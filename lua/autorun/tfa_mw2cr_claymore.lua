@@ -1,0 +1,6 @@
+TFA.AddWeaponSound("TFA_MW2R_CLYMR.Plant", {"weapons/tfa_mw2r/claymore/wpn_h1_claymore_plant_01.wav", "weapons/tfa_mw2r/claymore/wpn_h1_claymore_plant_02.wav"})
+TFA.AddWeaponSound("TFA_MW2R_CLYMR.Activate", "weapons/tfa_mw2r/claymore/wpn_h1_claymore_activate.wav")
+TFA.AddWeaponSound("TFA_MW2R_CLYMR.Pin", "weapons/tfa_mw2r/claymore/wpn_h1_claymore_pin.wav")
+TFA.AddWeaponSound("TFA_MW2R_CLYMR.Look1", "weapons/tfa_mw2r/claymore/wpn_h1_claymore_ins_look_01.wav")
+TFA.AddWeaponSound("TFA_MW2R_CLYMR.Look2", "weapons/tfa_mw2r/claymore/wpn_h1_claymore_ins_look_02.wav")
+TFA.AddWeaponSound("TFA_MW2R_CLYMR.Rest", "weapons/tfa_mw2r/claymore/wpn_h1_claymore_ins_rest.wav")
