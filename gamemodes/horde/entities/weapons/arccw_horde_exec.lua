@@ -12,7 +12,10 @@ SWEP.Trivia_Calibre = ".410 Bore"
 SWEP.Trivia_Mechanism = "Double-Action"
 SWEP.Trivia_Country = "Brazil/USA"
 SWEP.Trivia_Year = 2006
-
+if CLIENT then
+    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_bo2_judge")
+    killicon.Add("arccw_horde_exec", "arccw/weaponicons/arccw_bo2_judge", Color(0, 0, 0, 255))
+end
 SWEP.Slot = 1
 
 SWEP.UseHands = true
