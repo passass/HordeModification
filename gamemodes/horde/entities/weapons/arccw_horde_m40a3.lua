@@ -13,7 +13,10 @@ SWEP.Trivia_Calibre = "7.62x51mm NATO"
 SWEP.Trivia_Mechanism = "Bolt-Action"
 SWEP.Trivia_Country = "USA"
 SWEP.Trivia_Year = 1966
-
+if CLIENT then
+    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_cod4e_m40a3")
+    killicon.Add("arccw_horde_m40a3", "arccw/weaponicons/arccw_cod4e_m40a3", Color(0, 0, 0, 255))
+end
 SWEP.Slot = 3
 
 SWEP.UseHands = true
