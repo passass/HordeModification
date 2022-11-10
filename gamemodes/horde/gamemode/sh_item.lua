@@ -647,11 +647,20 @@ function HORDE:GetDefaultItemsData()
     HORDE:CreateItem("Explosive",  "M72 LAW",        "arccw_horde_law",   3500,  9, "M72 Light Anti-Armor Weapon.\nFocuses on raw destructive power instead of area of effect.\nVery good for clearing the area.",
     {Demolition=true}, 15, -1, nil, nil, {Demolition=15}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
 
-    HORDE:CreateItem("Explosive",  "Gjallarhorn",        "horde_gjallarhorn",   3500,  14, "Gjallarhorn the wonder weapon.\nIt fire rocket which breaks into many pieces of rockets.",
+    HORDE:CreateItem("Explosive",  "Gjallarhorn",        "horde_gjallarhorn",   3500,  12, "Gjallarhorn the wonder weapon.\nIt fire rocket which breaks into many pieces of rockets.",
     {Demolition=true}, 30, -1, nil, nil, {Demolition=20}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
 	
 	HORDE:CreateItem("Explosive",  "Chain Grenade",        "horde_chaingrenade",   3500,  4, "A grenade which explode 3 times.",
     {Demolition=true}, 8, -1, nil, nil, {Demolition=20}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
+	
+	HORDE:CreateItem("Explosive",  "Deathbringer",        "horde_deathbringer",   6000,  12, "Deathbringer.\nIt fire circle of energy which breaks into many circles.",
+    {Demolition=true}, 30, -1, nil, nil, {Demolition=30}, 1, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
+	
+	HORDE:CreateItem("Explosive",  "Leviathan's Sigh",        "horde_leviathans_breath",   6000,  9, "Leviathan's Sigh.\nBow that fire a exlopsion arrow.",
+    {Demolition=true}, 5, -1, nil, nil, {Demolition=30}, 1, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
+	
+	HORDE:CreateItem("Explosive",  "Xenophage",        "horde_xenophage",   6000,  9, "Xenophage.\nShots a small rocket.",
+    {Demolition=true}, 15, -1, nil, nil, {Demolition=30}, 1, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
 
     HORDE:CreateItem("Explosive",  "SLAM",           "weapon_slam",       1250,   1, "Selectable Lightweight Attack Munition.\nRMB to detonate. Attach to wall to active laser mode.",
     {Demolition=true}, 0, 20, nil, nil, nil, nil, {HORDE.DMG_BLAST})

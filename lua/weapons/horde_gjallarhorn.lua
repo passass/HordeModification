@@ -28,8 +28,8 @@ SWEP.DisableChambering 				= true
 SWEP.SelectiveFire = false -- Allow selecting your firemode?
 
 if CLIENT then
-    SWEP.WepSelectIcon = surface.GetTextureID("vgui/hud/destiny_gjallarhorn.vtf")
-    killicon.Add("horde_gjallarhorn", "vgui/hud/destiny_gjallarhorn", Color(0, 0, 0, 255))
+    SWEP.WepSelectIcon = surface.GetTextureID("vgui/killicons/destiny_gjallarhorn.vtf")
+    killicon.Add("horde_gjallarhorn", "vgui/killicons/destiny_gjallarhorn", Color(255, 255, 255, 255))
 end
 
 SWEP.Primary.ClipSize				= 1
@@ -49,7 +49,7 @@ SWEP.Primary.Damage					= 180
 SWEP.Primary.HullSize 				= 1
 SWEP.DamageType 					= DMG_BLAST
 
-SWEP.Horde_MaxMags = 30
+SWEP.Horde_MaxMags = 35
 
 -- PROJECTILES
 SWEP.Primary.Projectile = "horde_ghorn_rocket" -- Entity to shoot
