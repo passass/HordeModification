@@ -8,7 +8,10 @@ SWEP.PrintName = "Thrustodyne Aeronautics Model 23"
 SWEP.Slot = 1
 
 SWEP.UseHands = true
-
+if CLIENT then
+    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_horde_jetgun.vtf")
+    killicon.Add("arccw_horde_jetgun", "arccw/weaponicons/arccw_horde_jetgun", Color(255, 255, 255, 255))
+end
 SWEP.ViewModel =  "models/weapons/jetgun/v_jetgun.mdl"
 SWEP.WorldModel = "models/weapons/jetgun/w_jetgun.mdl"
 SWEP.MirrorVMWM = false
