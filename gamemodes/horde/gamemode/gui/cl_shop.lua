@@ -23,7 +23,7 @@ function PANEL:Init()
     end
     self:SetPos((ScrW() / 2) - (self:GetWide() / 2), (ScrH() / 2) - (self:GetTall() / 2))
 
-    local close_btn = vgui.Create("DButton", self) 
+    local close_btn = vgui.Create("DButton", self)
     close_btn:SetFont("marlett")
     close_btn:SetText("r")
     close_btn.Paint = function() end
@@ -31,6 +31,48 @@ function PANEL:Init()
     close_btn:SetSize(32, 32)
     close_btn:SetPos(self:GetWide() - 40, 8)
     close_btn.DoClick = function() HORDE:ToggleShop() end
+    
+    --- PlayerModel Selector Button
+    local playermodelselector_btn = vgui.Create("DButton", self)
+    playermodelselector_btn:SetText("PlayerModel")
+    playermodelselector_btn.Paint = function() end
+    playermodelselector_btn:SetColor(Color(255, 255, 255))
+    playermodelselector_btn:SetSize(60, 60)
+    playermodelselector_btn:SetPos(self:GetWide() - 166, 8)
+    playermodelselector_btn:SetFont("Category")
+    playermodelselector_btn:SetTall(40)
+    playermodelselector_btn.DoClick = function()
+        HORDE:ToggleShop()
+        RunConsoleCommand( "playermodel_selector" )
+    end
+    playermodelselector_btn.PerformLayout = function(pnl)
+        pnl:SizeToContents() pnl:SetWide(pnl:GetWide() + 12) DLabel.PerformLayout(pnl)
+        pnl:SetContentAlignment(4)
+        pnl:SetTextInset( 12, 0 )
+    end
+
+    playermodelselector_btn.Paint = function(pnl, w, h)
+        if pnl:GetActive() then
+            draw.RoundedBox(5, 0, 0, w, h, Color(40,40,40,230))
+        else
+            draw.RoundedBox(5, 0, 0, w, h, HORDE.color_crimson)
+        end
+    end
+
+    playermodelselector_btn.UpdateColours = function(pnl)
+        if pnl:GetActive() then
+            pnl:SetTextColor(HORDE.color_crimson)
+            return
+        end
+        if pnl.Hovered then
+            return
+        end
+        pnl:SetTextColor(Color(255, 255, 255))
+    end
+
+    playermodelselector_btn.GetActive = function(pnl) return pnl.Active or false end
+    playermodelselector_btn.SetActive = function(pnl, state) pnl.Active = state end
+    --- PlayerModel Selector Button
 
     local btn_container = vgui.Create("DHorizontalScroller", self)
     btn_container:SetTall(32)
@@ -379,22 +421,26 @@ function PANEL:Paint(w, h)
     else
         draw.RoundedBox(0, 0, 0, w, h, HORDE.color_hollow)
     end
+    
+    local offset = 135
 
     -- Money
     local display_name = LocalPlayer():Horde_GetCurrentSubclass()
     local loc_display_name = translate.Get("Class_" .. display_name) or display_name
     draw.SimpleText(translate.Get("Shop_Class") .. ": " .. loc_display_name, 'Heading', 170, 24, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
     
+    
+
     local text
     local weight_text
     weight_text = translate.Get("Shop_Weight") .. ': [' .. tostring(LocalPlayer():Horde_GetMaxWeight() - LocalPlayer():Horde_GetWeight()) .. "/" .. LocalPlayer():Horde_GetMaxWeight() .. "]"
     text = translate.Get("Shop_Cash") .. ": " .. tostring(LocalPlayer():Horde_GetMoney()) .. '$ ' .. ' ' .. tostring(LocalPlayer():Horde_GetSkullTokens()) .. '       ' .. weight_text
-    draw.SimpleText(text, 'Heading', self:GetWide() - 40, 24, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+    draw.SimpleText(text, 'Heading', self:GetWide() - 40 - offset, 24, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 
     local mat = Material("skull.png", "mips smooth")
     surface.SetMaterial(mat)
     surface.SetDrawColor(Color(255,255,255))
-    surface.DrawTexturedRect(self:GetWide() - surface.GetTextSize(weight_text) * 1.5 - 10, 14, 20, 20)
+    surface.DrawTexturedRect(self:GetWide() - surface.GetTextSize(weight_text) * 1.5 - 10 - offset, 14, 20, 20)
 end
 
 vgui.Register("HordeShop", PANEL)

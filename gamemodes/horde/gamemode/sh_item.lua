@@ -706,6 +706,9 @@ function HORDE:GetDefaultItemsData()
     HORDE:CreateItem("Special",    "Watchtower MKIII",  "horde_watchtower_mk3",1500,  3, "A watchtower that deters enemies.\nShocks 1 nearby enemy every 1 second.\nDoes 100 Lightning damage.\n(Entity Class: horde_watchtower_mk3)",
     {Warden=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=2}, "items/horde_watchtower.png", {Warden=3}, nil, {HORDE.DMG_LIGHTNING})
     
+    HORDE:CreateItem("Special",    "Barricade Kit",  "horde_barricadekit", 1500,  4, "Barricade Kit.\nKit with barricade that block zombies movement",
+    {Engineer=true}, nil, nil, {type=HORDE.ENTITY_PROPERTY_WPN, wep_that_place=true, limit=1}, nil, {Warden=10}, nil)--, {HORDE.DMG_LIGHTNING})
+
     HORDE:CreateItem("Special",    "C4",  "horde_c4", 1500,  4, "C4.\nThrowable Bomb which explode on press detonator",
     {Warden=true, Assault=true, Survivor=true, Heavy=true, Ghost=true, Demolition=true}, 75, -1, nil, "entities/horde_c4.png", {Demolition=30}, nil, {HORDE.DMG_BLAST})
     HORDE:CreateItem("Special",    "Claymore",  "horde_claymore", 1500,  3, "Claymore.\nBomb that explode on approaching enemies",

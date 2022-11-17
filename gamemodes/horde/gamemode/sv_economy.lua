@@ -252,7 +252,11 @@ function plymeta:Horde_RecalcWeight()
         if not HORDE.items[wpn:GetClass()] then goto cont end
         local wpn_weight = HORDE.items[wpn:GetClass()].weight
         if weight + wpn_weight > self:Horde_GetMaxWeight() then
-            self:DropWeapon(wpn)
+            if IsValid(wpn) and wpn.CantDropWep then
+                self:StripWeapon(wpn:GetClass())
+            else
+                self:DropWeapon(wpn)
+            end
         else
             weight = weight + wpn_weight
         end
@@ -363,10 +367,16 @@ end)
 hook.Add("PlayerCanPickupWeapon", "Horde_Economy_Pickup", function (ply, wpn)
     if not ply:IsValid() then return false end
     if ply:IsNPC() then return true end
-    if HORDE.items[wpn:GetClass()] then
-        local item = HORDE.items[wpn:GetClass()]
+    local item = HORDE.items[wpn:GetClass()]
+    if item then
         if (ply:Horde_GetWeight() - item.weight < 0) or (item.whitelist and (not item.whitelist[ply:Horde_GetClass().name])) then
             return false
+        end
+        if HORDE:IsItemPlacable(item) and ply.Horde_drop_entities then
+            local count_of_barricades = ply.Horde_drop_entities[item.class]
+            if count_of_barricades and count_of_barricades >= item.entity_properties.limit then
+                return false
+            end
         end
         if item.starter_classes then
             if (item.class == "horde_void_projector" and ply:Horde_GetCurrentSubclass() ~= "Necromancer") or
@@ -391,7 +401,11 @@ hook.Add("WeaponEquip", "Horde_Economy_Equip", function (wpn, ply)
         local item = HORDE.items[wpn:GetClass()]
         if (ply:Horde_GetWeight() - item.weight < 0) or (item.whitelist and (not item.whitelist[ply:Horde_GetClass().name])) then
             timer.Simple(0, function ()
-                ply:DropWeapon(wpn)
+                if IsValid(wpn) and wpn.CantDropWep then
+                    ply:StripWeapon(wpn:GetClass())
+                else
+                    ply:DropWeapon(wpn)
+                end
             end)
             return
         end
@@ -445,7 +459,23 @@ net.Receive("Horde_BuyItem", function (len, ply)
         if item.entity_properties then
             if item.entity_properties.type == HORDE.ENTITY_PROPERTY_WPN then
                 -- Weapon entity
+                local drop_entities
+                local limit = item.entity_properties.limit
+                if limit then
+                    drop_entities = ply:Horde_GetDropEntities()
+                    if drop_entities[item.class] and drop_entities[item.class] >= limit then
+                        return
+                    end
+                end
                 buy_weapon(ply, class, price, skull_tokens)
+                
+                if limit then
+                    timer.Simple(0, function()
+                        ply:Horde_AddDropEntity(class, ply:GetWeapon(class))
+                        --ply:Horde_RemoveDropEntity(class, entity_creation_id, weightless)
+                    end)
+                    
+                end
             elseif item.entity_properties.type == HORDE.ENTITY_PROPERTY_GIVE then
                 -- Give entity
                 if GetConVar("horde_default_item_config"):GetInt() == 1 and class == "item_battery" then
@@ -692,28 +722,21 @@ net.Receive("Horde_SellItem", function (len, ply)
         return
     end
     if ply:HasWeapon(class) then
+        local wep = ply:GetWeapon(class)
+        if wep.Horde_OnSell and wep:Horde_OnSell() then return end
         local item = HORDE.items[class]
         ply:Horde_AddMoney(math.floor(item.price * 0.25))
-        local wep = ply:GetWeapon(class)
-        if wep.ArcCW and wep.Attachments then 
-            for k, v in pairs(wep.Attachments) do
-                if v.Installed and !v.FreeSlot and !v.Integral then
-                    ArcCW:PlayerGiveAtt(ply, v.Installed)
-                end
-            end
-            ArcCW:PlayerSendAttInv(ply)
-        end
         ply:StripWeapon(class)
         ply:Horde_SyncEconomy()
     else
         local item = HORDE.items[class]
-        if item.entity_properties.type == HORDE.ENTITY_PROPERTY_DROP then
+        if item.entity_properties.type == HORDE.ENTITY_PROPERTY_DROP or item.entity_properties.wep_that_place then
             local drop_entities = ply:Horde_GetDropEntities()
             if drop_entities and drop_entities[class] then
                 ply:Horde_AddMoney(math.floor(0.25 * item.price * drop_entities[class]))
                 -- Remove all the drop entiies of this player
                 for _, ent in pairs(HORDE.player_drop_entities[ply:SteamID()]) do
-                    if ent:IsValid() and ent:GetClass() == class then
+                    if ent:IsValid() and (ent:GetClass() == class or ent.Horde_ItemID == class) then
                         ent.Horde_Minion_Respawn = nil
                         timer.Remove("Horde_ManhackRespawn" .. ent:GetCreationID())
                         ent:Remove()
@@ -811,10 +834,13 @@ net.Receive("Horde_SelectClass", function (len, ply)
         for _, wpn in pairs(ply:GetWeapons()) do
             if hook.Run("PlayerCanPickupWeapon", ply, wpn) == true then 
                 occupied_weight = occupied_weight + HORDE.items[wpn:GetClass()].weight
-                print(wpn:GetClass())
                 continue
             end
-            ply:DropWeapon(wpn)
+            if IsValid(wpn) and wpn.CantDropWep then
+                ply:StripWeapon(wpn:GetClass())
+            else
+                ply:DropWeapon(wpn)
+            end
         end
     else
 		ply:StripAmmo()

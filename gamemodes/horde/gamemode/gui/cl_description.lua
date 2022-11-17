@@ -157,7 +157,12 @@ function PANEL:DoClick()
     if not LocalPlayer():Alive() then return end
     if LocalPlayer():Horde_GetMoney() < self.item.price or LocalPlayer():Horde_GetWeight() < self.item.weight or (not self.level_satisfy) then return end
     local drop_entities = LocalPlayer():Horde_GetDropEntities()
-    if self.item.entity_properties and self.item.entity_properties.limit and self.item.entity_properties.limit > 0 and self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_DROP and drop_entities[self.item.class] and drop_entities[self.item.class] >= self.item.entity_properties.limit then return end
+    if self.item.entity_properties and
+    self.item.entity_properties.limit and
+    self.item.entity_properties.limit > 0 and
+    --self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_DROP and
+    drop_entities[self.item.class] and
+    drop_entities[self.item.class] >= self.item.entity_properties.limit then return end
     -- Buy the item
     net.Start("Horde_BuyItem")
     net.WriteString(self.item.class)
@@ -213,7 +218,7 @@ function PANEL:SellDoClick()
         return
     end
     if not LocalPlayer():Alive() then return end
-    if LocalPlayer():HasWeapon(self.item.class) or (self.item.entity_properties and (self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_DROP or self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_GADGET)) then
+    if LocalPlayer():HasWeapon(self.item.class) or (self.item.entity_properties and (self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_DROP or self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_GADGET or self.item.entity_properties.wep_that_place)) then
         Derma_Query("Sell Item?!", "Sell",
                 "Yes",
                 function()
@@ -669,7 +674,7 @@ function PANEL:Paint()
                 surface.DrawRect(0, 0, self:GetWide(), 200)
             end
 
-            if self.item.category ~= "Melee" and self.item.category ~= "Equipment" and self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_WPN then
+            if self.item.category ~= "Melee" and self.item.category ~= "Equipment" and self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_WPN and !self.item.entity_properties.wep_that_place then
                 self.ammo_panel:SetVisible(true)
 
                 if self.item.ammo_price and self.item.ammo_price >= 0 then
@@ -793,7 +798,7 @@ function PANEL:Paint()
             self.ammo_panel:SetVisible(false)
             self.ammo_secondary_btn:SetVisible(false)
             self.current_ammo_panel.Paint = function () end
-            if self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_DROP then
+            if HORDE:IsItemPlacable(self.item) then
                 local drop_entities = LocalPlayer():Horde_GetDropEntities()
                 if drop_entities[self.item.class] then
                     self.sell_btn:SetVisible(true)
@@ -811,7 +816,7 @@ function PANEL:Paint()
             end
         else
             self.buy_btn:SetText(translate.Get("Shop_Buy_Item"))
-            if self.item.entity_properties and self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_DROP then
+            if self.item.entity_properties and (HORDE:IsItemPlacable(self.item)) then
                 local drop_entities = LocalPlayer():Horde_GetDropEntities()
                 if drop_entities[self.item.class] then
                     self.buy_btn:SetText(translate.Get("Shop_Buy_Item") .. " " .. drop_entities[self.item.class] .. "/" .. self.item.entity_properties.limit)

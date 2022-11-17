@@ -737,7 +737,11 @@ hook.Add("DoPlayerDeath", "Horde_DoPlayerDeath", function(victim)
     net.Start("Horde_ClearStatus")
     net.Send(victim)
     for _, wpn in pairs(victim:GetWeapons()) do
-        victim:DropWeapon(wpn)
+        if IsValid(wpn) and wpn.CantDropWep then
+            victim:StripWeapon(wpn:GetClass())
+        else
+            victim:DropWeapon(wpn)
+        end
     end
     if (not HORDE.start_game) or (HORDE.current_break_time > 0) then
         timer.Simple(1, function() if victim:IsValid() then
