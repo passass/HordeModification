@@ -431,6 +431,8 @@ function HORDE:GetDefaultItemsData()
 	
 	HORDE:CreateItem("Pistol",     "TAC45-Special",          "arccw_horde_tac45",   1500,  2, "TAC45-Special.\nStrong modified version of tac45.",
     special_pistol_classes, 5, -1, nil, nil, special_pistol_requir, 1, {HORDE.DMG_BALLISTIC})
+	HORDE:CreateItem("Pistol",     "Desert Eagle Mk XIX",          "arccw_horde_deagle_xix",   2000,  4, "Desert Eagle Mk XIX.\nUpgraded version of desert eagle.",
+    special_pistol_classes, 20, -1, nil, nil, special_pistol_requir, 1, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Pistol",     "HK USP Tactical",          "arccw_horde_usptac",   1500,  2, "HK USP Tactical.\nmodified HK USP Tactical with knife as melee weapon.",
     special_pistol_classes, 5, -1, nil, nil, special_pistol_requir, 1, {HORDE.DMG_BALLISTIC})
 	
@@ -485,9 +487,11 @@ function HORDE:GetDefaultItemsData()
     {Medic=true}, 8, -1, nil, nil, {Medic=15}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
 	
 	HORDE:CreateItem("SMG",        "Medic MSMC", "arccw_horde_msmc", 6000, 7, "MSMC - an Elite medic weapon with big power.",
-    {Medic=true}, 20, -1, nil, nil, {Medic=30}, 1, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
+    {Medic=true}, 10, -1, nil, nil, {Medic=30}, 1, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
+	HORDE:CreateItem("SMG",        "MP5A2 SUP MedMod", "arccw_horde_mp5_sup", 6000, 7, "MP5A2 SUP MedMod\nan rifle with sup mod and attached medic syringe system.",
+    {Medic=true}, 10, -1, nil, nil, {Medic=30}, 1, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
     HORDE:CreateItem("SMG",        "AKS-74U", "arccw_horde_aks74u", 6000, 6, "AKS-74U - a strong weapon but without medics features.",
-    {Medic=true}, 20, -1, nil, nil, {Medic=30}, 1, {HORDE.DMG_BALLISTIC})
+    {Medic=true}, 15, -1, nil, nil, {Medic=30}, 1, {HORDE.DMG_BALLISTIC})
 	
     HORDE:CreateItem("SMG",        "Tommi Boom",            "arccw_horde_thompson_expl", 2225, 6, "Tommi Boom.\nA M1921 with explosion module",
     {Demolition=true}, 12, -1, nil, nil, {Demolition=5}, nil, {HORDE.DMG_BLAST})
