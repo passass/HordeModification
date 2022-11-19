@@ -35,7 +35,7 @@ SWEP.DamageMin = 90
 SWEP.RangeMin = 15
 SWEP.Range = 75
 
-SWEP.Horde_MaxMags = 12
+SWEP.Horde_MaxMags = 19
 
 SWEP.Penetration = 3
 SWEP.DamageType = DMG_BULLET

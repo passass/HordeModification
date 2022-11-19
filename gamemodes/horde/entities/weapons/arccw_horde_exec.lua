@@ -37,7 +37,7 @@ SWEP.DamageMin = 19 -- damage done at maximum range
 SWEP.Range = 20
 
 SWEP.HullSize = 0.5
-SWEP.BodyDamageMults = {[HITGROUP_HEAD] = 1,}
+--SWEP.BodyDamageMults = {[HITGROUP_HEAD] = 1,}
 
 SWEP.Penetration = 2
 SWEP.DamageType = DMG_BULLET

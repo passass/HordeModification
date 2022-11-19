@@ -226,7 +226,7 @@ SWEP.Attachments = {
             vpos = Vector(10, 0, 2.2),
             vang = Angle(0, 0, 0),
         },
-		Installed="mw3e_barrel_mp5_sd", Integral=true
+		--Installed="mw3e_barrel_mp5_sd", Integral=true
     },
     { --2
         PrintName = "Muzzle",
