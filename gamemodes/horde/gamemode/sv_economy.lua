@@ -726,6 +726,14 @@ net.Receive("Horde_SellItem", function (len, ply)
         if wep.Horde_OnSell and wep:Horde_OnSell() then return end
         local item = HORDE.items[class]
         ply:Horde_AddMoney(math.floor(item.price * 0.25))
+		if wep.ArcCW and wep.Attachments then 
+            for k, v in pairs(wep.Attachments) do
+                if v.Installed and !v.FreeSlot and !v.Hidden and !v.Integral then
+                    ArcCW:PlayerGiveAtt(ply, v.Installed)
+                end
+            end
+            ArcCW:PlayerSendAttInv(ply)
+        end
         ply:StripWeapon(class)
         ply:Horde_SyncEconomy()
     else

@@ -205,8 +205,8 @@ SWEP.Attachments = {
     },
     {
         PrintName = "Cylinder",
-        Slot = "bo1_cylinder",
-		Installed = "bo1_cylinder",
+        Slot = "bo1_speedloader",	
+		Installed = "bo1_cylinder_speedloader",
 		Integral = true
     },--4
     { --5
@@ -228,16 +228,16 @@ SWEP.Attachments = {
     },
 }
 
-SWEP.Hook_ModifyBodygroups = function(wep, data)
+--[[SWEP.Hook_ModifyBodygroups = function(wep, data)
     local vm = data.vm
     local papcamo = wep:GetBuff_Override("PackAPunch")
 
     if papcamo then
         return vm:SetSkin(2)
     end
-end
+end]]
 
-/*
+
 SWEP.Hook_TranslateAnimation = function(wep, anim)
     local speed = wep:GetBuff_Override("BO1_SpeedLoader")
 
@@ -253,7 +253,7 @@ SWEP.Hook_TranslateAnimation = function(wep, anim)
         end
     end
 end
-*/
+
 
 SWEP.Animations = {
     ["idle"] = {
