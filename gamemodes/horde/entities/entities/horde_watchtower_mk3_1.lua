@@ -24,7 +24,8 @@ function ENT:HORDE_WatchTowerThink()
             util.BlastDamageInfo(dmg, ent:GetPos(), 70)
             util.ParticleTracerEx("vortigaunt_beam", self:GetPos(), ent:GetPos() + ent:OBBCenter(), true, self:EntIndex(), -1)
             util.ParticleTracerEx("vortigaunt_beam_b", self:GetPos(), ent:GetPos() + ent:OBBCenter(), true, self:EntIndex(), -1)
-            break
+            return
         end
     end
+	return false
 end
