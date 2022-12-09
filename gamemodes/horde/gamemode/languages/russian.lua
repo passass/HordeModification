@@ -585,7 +585,6 @@ LANGUAGE["Item_Watchtower"] = [[Сторожевая башня]]
 LANGUAGE["Item_Desc_Watchtower"] = [[
 Сторожевая башня, обеспечивающая пополнение запасов.
 Создает 1 боеприпас каждые 30 секунд.
-(Класс сущности: horde_watchtower)
 ]]
 
 
@@ -615,16 +614,30 @@ LANGUAGE["Item_Desc_Full Kevlar Armor"] = [[
 
 LANGUAGE["Item_Watchtower MKII"] = [[Сторожевая башня - Модель II]]
 LANGUAGE["Item_Desc_Watchtower MKII"] = [[
-Сторожевая башня обеспечивающая пополнение припасов.
+Сторожевая башня обеспечивающая пополнение здоровья.
 Генерирует 1 мелкую аптечку каждые 30 секунд.
-(Entity Class: horde_watchtower_mk2)
+]]
+
+LANGUAGE["Item_Watchtower MKIII.I"] = [[Сторожевая башня - Модель III.I]]
+LANGUAGE["Item_Desc_Watchtower MKIII.I"] = [[
+Башня отпугивающая врагов. Бьёт током каждого противника вблизи каждые четыре секунды.
+325 урона током.
+]]
+LANGUAGE["Item_Watchtower MKII.I"] = [[Сторожевая башня - Модель II.I]]
+LANGUAGE["Item_Desc_Watchtower MKII.I"] = [[
+Сторожевая башня обеспечивающая пополнение брони.
+Генерирует 1 ячейку брони каждые 30 секунд.
+]]
+LANGUAGE["Item_Watchtower MKII.V"] = [[Сторожевая башня - Модель II.V]]
+LANGUAGE["Item_Desc_Watchtower MKII.V"] = [[
+Сторожевая башня обеспечивающая пополнение здоровья.
+Генерирует 1 большую аптечку каждые 30 секунд.
 ]]
 
 LANGUAGE["Item_Watchtower MKIII"] = [[Сторожевая башня - Модель III]]
 LANGUAGE["Item_Desc_Watchtower MKIII"] = [[
-Башня отпугивающая врагов. Бьёт током каждого противника вблизи каждую секунду.
-80 урона током.
-(Entity Class: horde_watchtower_mk3)
+Башня отпугивающая врагов. Бьёт током каждого противника вблизи каждые две секунды.
+100 урона током.
 ]]
 
 LANGUAGE["Item_Tau Cannon"] = [[Тау Пушка]]

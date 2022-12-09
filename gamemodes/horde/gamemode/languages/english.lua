@@ -1126,9 +1126,13 @@ LANGUAGE["Item_Watchtower MKIII"] = [[Watchtower MKIII]]
 LANGUAGE["Item_Desc_Watchtower MKIII"] = [[
 A watchtower that deters enemies.
 Shocks 1 nearby enemy every 1 second.
-Does 80 Lightning damage.
+Does 100 Lightning damage.
 (Entity Class: horde_watchtower_mk3)
 ]]
+
+LANGUAGE["Item_Watchtower MKIII.I"] = [[Watchtower MKIII.I]]
+LANGUAGE["Item_Watchtower MKII.I"] = [[Watchtower MKII.I]]
+LANGUAGE["Item_Watchtower MKII.V"] = [[Watchtower MKII.V]]
 
 LANGUAGE["Item_Tau Cannon"] = [[Tau Cannon]]
 LANGUAGE["Item_Desc_Tau Cannon"] = [[

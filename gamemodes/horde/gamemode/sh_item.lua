@@ -703,13 +703,24 @@ function HORDE:GetDefaultItemsData()
     {Berserker=true}, 10, -1, nil, nil, {Berserker=1}, nil, {HORDE.DMG_SLASH})
     HORDE:CreateItem("Special",    "Ballistic Knife", "arccw_horde_ballistic_knife", 2000, 3, "Ballistic Knife.\nshoots knives that can be picked up.",
     {Berserker=true}, 30, -1, nil, nil, {Berserker=2}, nil, {HORDE.DMG_SLASH})
-    HORDE:CreateItem("Special",    "Watchtower",      "horde_watchtower",       800,  1, "A watchtower that provides resupply.\nGenerates 1 ammobox every 30 seconds.\n(Entity Class: horde_watchtower)",
-    {Warden=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=2}, "items/horde_watchtower.png")
-    HORDE:CreateItem("Special",    "Watchtower MKII",  "horde_watchtower_mk2", 1000,  2, "A watchtower that provides resupply.\nGenerates 1 health vial every 30 seconds.\n(Entity Class: horde_watchtower_mk2)",
-    {Warden=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=2}, "items/horde_watchtower.png")
-    HORDE:CreateItem("Special",    "Watchtower MKIII",  "horde_watchtower_mk3",1500,  3, "A watchtower that deters enemies.\nShocks 1 nearby enemy every 1 second.\nDoes 100 Lightning damage.\n(Entity Class: horde_watchtower_mk3)",
-    {Warden=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=2}, "items/horde_watchtower.png", {Warden=3}, nil, {HORDE.DMG_LIGHTNING})
     
+    -- WatchTowers
+    
+    HORDE:CreateItem("Special",    "Watchtower",      "horde_watchtower",       800,  1, "A watchtower that provides resupply.\nGenerates 1 ammobox every 30 seconds.",
+    {Warden=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=2}, "items/horde_watchtower.png")
+    HORDE:CreateItem("Special",    "Watchtower MKII",  "horde_watchtower_mk2", 1000,  2, "A watchtower that provides resupply.\nGenerates 1 health vial every 30 seconds.",
+    {Warden=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=2}, "items/horde_watchtower.png")
+    HORDE:CreateItem("Special",    "Watchtower MKII.V",  "horde_watchtower_bighealth",1600,  3, "A watchtower that provides resupply.\nGenerates 1 health kit every 30 seconds.",
+    {Warden=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=2}, "items/horde_watchtower.png", {Warden=2}, nil, {HORDE.DMG_LIGHTNING})
+    HORDE:CreateItem("Special",    "Watchtower MKII.I",  "horde_watchtower_armor", 1250,  3, "A watchtower that provides resupply.\nGenerates 1 armor battery every 30 seconds.",
+    {Warden=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=1}, "items/horde_watchtower.png", {Warden=2})
+    HORDE:CreateItem("Special",    "Watchtower MKIII",  "horde_watchtower_mk3",1500,  3, "A watchtower that deters enemies.\nShocks 1 nearby enemy every 1 second.\nDoes 100 Lightning damage.",
+    {Warden=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=2}, "items/horde_watchtower.png", {Warden=5}, nil, {HORDE.DMG_LIGHTNING})
+    HORDE:CreateItem("Special",    "Watchtower MKIII.I",  "horde_watchtower_mk3_1",1750,  3, "A watchtower that deters enemies.\nShocks 1 nearby enemy every 1 second.\nDoes 325 Lightning damage.",
+    {Warden=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=2}, "items/horde_watchtower.png", {Warden=5}, nil, {HORDE.DMG_LIGHTNING})
+    
+    -- WatchTowers
+
     HORDE:CreateItem("Special",    "Barricade Kit",  "horde_barricadekit", 1500,  4, "Barricade Kit.\nKit with barricade that block zombies movement",
     {Engineer=true}, nil, nil, {type=HORDE.ENTITY_PROPERTY_WPN, wep_that_place=true, limit=1}, nil, {Warden=10}, nil)--, {HORDE.DMG_LIGHTNING})
 
