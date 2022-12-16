@@ -21,77 +21,53 @@ TFA.AddWeaponSound("TFA_MW2R_RIOT.Look2", "weapons/tfa_mw2r/riotshield/wpn_h2_ri
 TFA.AddWeaponSound("TFA_MW2R_RIOT.Rest", "weapons/tfa_mw2r/riotshield/wpn_h2_riotshield_inspect_look_rest_01.wav")
 TFA.AddWeaponSound("TFA_MW2R_RIOT.Walk", {"weapons/tfa_mw2r/riotshield/riot_shield_plant_move_01.wav", "weapons/tfa_mw2r/riotshield/riot_shield_plant_move_02.wav", "weapons/tfa_mw2r/riotshield/riot_shield_plant_move_03.wav"})
 
-local function BlockDamageRiotShield( ent, dmginfo )
+local function BlockDamageRiotShield( ent, dmginfo, bonus )
 	--replacing the entire function like a dumbass cause i cant code for shit and dont know who to ask for help
-		if not ent:IsPlayer() then return end
 		if dmginfo:IsDamageType( DMG_DROWNRECOVER ) or dmginfo:IsDamageType(DMG_DIRECT) then return end
-		local wep
-		wep = ent:GetActiveWeapon()
+		local wep = ent:GetActiveWeapon()
 
 		if (wep.IsTFAWeapon and wep.RiotShieldDamageTypes and wep.RiotShield == true) then
-		local RiotShield = false
+		local RiotShield
 		for _,v in ipairs(wep.RiotShieldDamageTypes) do
 			if dmginfo:IsDamageType(v) then RiotShield = true end
 		end
 		if RiotShield then
-			local damageinflictor, blockthreshold
-			damageinflictor = dmginfo:GetInflictor()
+			local blockthreshold = ( wep.RiotShieldCone or 135 ) / 2
+			local damageinflictor = dmginfo:GetInflictor()
 
 			if (not IsValid(damageinflictor)) then
 				damageinflictor = dmginfo:GetAttacker()
 			end
 
-			blockthreshold = ( wep.RiotShieldCone or 135 ) / 2
-			if angle_mult_cv then
-				blockthreshold = blockthreshold * angle_mult_cv:GetFloat()
-			end
+			--if angle_mult_cv then
+			--	blockthreshold = blockthreshold * angle_mult_cv:GetFloat()
+			--end
 
 			if (IsValid(damageinflictor) and ( math.abs(math.AngleDifference( ent:EyeAngles().y, ( damageinflictor:GetPos() - ent:GetPos() ):Angle().y )) <= blockthreshold)) then
 				if wep.RiotShieldPreHook and wep:RiotShieldPreHook() then
                     return
                 end
-                
-                local dmgscale
-                
-				if ( not timed_blocking_cv ) or timed_blocking_cv:GetBool() then
-					dmgscale = wep.RiotShieldMaximum
-				else
-					dmgscale = wep.RiotShieldMaximum
-				end
-				local olddmg = dmginfo:GetDamage()
-				dmgscale = math.min( dmgscale, wep.RiotShieldDamageCap / dmginfo:GetDamage() )
-
-				dmginfo:ScaleDamage(dmgscale)
+				
+				--local olddmg = dmginfo:GetDamage()
+				local dmgscale = math.min( wep.RiotShieldMaximum, wep.RiotShieldDamageCap / dmginfo:GetDamage() )
+				bonus.less = bonus.less * dmgscale
+				--dmginfo:ScaleDamage(dmgscale)
 				dmginfo:SetDamagePosition(vector_origin)
 				dmginfo:SetDamageType( bit.bor( dmginfo:GetDamageType(), DMG_DROWNRECOVER ) )
 				wep:EmitSound(wep.RiotShieldImpact or "")
 
-				if deflect_cv and deflect_cv:GetInt() == 2 then
-					DeflectBullet( ent, dmginfo, olddmg )
-				end
+				--if deflect_cv and deflect_cv:GetInt() == 2 then
+				--	DeflectBullet( ent, dmginfo, olddmg )
+				--end
 
-                local result
-				
-				if dmginfo:GetDamage() < 1 then
-					if deflect_cv and deflect_cv:GetInt() == 1 and wep.RiotShieldCanDeflect then
-						DeflectBullet( ent, dmginfo, olddmg )
-					end
-					result = true
-				end
-
-                local hook_result = wep.RiotShieldPostHook and wep:RiotShieldPostHook(dmginfo, olddmg)
-                if hook_result then return end
-                return result
+                if wep.RiotShieldPostHook then wep:RiotShieldPostHook(dmginfo) end
 			end
 		end
 	end
 end
 
-hook.Add("EntityTakeDamage", "mw2cr_riotshield", function( ent, dmginfo )
-	return BlockDamageRiotShield( ent, dmginfo )
-end) --Cancel
-hook.Add("ScalePlayerDamage", "mw2cr_riotshield", function( ent, _, dmginfo ) --Cancel
-	return BlockDamageRiotShield( ent, dmginfo )
+hook.Add("Horde_OnPlayerDamageTaken", "horde_riotshieldblockdamage", function( ply, dmginfo, bonus )
+	BlockDamageRiotShield( ply, dmginfo, bonus )
 end)
 
 
@@ -139,23 +115,28 @@ SWEP.RiotShieldDamageTypes = {
 	DMG_SLASH,DMG_CLUB,DMG_BULLET
 }
 
-SWEP.ShieldHealth = 250
+SWEP.RiotShieldHealth = 250
 
-function SWEP:RiotShieldPostHook(dmginfo, startdamage)
-	if CLIENT and !startdamage and isstring(dmginfo) then
-		startdamage = tonumber(dmginfo)
+function SWEP:RiotShieldPostHook(dmginfo)
+	if CLIENT then
+		if isstring(dmginfo) then
+			self.RiotShieldHealth = tonumber(dmginfo) or self.RiotShieldHealth
+		end
+	else
+		print(self.RiotShieldHealth, dmginfo:GetDamage())
+		self.RiotShieldHealth = self.RiotShieldHealth - dmginfo:GetDamage()
+		if self.RiotShieldHealth <= 0 then
+			self:GetOwner():StripWeapon(self:GetClass())
+			self:EmitSound("physics/wood/wood_crate_break1.wav")
+		else
+			self:CallOnClient("RiotShieldPostHook", "" .. self.RiotShieldHealth)
+		end
 	end
-	self.ShieldHealth = self.ShieldHealth - startdamage
-	if self.ShieldHealth <= 0 then
-		self:GetOwner():StripWeapon(self:GetClass())
-		self:EmitSound("physics/wood/wood_crate_break1.wav")
-	end
-	self:CallOnClient("RiotShieldPostHook", "" .. startdamage)
 end
 
 if CLIENT then
 	function SWEP:GetHUDData()
-		local hpamount = math.Round(self.ShieldHealth)
+		local hpamount = math.Round(self.RiotShieldHealth)
 		return {
 			ammoname = "HP",
 			clip = hpamount,

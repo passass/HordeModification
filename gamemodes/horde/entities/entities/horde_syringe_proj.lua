@@ -59,7 +59,7 @@ else
 		self.particle:Spawn()
 		self.particle:Activate()
 		
-		self.Syringe_Damage = self.Inflictor.Syringe_Damage or 10
+		self.Syringe_Damage = self.Inflictor.Syringe_Damage or 20
 		self.Syringe_Heal = self.Inflictor.Syringe_Heal or 10
 	end
 	

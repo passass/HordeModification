@@ -427,7 +427,7 @@ function HORDE:GetDefaultItemsData()
     {Medic=true}, 25, -1, nil, nil, {Medic=4}, nil, {HORDE.DMG_POISON})
 	
 	HORDE:CreateItem("Pistol",     "Crusader's Crossbow",          "arccw_horde_mediccrossbow",   2000,  4, "Crusader's Crossbow.\nA medic crossbow which have 1 ammo in clip.",
-    {Medic=true}, 2, -1, nil, nil, {Medic=5}, nil, {HORDE.DMG_POISON})
+    {Medic=true}, 3, -1, nil, nil, {Medic=5}, nil, {HORDE.DMG_POISON})
 	
 	HORDE:CreateItem("Pistol",     "TAC45-Special",          "arccw_horde_tac45",   1500,  2, "TAC45-Special.\nStrong modified version of tac45.",
     special_pistol_classes, 5, -1, nil, nil, special_pistol_requir, 1, {HORDE.DMG_BALLISTIC})

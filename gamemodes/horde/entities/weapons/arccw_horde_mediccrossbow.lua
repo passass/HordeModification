@@ -7,25 +7,10 @@ if CLIENT then
     killicon.Add("arccw_horde_mediccrossbow", "arccw/weaponicons/arccw_horde_mediccrossbow", Color(0, 0, 0, 255))
 end
 SWEP.PrintName = "Crusader's Crossbow"
---[[SWEP.Trivia_Class = "Pistol"
-SWEP.Trivia_Desc = ".40 Caliber semi automatic pistol. Commonly used among police and popular with civilians for its reliability."
-SWEP.Trivia_Manufacturer = "Auschen Waffenfabrik"
-SWEP.Trivia_Calibre = ".40 S&W"
-SWEP.Trivia_Mechanism = "Short Recoil"
-SWEP.Trivia_Country = "Austria"
-SWEP.Trivia_Year = 1993]]
 
 SWEP.Slot = 1
 
 SWEP.UseHands = false
---[[
-CustomizableWeaponry:addFireSound("CW_SYRINGE_FIRE", "weapons/syringegun_shoot.wav", 1, 100, CHAN_STATIC)
-CustomizableWeaponry:addFireSound("CW_SYRINGEPROTO_FIRE", "weapons/tf_medic_syringe_overdose.wav", 1, 100, CHAN_STATIC)
-CustomizableWeaponry:addFireSound("CW_SYRINGECROSSBOW_FIRE", "weapons/crusaders_crossbow_shoot.wav", 1, 100, CHAN_STATIC)
-
-CustomizableWeaponry:addReloadSound("CW_SYRINGE_AIR1", "weapons/syringegun_reload_air1.wav")
-CustomizableWeaponry:addReloadSound("CW_SYRINGE_AIR2", "weapons/syringegun_reload_air2.wav")
-CustomizableWeaponry:addReloadSound("CW_SYRINGE_GLASS", "weapons/syringegun_reload_glass2.wav", 1, 100, CHAN_STATIC)]]
 
 SWEP.ViewModel		= "models/weapons/red/medic/v_syringegun_red.mdl"
 SWEP.WorldModel		= "models/weapons/c_models/c_syringegun/c_syringegun.mdl"
@@ -36,18 +21,19 @@ SWEP.ActiveAng = Angle(0, 0, 0)
 SWEP.ForceDefaultAmmo = 20
 SWEP.HolsterPos = Vector(4.8, 6, 0)
 SWEP.HolsterAng = Angle(-7.036, 30.016, 0)
-SWEP.Hook_ModifyBodygroups = function(wep, data)
+function SWEP:Hook_ModifyBodygroups(data)
     local vm = data.vm
     if vm and IsValid(vm) then
         vm:SetBodygroup(1, 3)
     end
 end
 
-SWEP.Syringe_Damage = 120
+SWEP.Syringe_Damage = 100
 SWEP.Syringe_Heal = 50
+SWEP.ClipsPerAmmoBox = 5
 
 SWEP.Damage = 15
-==[[SWEP.DamageMin = 75 -- damage done at maximum range
+--[[SWEP.DamageMin = 75 -- damage done at maximum range
 SWEP.Range = 90 -- in METRES
 SWEP.Penetration = 11]]
 SWEP.DamageType = DMG_BULLET
@@ -59,7 +45,7 @@ SWEP.CanFireUnderwater = true
 SWEP.ChamberSize = 0 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 
-SWEP.Horde_MaxMags = 80
+SWEP.Horde_MaxMags = 75
 
 SWEP.Recoil = .2
 SWEP.RecoilSide = .4

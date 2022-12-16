@@ -175,7 +175,7 @@ SWEP.WorldModelOffset = {
     pos = Vector(-12.5, 4, -2.5),
     ang = Angle(-10, 0, 180)
 }
-
+print("gasdgasd")
 SWEP.MirrorVMWM = true
 
 SWEP.Attachments = {

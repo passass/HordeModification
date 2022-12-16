@@ -10,45 +10,44 @@ SWEP.AdminOnly = false
 
 SWEP.PrintName = "Übersaw"
 SWEP.Trivia_Class = "Melee Weapon"
-SWEP.Trivia_Desc = "A Fireaxe, used by the Firemen."
-SWEP.Trivia_Manufacturer = "Top Gear"
-SWEP.Trivia_Calibre = "N/A"
-SWEP.Trivia_Mechanism = "Sharp Edge"
-SWEP.Trivia_Country = "???"
-SWEP.Trivia_Year = 1900
 
 SWEP.Slot = 0
 
 SWEP.NotForNPCs = true
 
 SWEP.UseHands = false
-
-SWEP.Hook_ModifyBodygroups = function(wep, data)
-	if CLIENT then
+if CLIENT then
+	function SWEP:Hook_ModifyBodygroups(data)
 		local vm = data.vm
 		if vm and IsValid(vm) then
 			vm:SetBodygroup(1, 1)
 		end
 	end
-end
-
-function SWEP:Hook_PostBash(info)
-	if CLIENT or not info.tr.Entity then return end
-	local ent = info.tr.Entity
-	if IsValid(ent) and ent:IsPlayer() then
-		local healinfo = HealInfo:New({amount = 25, healer = self:GetOwner()})
-		HORDE:OnPlayerHeal(ent, healinfo)
+else
+	function SWEP:Hook_PostBash(info)
+		if not info.tr.Entity then return end
+		local ent = info.tr.Entity
+		if IsValid(ent) then
+			if ent:IsPlayer() then
+				local healinfo = HealInfo:New({amount = 30, healer = self:GetOwner()})
+				HORDE:OnPlayerHeal(ent, healinfo)
+			elseif ent:IsNPC() then
+				local owner = self:GetOwner()
+				local healinfo = HealInfo:New({amount = math.Round(info.dmg / 3.25), healer = owner})
+				HORDE:OnPlayerHeal(owner, healinfo)
+			end
+		end
 	end
 end
 
 SWEP.ViewModel		= "models/weapons/red/medic/v_bonesaw_red.mdl"
 SWEP.WorldModel		= "models/weapons/w_models/w_bonesaw.mdl"
 SWEP.ViewModelFOV = 70
-
+print("gdsagasd")
 SWEP.MeleeDamage = 65
 
 SWEP.PrimaryBash = true
-SWEP.CanBash = true	
+SWEP.CanBash = true
 SWEP.MeleeDamageType = DMG_SLASH
 SWEP.MeleeRange = 65
 SWEP.MeleeAttackTime = .1
