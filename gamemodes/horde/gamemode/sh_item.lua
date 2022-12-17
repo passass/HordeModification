@@ -180,6 +180,9 @@ function HORDE:GetDefaultGadgets()
     HORDE:CreateGadgetItem("gadget_projectile_launcher_ballistic", 2500, 2, {Ghost=true}, {Ghost=10}, {HORDE.DMG_BALLISTIC})
     HORDE:CreateGadgetItem("gadget_death_mark", 2500, 2, {Ghost=true}, {Ghost=15}, {HORDE.DMG_BLUNT})
     HORDE:CreateGadgetItem("gadget_assassin_optics", 3000, 2, {Ghost=true}, {Ghost=20})
+    HORDE:CreateGadgetItem("gadget_timestop", 4000, 3, {Ghost=true}, {Ghost=30}
+        --{Ghost=30},
+    )
 
     HORDE:CreateGadgetItem("gadget_quantum_tunnel", 2000, 1, {Engineer=true}, {Engineer=5})
     HORDE:CreateGadgetItem("gadget_voidout", 2250, 1, {Engineer=true}, {Engineer=10})

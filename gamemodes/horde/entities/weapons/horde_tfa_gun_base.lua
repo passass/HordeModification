@@ -192,3 +192,225 @@ function SWEP:DrawHUDAmmo()
 	end
 end
 function SWEP:GenerateInspectionDerma() end
+local cv_forcemult = GetConVar("sv_tfa_force_multiplier")
+local sv_tfa_bullet_penetration_power_mul = GetConVar("sv_tfa_bullet_penetration_power_mul")
+local sv_tfa_recoil_legacy = GetConVar("sv_tfa_recoil_legacy")
+
+local function BallisticFirebullet(ply, bul, ovr, angPreserve)
+	local wep = ply:GetActiveWeapon()
+
+	if TFA.Ballistics and TFA.Ballistics:ShouldUse(wep) then
+		if ballistics_distcv:GetInt() == -1 or util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 0x7fff, ply).HitPos:Distance(ply:GetShootPos()) > (ballistics_distcv:GetFloat() * TFA.Ballistics.UnitScale) then
+			bul.SmokeParticle = bul.SmokeParticle or wep.BulletTracer or wep.TracerBallistic or wep.BallisticTracer or wep.BallisticsTracer
+
+			if ovr then
+				TFA.Ballistics:FireBullets(wep, bul, angPreserve or angle_zero, true)
+			else
+				TFA.Ballistics:FireBullets(wep, bul, angPreserve)
+			end
+		else
+			ply:FireBullets(bul)
+		end
+	else
+		ply:FireBullets(bul)
+	end
+end
+
+
+function SWEP:ShootBullet(damage, recoil, num_bullets, aimcone, disablericochet, bulletoverride)
+	if not IsFirstTimePredicted() and not game.SinglePlayer() then return end
+	num_bullets = num_bullets or 1
+	aimcone = aimcone or 0
+
+	self:SetLastGunFire(CurTime())
+
+	if self:GetStatL("Primary.Projectile") then
+		if CLIENT then return end
+
+		for _ = 1, num_bullets do
+			local ent = ents.Create(self:GetStatL("Primary.Projectile"))
+
+			local ang = self:GetOwner():GetAimVector():Angle()
+
+			if not sv_tfa_recoil_legacy:GetBool() then
+				ang.p = ang.p + self:GetViewPunchP()
+				ang.y = ang.y + self:GetViewPunchY()
+			end
+
+			ang:RotateAroundAxis(ang:Right(), -aimcone / 2 + math.Rand(0, aimcone))
+			ang:RotateAroundAxis(ang:Up(), -aimcone / 2 + math.Rand(0, aimcone))
+
+			ent:SetPos(self:GetOwner():GetShootPos())
+			ent:SetOwner(self:GetOwner())
+			ent:SetAngles(ang)
+			ent.damage = self:GetStatL("Primary.Damage")
+			ent.mydamage = self:GetStatL("Primary.Damage")
+			
+			local dir = ang:Forward()
+			dir:Mul(self:GetStatL("Primary.ProjectileVelocity"))
+
+			if self:GetStatL("Primary.ProjectileModel") then
+				ent:SetModel(self:GetStatL("Primary.ProjectileModel"))
+			end
+			
+			ent.CurVel = dir
+			ent.SpawnTime = CurTime()
+
+			self:PreSpawnProjectile(ent)
+
+			ent:Spawn()
+
+			
+
+			ent:SetVelocity(dir)
+			local phys = ent:GetPhysicsObject()
+			
+			if IsValid(phys) then
+				phys:SetVelocity(dir)
+			end
+			
+			if self.ProjectileModel then
+				ent:SetModel(self:GetStatL("Primary.ProjectileModel"))
+			end
+
+			ent:SetOwner(self:GetOwner())
+
+			self:PostSpawnProjectile(ent)
+		end
+		-- Source
+		-- Dir of self.MainBullet
+		-- Aim Cone X
+		-- Aim Cone Y
+		-- Show a tracer on every x bullets
+		-- Amount of force to give to phys objects
+
+		return
+	end
+
+	if self.Tracer == 1 then
+		TracerName = "Ar2Tracer"
+	elseif self.Tracer == 2 then
+		TracerName = "AirboatGunHeavyTracer"
+	else
+		TracerName = "Tracer"
+	end
+
+	self.MainBullet.PCFTracer = nil
+
+	if self:GetStatL("TracerName") and self:GetStatL("TracerName") ~= "" then
+		if self:GetStatL("TracerPCF") then
+			TracerName = nil
+			self.MainBullet.PCFTracer = self:GetStatL("TracerName")
+			self.MainBullet.Tracer = 0
+		else
+			TracerName = self:GetStatL("TracerName")
+		end
+	end
+
+	local owner = self:GetOwner()
+
+	self.MainBullet.Attacker = owner
+	self.MainBullet.Inflictor = self
+	self.MainBullet.Src = owner:GetShootPos()
+
+	self.MainBullet.Dir = self:GetAimVector()
+	self.MainBullet.HullSize = self:GetStatL("Primary.HullSize") or 0
+	self.MainBullet.Spread.x = 0
+	self.MainBullet.Spread.y = 0
+
+	self.MainBullet.Num = 1
+
+	if num_bullets == 1 then
+		local dYaw, dPitch = self:ComputeBulletDeviation(1, 1, aimcone)
+
+		local ang = self.MainBullet.Dir:Angle()
+		local up, right = ang:Up(), ang:Right()
+
+		ang:RotateAroundAxis(up, dYaw)
+		ang:RotateAroundAxis(right, dPitch)
+
+		self.MainBullet.Dir = ang:Forward()
+	end
+
+	self.MainBullet.Wep = self
+
+	if self.TracerPCF then
+		self.MainBullet.Tracer = 0
+	else
+		self.MainBullet.Tracer = self:GetStatL("TracerCount") or 3
+	end
+
+	self.MainBullet.TracerName = TracerName
+	self.MainBullet.PenetrationCount = 0
+	self.MainBullet.PenetrationPower = self:GetStatL("Primary.PenetrationPower") * sv_tfa_bullet_penetration_power_mul:GetFloat(1)
+	self.MainBullet.InitialPenetrationPower = self.MainBullet.PenetrationPower
+	self.MainBullet.AmmoType = self:GetPrimaryAmmoType()
+	self.MainBullet.Force = self:GetStatL("Primary.Force") * cv_forcemult:GetFloat() * self:GetAmmoForceMultiplier()
+	self.MainBullet.Damage = damage
+	self.MainBullet.InitialDamage = damage
+	self.MainBullet.InitialForce = self.MainBullet.Force
+	self.MainBullet.InitialPosition = Vector(self.MainBullet.Src)
+	self.MainBullet.HasAppliedRange = false
+
+	if self.CustomBulletCallback then
+		self.MainBullet.Callback2 = self.CustomBulletCallback
+	else
+		self.MainBullet.Callback2 = nil
+	end
+
+	if num_bullets > 1 then
+		local ang_ = self.MainBullet.Dir:Angle()
+		local up, right = ang_:Up(), ang_:Right()
+
+		-- single callback per multiple bullets fix
+		for i = 1, num_bullets do
+			local bullet = table.Copy(self.MainBullet)
+
+			local ang = Angle(ang_)
+
+			local dYaw, dPitch = self:ComputeBulletDeviation(i, num_bullets, aimcone)
+			ang:RotateAroundAxis(up, dYaw)
+			ang:RotateAroundAxis(right, dPitch)
+
+			bullet.Dir = ang:Forward()
+
+			function bullet.Callback(attacker, trace, dmginfo)
+				if not IsValid(self) then return end
+
+				dmginfo:SetInflictor(self)
+				dmginfo:SetDamage(dmginfo:GetDamage() * bullet:CalculateFalloff(trace.HitPos))
+
+				if bullet.Callback2 then
+					bullet.Callback2(attacker, trace, dmginfo)
+				end
+
+				self:CallAttFunc("CustomBulletCallback", attacker, trace, dmginfo)
+
+				bullet:Penetrate(attacker, trace, dmginfo, self, {})
+				self:PCFTracer(bullet, trace.HitPos or vector_origin)
+			end
+
+			BallisticFirebullet(owner, bullet, nil, ang)
+		end
+
+		return
+	end
+
+	function self.MainBullet.Callback(attacker, trace, dmginfo)
+		if not IsValid(self) then return end
+
+		dmginfo:SetInflictor(self)
+		dmginfo:SetDamage(dmginfo:GetDamage() * self.MainBullet:CalculateFalloff(trace.HitPos))
+
+		if self.MainBullet.Callback2 then
+			self.MainBullet.Callback2(attacker, trace, dmginfo)
+		end
+
+		self:CallAttFunc("CustomBulletCallback", attacker, trace, dmginfo)
+
+		self.MainBullet:Penetrate(attacker, trace, dmginfo, self, {})
+		self:PCFTracer(self.MainBullet, trace.HitPos or vector_origin)
+	end
+
+	BallisticFirebullet(owner, self.MainBullet)
+end

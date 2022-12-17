@@ -41,6 +41,10 @@ function ENT:Draw()
 	render.DrawSprite(self:GetAttachment(1).Pos, 1.75, 1.75, Color(255,0,0,0))
 end
 
+function ENT:Horde_EndTimeStop() 
+	return self.Armed
+end
+
 function ENT:PhysicsCollide(data, phys)
 	local ent = data.HitEntity
 	if !ent:IsWorld() and ent:IsSolid() then
@@ -52,6 +56,8 @@ function ENT:PhysicsCollide(data, phys)
 		end)
 		self:SetAngles(data.HitNormal:Angle() + Angle(-90,0,0))
 	end
+	
+	self.Armed = true
 
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	phys:EnableMotion(false)

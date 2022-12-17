@@ -246,7 +246,6 @@ function SWEP:PrimaryAttack()
 
 	self:ScheduleStatus(TFA.Enum.STATUS_GRENADE_PULL, self:GetActivityLength(tanim))
 	self:SetNW2Bool("Underhanded", false)
-	print("THROW")
 end
 
 function SWEP:SecondaryAttack()

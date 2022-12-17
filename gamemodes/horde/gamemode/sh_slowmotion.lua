@@ -88,7 +88,7 @@ if CLIENT then
                 hook.Remove("RenderScreenspaceEffects", "Horde_Draw_SlowMotion")
                 return
             end
-            local stage = math.Clamp(end_time == 0 and ((CurTime() - start_time) / 1.3) or ((end_time - CurTime()) / .75), 0, 1)
+            local stage = Lerp(end_time == 0 and ((CurTime() - start_time) / 1.3) or ((end_time - CurTime()) / .75), 0, 1)
             DrawColorModify( {
                 ["$pp_colour_addr"] = 0,
                 ["$pp_colour_addg"] = 0,
@@ -195,7 +195,16 @@ function funcs.Make_Faster()
     game.SetTimeScale(cur_slowmotion)
 end
 
-function HORDE:SlowMotion_Start()
+function HORDE.SlowMotion_isprocessing()
+    return last_player_called_slowmotion != NULL or cur_slowmotion != 1
+end
+
+function HORDE.SlowMotion_end()
+    PlaySlowMotionSound(true)
+    funcs.CreateTimedFunc("Horde_SlowMotion_end_2", funcs.Make_Faster)
+end
+
+function HORDE.SlowMotion_Start()
     if slow_motion_end_happened != 0 then
         slow_motion_happened = times_to_end - slow_motion_end_happened
         cur_slowmotion = 1 - one_time * slow_motion_happened
@@ -214,8 +223,10 @@ end
 
 hook.Add("Horde_OnNPCKilled", "StartSlowMotion", function(victim, killer, inflictor)
     if inflictor:IsNPC() then return end -- 
-    if last_player_called_slowmotion == NULL and math.random() > 0.08 or last_player_called_slowmotion != NULL and (killer != last_player_called_slowmotion or last_player_called_count >= 3) then return end
+    if last_player_called_slowmotion == NULL and math.random() > 0.08 or last_player_called_slowmotion != NULL and (killer != last_player_called_slowmotion or last_player_called_count >= 3) and 
+        !hook.Run("Horde_CanSlowTime")
+    then return end
     last_player_called_slowmotion = killer
     last_player_called_count = last_player_called_count + 1
-    HORDE:SlowMotion_Start()
+    HORDE.SlowMotion_Start()
 end)

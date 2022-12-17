@@ -2,22 +2,7 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 include('shared.lua')
 
-if SERVER then
-	function HORDE:MakeExplosionEffect(pos, ent)
-		if CreateGrenadeExplosion then
-			CreateGrenadeExplosion(pos)
-			if ent then HORDE:EmitExplosionSound(ent, 125) end
-		else
-			local effectdata = EffectData()
-			effectdata:SetOrigin(pos)
-			util.Effect("Explosion", effectdata)
-		end
-	end
-	
-	function HORDE:EmitExplosionSound(ent, soundlevel, pitch) 
-		ent:EmitSound("weapons/explode" .. math.random(3, 5) .. ".wav", soundlevel, pitch)
-	end
-end
+
 
 function ENT:Initialize()
 	self.Entity:SetModel("models/weapons/tfa_cso/w_chain_grenade.mdl")
