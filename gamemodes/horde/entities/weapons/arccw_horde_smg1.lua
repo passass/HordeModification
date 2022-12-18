@@ -26,6 +26,8 @@ SWEP.WorldModel = "models/weapons/w_smg1.mdl"
 SWEP.ViewModelFOV = 65
 SWEP.MirrorVMWM = true
 
+SWEP.Horde_MaxMags = 35
+
 SWEP.Damage = 6
 SWEP.DamageMin = 4 -- damage done at maximum range
 SWEP.Range = 31.25 -- in METRES

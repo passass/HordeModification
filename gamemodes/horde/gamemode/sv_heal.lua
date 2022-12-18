@@ -65,7 +65,8 @@ function plymeta:Horde_GetTotalHP()
 	return math.min(self:Health() + self.Horde_HealHPRemain, self.Horde_HealLastMaxHealth)
 end
 
-function plymeta:Horde_MakeSlowHeal(amount, overhealmult)
+function plymeta:Horde_SlowHeal(amount, overhealmult)
+	if hook.Run("Horde_SlowHeal_NotAllow", self, amount, overhealmult) then return end
     local maxhealth = self:GetMaxHealth() * (overhealmult or 1)
     local health = self:Health()
     local remaintoheal = self.Horde_HealHPRemain or 0
@@ -120,7 +121,7 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
 			end
 		end
         if not healinfo:IsImmediately() then
-            ply:Horde_MakeSlowHeal(heal_bonus * healinfo:GetHealAmount(), maxhealth_mult)
+            ply:Horde_SlowHeal(heal_bonus * healinfo:GetHealAmount(), maxhealth_mult)
         else
             ply:SetHealth(
                 math.min(
@@ -131,7 +132,7 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
         end
     else
         if not healinfo:IsImmediately() then
-            ply:Horde_MakeSlowHeal(healinfo:GetHealAmount(), maxhealth_mult)
+            ply:Horde_SlowHeal(healinfo:GetHealAmount(), maxhealth_mult)
         else
             ply:SetHealth(
                 math.min(

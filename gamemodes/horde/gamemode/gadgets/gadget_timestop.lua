@@ -3,7 +3,7 @@ GADGET.Description =
 [[Stop Time for 5 seconds.]]
 GADGET.Icon = "items/gadgets/timestop.png"
 GADGET.Duration = 6
-GADGET.Cooldown = 90--85
+GADGET.Cooldown = 90
 GADGET.Active = true
 GADGET.Params = {}
 GADGET.Hooks = {}
@@ -192,6 +192,7 @@ local function unfreeze_npc(ent)
 end
 
 local TimeStopStart = 0
+local TimeStopProceed = false
 
 function HORDE.TimeStop_TimeEnough() 
 	return TimeStopStart + 6.2 - CurTime()
@@ -263,6 +264,7 @@ local function start_timestop(ply)
     hook.Add("Horde_CanSlowTime", "Horde_TimeStop", function()
         return true
     end)
+	TimeStopProceed = true
     if HORDE.SlowMotion_isprocessing() then HORDE.SlowMotion_end() end
     net.Start("Horde_TimeStop")
     net.WriteBool(true)
@@ -270,10 +272,32 @@ local function start_timestop(ply)
     timer.Simple(.5, function()
 	
 		TimeStopStart = CurTime()
+		
+		local players_healed = {}
 
         for _, ply2 in pairs(player.GetAll()) do
             if ply2:Alive() and ply2 != ply then
                 ply2:Freeze(true)
+                ply2:Lock()
+				if ply2.Horde_HealHPRemain then
+					players_healed[ply2] = {ply2.Horde_HealHPRemain, ply2.Horde_HealLastMaxHealth}
+					ply2.Horde_HealHPRemain = nil
+					timer.Remove("Horde_" .. ply2:EntIndex() .. "SlowlyHeal")
+				end
+                local wep = ply2:GetActiveWeapon()
+                if IsValid(wep) and wep.ArcCW and wep:GetReloading() then
+                    wep:SetNextPrimaryFire(wep:GetNextPrimaryFire() + 6.2)
+                    wep:SetReloading(wep:GetReloadingREAL() + 6.2)
+                    wep.LastAnimStartTime = wep.LastAnimStartTime + 6.2
+                    wep.LastAnimFinishTime = wep.LastAnimFinishTime + 6.2
+                    wep:SetNextIdle(wep:GetNextIdle() + 6.2)
+                    wep:SetMagUpIn(wep:GetMagUpIn() + 6.2)
+                    local vm = wep:GetOwner():GetViewModel()
+                    if vm and IsValid(vm) then
+                        wep.oldPlaybackRate = vm:GetPlaybackRate()
+                        vm:SetPlaybackRate(0)
+                    end
+                end
             end
         end
 
@@ -288,7 +312,7 @@ local function start_timestop(ply)
         end
 
         for i, ent in pairs(ents.GetAll()) do
-            if i == 1 or !IsEntity(ent) or ent:IsNPC() or ent:IsWeapon() then continue end
+            if i == 1 or !IsEntity(ent) or ent:IsNPC() or ent:IsWeapon() or ent:IsPlayer() then continue end
             table.insert(frozed_entities, ent)
             freeze_entity(ent)
         end
@@ -324,7 +348,7 @@ local function start_timestop(ply)
 
         hook.Add("WeaponEquip", "Horde_TimeStop", function(wep)
             timer.Simple(0, function()
-                if !IsValid(wep) then return end
+                if !IsValid(wep) or wep:GetOwner() != ply then return end
                 wep.oldDoPrimaryFire = wep.DoPrimaryFire
 
                 wep.DoPrimaryFire = function(self, isent, data)
@@ -336,6 +360,19 @@ local function start_timestop(ply)
                 end
             end)
         end)
+		
+		hook.Add("Horde_SlowHeal_NotAllow", "Horde_TimeStop", function(ply2, amount, overhealmult)
+			if ply == ply2 then return end
+			if !players_healed[ply2] then 
+				players_healed[ply2] = {0, 0}
+			end
+			players_healed[ply2][1] = players_healed[ply2][1] + amount
+			local maxhealth = self:GetMaxHealth() * (overhealmult or 1)
+			if maxhealth > players_healed[ply2][2] then 
+				players_healed[ply2][2] = maxhealth
+			end
+			return true
+		end)
 		
 		--[[hook.Add("Think", "TimeStopNPCMove", function()
             for _, ent in pairs(npc_slowed) do
@@ -361,9 +398,11 @@ local function start_timestop(ply)
 
             timer.Simple(1.2, function()
 				TimeStopStart = 0
+				TimeStopProceed = false
                 hook.Remove("Horde_CanSlowTime", "Horde_TimeStop")
 				hook.Remove("WeaponEquip", "Horde_TimeStop")
 				hook.Remove( "OnEntityCreated", "Horde_TimeStop")
+                hook.Remove("Horde_SlowHeal_NotAllow", "Horde_TimeStop")
 
                 if IsValid(ply) then
                     for _, wep in pairs(ply:GetWeapons()) do
@@ -372,8 +411,6 @@ local function start_timestop(ply)
                             wep.oldDoPrimaryFire = nil
                         end
                     end
-        
-                    
                 end
                 
                 for _, bul in pairs(shotted_bullets) do
@@ -395,11 +432,24 @@ local function start_timestop(ply)
                     unfreeze_entity(ent)
                 end
                 for _, ply2 in pairs(player.GetAll()) do
-                    
                     if ply2:Alive() and ply2 != ply then
                         ply2:Freeze(false)
+                        ply2:UnLock()
+                        ply2:StopSound("player/pl_drown1.wav")
+                        ply2:StopSound("player/pl_drown2.wav")
+                        ply2:StopSound("player/pl_drown3.wav")
+						if players_healed[ply2] then
+							ply2:Horde_SlowHeal(players_healed[ply2][1], math.max(players_healed[ply2][2] / ply2:GetMaxHealth(), 1))
+						end
+                        local wep = ply:GetActiveWeapon()
+                        if IsValid(wep) and wep.oldPlaybackRate then
+                            local vm = wep:GetOwner():GetViewModel()
+                            if vm and IsValid(vm) then
+                                vm:SetPlaybackRate(wep.oldPlaybackRate)
+                            end
+                            wep.oldPlaybackRate = nil
+                        end
                     end
-    
                 end
             end)
         end)
@@ -409,7 +459,8 @@ end
 GADGET.Hooks.Horde_UseActiveGadget = function (ply)
     if CLIENT then return end
     if ply:Horde_GetGadget() ~= "gadget_timestop" then return end
-
+	if TimeStopProceed then return true end
+	
     ply:EmitSound("timestop_start.mp3")
 
     start_timestop(ply)

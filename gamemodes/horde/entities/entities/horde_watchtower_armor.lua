@@ -16,6 +16,7 @@ function ENT:HORDE_WatchTowerThink()
         self.Horde_ArmorBattery:Remove()
     end
     self.Horde_ArmorBattery = ents.Create("item_battery")
+	self.Horde_ArmorBattery:AddEFlags(EFL_NO_DAMAGE_FORCES)
     self.Horde_ArmorBattery:SetPos(self:GetPos() - self:GetAngles():Forward() * 30)
     self.Horde_ArmorBattery:Spawn()
 end

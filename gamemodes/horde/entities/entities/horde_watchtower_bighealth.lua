@@ -16,6 +16,7 @@ function ENT:HORDE_WatchTowerThink()
         self.Horde_HealthKit:Remove()
     end
     self.Horde_HealthKit = ents.Create("item_healthkit")
+	self.Horde_HealthKit:AddEFlags(EFL_NO_DAMAGE_FORCES)
     self.Horde_HealthKit:SetPos(self:GetPos() - self:GetAngles():Forward() * 30)
     self.Horde_HealthKit:Spawn()
 end

@@ -268,6 +268,7 @@ function HORDE:GetDefaultItemInfusions()
     HORDE.items["arccw_horde_bizon"].infusions = ballistic_infusions_smgs
     HORDE.items["arccw_horde_p90"].infusions = ballistic_infusions_smgs
     HORDE.items["arccw_horde_mp7m"].infusions = {HORDE.Infusion_Ruination, HORDE.Infusion_Chrono, HORDE.Infusion_Impaling, HORDE.Infusion_Quality, HORDE.Infusion_Rejuvenating}
+	HORDE.items["arccw_horde_pp90m1"].infusions = {HORDE.Infusion_Ruination, HORDE.Infusion_Chrono, HORDE.Infusion_Impaling, HORDE.Infusion_Quality, HORDE.Infusion_Rejuvenating}
     HORDE.items["arccw_horde_vector"].infusions = {HORDE.Infusion_Ruination, HORDE.Infusion_Chrono, HORDE.Infusion_Impaling, HORDE.Infusion_Quality, HORDE.Infusion_Rejuvenating}
 	HORDE.items["arccw_horde_msmc"].infusions = {HORDE.Infusion_Ruination, HORDE.Infusion_Chrono, HORDE.Infusion_Impaling, HORDE.Infusion_Quality, HORDE.Infusion_Rejuvenating}
     HORDE.items["arccw_horde_aks74u"].infusions = ballistic_infusions_smgs
@@ -609,7 +610,7 @@ function HORDE:GetDefaultItemsData()
     HORDE:CreateItem("Rifle",    "M16 M203",         "arccw_horde_m16m203",2250,7, "M16A4 equipped with an M203 underbarrel grenade launcher.\nDouble press B or ZOOM button to equip M203.",
     {Assault=true, Demolition=true}, 10, 10, nil, nil, {Assault=5, Demolition=5}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_BLAST})
     HORDE:CreateItem("Rifle",    "M16 Pyro",         "arccw_horde_m16_pyro", 2500,7, "M16A4 with Fire module and molotov launcher.",
-    {Cremator=true}, 10, 20, nil, nil, {Assault=5, Cremator=5}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_BURN})
+    {Cremator=true}, 10, 80, nil, nil, {Assault=5, Cremator=5}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_BURN})
     HORDE:CreateItem("Rifle",    "AK Medic",         "arccw_horde_ak47medic", 3000, 8, "A Ak47 with M203 Medic Module.",
     {Medic=true}, 10, 115, nil, nil, {Medic=15}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
 
@@ -673,17 +674,18 @@ function HORDE:GetDefaultItemsData()
     {Demolition=true}, 0, 20, nil, nil, nil, nil, {HORDE.DMG_BLAST})
     HORDE:CreateItem("Explosive",      "Crossbow",           "arccw_horde_crossbow",     2625, 7, "Crossbow.\nA Crossbow with explosive arrows.",
     {Demolition=true}, 6, -1, nil, nil, {Demolition=5}, nil, {HORDE.DMG_BALLISTIC})
-    HORDE:CreateItem("Explosive",  "Incendiary Grenade",   "arccw_horde_nade_incendiary",        1500,   2, "Generates a pool of fire after some delay.\nSets everything on fire within its effect.",
-    {Cremator=true}, 100, -1, nil, nil, {Cremator=2}, nil, {HORDE.DMG_FIRE})
+    HORDE:CreateItem("Explosive",  "Incendiary Grenade",   "arccw_horde_nade_incendiary",        1000,   2, "Generates a pool of fire after some delay.\nSets everything on fire within its effect.",
+    {Cremator=true}, 25, -1, nil, nil, {Cremator=2}, nil, {HORDE.DMG_FIRE})
     HORDE:CreateItem("Explosive",  "Incendiary Launcher",  "arccw_horde_incendiary_launcher", 3000,  8, "Incendiary Grenade Launcher.\nShoots incendiary grenades the erupt into flames on impact.",
     {Cremator=true}, 50, -1, nil, nil, {Cremator=5}, nil, {HORDE.DMG_FIRE})
+	HORDE:CreateItem("Explosive",    "Molotov Cocktail",  "arccw_horde_nade_molotov",     1750,  4, "Molotov Cocktail.",
+    {Cremator=true}, 50, -1, nil, nil, {Cremator=5}, nil, {HORDE.DMG_BURN})
 
     --HORDE:CreateItem("Special",    "Combine AR2",    "weapon_ar2",         2250, 7, "Overwatch standard issue rifle.\nDark energy-powered assault rifle.",
     --{Medic=false, Assault=false, Heavy=false, Demolition=false, Survivor=false, Ghost=false, Engineer=true}, 5, 100)
     HORDE:CreateItem("Special",    "Welder",         "horde_welder",         100,  2, "Engineering welder.\nDamages enemies and heals minions.",
     {Engineer=true}, 50, -1, nil, nil, nil, nil, {HORDE.DMG_BLAST}, nil, {"Engineer"})
-    HORDE:CreateItem("Special",    "Molotov Cocktail",  "arccw_horde_nade_molotov",     550,  4, "Molotov Cocktail.",
-    {Cremator=true}, 10, -1, nil, nil, {Cremator=5}, nil, {HORDE.DMG_BURN})
+    
     HORDE:CreateItem("Special",    "Manhack",        "npc_manhack",          900,  4, "Manhack that regenerates on death.\nManhack deals its health as damage to enemies.\nManhack dies on impact.",
     {Engineer=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=3}, "items/npc_manhack.png", nil, nil, {HORDE.DMG_SLASH})
     HORDE:CreateItem("Special",    "Turret",         "npc_turret_floor",    1000,  4, "Combine Overwatch turret.\n\nUsed to guard chocke points and vital areas.",
