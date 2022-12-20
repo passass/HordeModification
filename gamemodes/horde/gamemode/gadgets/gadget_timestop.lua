@@ -3,7 +3,7 @@ GADGET.Description =
 [[Stop Time for 5 seconds.]]
 GADGET.Icon = "items/gadgets/timestop.png"
 GADGET.Duration = 6
-GADGET.Cooldown = 90
+GADGET.Cooldown = 5--90
 GADGET.Active = true
 GADGET.Params = {}
 GADGET.Hooks = {}
@@ -99,7 +99,12 @@ end
 
 util.AddNetworkString("Horde_TimeStop")
 
-local function freeze_npc(ent)
+local mutations = {
+	"Fume",
+	"Regenerator",
+}
+
+function HORDE:TimeStop_freeze_npc(ent)
 	if ent.Horde_StartTimeStop and ent:Horde_StartTimeStop() then return end 
     local phys = ent:GetPhysicsObject()
     if IsValid(phys) then
@@ -107,6 +112,8 @@ local function freeze_npc(ent)
     end
     
     ent:SetSchedule(SCHED_NPC_FREEZE)
+	ent.oldAnimationPlaybackRate = ent.AnimationPlaybackRate
+	ent.oldPlaybackRate = ent:GetPlaybackRate()
     ent.AnimationPlaybackRate = 0
     ent:SetPlaybackRate(0)
 
@@ -147,11 +154,16 @@ local function freeze_npc(ent)
 	end
 	
     if ent.StopAttacks then ent:StopAttacks(true) end
-    --[[ent.oldConstantlyFaceEnemyVisible = ent.CurrentSchedule.ConstantlyFaceEnemyVisible
-    ent.CurrentSchedule.ConstantlyFaceEnemyVisible = false]]
+	
+	for i, mutation in pairs(mutations) do
+		local id = ent:GetCreationID()
+		if timer.Exists("Horde_Mutation_" .. mutation .. id) then 
+			timer.Pause("Horde_Mutation_" .. mutation .. id)
+		end
+	end
 end
 
-local function unfreeze_npc(ent)
+function HORDE:TimeStop_unfreeze_npc(ent)
 	if ent.Horde_EndTimeStop and ent:Horde_EndTimeStop() then return end
     ent.AnimationPlaybackRate = 1
     ent:SetPlaybackRate(1)
@@ -187,8 +199,13 @@ local function unfreeze_npc(ent)
 		ent.CustomOnThink = ent.oldCustomOnThink
 		ent.oldCustomOnThink = nil
 	end
-    --[[ent.CurrentSchedule.ConstantlyFaceEnemyVisible = ent.oldConstantlyFaceEnemyVisible
-    ent.oldConstantlyFaceEnemyVisible = nil]]
+	
+	for i, mutation in pairs(mutations) do
+		local id = ent:GetCreationID()
+		if timer.Exists("Horde_Mutation_" .. mutation .. id) then 
+			timer.UnPause("Horde_Mutation_" .. mutation .. id)
+		end
+	end
 end
 
 local TimeStopStart = 0
@@ -260,6 +277,112 @@ local function unfreeze_entity(ent)
     end
 end
 
+local freezed_mutations = {} -- example. {"nemesis", ent_pos}
+
+
+
+local function freeze_mutations()
+	for id, _ in pairs(HORDE:Mutations_Nemesis_GetAll()) do
+		timer.Pause("Horde_Mutation_Nemesis" .. id)
+	end
+	
+	hook.Add("Horde_Mutations_Nemesis_Create", "Horde_TimeStop", function(ent_pos)
+		table.insert(freezed_mutations, {"nemesis", ent_pos})
+        return true
+    end)
+end
+
+local function unfreeze_mutations()
+	for id, _ in pairs(HORDE:Mutations_Nemesis_GetAll()) do 
+		timer.UnPause("Horde_Mutation_Nemesis" .. id)
+	end
+
+	hook.Remove("Horde_Mutations_Nemesis_Create", "Horde_TimeStop")
+	for _, data in pairs(freezed_mutations) do 
+		local mutation = data[1]
+		if mutation == "nemesis" then 
+			HORDE:Mutations_Nemesis_Create(data[2])
+		end
+	end
+	freezed_mutations = {}
+end
+
+local function freeze_mutations_progress(exclude_ply)
+	hook.Add("Horde_OnPlayerDebuffApplyPost", "Horde_TimeStop", function(ent, debuff, bonus, inflictor)
+		if ent == exclude_ply then return end
+		local timername = "Horde_RemoveBuildup_" .. tostring(debuff) .. "_" .. ent:SteamID()
+		timer.Pause(timername)
+	end)
+	hook.Add("Horde_PostPlayerDebuffApply", "Horde_TimeStop", function(ent, debuff) 
+		if ent == exclude_ply then return end
+		local timername = "Horde_Remove_" .. tostring(debuff) .. "_" .. ent:SteamID()
+		timer.Pause(timername)
+	end)
+	for _, ply in pairs(player.GetAll()) do
+		if !ply:Alive() or exclude_ply == ply then return end
+		local steamid = ply:SteamID()
+		if ply.Horde_Debuff_Buildup then
+			for debuff, _ in pairs(ply.Horde_Debuff_Buildup) do
+				local timername = "Horde_RemoveBuildup_" .. tostring(debuff) .. "_" .. steamid
+				local timername2 = "Horde_Remove_" .. tostring(debuff) .. "_" .. steamid
+				timer.Pause(timername)
+				timer.Pause(timername2)
+			end
+		end
+		if timer.Exists("Horde_BleedingEffect" .. steamid) then 
+			timer.Pause("Horde_BleedingEffect" .. steamid)
+		end
+	end
+	
+	for _, ent in pairs(ents.GetAll()) do
+		if ent:IsPlayer() then return end
+		local id = ent:GetCreationID()
+		if ent.Horde_Debuff_Buildup then
+			for _, debuff in pairs(ent.Horde_Debuff_Buildup) do 
+				local timername = "Horde_Remove_" .. tostring(debuff) .. "_" .. id
+				timer.Pause(timername)
+			end
+		end
+		if timer.Exists("Horde_BleedingEffect" .. id) then 
+			timer.Pause("Horde_BleedingEffect" .. id)
+		end
+	end
+end
+
+local function unfreeze_mutations_progress(exclude_ply)
+	hook.Remove("Horde_OnPlayerDebuffApplyPost", "Horde_TimeStop")
+	hook.Remove("Horde_PostPlayerDebuffApply", "Horde_TimeStop")
+	for _, ply in pairs(player.GetAll()) do
+		if !ply:Alive() or exclude_ply == ply then return end
+		local steamid = ply:SteamID()
+		if ply.Horde_Debuff_Buildup then
+			for debuff, _ in pairs(ply.Horde_Debuff_Buildup) do 
+				local timername = "Horde_RemoveBuildup_" .. tostring(debuff) .. "_" .. steamid
+				local timername2 = "Horde_Remove_" .. tostring(debuff) .. "_" .. steamid
+				timer.UnPause(timername)
+				timer.UnPause(timername2)
+			end
+		end
+		if timer.Exists("Horde_BleedingEffect" .. steamid) then 
+			timer.UnPause("Horde_BleedingEffect" .. steamid)
+		end
+	end
+	
+	for _, ent in pairs(ents.GetAll()) do 
+		if ent:IsPlayer() then return end
+		local id = ent:GetCreationID()
+		if ent.Horde_Debuff_Buildup then
+			for _, debuff in pairs(ent.Horde_Debuff_Buildup) do 
+				local timername = "Horde_Remove_" .. tostring(debuff) .. "_" .. id
+				timer.UnPause(timername)
+			end
+		end
+		if timer.Exists("Horde_BleedingEffect" .. id) then 
+			timer.UnPause("Horde_BleedingEffect" .. id)
+		end
+	end
+end
+
 local function start_timestop(ply)
     hook.Add("Horde_CanSlowTime", "Horde_TimeStop", function()
         return true
@@ -276,7 +399,7 @@ local function start_timestop(ply)
 		local players_healed = {}
 
         for _, ply2 in pairs(player.GetAll()) do
-            if ply2:Alive() and ply2 != ply then
+            --if ply2:Alive() and ply2 != ply then
                 ply2:Freeze(true)
                 ply2:Lock()
 				if ply2.Horde_HealHPRemain then
@@ -298,7 +421,7 @@ local function start_timestop(ply)
                         vm:SetPlaybackRate(0)
                     end
                 end
-            end
+            --end
         end
 
         local npc_slowed = {}
@@ -308,7 +431,7 @@ local function start_timestop(ply)
         for _, ent in pairs(ents.FindByClass("npc_*")) do
             if !ent:IsNPC() then continue end
             table.insert(npc_slowed, ent)
-            freeze_npc(ent)
+            HORDE:TimeStop_freeze_npc(ent)
         end
 
         for i, ent in pairs(ents.GetAll()) do
@@ -319,7 +442,7 @@ local function start_timestop(ply)
 
         hook.Add( "OnEntityCreated", "Horde_TimeStop", function( ent )
             if ent:IsNPC() then
-                freeze_npc(ent)
+                HORDE:TimeStop_freeze_npc(ent)
                 
                 table.insert(npc_slowed, ent)
 
@@ -367,31 +490,24 @@ local function start_timestop(ply)
 				players_healed[ply2] = {0, 0}
 			end
 			players_healed[ply2][1] = players_healed[ply2][1] + amount
-			local maxhealth = self:GetMaxHealth() * (overhealmult or 1)
-			if maxhealth > players_healed[ply2][2] then 
+			local maxhealth = ply2:GetMaxHealth() * (overhealmult or 1)
+			if maxhealth > players_healed[ply2][2] then
 				players_healed[ply2][2] = maxhealth
 			end
 			return true
 		end)
 		
-		--[[hook.Add("Think", "TimeStopNPCMove", function()
-            for _, ent in pairs(npc_slowed) do
-                if !IsValid(ent) then continue end
-                ent:SetSchedule(SCHED_IDLE_STAND)
-                ent:SetMoveVelocity(Vector(0, 0, 0))
-                ent:SetVelocity(Vector(0, 0, 0))
-            end
-        end)]]
         timer.Simple(0.2, function()
 			for _, ent in pairs(npc_slowed) do
 				if not ent:IsValid() then continue end
 				ent:SetSchedule(SCHED_NPC_FREEZE)
 			end
 		end)
-
+	
+		freeze_mutations()
+		freeze_mutations_progress(ply)
+		
         timer.Simple(5, function()
-            --hook.Remove("Think", "TimeStopNPCMove")
-            
             net.Start("Horde_TimeStop")
             net.WriteBool(false)
             net.Broadcast()
@@ -403,6 +519,8 @@ local function start_timestop(ply)
 				hook.Remove("WeaponEquip", "Horde_TimeStop")
 				hook.Remove( "OnEntityCreated", "Horde_TimeStop")
                 hook.Remove("Horde_SlowHeal_NotAllow", "Horde_TimeStop")
+				unfreeze_mutations()
+				unfreeze_mutations_progress(ply)
 
                 if IsValid(ply) then
                     for _, wep in pairs(ply:GetWeapons()) do
@@ -425,14 +543,14 @@ local function start_timestop(ply)
 
                 for _, ent in pairs(npc_slowed) do
                     if !IsValid(ent) then continue end
-                    unfreeze_npc(ent)
+                    HORDE:TimeStop_unfreeze_npc(ent)
                 end
                 for _, ent in pairs(frozed_entities) do
                     if !IsValid(ent) then continue end
                     unfreeze_entity(ent)
                 end
                 for _, ply2 in pairs(player.GetAll()) do
-                    if ply2:Alive() and ply2 != ply then
+                    --if ply2:Alive() and ply2 != ply then
                         ply2:Freeze(false)
                         ply2:UnLock()
                         ply2:StopSound("player/pl_drown1.wav")
@@ -449,7 +567,7 @@ local function start_timestop(ply)
                             end
                             wep.oldPlaybackRate = nil
                         end
-                    end
+                    --end
                 end
             end)
         end)
