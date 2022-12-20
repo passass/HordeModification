@@ -253,6 +253,7 @@ function HORDE:GetDefaultItemInfusions()
 	HORDE.items["arccw_horde_tac45"].infusions = ballistic_infusions_light
     HORDE.items["arccw_horde_usptac"].infusions = ballistic_infusions_light
 	HORDE.items["arccw_horde_g18"].infusions = ballistic_infusions_light
+	HORDE.items["arccw_horde_deagle_xix"].infusions = ballistic_infusions_light
     --HORDE.items["arccw_horde_flaregun"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Quality}
 
     local ballistic_infusions_smgs = {HORDE.Infusion_Ruination, HORDE.Infusion_Chrono, HORDE.Infusion_Impaling, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Septic}
@@ -267,11 +268,13 @@ function HORDE:GetDefaultItemInfusions()
     HORDE.items["arccw_horde_mtar"].infusions = ballistic_infusions_smgs
     HORDE.items["arccw_horde_bizon"].infusions = ballistic_infusions_smgs
     HORDE.items["arccw_horde_p90"].infusions = ballistic_infusions_smgs
-    HORDE.items["arccw_horde_mp7m"].infusions = {HORDE.Infusion_Ruination, HORDE.Infusion_Chrono, HORDE.Infusion_Impaling, HORDE.Infusion_Quality, HORDE.Infusion_Rejuvenating}
-	HORDE.items["arccw_horde_pp90m1"].infusions = {HORDE.Infusion_Ruination, HORDE.Infusion_Chrono, HORDE.Infusion_Impaling, HORDE.Infusion_Quality, HORDE.Infusion_Rejuvenating}
-    HORDE.items["arccw_horde_vector"].infusions = {HORDE.Infusion_Ruination, HORDE.Infusion_Chrono, HORDE.Infusion_Impaling, HORDE.Infusion_Quality, HORDE.Infusion_Rejuvenating}
-	HORDE.items["arccw_horde_msmc"].infusions = {HORDE.Infusion_Ruination, HORDE.Infusion_Chrono, HORDE.Infusion_Impaling, HORDE.Infusion_Quality, HORDE.Infusion_Rejuvenating}
+	local med_weps_infs = {HORDE.Infusion_Ruination, HORDE.Infusion_Chrono, HORDE.Infusion_Impaling, HORDE.Infusion_Quality, HORDE.Infusion_Rejuvenating}
+    HORDE.items["arccw_horde_mp7m"].infusions = med_weps_infs
+	HORDE.items["arccw_horde_pp90m1"].infusions = med_weps_infs
+    HORDE.items["arccw_horde_vector"].infusions = med_weps_infs
+	HORDE.items["arccw_horde_msmc"].infusions = med_weps_infs
     HORDE.items["arccw_horde_aks74u"].infusions = ballistic_infusions_smgs
+	HORDE.items["arccw_horde_mp5_sup"].infusions = med_weps_infs
     
     -- Shotguns
     HORDE.items["arccw_horde_shotgun"].infusions = ballistic_infusions_light
@@ -486,7 +489,7 @@ function HORDE:GetDefaultItemsData()
     HORDE:CreateItem("SMG",        "MP7A1 Medic PDW","arccw_horde_mp7m"  ,2500, 6, "A modified version of MP7A1 for medical purposes.\n\nPress B or ZOOM to fire healing darts.",
     {Medic=true}, 8, -1, nil, nil, {Medic=13}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
     HORDE:CreateItem("SMG",        "PP-90M1 Medic", "arccw_horde_pp90m1"  ,2500, 6, "PP-90M1 Medic.\nA modified version of PP-90M1 for medical purposes.\n\nPress B or ZOOM to fire healing darts.",
-    {Medic=true}, 8, -1, nil, nil, {Medic=18}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
+    {Medic=true}, 20, -1, nil, nil, {Medic=18}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
     HORDE:CreateItem("SMG",        "Vector Medic PDW","arccw_horde_vector",3000, 6, "KRISS Vector Gen I equipped with a medical dart launcher.\nUses an unconventional blowback system that results in its high firerate.\n\nPress B or ZOOM to fire healing darts.\nHealing dart recharges every 1.5 seconds.",
     {Medic=true}, 8, -1, nil, nil, {Medic=15}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
 	

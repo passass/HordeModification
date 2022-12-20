@@ -33,9 +33,9 @@ SWEP.WorldModelOffset = {
 SWEP.WorldModel = "models/weapons/arccw/w_bo2_svu.mdl"
 SWEP.MirrorWorldModel = "models/weapons/arccw/w_bo2_svu.mdl"
 SWEP.ViewModelFOV = 60
-SWEP.Horde_MaxMags = 35
-SWEP.Damage = 135
-SWEP.DamageMin = 130 -- damage done at maximum range
+SWEP.Horde_MaxMags = 30
+SWEP.Damage = 140
+SWEP.DamageMin = 135 -- damage done at maximum range
 SWEP.Range = 400 -- in METRES
 SWEP.RangeMin = 40
 
@@ -50,9 +50,9 @@ SWEP.TracerCol = Color(255, 25, 25)
 SWEP.TracerWidth = 3
 
 SWEP.ChamberSize = 0 -- how many rounds can be chambered.
-SWEP.Primary.ClipSize = 10 -- DefaultClip is automatically set.
-SWEP.ExtendedClipSize = 18
-SWEP.ReducedClipSize = 5
+SWEP.Primary.ClipSize = 12 -- DefaultClip is automatically set.
+SWEP.ExtendedClipSize = 24
+SWEP.ReducedClipSize = 6
 
 SWEP.Recoil = 0.85
 SWEP.RecoilSide = 0.4
@@ -78,7 +78,7 @@ SWEP.NPCWeight = 100
 SWEP.ManualAction = false
 
 SWEP.AccuracyMOA = 1 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 800 -- inaccuracy added by hip firing.
+SWEP.HipDispersion = 190 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 50
 
 SWEP.Primary.Ammo = "ar2" -- what ammo type the gun uses
@@ -288,7 +288,6 @@ SWEP.Hook_SelectReloadAnimation = function(wep, curanim)
         end
     end
 end
-
 SWEP.Animations = {
     ["idle"] = {
         Source = "idle",
@@ -325,25 +324,24 @@ SWEP.Animations = {
     },
     ["reload"] = {
         Source = "reload",
-        Time = 3,
+        Time = 2.2,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        FrameRate = 30,
         SoundTable = {
-            {s = "ArcCW_BO2.Sniper_ClipOut", t = 0.4},
-            {s = "ArcCW_BO2.Sniper_ClipIn", t = 1.75},
+            {s = "ArcCW_BO2.Sniper_ClipOut", t = 0.33},
+            {s = "ArcCW_BO2.Sniper_ClipIn", t = 1.4},
         },
         MinProgress = 2,
     },
     ["reload_empty"] = {
         Source = "reload_empty",
-        Time = 4,
+        Time = 3.2,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         FrameRate = 30,
         SoundTable = {
-            {s = "ArcCW_BO2.Sniper_ClipOut", t = 0.4},
-            {s = "ArcCW_BO2.Sniper_ClipIn", t = 1.75},
-            {s = "ArcCW_BO2.Sniper_BoltBack", t = 2.25},
-            {s = "ArcCW_BO2.Sniper_BoltFwd", t = 2.45},
+            {s = "ArcCW_BO2.Sniper_ClipOut", t = 0.35},
+            {s = "ArcCW_BO2.Sniper_ClipIn", t = 1.5},
+            {s = "ArcCW_BO2.Sniper_BoltBack", t = 2},
+            {s = "ArcCW_BO2.Sniper_BoltFwd", t = 2.1`},
         },
         MinProgress = 2.6,
     },

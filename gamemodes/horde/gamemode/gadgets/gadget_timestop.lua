@@ -3,7 +3,7 @@ GADGET.Description =
 [[Stop Time for 5 seconds.]]
 GADGET.Icon = "items/gadgets/timestop.png"
 GADGET.Duration = 6
-GADGET.Cooldown = 5--90
+GADGET.Cooldown = 90
 GADGET.Active = true
 GADGET.Params = {}
 GADGET.Hooks = {}
@@ -399,7 +399,7 @@ local function start_timestop(ply)
 		local players_healed = {}
 
         for _, ply2 in pairs(player.GetAll()) do
-            --if ply2:Alive() and ply2 != ply then
+            if ply2:Alive() and ply2 != ply then
                 ply2:Freeze(true)
                 ply2:Lock()
 				if ply2.Horde_HealHPRemain then
@@ -421,7 +421,7 @@ local function start_timestop(ply)
                         vm:SetPlaybackRate(0)
                     end
                 end
-            --end
+            end
         end
 
         local npc_slowed = {}
@@ -550,7 +550,7 @@ local function start_timestop(ply)
                     unfreeze_entity(ent)
                 end
                 for _, ply2 in pairs(player.GetAll()) do
-                    --if ply2:Alive() and ply2 != ply then
+                    if ply2:Alive() and ply2 != ply then
                         ply2:Freeze(false)
                         ply2:UnLock()
                         ply2:StopSound("player/pl_drown1.wav")
@@ -567,7 +567,7 @@ local function start_timestop(ply)
                             end
                             wep.oldPlaybackRate = nil
                         end
-                    --end
+                    end
                 end
             end)
         end)

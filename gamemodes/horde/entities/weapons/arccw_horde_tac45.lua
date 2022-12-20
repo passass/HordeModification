@@ -39,7 +39,7 @@ SWEP.Damage = 75
 SWEP.DamageMin = 60
 SWEP.Range = 15
 SWEP.RangeMin = 5
-SWEP.Horde_MaxMags = 30
+SWEP.Horde_MaxMags = 25
 SWEP.Penetration = 15
 SWEP.DamageType = DMG_BULLET
 
@@ -51,11 +51,11 @@ SWEP.ChamberSize = 0 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 30
 
-SWEP.Recoil = 1.25
+SWEP.Recoil = 1
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 1
 
-SWEP.Delay = 60 / 500 -- 60 / RPM.
+SWEP.Delay = 60 / 550 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
@@ -70,7 +70,7 @@ SWEP.NPCWeaponType = "weapon_pistol"
 SWEP.NPCWeight = 100
 
 SWEP.AccuracyMOA = 5 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 320 -- inaccuracy added by hip firing.
+SWEP.HipDispersion = 380 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 130
 
 SWEP.ShootWhileSprint = false

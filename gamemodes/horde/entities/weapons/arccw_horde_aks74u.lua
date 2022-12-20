@@ -41,6 +41,7 @@ SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
 SWEP.MuzzleVelocity = 734 -- projectile or phys bullet muzzle velocity
 -- IN M/S
+SWEP.Horde_MaxMags = 25
 
 SWEP.TracerNum = 1 -- tracer every X
 SWEP.TracerCol = Color(255, 25, 25)

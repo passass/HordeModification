@@ -30,7 +30,7 @@ if SERVER then
 		local trys = 0
 		local id = math.random(1, 999)
 		local all_nemesises = HORDE:Mutations_Nemesis_GetAll()
-		while trys < 1000 and !all_nemesises[id] do 
+		while trys < 1000 and all_nemesises[id] do 
 			trys = trys + 1
 			id = math.random(1, 999)
 		end

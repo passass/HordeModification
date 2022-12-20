@@ -29,7 +29,7 @@ SWEP.Damage = 30
 SWEP.DamageMin = 15
 SWEP.Range = 25  -- GAME UNITS * 0.025 = METRES
 SWEP.Penetration = 4
-SWEP.Horde_MaxMags = 11
+SWEP.Horde_MaxMags = 13
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
 

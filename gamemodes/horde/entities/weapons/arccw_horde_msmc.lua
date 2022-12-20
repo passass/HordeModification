@@ -39,7 +39,7 @@ SWEP.WorldModelOffset = {
 SWEP.ViewModelFOV = 60
 
 HORDE.Syringe:ApplyMedicSkills(SWEP, 20)
-SWEP.Horde_MaxMags = 25
+SWEP.Horde_MaxMags = 27
 SWEP.Damage = 42
 SWEP.DamageMin = 35 -- damage done at maximum range
 SWEP.Range = 120 -- in METRES
