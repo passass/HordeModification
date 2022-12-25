@@ -34,41 +34,11 @@ PERK.Hooks.Horde_OnUnsetPerk = function(ply, perk)
     end
 end
 
-PERK.Hooks.Horde_SlowMotion_start_Bonus = function(ply, slow_motion_stage, slomo_bonus)
-    if not ply:Horde_GetPerk("berserker_base") then return end
-    local mult = slow_motion_stage == 1 and 1 or 1 / Lerp((slomo_bonus / 2) * (1 / slow_motion_stage / 3), 1, 3)
-    local is_end = slow_motion_stage == 1
-    for _, wep in pairs(ply:GetWeapons()) do
-        if wep.Base == "arccw_base_melee" then
-            wep.Mult_MeleeTime = mult
-            wep.TickCache_Mults["Mult_MeleeTime"] = mult
-            wep.ModifiedCache["Mult_MeleeTime"] = true
-            if !wep.Animations.bash.oldMult  then
-                wep.Animations.bash.oldMult = wep.Animations.bash.Mult or 1
-            end
-            local bash2_is_valid = not not wep.Animations.bash2
-            if bash2_is_valid and !wep.Animations.bash2.oldMult then
-                wep.Animations.bash2.oldMult = wep.Animations.bash2.Mult or 1
-            end
-            if !is_end then
-                wep.Animations.bash.Mult = wep.Animations.bash.oldMult * mult
-                if bash2_is_valid then
-                    wep.Animations.bash2.Mult = wep.Animations.bash2.oldMult * mult
-                end
-            else
-                wep.Animations.bash.Mult = wep.Animations.bash.oldMult
-                wep.Animations.bash.oldMult = nil
-                if bash2_is_valid then
-                    wep.Animations.bash2.Mult = wep.Animations.bash2.oldMult
-                    wep.Animations.bash2.oldMult = nil
-                end
-            end
-        end
-    end
+PERK.Hooks.SlowMotion_MovementSpeedBonus_Allow = function(ply) 
+	return ply:Horde_GetPerk("berserker_base")
 end
---[[PERK.Hooks.Horde_SlowMotion_end_Bonus = PERK.Hooks.Horde_SlowMotion_start_Bonus
 
-PERK.Hooks.Horde_PlayerMoveBonus = HORDE.SlowMotion_Template_SpeedBonus]]
+PERK.Hooks.SlowMotion_MeleeAttackSpeedBonus_Allow = PERK.Hooks.SlowMotion_MovementSpeedBonus_Allow
 
 PERK.Hooks.Horde_OnPlayerDamageTaken = function(ply, dmginfo, bonus)
     if not ply:Horde_GetPerk("berserker_base")  then return end

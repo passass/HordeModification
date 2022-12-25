@@ -25,6 +25,12 @@ PERK.Hooks.Horde_OnUnsetPerk = function(ply, perk)
     end
 end
 
+PERK.Hooks.SlowMotion_ReloadBonus_Allow = function(ply)
+	return ply:Horde_GetPerk("survivor_base")
+end
+
+PERK.Hooks.SlowMotion_MovementSpeedBonus_Allow = PERK.Hooks.SlowMotion_ReloadBonus_Allow
+
 PERK.Hooks.Horde_PrecomputePerkLevelBonus = function (ply)
     if SERVER then
         ply:Horde_SetPerkLevelBonus("slomo_bonus", math.min(2, 0.08 * ply:Horde_GetLevel(HORDE.Class_Survivor)))

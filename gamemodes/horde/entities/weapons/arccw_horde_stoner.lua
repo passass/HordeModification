@@ -47,9 +47,9 @@ SWEP.TracerWidth = 3
 
 SWEP.ChamberSize = 0 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 30 -- DefaultClip is automatically set.
-SWEP.ExtendedClipSize = 80
-
-SWEP.Delay = 60 / 900-- 60 / RPM.
+SWEP.ExtendedClipSize = 60
+SWEP.ClipsPerAmmoBox = 2
+SWEP.Delay = 60 / 700-- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {

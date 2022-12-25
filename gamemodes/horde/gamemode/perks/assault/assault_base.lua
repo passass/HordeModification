@@ -40,6 +40,14 @@ PERK.Hooks.Horde_PlayerMoveBonus = function(ply, bonus_walk, bonus_run)
     bonus_run.more = bonus_run.more * ply:Horde_GetPerkLevelBonus("assault_base")
 end
 
+PERK.Hooks.SlowMotion_RPMBonus_Allow = function(ply) 
+	return ply:Horde_GetPerk("assault_base")
+end
+
+PERK.Hooks.SlowMotion_ReloadBonus_Allow = PERK.Hooks.SlowMotion_RPMBonus_Allow
+
+
+
 PERK.Hooks.Horde_PrecomputePerkLevelBonus = function (ply)
     if SERVER then
         ply:Horde_SetPerkLevelBonus("assault_base", 1 + math.min(0.20, 0.008 * ply:Horde_GetLevel(HORDE.Class_Assault)))

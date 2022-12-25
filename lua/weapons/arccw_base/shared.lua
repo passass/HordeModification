@@ -724,11 +724,13 @@ SWEP.Bodygroups = {} -- [0] = 1, [1] = 0...
 
 local searchdir = "weapons/arccw_base"
 
+local blacklist = {["horde_modifs.lua"] = true, ["shared.lua"] = true}
+
 local function autoinclude(dir)
     local files, dirs = file.Find(searchdir .. "/*.lua", "LUA")
 
     for _, filename in pairs(files) do
-        if filename == "shared.lua" then continue end
+        if blacklist[filename] then continue end
         local luatype = string.sub(filename, 1, 2)
 
         if luatype == "sv" then
