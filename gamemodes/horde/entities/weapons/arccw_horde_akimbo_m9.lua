@@ -25,15 +25,15 @@ SWEP.WorldModelOffset = {
 }
 SWEP.WorldModel = "models/weapons/w_pist_elite_single.mdl"
 SWEP.ViewModelFOV = 65
-
-SWEP.Damage = 29
+SWEP.ClipsPerAmmoBox = 2
+SWEP.Damage = 42
 SWEP.DamageMin = 21
 SWEP.Range = 50  -- GAME UNITS * 0.025 = METRES
 SWEP.Penetration = 6
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
 
-
+SWEP.Horde_MaxMags = 40
 SWEP.ChamberSize = 0
 SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 25
@@ -59,7 +59,7 @@ SWEP.NPCWeaponType = {"weapon_pistol"}
 SWEP.NPCWeight = 100
 
 SWEP.AccuracyMOA = 9 / 2 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 125 / 2 -- inaccuracy added by hip firing.
+SWEP.HipDispersion = 200 / 2 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 25
 
 SWEP.Primary.Ammo = "pistol" -- what ammo type the gun uses

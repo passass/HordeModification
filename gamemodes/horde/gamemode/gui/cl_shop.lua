@@ -16,6 +16,7 @@ local shop_icons = {
 local PANEL = {}
 
 function PANEL:Init()
+    local ply = LocalPlayer()
     if ScrW() <= 1600 or ScrH() < 1080 then
         self:SetSize(ScrW(), ScrH())
     else
@@ -256,23 +257,36 @@ function PANEL:Init()
         if table.IsEmpty(items) then goto cont end
 
         table.sort(items, function(a, b)
-            if a.cmp == b.cmp then
-                if a.skull_tokens == b.skull_tokens then
-                    if a.weight == b.weight then
-                        if a.total_levels == b.total_levels then
-                            return a.name < b.name
-                        else
-                            return a.total_levels < b.total_levels
-                        end
-                    else
-                        return a.weight < b.weight
-                    end
-                else
-                    return a.skull_tokens < b.skull_tokens
-                end
-            else
+            if a.cmp != b.cmp then
                 return a.cmp < b.cmp
             end
+
+            if a.skull_tokens != b.skull_tokens then
+                return a.skull_tokens < b.skull_tokens
+            end
+
+            local a_total_levels = 0
+            local b_total_levels = 0
+            if a.levels and a.levels.VariousConditions then
+                a_total_levels = a.total_levels[ply:Horde_GetClass().name] or 0
+            else
+                a_total_levels = a.total_levels
+            end
+
+            if b.levels and b.levels.VariousConditions then
+                b_total_levels = b.total_levels[ply:Horde_GetClass().name] or 0
+            else
+                b_total_levels = b.total_levels
+            end
+
+            if a.weight != b.weight then
+                return a_total_levels < b_total_levels
+            end
+
+            if a_total_levels == b_total_levels then
+                return a.name < b.name
+            end
+            return a_total_levels < b_total_levels
         end)
 
         local ShopCategoryTab = vgui.Create("DPanel", self)

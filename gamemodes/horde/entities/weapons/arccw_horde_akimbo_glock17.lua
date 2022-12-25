@@ -25,7 +25,7 @@ SWEP.WorldModelOffset = {
 }
 SWEP.WorldModel = "models/weapons/w_pist_glock18.mdl"
 SWEP.ViewModelFOV = 65
-
+SWEP.ClipsPerAmmoBox = 2
 SWEP.Damage = 40
 SWEP.DamageMin = 20
 SWEP.Range = 740 * 0.025  -- GAME UNITS * 0.025 = METRES
@@ -262,6 +262,8 @@ SWEP.Hook_TranslateAnimation = function(wep, anim)
         return anim .. "_akimbo_right"
     end
 end
+
+SWEP.Horde_MaxMags = 40
 
 SWEP.Animations = {
     ["idle"] = {

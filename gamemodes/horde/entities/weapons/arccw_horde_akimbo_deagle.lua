@@ -25,14 +25,14 @@ SWEP.WorldModelOffset = {
 }
 SWEP.WorldModel = "models/weapons/w_pist_deagle.mdl"
 SWEP.ViewModelFOV = 65
-
+SWEP.ClipsPerAmmoBox = 2
 SWEP.Damage = 90
 SWEP.DamageMin = 42
 SWEP.Range = 55  -- GAME UNITS * 0.025 = METRES
 SWEP.Penetration = 10
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
-
+SWEP.Horde_MaxMags = 40
 
 SWEP.ChamberSize = 0
 SWEP.Primary.ClipSize = 7 -- DefaultClip is automatically set.

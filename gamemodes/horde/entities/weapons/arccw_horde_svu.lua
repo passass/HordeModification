@@ -341,7 +341,7 @@ SWEP.Animations = {
             {s = "ArcCW_BO2.Sniper_ClipOut", t = 0.35},
             {s = "ArcCW_BO2.Sniper_ClipIn", t = 1.5},
             {s = "ArcCW_BO2.Sniper_BoltBack", t = 2},
-            {s = "ArcCW_BO2.Sniper_BoltFwd", t = 2.1`},
+            {s = "ArcCW_BO2.Sniper_BoltFwd", t = 2.1},
         },
         MinProgress = 2.6,
     },

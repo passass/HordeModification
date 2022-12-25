@@ -156,7 +156,7 @@ SWEP.Attachments = {
         Slot = {"optic_lp", "optic"}, -- what kind of attachments can fit here, can be string or table
         Bone = "A_Optic", -- relevant bone any attachments will be mostly referring to
         Offset = {
-            vpos = Vector(0, -.3, 0), -- offset that the attachment will be relative to the bone
+            vpos = Vector(-.04, -.3, 0), -- offset that the attachment will be relative to the bone
             vang = Angle(90, 0, 90),
             wpos = Vector(10, .8, -7.35),
             wang = Angle(0, 0, 0)
@@ -196,7 +196,7 @@ SWEP.Attachments = {
         VMScale = Vector(1.2, 1, 1),
         WMScale = Vector(1.2, 1, 1),
         Offset = {
-            vpos = Vector(0, 2, -.1), -- offset that the attachment will be relative to the bone
+            vpos = Vector(0, 0, -.1), -- offset that the attachment will be relative to the bone
             vang = Angle(0, 90, 0),
             wpos = Vector(9.5, 1.15, -4.2),
             wang = Angle(180, -180, 0),
@@ -253,15 +253,17 @@ SWEP.Animations = {
         Source = "base_reload",
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         LHIK = true,
+		Time = 2.7,
         LHIKIn = .6, LHIKEaseIn = .5,
-        LHIKOut = 1, LHIKEaseOut = .5,
+        LHIKOut = .55, LHIKEaseOut = .3,
     },
     ["reload_empty"] = {
         Source = "base_reloadempty",
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         LHIK = true,
+		Time = 3.3,
         LHIKIn = .6, LHIKEaseIn = .5,
-        LHIKOut = 1, LHIKEaseOut = .5,
+        LHIKOut = .7, LHIKEaseOut = .5,
     },
     ["holster"] = {
 		Source = "base_holster",

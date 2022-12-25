@@ -445,16 +445,7 @@ net.Receive("Horde_BuyItem", function (len, ply)
     local weight = HORDE.items[class].weight
     local levels = HORDE.items[class].levels
     local skull_tokens = HORDE.items[class].skull_tokens or 0
-    local level_satisfy = true
-    if levels and (HORDE.disable_levels_restrictions == 0) then
-        for c, level in pairs(levels) do
-            if ply:Horde_GetLevel(c) < level then
-                level_satisfy = false
-                break
-            end
-        end
-    end level_satisfy = true
-    if ply:Horde_GetMoney() >= price and ply:Horde_GetWeight() >= weight and ply:Horde_GetSkullTokens() >= skull_tokens and level_satisfy then
+    if ply:Horde_GetMoney() >= price and ply:Horde_GetWeight() >= weight and ply:Horde_GetSkullTokens() >= skull_tokens and HORDE:WeaponLevelLessThanYour(ply, levels) then
         local item = HORDE.items[class]
         if item.entity_properties then
             if item.entity_properties.type == HORDE.ENTITY_PROPERTY_WPN then

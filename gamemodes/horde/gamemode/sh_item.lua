@@ -14,6 +14,34 @@ HORDE.starter_weapons = {}
 HORDE.max_weight = 15
 HORDE.default_ammo_price = 10
 
+function HORDE:WeaponLevelGetRequiredLevelClass(ply, levels, RequiredClass)
+    if levels.VariousConditions then
+        return levels[ply:Horde_GetClass().name][RequiredClass]
+    end
+    return levels[RequiredClass]
+end
+
+function HORDE:WeaponLevelLessThanYour(ply, levels)
+    if HORDE.disable_levels_restrictions == 1 or !levels then return true end
+    if levels.VariousConditions then
+        local levels2 = levels[ply:Horde_GetClass().name]
+        if !levels2 then
+            return true
+        end
+        if isstring(levels2) then
+            levels = levels[levels2]
+        else
+            levels = levels2
+        end
+    end
+    for c, level in pairs(levels) do
+        if ply:Horde_GetLevel(c) < level then
+            return false
+        end
+    end
+    return true
+end
+
 -- Creates a Horde item. The item will appear in the shop.
 function HORDE:CreateItem(category, name, class, price, weight, description, whitelist, ammo_price, secondary_ammo_price, entity_properties, shop_icon, levels, skull_tokens, dmgtype, infusions, starter_classes, hidden)
     if category == nil or name == nil or class == nil or price == nil or weight == nil or description == nil then return end
@@ -48,11 +76,24 @@ function HORDE:CreateItem(category, name, class, price, weight, description, whi
     item.total_levels = 0
     if levels then
         item.levels = levels
-        local total_levels = 0
-        for _, level in pairs(levels) do
-            total_levels = total_levels + level
+        if levels.VariousConditions then
+            local total_levels = {}
+            for class_name, class_levels in pairs(levels) do
+                if class_name != "VariousConditions" then
+                    for _, level in pairs(class_levels) do
+                        if !total_levels[class_name] then total_levels[class_name] = 0 end
+                        total_levels[class_name] = total_levels[class_name] + level
+                    end
+                end
+            end
+            item.total_levels = total_levels
+        else
+            local total_levels = 0
+            for _, level in pairs(levels) do
+                total_levels = total_levels + level
+            end
+            item.total_levels = total_levels
         end
-        item.total_levels = total_levels
     end
     item.dmgtype = dmgtype or nil
     item.infusions = infusions or nil
@@ -254,6 +295,10 @@ function HORDE:GetDefaultItemInfusions()
     HORDE.items["arccw_horde_usptac"].infusions = ballistic_infusions_light
 	HORDE.items["arccw_horde_g18"].infusions = ballistic_infusions_light
 	HORDE.items["arccw_horde_deagle_xix"].infusions = ballistic_infusions_light
+	
+	HORDE.items["arccw_horde_akimbo_deagle"].infusions = ballistic_infusions_light
+	HORDE.items["arccw_horde_akimbo_glock17"].infusions = ballistic_infusions_light
+	HORDE.items["arccw_horde_akimbo_m9"].infusions = ballistic_infusions_light
     --HORDE.items["arccw_horde_flaregun"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Quality}
 
     local ballistic_infusions_smgs = {HORDE.Infusion_Ruination, HORDE.Infusion_Chrono, HORDE.Infusion_Impaling, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Septic}
@@ -387,11 +432,19 @@ function HORDE:GetDefaultItemsData()
     HORDE:CreateItem("Melee",      "Fireaxe",        "arccw_horde_axe",     1500,  4, "Fireaxe.\nChops enemies in half.",
     nil, 10, -1, nil, nil, {Berserker=2}, nil, {HORDE.DMG_SLASH})
     HORDE:CreateItem("Melee",      "Katana",         "arccw_horde_katana",  2000,  5, "Ninja sword.\nLong attack range and fast attack speed.",
-    {Survivor=true, Berserker=true}, 10, -1, nil, nil, {Berserker=6}, nil, {HORDE.DMG_SLASH})
+    {Survivor=true, Berserker=true}, 10, -1, nil, nil, {
+        VariousConditions=true,
+        Berserker = {Berserker=6},
+        Survivor = {Berserker=6, Survivor=15},
+    }, nil, {HORDE.DMG_SLASH})
     HORDE:CreateItem("Melee",      "Übersaw",        "arccw_horde_ubersaw",     1750,  4, "Übersaw.\nMedic Knife.",
     {Medic=true}, 10, -1, nil, nil, {Berserker=3, Medic=4}, nil, {HORDE.DMG_SLASH})
 	HORDE:CreateItem("Melee",      "Bat",            "arccw_horde_bat",     2000,  5, "Sturdy baseball bat.\nHits like a truck.",
-    {Survivor=true, Berserker=true}, 10, -1, nil, nil, {Berserker=10}, nil, {HORDE.DMG_BLUNT})
+    {Survivor=true, Berserker=true}, 10, -1, nil, nil, {
+        VariousConditions=true,
+        Berserker = {Berserker=10},
+        Survivor = {Berserker=10, Survivor=15},
+    }, nil, {HORDE.DMG_BLUNT})
     HORDE:CreateItem("Melee",      "Chainsaw",       "arccw_horde_chainsaw",2500, 8, "Brrrrrrrrrrrrrrrr.\n\nHold RMB to saw through enemies.",
     {Berserker=true}, 10, -1, nil, nil, {Berserker=10}, nil, {HORDE.DMG_SLASH})
     HORDE:CreateItem("Melee",      "Inferno Blade",  "arccw_horde_inferno_blade",   2500, 8, "A blazing curved sword with hidden power.\n\nPress RMB to activate/deactivate the weapon.\n\nWhen deactivated, the weapon deals Slashing damage.\n\nWhen activated, the weapon deals splashing Fire damage.\nHowever, the user takes Fire damage over time.",
@@ -487,7 +540,11 @@ function HORDE:GetDefaultItemsData()
     HORDE:CreateItem("SMG",        "P90",            "arccw_horde_p90",      2000, 6, "ES C90.\nA Belgian bullpup PDW with a magazine of 50 rounds.",
     {Medic=true, Assault=true, Survivor=true}, 15, -1, nil, nil, {Medic=6}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("SMG",        "MP7A1 Medic PDW","arccw_horde_mp7m"  ,2500, 6, "A modified version of MP7A1 for medical purposes.\n\nPress B or ZOOM to fire healing darts.",
-    {Medic=true}, 8, -1, nil, nil, {Medic=13}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
+    {Medic=true, Survivor=true}, 8, -1, nil, nil, {
+        VariousConditions=true,
+        Medic = {Medic=13},
+        Survivor = {Medic=13, Survivor=25},
+    }, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
     HORDE:CreateItem("SMG",        "PP-90M1 Medic", "arccw_horde_pp90m1"  ,2500, 6, "PP-90M1 Medic.\nA modified version of PP-90M1 for medical purposes.\n\nPress B or ZOOM to fire healing darts.",
     {Medic=true}, 20, -1, nil, nil, {Medic=18}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
     HORDE:CreateItem("SMG",        "Vector Medic PDW","arccw_horde_vector",3000, 6, "KRISS Vector Gen I equipped with a medical dart launcher.\nUses an unconventional blowback system that results in its high firerate.\n\nPress B or ZOOM to fire healing darts.\nHealing dart recharges every 1.5 seconds.",
@@ -526,7 +583,11 @@ function HORDE:GetDefaultItemsData()
 	HORDE:CreateItem("Shotgun",    "Executioner",        "arccw_horde_exec",  2250, 6, "Executioner.\nA automatic shotgun like the judge.",
     {Survivor=true, Warden=true}, 15, -1, nil, nil, {Warden=8}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Shotgun",    "Striker",        "arccw_horde_striker", 2500, 8, "Armsel Striker.\nA 12-gauge shotgun with a revolving cylinder from South Africa.",
-    {Warden=true}, 15, -1, nil, nil, {Warden=10}, nil, {HORDE.DMG_BALLISTIC})
+    {Warden=true, Survivor=true}, 15, -1, nil, nil, {
+        VariousConditions=true,
+        Warden = {Warden=10},
+        Survivor = {Warden=10, Survivor=20},
+    }, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Shotgun",    "HMTech-301 Shotgun",           "arccw_kf2_shotgun_medic",  2500, 8, "HMTech-301 Shotgun.\n A modern shotgun with heal module.",
     {Medic=true}, 15, -1, nil, nil, {Medic=5, Warden=10}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
     HORDE:CreateItem("Shotgun",    "AA12",           "arccw_horde_aa12",  3000, 9, "Atchisson Assault Shotgun.\nDevastating firepower at close to medium range.",
@@ -559,9 +620,17 @@ function HORDE:GetDefaultItemsData()
     HORDE:CreateItem("Rifle",      "AUG",            "arccw_go_aug",      2500, 7, "Steyr AUG.\nAn Austrian bullpup assault rifle.",
     {Assault=true, Survivor=true}, 10, -1, nil, nil, {Assault=5}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Rifle",      "F2000",          "arccw_horde_f2000", 3000, 7, "FN F2000.\nAn ambidextrous bullpup rifle developed by FN.",
-    {Assault=true}, 10, -1, nil, nil, {Assault=8}, nil, {HORDE.DMG_BALLISTIC})
+    {Assault=true, Survivor=true}, 10, -1, nil, nil, {
+        VariousConditions=true,
+        Assault = {Assault=8},
+        Survivor = {Assault=8, Survivor=15},
+    }, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Rifle",      "STG-44",          "arccw_horde_stg44", 3000, 8, "STG-44.\nOld but effiency weapon.",
-    {Assault=true}, 10, -1, nil, nil, {Assault=9}, nil, {HORDE.DMG_BALLISTIC})
+    {Assault=true, Survivor=true}, 10, -1, nil, nil, {
+        VariousConditions=true,
+        Assault = {Assault=9},
+        Survivor = {Assault=9, Survivor=15},
+    }, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Rifle",      "Tavor",          "arccw_horde_tavor", 3000, 7, "IWI Tavor-21.\nDesigned to maximize reliability, durability, and simplicity.",
     {Assault=true}, 10, -1, nil, nil, {Assault=10}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Rifle",      "AK-117",          "arccw_horde_ak117", 3000, 7, "AK-117.\nNewest weapon of series AK.",
@@ -591,7 +660,11 @@ function HORDE:GetDefaultItemsData()
 	
 	
     HORDE:CreateItem("Rifle",      "AWP",            "arccw_horde_awp",     2500, 8, "Magnum Ghost Rifle.\nA series of sniper rifles manufactured by the United Kingdom.",
-    {Ghost=true}, 10, -1, nil, nil, {Ghost=5}, nil, {HORDE.DMG_BALLISTIC})
+    {Ghost=true, Survivor=true}, 10, -1, nil, nil, {
+        VariousConditions=true,
+        Ghost = {Ghost=5},
+        Survivor = {Ghost=5, Survivor=10},
+    }, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Rifle",      "SCAR-H",           "arccw_go_scar",       2500, 8, "FN SCAR-H.\nAn assault rifle developed by Belgian manufacturer FN Herstal.",
     {Survivor=true,  Ghost=true}, 15, -1, nil, nil, {Ghost=7, Assault=3}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Rifle",      "G3",             "arccw_horde_g3",      3000, 8, "G3 Battle Rifle.\nA 7.62×51mm NATO, select-fire battle rifle developed by H&K.",
@@ -626,7 +699,11 @@ function HORDE:GetDefaultItemsData()
     --HORDE:CreateItem("MG",         "RPK",           "arccw_mw2_rpk",   2750, 9, "M249 light machine gun.\nA gas operated and air-cooled weapon of destruction.",
     --{Heavy=true}, 25, -1)
     HORDE:CreateItem("MG",         "L86 LSW",        "arccw_horde_l86",    2500, 9, "SA80 L86 LSW.\nBullpup light machine gun.",
-    {Heavy=true}, 25, -1, nil, nil, {Heavy=5}, nil, {HORDE.DMG_BALLISTIC})
+    {Heavy=true, Survivor=true}, 25, -1, nil, nil, {
+        VariousConditions=true,
+        Heavy = {Heavy=5},
+        Survivor = {Heavy=5, Survivor=20},
+    }, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("MG",         "MG4",            "arccw_mw2_mg4",      3000, 10, "Heckler & Koch MG4.\nA belt-fed 5.56 mm light machine gun that replaced MG3.",
     {Heavy=true}, 40, -1, nil, nil, {Heavy=10}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("MG",         "M240B",          "arccw_mw2_m240",     3000, 10, "M240 Bravo.\nFires 7.62mm NATO ammunition.\nEquipped by U.S. Armed Forces.",
