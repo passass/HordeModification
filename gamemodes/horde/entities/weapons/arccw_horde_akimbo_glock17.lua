@@ -2,7 +2,7 @@ if not ArcCWInstalled then return end
 if CLIENT then
     killicon.AddAlias("arccw_horde_akimbo_glock17", "arccw_go_glock")
 end
-SWEP.Base = "arccw_mw2_abase"
+SWEP.Base = "arccw_horde_akimbo_base"
 SWEP.Spawnable = true
 SWEP.Category = "ArcCW - MW2 - Unofficial"
 SWEP.AdminOnly = false
@@ -231,7 +231,7 @@ SWEP.Attachments = {
             vang = Angle(0, 0, 0),
         },
         Hidden = true,
-        Installed = "mw2_akimbo_glock17",
+        Installed = "horde_akimbo_glock17",
         Integral = true,
     },
     {

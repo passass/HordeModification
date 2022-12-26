@@ -26,7 +26,9 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotio
 			wep.Mult_ReloadTime = total_mult
 			wep.TickCache_Mults["Mult_ReloadTime"] = total_mult
 			wep.ModifiedCache["Mult_ReloadTime"] = true
-			wep.ModifiedCache_Permanent["Mult_ReloadTime"] = true
+			if wep.ModifiedCache_Permanent then
+				wep.ModifiedCache_Permanent["Mult_ReloadTime"] = true 
+			end
 		end
 	end
 
@@ -67,7 +69,9 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotio
 			wep.Mult_RPM = total_mult
 			wep.TickCache_Mults["Mult_RPM"] = total_mult
 			wep.ModifiedCache["Mult_RPM"] = true
-			wep.ModifiedCache_Permanent["Mult_RPM"] = true
+			if wep.ModifiedCache_Permanent then
+				wep.ModifiedCache_Permanent["Mult_RPM"] = true
+			end
 		end
 	end
 
@@ -104,7 +108,7 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotio
 	
 	local function calculate_total_meleeattackspeed(wep)
 		local total_mult = 1
-		for _, mult in pairs(wep.Horde_MeleeAttackSpeedMults) do 
+		for _, mult in pairs(wep.Horde_MeleeAttackSpeedMults or {}) do 
 			total_mult = total_mult * mult
 		end
 
@@ -112,7 +116,9 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotio
             wep.Mult_MeleeTime = wep.Horde_MeleeAttackSpeedMults_MultMeleeTime * total_mult
             wep.TickCache_Mults["Mult_MeleeTime"] = wep.Horde_MeleeAttackSpeedMults_MultMeleeTime * total_mult
             wep.ModifiedCache["Mult_MeleeTime"] = true
-			wep.ModifiedCache_Permanent["Mult_MeleeTime"] = true
+			if wep.ModifiedCache_Permanent then
+				wep.ModifiedCache_Permanent["Mult_MeleeTime"] = true
+			end
             
 			if wep.Animations.bash then
 				wep.Animations.bash.Mult = wep.Horde_MeleeAttackSpeedMults_bash * total_mult
@@ -237,19 +243,19 @@ local function add_newweapon_and_addallmults(wep)
 	local ply = wep:GetOwner()
 	if arccw_melees_bases[wep.Base] or tfa_melees_base[wep.Base] then
 		init_meleeattackspeed_table(wep)
-		wep.Horde_MeleeAttackSpeedMults = table.Copy(ply.Horde_MeleeAttackSpeedMults)
+		wep.Horde_MeleeAttackSpeedMults = table.Copy(ply.Horde_MeleeAttackSpeedMults) or {}
 		calculate_total_meleeattackspeed(wep)
 	else
 		if ply.Horde_ReloadSpeedMults then
 			init_reload_speed_table(wep)
-			wep.Horde_ReloadSpeedMults = table.Copy(ply.Horde_ReloadSpeedMults)
+			wep.Horde_ReloadSpeedMults = table.Copy(ply.Horde_ReloadSpeedMults) or {}
 			calculate_total_reloadspeed(wep)
 			PrintTable(wep.Horde_ReloadSpeedMults)
 		end
 		
 		if ply.Horde_RPMMults then
 			init_rpm_table(wep)
-			wep.Horde_RPMMults = table.Copy(ply.Horde_RPMMults)
+			wep.Horde_RPMMults = table.Copy(ply.Horde_RPMMults) or {}
 			calculate_total_rpmmult(wep)
 		end
 	end
@@ -260,11 +266,7 @@ if SERVER then
 		timer.Simple(0, function() 
 			add_newweapon_and_addallmults(wep)
 		end)
-		net.Start("Horde_SyncWeaponModifs")
-		net.WriteEntity(wep)
-		net.Send(wep:GetOwner())
 	end)
-	util.AddNetworkString("Horde_SyncWeaponModifs")
 end
 
 

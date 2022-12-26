@@ -27,7 +27,7 @@ AddCSLuaFile()
 local entmeta = FindMetaTable("Entity")
 
 function entmeta:Horde_AddEffect_MedicGrenade(ent)
-    if self.horde_effect_medicgrenade then return end
+    if self.horde_effect_medicgrenade or ent.Horde_TimeStoped then return end
     self.horde_effect_medicgrenade = true
     local id = self:GetCreationID()
     timer.Create("Horde_MedicGrenadeEffect" .. id, 0.5, 0, function ()
@@ -45,6 +45,22 @@ function entmeta:Horde_AddEffect_MedicGrenade(ent)
             self:TakeDamageInfo(d)
         end
     end)
+end
+
+function ENT:Horde_StartTimeStop() 
+	if !self.Horde_TimeStoped then 
+		self.Horde_TimeStoped = true
+		timer.Pause("Horde_MedicGrenadeEffect" .. self:GetCreationID())
+		timer.Pause("Horde_DeleteSelf" .. self:GetCreationID())
+	end
+end
+
+function ENT:Horde_EndTimeStop() 
+	if self.Horde_TimeStoped then 
+		self.Horde_TimeStoped = nil
+		timer.UnPause("Horde_MedicGrenadeEffect" .. self:GetCreationID())
+		timer.UnPause("Horde_DeleteSelf" .. self:GetCreationID())
+	end
 end
 
 function entmeta:Horde_RemoveEffect_MedicGrenade()
@@ -192,7 +208,7 @@ function ENT:Detonate()
     self.Armed = true
     self:EmitSound("arccw_go/smokegrenade/smoke_emit.wav", 90, 100, 1, CHAN_AUTO)
 
-    timer.Simple(self.Duration, function()
+    timer.Create("Horde_DeleteSelf" .. self:GetCreationID(), self.Duration, 1, function()
         if !IsValid(self) then return end
 
         self:Remove()

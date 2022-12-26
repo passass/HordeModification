@@ -64,7 +64,6 @@ function ENT:Think()
     if !self.SpawnTime then self.SpawnTime = CurTime() end
 
     if SERVER and CurTime() - self.SpawnTime >= 5 and !self.Armed then
-        print("time erase")
         self:Detonate()
     end
 

@@ -28,6 +28,15 @@ function ENT:Initialize()
 	self.NextExplode = CurTime() + self.MidDelay
 end
 
+function ENT:Horde_StartTimeStop() 
+	if !self.Horde_TimeStoped then 
+		self.Horde_TimeStoped = true
+		local enough = HORDE.TimeStop_TimeEnough()
+		self.timeleft = self.timeleft + enough
+		self.NextExplode = self.NextExplode + enough
+	end
+end
+
 ENT.Delay = 3
 ENT.MidDelay = 0.35
 ENT.MaxExplodes = 2
