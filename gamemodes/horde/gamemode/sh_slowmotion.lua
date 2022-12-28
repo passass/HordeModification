@@ -26,7 +26,7 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotio
 			wep.ModifiedCache["Mult_ReloadTime"] = true
 			wep.TickCache_Mults["Mult_ReloadTime"] = nil
 			wep.Mult_ReloadTime = total_mult
-			wep.TickCache_Mults["Mult_ReloadTime"] = total_mult
+			wep.TickCache_Mults["Mult_ReloadTime"] = nil
 			if wep.ModifiedCache_Permanent then
 				wep.ModifiedCache_Permanent["Mult_ReloadTime"] = true
 			end
@@ -72,7 +72,7 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotio
 			wep.TickCache_Mults["Mult_RPM"] = nil
 			total_mult = total_mult
 			wep.Mult_RPM = total_mult
-			wep.TickCache_Mults["Mult_RPM"] = total_mult
+			wep.TickCache_Mults["Mult_RPM"] = nil
 			if wep.ModifiedCache_Permanent then
 				wep.ModifiedCache_Permanent["Mult_RPM"] = true
 			end
@@ -120,7 +120,7 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotio
 			wep.ModifiedCache["Mult_MeleeTime"] = true
 			wep.TickCache_Mults["Mult_MeleeTime"] = nil
 			wep.Mult_MeleeTime = total_mult * wep.Horde_MeleeAttackSpeedMults_MultMeleeTime
-			wep.TickCache_Mults["Mult_MeleeTime"] = total_mult * wep.Horde_MeleeAttackSpeedMults_MultMeleeTime
+			wep.TickCache_Mults["Mult_MeleeTime"] = nil
 
             wep.ModifiedCache["Mult_MeleeTime"] = true
 			if wep.ModifiedCache_Permanent then
