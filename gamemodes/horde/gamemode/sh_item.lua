@@ -986,36 +986,36 @@ HORDE.GetArcCWAttachments = function ()
     {Ghost=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Optic"})
     local underbarrelprice = 1000
     -- Underbarrel
-    HORDE:CreateItem("Attachment", "Pistol Foregrip",   "go_nova_stock_pistol",  underbarrelprice * .9,  0, "",
+    HORDE:CreateItem("Attachment", "Pistol Foregrip",   "go_nova_stock_pistol",  underbarrelprice * .4,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Underbarrel"})
-	HORDE:CreateItem("Attachment", "Pistol Foregrip",   "foregrip_pistol",  underbarrelprice * .9,  0, "",
+	HORDE:CreateItem("Attachment", "Pistol Foregrip",   "foregrip_pistol",  underbarrelprice * .4,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Underbarrel"})
-    HORDE:CreateItem("Attachment", "Ergo Foregrip",   "go_foregrip_ergo",  underbarrelprice,  0, "",
+    HORDE:CreateItem("Attachment", "Ergo Foregrip",   "go_foregrip_ergo",  underbarrelprice * .6,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Underbarrel"})
     HORDE:CreateItem("Attachment", "Battle Foregrip",   "go_foregrip",  underbarrelprice,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Underbarrel"})
-    HORDE:CreateItem("Attachment", "Stubby Foregrip",   "go_foregrip_stubby",  underbarrelprice,  0, "",
+    HORDE:CreateItem("Attachment", "Stubby Foregrip",   "go_foregrip_stubby",  underbarrelprice * .75,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Underbarrel"})
-    HORDE:CreateItem("Attachment", "Tactical Grip",   "go_ak_grip_tactical",  underbarrelprice,  0, "",
+    HORDE:CreateItem("Attachment", "Tactical Grip",   "go_ak_grip_tactical",  underbarrelprice * .6,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Underbarrel"})
     HORDE:CreateItem("Attachment", "Snatch Foregrip",   "go_foregrip_snatch",  underbarrelprice,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Underbarrel"})
-    HORDE:CreateItem("Attachment", "Angled Foregrip",   "go_foregrip_angled",  underbarrelprice,  0, "",
+    HORDE:CreateItem("Attachment", "Angled Foregrip",   "go_foregrip_angled",  underbarrelprice * .5,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Underbarrel"})
     HORDE:CreateItem("Attachment", "Bipod",             "go_fore_bipod",  underbarrelprice,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Underbarrel"})
 
     local tactsprice = 800
     -- Tactical
-    HORDE:CreateItem("Attachment", "Flashlight",   "go_flashlight",  tactsprice * .8,  0, "",
+    HORDE:CreateItem("Attachment", "Flashlight",   "go_flashlight",  tactsprice * .4,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Tactical"})
-    HORDE:CreateItem("Attachment", "Combo Flashlight",   "go_flashlight_combo",  tactsprice * .9,  0, "",
+    HORDE:CreateItem("Attachment", "Combo Flashlight",   "go_flashlight_combo",  tactsprice * .5,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Tactical"})
     HORDE:CreateItem("Attachment", "5mW Laser",   "go_laser_peq",  tactsprice,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Tactical"})
-    HORDE:CreateItem("Attachment", "3mW Laser",   "go_laser_surefire",  tactsprice,  0, "",
+    HORDE:CreateItem("Attachment", "3mW Laser",   "go_laser_surefire",  tactsprice * 0.75,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Tactical"})
-    HORDE:CreateItem("Attachment", "1mW Laser",   "go_laser",  tactsprice,  0, "",
+    HORDE:CreateItem("Attachment", "1mW Laser",   "go_laser",  tactsprice * 0.25,  0, "",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Tactical"})
 
     local unicsatts_multprice = 5
