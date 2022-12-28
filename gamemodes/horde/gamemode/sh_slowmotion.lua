@@ -19,15 +19,16 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotio
 	local function calculate_total_reloadspeed(wep)
 		
 		local total_mult = 1
-		for _, mult in pairs(wep.Horde_ReloadSpeedMults) do 
+		for _, mult in pairs(wep.Horde_ReloadSpeedMults) do
 			total_mult = total_mult * mult
 		end
 		if wep.ArcCW then
+			wep.ModifiedCache["Mult_ReloadTime"] = true
+			wep.TickCache_Mults["Mult_ReloadTime"] = nil
 			wep.Mult_ReloadTime = total_mult
 			wep.TickCache_Mults["Mult_ReloadTime"] = total_mult
-			wep.ModifiedCache["Mult_ReloadTime"] = true
 			if wep.ModifiedCache_Permanent then
-				wep.ModifiedCache_Permanent["Mult_ReloadTime"] = true 
+				wep.ModifiedCache_Permanent["Mult_ReloadTime"] = true
 			end
 		end
 	end
@@ -53,6 +54,7 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotio
 				init_reload_speed_table(wep)
 			end
 			wep.Horde_ReloadSpeedMults[multname] = mult
+			
 			calculate_total_reloadspeed(wep)
 		end
 	end
@@ -62,13 +64,15 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotio
 
 	local function calculate_total_rpmmult(wep)
 		local total_mult = 1
-		for _, mult in pairs(wep.Horde_RPMMults) do 
+		for _, mult in pairs(wep.Horde_RPMMults) do
 			total_mult = total_mult * mult
 		end
 		if wep.ArcCW then
+			wep.ModifiedCache["Mult_RPM"] = true
+			wep.TickCache_Mults["Mult_RPM"] = nil
+			total_mult = total_mult
 			wep.Mult_RPM = total_mult
 			wep.TickCache_Mults["Mult_RPM"] = total_mult
-			wep.ModifiedCache["Mult_RPM"] = true
 			if wep.ModifiedCache_Permanent then
 				wep.ModifiedCache_Permanent["Mult_RPM"] = true
 			end
@@ -108,13 +112,16 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotio
 	
 	local function calculate_total_meleeattackspeed(wep)
 		local total_mult = 1
-		for _, mult in pairs(wep.Horde_MeleeAttackSpeedMults or {}) do 
+		for _, mult in pairs(wep.Horde_MeleeAttackSpeedMults or {}) do
 			total_mult = total_mult * mult
 		end
 
 		if wep.ArcCW and arccw_melees_bases[wep.Base] then
-            wep.Mult_MeleeTime = wep.Horde_MeleeAttackSpeedMults_MultMeleeTime * total_mult
-            wep.TickCache_Mults["Mult_MeleeTime"] = wep.Horde_MeleeAttackSpeedMults_MultMeleeTime * total_mult
+			wep.ModifiedCache["Mult_MeleeTime"] = true
+			wep.TickCache_Mults["Mult_MeleeTime"] = nil
+			wep.Mult_MeleeTime = total_mult * wep.Horde_MeleeAttackSpeedMults_MultMeleeTime
+			wep.TickCache_Mults["Mult_MeleeTime"] = total_mult * wep.Horde_MeleeAttackSpeedMults_MultMeleeTime
+
             wep.ModifiedCache["Mult_MeleeTime"] = true
 			if wep.ModifiedCache_Permanent then
 				wep.ModifiedCache_Permanent["Mult_MeleeTime"] = true
@@ -134,7 +141,7 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotio
 				for _, attacktable in pairs(wep.Primary.Attacks) do
 				if !attacktable.act then continue end
 					local mult = (wep["Horde_MeleeAttackSpeedMults_" .. attacktable.act] or 1) * (1 / total_mult)
-					if mult == 1 then 
+					if mult == 1 then
 						mult = nil
 					end
 					wep.SequenceRateOverride[attacktable.act] = mult
@@ -195,7 +202,7 @@ HORDE.SlowMotion_RPMBonus = function(ply, slow_motion_stage, slomo_bonus)
     if not slomo_bonus or slomo_bonus <= 0 then return end
 	
 	if slow_motion_stage == 1.0 then
-		HORDE.Weapons_MultReloadSpeed_Add(ply, "slomotion")
+		HORDE.Weapons_MultRPM_Add(ply, "slomotion")
 		return
 	end
 	
@@ -250,7 +257,6 @@ local function add_newweapon_and_addallmults(wep)
 			init_reload_speed_table(wep)
 			wep.Horde_ReloadSpeedMults = table.Copy(ply.Horde_ReloadSpeedMults) or {}
 			calculate_total_reloadspeed(wep)
-			PrintTable(wep.Horde_ReloadSpeedMults)
 		end
 		
 		if ply.Horde_RPMMults then
