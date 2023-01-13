@@ -37,7 +37,7 @@ att.UBGL_Automatic = false
 att.UBGL_MuzzleEffect = "muzzleflash_4"
 att.UBGL_ClipSize = 7
 att.UBGL_Ammo = "357"
-att.UBGL_RPM = 60 / 0.079
+att.UBGL_RPM = 60 / 0.1
 att.UBGL_Recoil = 1
 att.UBGL_RecoilSide = 1
 att.UBGL_RecoilRise = 0
@@ -66,12 +66,14 @@ att.Hook_Think = function(wep)
     end
 
     if !IsFirstTimePredicted() then return end
-    if wep:GetOwner():KeyPressed(IN_RELOAD) then
+    local owner = wep:GetOwner()
+    local mode = wep:GetCurrentFiremode().Mode
+    if owner:KeyPressed(IN_RELOAD) then
         wep:SetInUBGL(false)
         wep:ReloadUBGL()
-    elseif wep:GetOwner():KeyPressed(IN_ATTACK) then
+    elseif owner:KeyPressed(IN_ATTACK) then
         wep:SetInUBGL(false)
-    elseif wep:GetOwner():KeyPressed(IN_ATTACK2) then
+    elseif mode == 2 and owner:KeyDown(IN_ATTACK2) or owner:KeyPressed(IN_ATTACK2) then
         wep:SetInUBGL(true)
         wep:ShootUBGL()
     end
@@ -153,8 +155,7 @@ att.UBGL_Fire = function(wep, ubgl)
                                             -- Wep volume
                                                     -- Weapon pitch (along with the pitch randomizer)
 
-
-
+    
 
     wep:SetClip2(wep:Clip2() - 1)
     
@@ -175,23 +176,23 @@ att.UBGL_Reload = function(wep, ubgl)
 
     wep:SetInUBGL(false)
     wep:Reload()
-
+	local mult = wep:GetBuff_Mult("Mult_ReloadTime")
     if wep:Clip2() <= 0 then
-        wep:DoLHIKAnimation("reload_empty", 63/30)
-        wep:SetNextSecondaryFire(CurTime() + 63/30)
-        wep:SetMW2Masterkey_ShellInsertTime(CurTime() + 1.429)
+        wep:DoLHIKAnimation("reload_empty", 63/30 * mult)
+        wep:SetNextSecondaryFire(CurTime() + 63/30 * mult)
+        wep:SetMW2Masterkey_ShellInsertTime(CurTime() + 1.429 * mult)
         wep:PlaySoundTable({
-            {s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipout_v1.wav", 	t = 10/30},
-            {s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipin_v1.wav",  	t = 39/30},
-            {s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_chamber_v1.wav", 	t = 48/30},
+            {s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipout_v1.wav", 	t = 10/30 * mult},
+            {s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipin_v1.wav",  	t = 39/30 * mult},
+            {s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_chamber_v1.wav", 	t = 48/30 * mult},
         })
     else
-        wep:DoLHIKAnimation("reload", 59/30)
-        wep:SetNextSecondaryFire(CurTime() + 59/30)
-        wep:SetMW2Masterkey_ShellInsertTime(CurTime() + 1.429)
+        wep:DoLHIKAnimation("reload", 59/30 * mult)
+        wep:SetNextSecondaryFire(CurTime() + 59/30 * mult)
+        wep:SetMW2Masterkey_ShellInsertTime(CurTime() + 1.429 * mult)
         wep:PlaySoundTable({
-            {s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipout_v1.wav", 	t = 10/30},
-            {s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipin_v1.wav", 	    t = 39/30},
+            {s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipout_v1.wav", 	t = 10/30 * mult},
+            {s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipin_v1.wav", 	    t = 39/30 * mult},
         })
     end
 end

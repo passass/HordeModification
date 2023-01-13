@@ -65,12 +65,14 @@ att.Hook_Think = function(wep)
     end
 
     if !IsFirstTimePredicted() then return end
-    if wep:GetOwner():KeyPressed(IN_RELOAD) then
+    local owner = wep:GetOwner()
+    local mode = wep:GetCurrentFiremode().Mode
+    if owner:KeyPressed(IN_RELOAD) then
         wep:SetInUBGL(false)
         wep:ReloadUBGL()
-    elseif wep:GetOwner():KeyPressed(IN_ATTACK) then
+    elseif owner:KeyPressed(IN_ATTACK) then
         wep:SetInUBGL(false)
-    elseif wep:GetOwner():KeyPressed(IN_ATTACK2) then
+    elseif mode == 2 and owner:KeyDown(IN_ATTACK2) or owner:KeyPressed(IN_ATTACK2) then
         wep:SetInUBGL(true)
         wep:ShootUBGL()
     end
@@ -175,25 +177,25 @@ att.UBGL_Reload = function(wep, ubgl)
 
     wep:SetInUBGL(false)
     wep:Reload()
-
+	local mult = wep:GetBuff_Mult("Mult_ReloadTime")
     if wep:Clip2() <= 0 then
-        wep:DoLHIKAnimation("reload_empty", 89/40)
-        wep:SetNextSecondaryFire(CurTime() + 89/40)
-        wep:SetMW2Masterkey_ShellInsertTime(CurTime() + 1.2)
+        wep:DoLHIKAnimation("reload_empty", 89/40 * mult)
+        wep:SetNextSecondaryFire(CurTime() + 89/40 * mult)
+        wep:SetMW2Masterkey_ShellInsertTime(CurTime() + 1.2 * mult)
         wep:PlaySoundTable({
             {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_lift_v1.wav", 	t = 0},
-            {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_clipout_v1.wav", 	t = 4/40},
-            {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_clipin_v1.wav",  	t = 42/40},
-            {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_chamber_v1.wav", 	t = 67/40},
+            {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_clipout_v1.wav", 	t = 4/40 * mult},
+            {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_clipin_v1.wav",  	t = 42/40 * mult},
+            {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_chamber_v1.wav", 	t = 67/40 * mult},
         })
     else
-        wep:DoLHIKAnimation("reload", 70/40)
-        wep:SetNextSecondaryFire(CurTime() + 70/40)
-        wep:SetMW2Masterkey_ShellInsertTime(CurTime() + 1.2)
+        wep:DoLHIKAnimation("reload", 70/40 / mult)
+        wep:SetNextSecondaryFire(CurTime() + 70/40 / mult)
+        wep:SetMW2Masterkey_ShellInsertTime(CurTime() + 1.2 / mult)
         wep:PlaySoundTable({
             {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_lift_v1.wav", 	t = 0},
-            {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_clipout_v1.wav", 	t = 4/40},
-            {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_clipin_v1.wav", 	    t = 36/40},
+            {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_clipout_v1.wav", 	t = 4/40 * mult},
+            {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_clipin_v1.wav", 	    t = 36/40 * mult},
         })
     end
 end

@@ -531,14 +531,16 @@ local function start_timestop(ply)
                     end
                 end
                 
-                for _, bul in pairs(shotted_bullets) do
-                    bul.data.TracerName = "arccw_tracer_timestop"
-                    bul.data.Dir = bul.dir
-                    if IsValid(bul.wep) and bul.wep.ArcCW then
-                        bul.wep:DoPrimaryFire(false, bul.data)
-                    else
-                        ply:FireBullets(bul.data, true)
-                    end
+                for i, bul in pairs(shotted_bullets) do
+                    timer.Simple(math.min(.55, 0.04 * (i ^ .5)), function()
+                        bul.data.TracerName = "arccw_tracer_timestop"
+                        bul.data.Dir = bul.dir
+                        if IsValid(bul.wep) and bul.wep.ArcCW then
+                            bul.wep:DoPrimaryFire(false, bul.data)
+                        else
+                            ply:FireBullets(bul.data, true)
+                        end
+                    end)
                 end
 
                 for _, ent in pairs(npc_slowed) do

@@ -12,7 +12,6 @@ local tracer = Material("effects/smoke_trail")
 local smoke = Material("trails/smoke")
 
 function EFFECT:Init(data)
-    print("ggg")
     local hit = data:GetOrigin()
     local wep = data:GetEntity()
 
