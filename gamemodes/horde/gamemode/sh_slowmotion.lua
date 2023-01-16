@@ -1,3 +1,5 @@
+if GetConVar("horde_enable_slomo"):GetInt() == 0 then return end
+
 HORDE.SlowMotion_MovementSpeedBonus = function(ply, bonus_walk, bonus_run)
 	local stage = HORDE:SlowMotion_GetStage()
     if stage == 1 then return end
@@ -14,201 +16,30 @@ end
 
 hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotion_MovementSpeedBonus)
 
--- speed reload mults
-
-	local function calculate_total_reloadspeed(wep)
-		
-		local total_mult = 1
-		for _, mult in pairs(wep.Horde_ReloadSpeedMults) do
-			total_mult = total_mult * mult
-		end
-		if wep.ArcCW then
-			wep.ModifiedCache["Mult_ReloadTime"] = true
-			wep.TickCache_Mults["Mult_ReloadTime"] = nil
-			wep.Mult_ReloadTime = total_mult
-			wep.TickCache_Mults["Mult_ReloadTime"] = nil
-			if wep.ModifiedCache_Permanent then
-				wep.ModifiedCache_Permanent["Mult_ReloadTime"] = true
-			end
-		end
-	end
-
-
-	local function init_reload_speed_table(wep)
-		wep.Horde_ReloadSpeedMults = {}
-		if wep.ArcCW then
-			if wep.Mult_ReloadTime then 
-				wep.Horde_ReloadSpeedMults["init"] = wep.Mult_ReloadTime
-			end
-		end
-	end
-
-	HORDE.Weapons_MultReloadSpeed_Add = function(ply, multname, mult)
-		if mult then mult = 1 / mult end
-		if !ply.Horde_ReloadSpeedMults then
-			ply.Horde_ReloadSpeedMults = {}
-		end
-		ply.Horde_ReloadSpeedMults[multname] = mult
-		for _, wep in pairs(ply:GetWeapons()) do
-			if !wep.Horde_ReloadSpeedMults then
-				init_reload_speed_table(wep)
-			end
-			wep.Horde_ReloadSpeedMults[multname] = mult
-			
-			calculate_total_reloadspeed(wep)
-		end
-	end
-
--- speed reload mults
--- rpm mults 
-
-	local function calculate_total_rpmmult(wep)
-		local total_mult = 1
-		for _, mult in pairs(wep.Horde_RPMMults) do
-			total_mult = total_mult * mult
-		end
-		if wep.ArcCW then
-			wep.ModifiedCache["Mult_RPM"] = true
-			wep.TickCache_Mults["Mult_RPM"] = nil
-			total_mult = total_mult
-			wep.Mult_RPM = total_mult
-			wep.TickCache_Mults["Mult_RPM"] = nil
-			if wep.ModifiedCache_Permanent then
-				wep.ModifiedCache_Permanent["Mult_RPM"] = true
-			end
-		end
-	end
-
-	local function init_rpm_table(wep)
-		wep.Horde_RPMMults = {}
-		if wep.ArcCW then
-			if wep.Mult_RPM then 
-				wep.Horde_RPMMults["init"] = wep.Mult_RPM
-			end
-		end
-	end
-
-	HORDE.Weapons_MultRPM_Add = function(ply, multname, mult)
-		if !ply.Horde_RPMMults then
-			ply.Horde_RPMMults = {}
-		end
-		ply.Horde_RPMMults[multname] = mult
-		for _, wep in pairs(ply:GetWeapons()) do
-			if !wep.Horde_RPMMults then
-				init_rpm_table(wep)
-			end
-			
-			wep.Horde_RPMMults[multname] = mult
-			calculate_total_rpmmult(wep)
-		end
-	end
-
--- rpm mults
-
--- melee attack mults
-	
-	local arccw_melees_bases = {arccw_horde_base_melee = true, arccw_base_melee = true}
-	local tfa_melees_base = {horde_tfa_melee_base = true, tfa_melee_base = true}
-	
-	local function calculate_total_meleeattackspeed(wep)
-		local total_mult = 1
-		for _, mult in pairs(wep.Horde_MeleeAttackSpeedMults or {}) do
-			total_mult = total_mult * mult
-		end
-
-		if wep.ArcCW and arccw_melees_bases[wep.Base] then
-			wep.ModifiedCache["Mult_MeleeTime"] = true
-			wep.TickCache_Mults["Mult_MeleeTime"] = nil
-			wep.Mult_MeleeTime = total_mult * wep.Horde_MeleeAttackSpeedMults_MultMeleeTime
-			wep.TickCache_Mults["Mult_MeleeTime"] = nil
-
-            wep.ModifiedCache["Mult_MeleeTime"] = true
-			if wep.ModifiedCache_Permanent then
-				wep.ModifiedCache_Permanent["Mult_MeleeTime"] = true
-			end
-            
-			if wep.Animations.bash then
-				wep.Animations.bash.Mult = wep.Horde_MeleeAttackSpeedMults_bash * total_mult
-			end
-			
-			if wep.Animations.bash2 then
-				wep.Animations.bash2.Mult = wep.Horde_MeleeAttackSpeedMults_bash2 * total_mult
-			end
-		elseif wep.IsTFAWeapon and tfa_melees_base[wep.Base] then
-			if wep.Primary.Attacks then
-				if !wep.SequenceRateOverride then wep.SequenceRateOverride = {} end
-				if !wep.SequenceRateOverrideScaled then wep.SequenceRateOverrideScaled = {} end
-				for _, attacktable in pairs(wep.Primary.Attacks) do
-				if !attacktable.act then continue end
-					local mult = (wep["Horde_MeleeAttackSpeedMults_" .. attacktable.act] or 1) * (1 / total_mult)
-					if mult == 1 then
-						mult = nil
-					end
-					wep.SequenceRateOverride[attacktable.act] = mult
-					wep.SequenceRateOverrideScaled[attacktable.act] = mult
-					wep.StatCache2["SequenceRateOverrideScaled." .. attacktable.act] = nil
-					wep.StatCache2["SequenceRateOverride." .. attacktable.act] = nil
-				end
-				wep:ClearStatCache()
-			end
-        end
-	end
-
-
-	local function init_meleeattackspeed_table(wep)
-		wep.Horde_MeleeAttackSpeedMults = {}
-		if wep.ArcCW and arccw_melees_bases[wep.Base] then
-			wep.Horde_MeleeAttackSpeedMults_MultMeleeTime = wep.Mult_MeleeTime or 1
-			
-			if wep.Animations.bash then 
-				wep.Horde_MeleeAttackSpeedMults_bash = wep.Animations.bash.Mult or 1
-			end
-			
-			if wep.Animations.bash2 then 
-				wep.Horde_MeleeAttackSpeedMults_bash2 = wep.Animations.bash2.Mult or 1
-			end
-		elseif wep.IsTFAWeapon and tfa_melees_base[wep.Base] then
-			if wep.Primary.Attacks then
-				if !wep.SequenceRateOverride then wep.SequenceRateOverride = {} end
-				if !wep.SequenceRateOverrideScaled then wep.SequenceRateOverrideScaled = {} end
-				for _, attacktable in pairs(wep.Primary.Attacks) do
-					if !attacktable.act then continue end
-					wep["Horde_MeleeAttackSpeedMults_" .. attacktable.act] = wep.SequenceRateOverride[attacktable.act] or 1
-				end
-			end
-		end
-	end
-
-	HORDE.Weapons_MultAttackMeleeSpeed_Add = function(ply, multname, mult)
-		if mult then mult = 1 / mult end
-		if !ply.Horde_MeleeAttackSpeedMults then
-			ply.Horde_MeleeAttackSpeedMults = {}
-		end
-		ply.Horde_MeleeAttackSpeedMults[multname] = mult
-		for _, wep in pairs(ply:GetWeapons()) do
-			if !wep.Horde_MeleeAttackSpeedMults then
-				init_meleeattackspeed_table(wep)
-			end
-			wep.Horde_MeleeAttackSpeedMults[multname] = mult
-			calculate_total_meleeattackspeed(wep)
-		end
-	end
-
--- melee attack mults
-
 HORDE.SlowMotion_RPMBonus = function(ply, slow_motion_stage, slomo_bonus)
 	if !hook.Run("SlowMotion_RPMBonus_Allow", ply) then return end
 
     if not slomo_bonus or slomo_bonus <= 0 then return end
 	
 	if slow_motion_stage == 1.0 then
-		HORDE.Weapons_MultRPM_Add(ply, "slomotion")
+		HORDE:Modifier_AddToWeapons(ply, "Mult_RPM", "slomotion")
 		return
 	end
 	
 	local mult_rpm = 1 + (1 / slow_motion_stage / 3) * slomo_bonus
-    
-	HORDE.Weapons_MultRPM_Add(ply, "slomotion", mult_rpm)
+    HORDE:Modifier_AddToWeapons(ply, "Mult_RPM", "slomotion", mult_rpm)
+end
+
+HORDE.SlowMotion_ReloadBonus = function(ply, slow_motion_stage, slomo_bonus)
+	if !hook.Run("SlowMotion_ReloadBonus_Allow", ply) then return end
+
+	if not slomo_bonus or slomo_bonus <= 0 then return end
+
+	if slow_motion_stage == 1.0 then
+		HORDE:Modifier_AddToWeapons(ply, "Mult_ReloadTime", "slomotion")
+		return
+	end
+    HORDE:Modifier_AddToWeapons(ply, "Mult_ReloadTime", "slomotion", 1 / (slomo_bonus + 1))
 end
 
 HORDE.SlowMotion_MeleeAttackSpeedBonus = function(ply, slow_motion_stage, slomo_bonus)
@@ -217,24 +48,10 @@ HORDE.SlowMotion_MeleeAttackSpeedBonus = function(ply, slow_motion_stage, slomo_
 	if not slomo_bonus or slomo_bonus <= 0 then return end
 	
 	if slow_motion_stage == 1.0 then
-		HORDE.Weapons_MultAttackMeleeSpeed_Add(ply, "slomotion")
+		HORDE:Modifier_AddToWeapons(ply, "Mult_MeleeTime", "slomotion")
 		return
 	end
-    
-	HORDE.Weapons_MultAttackMeleeSpeed_Add(ply, "slomotion", Lerp((slomo_bonus / 2) * (1 / slow_motion_stage / 3), 1, 3))
-end
-
-HORDE.SlowMotion_ReloadBonus = function(ply, slow_motion_stage, slomo_bonus)
-	if !hook.Run("SlowMotion_ReloadBonus_Allow", ply) then return end
-	
-	if not slomo_bonus or slomo_bonus <= 0 then return end
-	
-	if slow_motion_stage == 1.0 then
-		HORDE.Weapons_MultReloadSpeed_Add(ply, "slomotion")
-		return
-	end
-    
-	HORDE.Weapons_MultReloadSpeed_Add(ply, "slomotion", slomo_bonus + 1)
+	HORDE:Modifier_AddToWeapons(ply, "Mult_MeleeTime", "slomotion", 1 / Lerp((slomo_bonus / 2) * (1 / slow_motion_stage / 3), 1, 3))
 end
 
 local function call_all_bonus_hooks(ply, slow_motion_stage, slomo_bonus)
@@ -245,35 +62,6 @@ end
 
 hook.Add("Horde_SlowMotion_start_Bonus", "Horde_SlowMotion_CalculateBonuses", call_all_bonus_hooks)
 hook.Add("Horde_SlowMotion_end_Bonus", "Horde_SlowMotion_CalculateBonuses", call_all_bonus_hooks)
-
-local function add_newweapon_and_addallmults(wep)
-	local ply = wep:GetOwner()
-	if arccw_melees_bases[wep.Base] or tfa_melees_base[wep.Base] then
-		init_meleeattackspeed_table(wep)
-		wep.Horde_MeleeAttackSpeedMults = table.Copy(ply.Horde_MeleeAttackSpeedMults) or {}
-		calculate_total_meleeattackspeed(wep)
-	else
-		if ply.Horde_ReloadSpeedMults then
-			init_reload_speed_table(wep)
-			wep.Horde_ReloadSpeedMults = table.Copy(ply.Horde_ReloadSpeedMults) or {}
-			calculate_total_reloadspeed(wep)
-		end
-		
-		if ply.Horde_RPMMults then
-			init_rpm_table(wep)
-			wep.Horde_RPMMults = table.Copy(ply.Horde_RPMMults) or {}
-			calculate_total_rpmmult(wep)
-		end
-	end
-end
-
-if SERVER then 
-	hook.Add("WeaponEquip", "Horde_ModifiersMultLoad", function(wep) 
-		timer.Simple(0, function() 
-			add_newweapon_and_addallmults(wep)
-		end)
-	end)
-end
 
 
 --                 TEMPLATES
@@ -359,6 +147,7 @@ end
 local funcs = {}
 local last_player_called_slowmotion = NULL
 local last_player_called_count = 0
+local last_slowmotion_called_timing = 0
 
 function funcs.CreateTimedFunc(name, func)
     if cur_slowmotion <= max_slow_time then
@@ -444,11 +233,14 @@ function HORDE.SlowMotion_Start()
 end
 
 hook.Add("Horde_OnNPCKilled", "StartSlowMotion", function(victim, killer, inflictor)
-    if inflictor:IsNPC() then return end -- 
-    if last_player_called_slowmotion == NULL and math.random() > 0.08 or last_player_called_slowmotion != NULL and (killer != last_player_called_slowmotion or last_player_called_count >= 3) and 
+    if inflictor:IsNPC() or CurTime() == last_slowmotion_called_timing then return end
+    if last_player_called_slowmotion == NULL and
+	math.random() > 0.08 or last_player_called_slowmotion != NULL and
+	(killer != last_player_called_slowmotion or last_player_called_count >= (killer:Horde_GetPerk("assault_base") and 5 or 3)) and
         !hook.Run("Horde_CanSlowTime")
     then return end
     last_player_called_slowmotion = killer
     last_player_called_count = last_player_called_count + 1
+	last_slowmotion_called_timing = CurTime()
     HORDE.SlowMotion_Start()
 end)

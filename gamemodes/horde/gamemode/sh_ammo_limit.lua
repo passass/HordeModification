@@ -1,13 +1,44 @@
 HORDE.Ammo_Max = 1000
+HORDE.Ammo_DefaultMaxMags = 20
+
+function HORDE:Ammo_CheckForValidWorking(ply)
+    local ammos_type = {}
+    
+    for _, wep in pairs(ply:GetWeapons()) do
+        local ammotype = wep:GetPrimaryAmmoType() or wep.Primary and wep.Primary.Ammo
+        if !ammotype then continue end
+        if !ammos_type[ammotype] then
+            ammos_type[ammotype] = {}
+        end
+        table.insert(ammos_type[ammotype], HORDE:Ammo_GetMaxAmmo(wep) + math.max(0, (wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1) - wep:Clip1()))
+    end
+
+    for ammotype, maxammos in pairs(ammos_type) do
+        local max_ammo = 0
+        for _, maxammo in pairs(maxammos) do
+            max_ammo = math.max(maxammo, max_ammo)
+        end
+        ply:SetAmmo(
+            math.min(ply:GetAmmoCount(ammotype), max_ammo),
+        ammotype)
+    end
+end
+
+function HORDE:Ammo_RemainToFillAmmo(wep)
+    local maxclip1 = (wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1)
+    return math.max(0, HORDE:Ammo_GetMaxAmmo(wep) +
+        math.max(0, maxclip1 -
+        wep:Clip1()) -
+        wep:GetOwner():GetAmmoCount(wep:GetPrimaryAmmoType()))
+end
 
 function HORDE:Ammo_RefillCost(ply, item)
     local wep = ply:GetWeapon(item.class)
-    local have_ammo = ply:GetAmmoCount(wep:GetPrimaryAmmoType())
-    local maxammo = HORDE:Ammo_GetMaxAmmo(wep)
-    if have_ammo >= maxammo then return 0 end
+    local tofillammo = HORDE:Ammo_RemainToFillAmmo(wep)
+    if tofillammo <= 0 then return 0 end
     local onemag_price = item.ammo_price or HORDE.default_ammo_price
     local clip = wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1
-    return math.ceil((maxammo - have_ammo) / clip * onemag_price)
+    return math.ceil(tofillammo / clip * onemag_price)
 end
 
 function HORDE:Ammo_RefillOneMagCost(ply, item)
@@ -20,8 +51,12 @@ function HORDE:Ammo_RefillOneMagCost(ply, item)
 end
 
 function HORDE:Ammo_GetMaxAmmo(wep)
-    local total = (wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1) * (wep.Horde_MaxMags or 20)
-    return total > HORDE.Ammo_Max and HORDE.Ammo_Max or total
+    local total = (wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1) * (wep.Horde_MaxMags or HORDE.Ammo_DefaultMaxMags)
+    return math.min(HORDE:Ammo_GetTotalLimit(wep), total)
+end
+
+function HORDE:Ammo_GetTotalLimit(wep)
+    return HORDE.Ammo_Max * (wep.Horde_TotalMaxAmmoMult or 1)
 end
 
 --[[function HORDE:Ammo_CanAfford(ply, item)

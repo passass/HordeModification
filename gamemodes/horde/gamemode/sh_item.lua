@@ -192,12 +192,20 @@ function HORDE:GetDefaultGadgets()
     HORDE:CreateGadgetItem("gadget_diamond_plating", 1750, 0, nil, {Berserker=3,Heavy=3})
     HORDE:CreateGadgetItem("gadget_corporate_mindset", 2000, 0, nil, {Survivor=5,Medic=5,Assault=5,Demolition=5,Berserker=5,Engineer=5,Warden=5,Cremator=5,Heavy=5,Ghost=5})
 
-    HORDE:CreateGadgetItem("gadget_vitality_booster", 2500, 1, {Survivor=true}, {Survivor=5})
+    HORDE:CreateGadgetItem("gadget_vitality_booster", 2500, 1, {Survivor=true})
     HORDE:CreateGadgetItem("gadget_damage_booster", 2500, 1, {Survivor=true}, {Survivor=10})
-	HORDE:CreateGadgetItem("gadget_agility_booster", 2500, 1, {Survivor=true}, {Survivor=15})
+	HORDE:CreateGadgetItem("gadget_agility_booster", 2500, 1, {Survivor=true, SWAT=true}, {
+        VariousConditions=true,
+        Survivor={Survivor=15},
+        SWAT = {SWAT=10}
+    })
     HORDE:CreateGadgetItem("gadget_transcendance", 3000, 1, {Survivor=true}, {Survivor=20})
 	
-    HORDE:CreateGadgetItem("gadget_iv_injection", 2000, 1, {Assault=true}, {Assault=5})
+    HORDE:CreateGadgetItem("gadget_iv_injection", 2000, 1, {Assault=true, SWAT=true}, {
+        VariousConditions=true,
+        Assault={Assault=5},
+        SWAT = {SWAT=5},
+    })
     HORDE:CreateGadgetItem("gadget_cortex", 2500, 1, {Assault=true}, {Assault=10})
     HORDE:CreateGadgetItem("gadget_neuro_amplifier", 3000, 2, {Assault=true}, {Assault=15})
     HORDE:CreateGadgetItem("gadget_ouroboros", 3000, 3, {Assault=true}, {Assault=20})
@@ -221,9 +229,7 @@ function HORDE:GetDefaultGadgets()
     HORDE:CreateGadgetItem("gadget_projectile_launcher_ballistic", 2500, 2, {Ghost=true}, {Ghost=10}, {HORDE.DMG_BALLISTIC})
     HORDE:CreateGadgetItem("gadget_death_mark", 2500, 2, {Ghost=true}, {Ghost=15}, {HORDE.DMG_BLUNT})
     HORDE:CreateGadgetItem("gadget_assassin_optics", 3000, 2, {Ghost=true}, {Ghost=20})
-    HORDE:CreateGadgetItem("gadget_timestop", 4000, 3, {Ghost=true}, {Ghost=30}
-        --{Ghost=30},
-    )
+    HORDE:CreateGadgetItem("gadget_timestop", 4000, 3, {Ghost=true}, {Ghost=30})
 
     HORDE:CreateGadgetItem("gadget_quantum_tunnel", 2000, 1, {Engineer=true}, {Engineer=5})
     HORDE:CreateGadgetItem("gadget_voidout", 2250, 1, {Engineer=true}, {Engineer=10})
@@ -244,6 +250,9 @@ function HORDE:GetDefaultGadgets()
     HORDE:CreateGadgetItem("gadget_projectile_launcher_fire", 2500, 2, {Cremator=true}, {Cremator=10}, {HORDE.DMG_FIRE})
     HORDE:CreateGadgetItem("gadget_barbeque", 2750, 2, {Cremator=true}, {Cremator=15})
     HORDE:CreateGadgetItem("gadget_hydrogen_burner", 3000, 3, {Cremator=true}, {Cremator=20})
+
+    HORDE:CreateGadgetItem("gadget_armored", 3000, 2, {SWAT=true}, {SWAT=15})
+    HORDE:CreateGadgetItem("gadget_smgpower", 3500, 3, {SWAT=true}, {SWAT=20})
 
     
     -- Droppable Gadgets
@@ -319,8 +328,12 @@ function HORDE:GetDefaultItemInfusions()
     HORDE.items["arccw_horde_vector"].infusions = med_weps_infs
 	HORDE.items["arccw_horde_msmc"].infusions = med_weps_infs
     HORDE.items["arccw_horde_aks74u"].infusions = ballistic_infusions_smgs
-	HORDE.items["arccw_horde_mp5_sup"].infusions = med_weps_infs
-    
+	HORDE.items["arccw_horde_mp5_sup_med"].infusions = med_weps_infs
+    HORDE.items["arccw_horde_mp5_sup"].infusions = ballistic_infusions_smgs
+    HORDE.items["arccw_horde_pm9"].infusions = ballistic_infusions_smgs
+    HORDE.items["arccw_horde_fmg9"].infusions = ballistic_infusions_smgs
+    HORDE.items["arccw_horde_mp40"].infusions = ballistic_infusions_smgs
+    HORDE.items["arccw_horde_g36c"].infusions = ballistic_infusions_smgs
     -- Shotguns
     HORDE.items["arccw_horde_shotgun"].infusions = ballistic_infusions_light
     HORDE.items["arccw_go_nova"].infusions = ballistic_infusions_light
@@ -422,7 +435,7 @@ function HORDE:GetDefaultItemsData()
     HORDE:CreateItem("Melee",      "Stunstick",      "weapon_stunstick",     10,  1, "Electric baton.",
     nil, 10, -1, nil, nil, nil, nil, {HORDE.DMG_BLUNT}, nil, {"Warden", "SpecOps"})
     HORDE:CreateItem("Melee",      "Crowbar",        "weapon_crowbar",       10,  1, "A rusty crowbar.",
-    nil, 10, -1, nil, nil, nil, nil, {HORDE.DMG_BLUNT}, nil, {"Survivor", "Assault", "Medic", "Demolition", "Engineer", "Ghost", "Gunslinger", "Heavy", "Cremator"})
+    nil, 10, -1, nil, nil, nil, nil, {HORDE.DMG_BLUNT}, nil, {"Survivor", "Assault", "Medic", "Demolition", "Engineer", "Ghost", "Gunslinger", "Heavy", "Cremator", "SWAT"})
     HORDE:CreateItem("Melee",      "Combat Knife",   "arccw_horde_knife",    100,  2, "A reliable bayonet.\nRMB to deal a heavy slash.",
     nil, 10, -1, nil, nil, nil, nil, {HORDE.DMG_SLASH}, nil, {"Berserker", "Samurai"})
     HORDE:CreateItem("Melee",      "Machete",        "arccw_horde_machete", 1000,  3, "Machete.",
@@ -467,13 +480,13 @@ function HORDE:GetDefaultItemsData()
     HORDE:CreateItem("Pistol",     "Flare Gun",      "arccw_horde_flaregun",   100,  4, "Orion Safety Flare Gun.\nIgnites enemies and deals Fire damage.",
     {Cremator=true}, 3, -1, nil, nil, nil, nil, {HORDE.DMG_FIRE}, nil, {"Cremator"})
     HORDE:CreateItem("Pistol",     "Glock",          "arccw_horde_glock",    750,  2, "Glock 18.\nSemi-automatic pistols manufactured in Austrian.",
-    {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true, SWAT=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Pistol",     "USP",            "arccw_horde_usp",      750,  2, "Universelle Selbstladepistole.\nA semi-automatic pistol developed in Germany by H&K.",
-    {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true, SWAT=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Pistol",     "P2000",          "arccw_horde_p2000",    750,  2, "Heckler & Koch P2000.\nA serviceable first-round pistol made by H&K.",
-    {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true, SWAT=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Pistol",     "P250",           "arccw_horde_p250",     750,  2, "SIG Sauer P250.\nA low-recoil sidearm with a high rate of fire.",
-    {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true, SWAT=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Pistol",     "R8",             "arccw_horde_r8",       750,  2, "R8 Revolver.\nDelivers a highly accurate and powerful round,\nbut at the expense of a lengthy trigger-pull.",
     {Survivor=true, Ghost=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Pistol",     "Deagle",         "arccw_horde_deagle",   750,  2, "Night Hawk .50C.\nAn iconic pistol that is diffcult to master.",
@@ -481,7 +494,7 @@ function HORDE:GetDefaultItemsData()
     HORDE:CreateItem("Pistol",     "M1911",          "arccw_horde_m1911",   750,  2, "Colt 1911.\nStandard-issue sidearm for the United States Armed Forces.",
     {Ghost=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
 	
-	local special_pistol_classes, special_pistol_requir = {Ghost=true, Survivor=true, Assault=true, Heavy=true}, {Ghost=30, Survivor=30, Assault=30, Heavy=30}
+	local special_pistol_classes, special_pistol_requir = {Ghost=true, SWAT=true, Survivor=true, Assault=true, Heavy=true}, {Ghost=30, Survivor=30, Assault=30, Heavy=30}
 	
 	HORDE:CreateItem("Pistol",     "Syringe Gun",          "arccw_horde_syringegun",   1750,  4, "Syringe Gun.\nA medic Syringe gun which have 40 ammo in clip.",
     {Medic=true}, 25, -1, nil, nil, {Medic=4}, nil, {HORDE.DMG_POISON})
@@ -518,33 +531,43 @@ function HORDE:GetDefaultItemsData()
     HORDE:CreateItem("Pistol",     "Dual Deagle",    "arccw_horde_akimbo_deagle",   1900,  5, "Dual Night Hawk .50C.\nAn iconic pistol that is diffcult to master.",
     {Ghost=true}, 5, -1, nil, nil, {Ghost=5}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("SMG",        "SMG1",           "arccw_horde_smg1",   100, 3, "A compact, fully automatic firearm.",
-    {Assault=true, Heavy=true, Survivor=true}, 5, -1, nil, "items/hl2/weapon_smg1.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Assault", "Heavy", "SpecOps"})
+    {Assault=true, Heavy=true, Survivor=true, SWAT=true}, 5, -1, nil, "items/hl2/weapon_smg1.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Assault", "Heavy", "SpecOps", "SWAT"})
     HORDE:CreateItem("SMG",        "TMP",            "arccw_horde_tmp",   1000, 3, "Steyr TMP.\nA select-fire 9×19mm Parabellum caliber machine pistol.",
-    {Medic=true, Assault=true, Heavy=true, Survivor=true, Cremator=true}, 8, -1, nil, nil, {Survivor=3}, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Heavy=true, Survivor=true, Cremator=true, SWAT=true}, 8, -1, nil, nil, {Survivor=3}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("SMG",        "Mac10",          "arccw_horde_mac10",    1500, 4, "Military Armament Corporation Model 10.\nBoasts a high rate of fire,\nwith poor spread accuracy and high recoil as trade-offs.",
-    {Medic=true, Assault=true, Heavy=true, Survivor=true, Cremator=true}, 8, -1, nil, nil, {Medic=1}, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Heavy=true, Survivor=true, Cremator=true, SWAT=true}, 8, -1, nil, nil, {SWAT=1}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("SMG",        "MP9",            "arccw_horde_mp9",      1500, 4, "Brügger & Thomet MP9.\nManufactured in Switzerland,\nthe MP9 is favored by private security firms world-wide.",
-    {Medic=true, Assault=true, Heavy=true, Survivor=true, Cremator=true}, 8, -1, nil, nil, {Medic=1}, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Heavy=true, Survivor=true, Cremator=true, SWAT=true}, 8, -1, nil, nil, {SWAT=1}, nil, {HORDE.DMG_BALLISTIC})
     --[[HORDE:CreateItem("SMG",        "MP5K",           "arccw_mw2_mp5k",    1500, 4, "Heckler & Koch MP5K.\nA more convert and mobile version of the MP5.",
     {Medic=true, Assault=true, Heavy=true, Survivor=true, Cremator=true}, 8, -1, nil, nil, {Assault=1,Medic=1}, nil, {HORDE.DMG_BALLISTIC})]]
     HORDE:CreateItem("SMG",        "MP5",            "arccw_horde_mp5",      1750, 5, "Heckler & Koch MP5.\nOften imitated but never equaled,\nthe MP5 is perhaps the most versatile SMG in the world.",
-    {Medic=true, Assault=true, Heavy=true, Survivor=true}, 8, -1, nil, nil, {Medic=3}, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Heavy=true, Survivor=true, SWAT=true}, 8, -1, nil, nil, {SWAT=3}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("SMG",        "UMP45",          "arccw_horde_ump45",      1750, 5, "KM UMP45.\nA lighter and cheaper successor to the MP5.",
-    {Medic=true, Assault=true, Heavy=true, Survivor=true}, 8, -1, nil, nil, {Medic=3}, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Heavy=true, Survivor=true, SWAT=true}, 8, -1, nil, nil, {SWAT=3}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("SMG",        "PP-2000",          "arccw_horde_pp2000",      1750, 5, "PP-2000.\nA small but power gun.",
-    {Medic=true, Assault=true, Heavy=true, Survivor=true}, 8, -1, nil, nil, {Medic=3}, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Heavy=true, Survivor=true, SWAT=true}, 8, -1, nil, nil, {SWAT=3}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("SMG",        "MTAR",            "arccw_horde_mtar",      2000, 6, "MTAR.\nMTAR is an Israeli bullpup assault rifle designed and produced by Israel Weapon Industries (IWI) as part of the Tavor rifle family.",
-    {Medic=true, Assault=true, Survivor=true}, 15, -1, nil, nil, {Medic=5}, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Survivor=true, SWAT=true}, 15, -1, nil, nil, {SWAT=5}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("SMG",        "PP Bizon",       "arccw_horde_bizon",    2000, 6, "PP-19 Bizon.\nOffers a high-capacity magazine that reloads quickly.",
-    {Medic=true, Assault=true, Survivor=true}, 15, -1, nil, nil, {Assault=3, Medic=6}, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Survivor=true, SWAT=true}, 15, -1, nil, nil, {Assault=3, SWAT=6}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("SMG",        "P90",            "arccw_horde_p90",      2000, 6, "ES C90.\nA Belgian bullpup PDW with a magazine of 50 rounds.",
-    {Medic=true, Assault=true, Survivor=true}, 15, -1, nil, nil, {Medic=6}, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Survivor=true, SWAT=true}, 15, -1, nil, nil, {SWAT=6}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("SMG",        "MP7A1 Medic PDW","arccw_horde_mp7m"  ,2500, 6, "A modified version of MP7A1 for medical purposes.\n\nPress B or ZOOM to fire healing darts.",
     {Medic=true, Survivor=true}, 8, -1, nil, nil, {
         VariousConditions=true,
         Medic = {Medic=13},
         Survivor = {Medic=13, Survivor=25},
     }, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
+
+    HORDE:CreateItem("SMG", "PM9","arccw_horde_pm9",2500, 5, "PM9.\n Fast Firerate Small SMG.",
+    {SWAT=true, Survivor=true}, 5, -1, nil, nil, {SWAT=10}, nil, {HORDE.DMG_BALLISTIC})
+
+    HORDE:CreateItem("SMG", "MP40","arccw_horde_mp40", 3000, 7, "MP40.\n SMG From World War II.",
+    {SWAT=true}, 10, -1, nil, nil, {SWAT=15}, nil, {HORDE.DMG_BALLISTIC})
+
+    HORDE:CreateItem("SMG", "FMG9","arccw_horde_fmg9", 3500, 6, "FMG9.\n Fast Firerate Compact SMG.",
+    {SWAT=true}, 8, -1, nil, nil, {SWAT=17}, nil, {HORDE.DMG_BALLISTIC})
+
     HORDE:CreateItem("SMG",        "PP-90M1 Medic", "arccw_horde_pp90m1"  ,2500, 6, "PP-90M1 Medic.\nA modified version of PP-90M1 for medical purposes.\n\nPress B or ZOOM to fire healing darts.",
     {Medic=true}, 20, -1, nil, nil, {Medic=18}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
     HORDE:CreateItem("SMG",        "Vector Medic PDW","arccw_horde_vector",3000, 6, "KRISS Vector Gen I equipped with a medical dart launcher.\nUses an unconventional blowback system that results in its high firerate.\n\nPress B or ZOOM to fire healing darts.\nHealing dart recharges every 1.5 seconds.",
@@ -552,10 +575,18 @@ function HORDE:GetDefaultItemsData()
 	
 	HORDE:CreateItem("SMG",        "Medic MSMC", "arccw_horde_msmc", 6000, 7, "MSMC - an Elite medic weapon with big power.",
     {Medic=true}, 10, -1, nil, nil, {Medic=30}, 1, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
-	HORDE:CreateItem("SMG",        "MP5A2 SUP MedMod", "arccw_horde_mp5_sup", 6000, 7, "MP5A2 SUP MedMod\nan rifle with sup mod and attached medic syringe system.",
+	HORDE:CreateItem("SMG",        "MP5A2 SUP MedMod", "arccw_horde_mp5_sup_med", 6000, 7, "MP5A2 MedMod\nan rifle with sup mod and attached medic syringe system.",
     {Medic=true}, 10, -1, nil, nil, {Medic=30}, 1, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
-    HORDE:CreateItem("SMG",        "AKS-74U", "arccw_horde_aks74u", 6000, 6, "AKS-74U - a strong weapon but without medics features.",
-    {Medic=true}, 15, -1, nil, nil, {Medic=30}, 1, {HORDE.DMG_BALLISTIC})
+    HORDE:CreateItem("SMG",        "MP5A2 SUP SupMod", "arccw_horde_mp5_sup", 6000, 6, "MP5A2 SUP\nan SMG with high firerate and medium damage.",
+    {SWAT=true}, 10, -1, nil, nil, {SWAT=30}, 1, {HORDE.DMG_BALLISTIC})
+    HORDE:CreateItem("SMG",        "G36C", "arccw_horde_g36c", 6000, 7, "G36C\nCompact version of G36.",
+    {SWAT=true}, 10, -1, nil, nil, {SWAT=30}, 1, {HORDE.DMG_BALLISTIC})
+    HORDE:CreateItem("SMG",        "AKS-74U", "arccw_horde_aks74u", 6000, 7, "AKS-74U - a strong weapon but without medics features.",
+    {Medic=true, SWAT=true}, 15, -1, nil, nil, {
+        VariousConditions=true,
+        Medic = {Medic=30},
+        SWAT = {SWAT=30},
+    }, 1, {HORDE.DMG_BALLISTIC})
 	
     HORDE:CreateItem("SMG",        "Tommi Boom",            "arccw_horde_thompson_expl", 2225, 6, "Tommi Boom.\nA M1921 with explosion module",
     {Demolition=true}, 12, -1, nil, nil, {Demolition=5}, nil, {HORDE.DMG_BLAST})
@@ -563,19 +594,19 @@ function HORDE:GetDefaultItemsData()
     HORDE:CreateItem("Shotgun",    "Pump-Action",    "arccw_horde_shotgun",100, 3, "A standard 12-gauge shotgun.",
     {Warden=true, Survivor=true}, 6, -1, nil, "items/hl2/weapon_shotgun.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Shotgun",    "Sawn-Off",           "arccw_horde_db_sawnoff",     1000, 3, "Sawn-Off.\nBasic double-barrel shotgun manufactured as an entry-level hunting weapon.",
-    {Assault=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 3, -1, nil, nil, {Warden=1}, nil, {HORDE.DMG_BALLISTIC})
+    {Assault=true, SWAT=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 3, -1, nil, nil, {Warden=1}, nil, {HORDE.DMG_BALLISTIC})
 	HORDE:CreateItem("Shotgun",    "Nova",           "arccw_go_nova",     1000, 4, "Benelli Nova.\nItalian pump-action 12-gauge shotgun.",
-    {Assault=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 10, -1, nil, nil, {Warden=2}, nil, {HORDE.DMG_BALLISTIC})
+    {Assault=true, SWAT=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 10, -1, nil, nil, {Warden=2}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Shotgun",    "M870",           "arccw_horde_870",      1500, 4, "Remington 870 Shotgun.\nManufactured in the United States.",
-    {Assault=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 10, -1, nil, nil, {Engineer=3}, nil, {HORDE.DMG_BALLISTIC})
+    {Assault=true, SWAT=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 10, -1, nil, nil, {Engineer=3}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Shotgun",    "MAG7",           "arccw_go_mag7",     1500, 4, "Techno Arms MAG-7.\nFires a specialized 60mm 12 gauge shell.",
-    {Assault=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 10, -1, nil, nil, {Warden=3}, nil, {HORDE.DMG_BALLISTIC})
+    {Assault=true, SWAT=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 10, -1, nil, nil, {Warden=3}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Shotgun",    "XM1014",         "arccw_go_m1014",    2000, 5, "Benelli M4 Super 90.\nFully automatic shotgun.",
-    {Assault=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 10, -1, nil, nil, {Warden=5}, nil, {HORDE.DMG_BALLISTIC})
+    {Assault=true, SWAT=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 10, -1, nil, nil, {Warden=5}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Shotgun",    "Double Barrel",  "arccw_horde_doublebarrel",    2000, 5, "Double Barrel Shotgun.\nDevastating power at close range.",
     {Survivor=true, Warden=true}, 10, -1, nil, nil, {Warden=5}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Shotgun",    "Model 1887",  "arccw_horde_m1887",    2000, 5, "Model 1887.\nModel 1887 is Lever-Action shotgun.",
-    {Assault=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 10, -1, nil, nil, {Warden=5}, nil, {HORDE.DMG_BALLISTIC})
+    {Assault=true, SWAT=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 10, -1, nil, nil, {Warden=5}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Shotgun",    "Trench Gun",     "arccw_horde_trenchgun", 2250, 6, "Winchester Model 1200.\nShoots incendiary pellets.",
     {Warden=true, Cremator=true}, 15, -1, nil, nil, {Warden=3, Cremator=1}, nil, {HORDE.DMG_FIRE}, {HORDE.Infusion_Quality, HORDE.Infusion_Impaling})
     HORDE:CreateItem("Shotgun",    "SPAS-12",        "arccw_mw2_spas12",  2250, 7, "Franchi SPAS-12.\nA combat shotgun manufactured by Italian firearms company Franchi.",
@@ -604,13 +635,13 @@ function HORDE:GetDefaultItemsData()
     {Demolition=true}, 8, -1, nil, nil, {Demolition=10, Warden=5}, nil, {HORDE.DMG_BLAST})
 
     HORDE:CreateItem("Rifle",      "AR15",           "arccw_go_ar15",     2000, 6, "AR-15 Style Rifle.\nA lightweight semi-automatic rifle based on ArmaLite AR-15 design.",
-    {Medic=true, Assault=true, Survivor=true, Ghost=true}, 10, -1, nil, nil, {Assault=2,Ghost=1}, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Survivor=true, Ghost=true, SWAT=true}, 10, -1, nil, nil, {Assault=2,Ghost=1}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Rifle",      "M14",           "arccw_horde_m14",     2200, 7, "M14.\nA semi-automatic rifle.",
     {Survivor=true, Ghost=true}, 10, -1, nil, nil, {Ghost=3}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Rifle",      "FAMAS",          "arccw_go_famas",    2250, 6, "FAMAS bullpup assault rifle.\nRecognised for its high rate of fire.",
-    {Medic=true, Assault=true, Survivor=true}, 10, -1, nil, nil, {Assault=3}, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Survivor=true, SWAT=true}, 10, -1, nil, nil, {Assault=3}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Rifle",      "Galil",          "arccw_go_ace",      2250, 6, "Galil ACE 22.\nDeveloped and originally manufactured by IMI.",
-    {Medic=true, Assault=true, Survivor=true}, 10, -1, nil, nil, {Assault=3}, nil, {HORDE.DMG_BALLISTIC})
+    {Medic=true, Assault=true, Survivor=true, SWAT=true}, 10, -1, nil, nil, {Assault=3}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Rifle",      "AK47",           "arccw_go_ak47",     2500, 7, "Avtomat Kalashnikova.\nA gas-operated, 7.62×39mm assault rifle developed in the Soviet Union.",
     {Assault=true, Survivor=true}, 10, -1, nil, nil, {Assault=5}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Rifle",      "M4A1",           "arccw_go_m4",       2500, 7, "Colt M4.\nA 5.56×45mm NATO, air-cooled, gas-operated, select fire carbine.",
@@ -716,7 +747,7 @@ function HORDE:GetDefaultItemsData()
     {Heavy=true}, 50, -1, nil, nil, {Heavy=20}, nil, {HORDE.DMG_BALLISTIC})
 
     HORDE:CreateItem("Explosive",  "Frag Grenade",   "weapon_frag",        100,  0, "A standard frag grenade.\nGood for crowd control.",
-    {Assault=true, Heavy=true, Demolition=true, Survivor=true, Ghost=true, Engineer=true, Warden=true, Cremator=true}, 100, -1, nil, nil, nil, nil, {HORDE.DMG_BLAST}, nil, {"Demolition"})
+    {Assault=true, Heavy=true, SWAT=true, Demolition=true, Survivor=true, Ghost=true, Engineer=true, Warden=true, Cremator=true}, 100, -1, nil, nil, nil, nil, {HORDE.DMG_BLAST}, nil, {"Demolition"})
     HORDE:CreateItem("Explosive",  "M67 Grenade",    "arccw_horde_nade_frag",1500,  2, "M67 High Explosive Fragmentation Grenade.\nMilitary grade, does large amounts of Blast damage.",
     {Demolition=true}, 100, -1, nil, nil, {Demolition=2}, nil, {HORDE.DMG_BLAST})
     HORDE:CreateItem("Explosive",  "Stun Grenade",   "arccw_horde_nade_stun", 800,  2, "Deals damage and Stuns enemy for 3 seconds.\nStun cooldown is 10 seconds.",
@@ -810,9 +841,9 @@ function HORDE:GetDefaultItemsData()
     {Engineer=true}, nil, nil, {type=HORDE.ENTITY_PROPERTY_WPN, wep_that_place=true, limit=1}, nil, {Warden=10}, nil)--, {HORDE.DMG_LIGHTNING})
 
     HORDE:CreateItem("Special",    "C4",  "horde_c4", 1500,  4, "C4.\nThrowable Bomb which explode on press detonator",
-    {Warden=true, Assault=true, Survivor=true, Heavy=true, Ghost=true, Demolition=true}, 75, -1, nil, "entities/horde_c4.png", {Demolition=30}, nil, {HORDE.DMG_BLAST})
+    {Warden=true, Assault=true, Survivor=true, SWAT=true, Heavy=true, Ghost=true, Demolition=true}, 75, -1, nil, "entities/horde_c4.png", {Demolition=30}, nil, {HORDE.DMG_BLAST})
     HORDE:CreateItem("Special",    "Claymore",  "horde_claymore", 1500,  3, "Claymore.\nBomb that explode on approaching enemies",
-    {Warden=true, Assault=true, Survivor=true, Heavy=true, Ghost=true, Demolition=true}, 60, -1, nil, "entities/horde_claymore.png", {Demolition=15}, nil, {HORDE.DMG_BLAST})
+    {Warden=true, Assault=true, Survivor=true, SWAT=true, Heavy=true, Ghost=true, Demolition=true}, 60, -1, nil, "entities/horde_claymore.png", {Demolition=15}, nil, {HORDE.DMG_BLAST})
     
     HORDE:CreateItem("Special",    "Heat Crossbow",  "arccw_horde_heat_crossbow", 1750,  4, "Improvised sniper weapon.\nHas two firemodes (Ballistic/Heat).\n\nDeals 300% headshot damage.",
     {Survivor=true, Ghost=true, Engineer=true, Cremator=true}, 2, -1, nil, "items/hl2/weapon_crossbow.png", nil, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_FIRE})
@@ -900,7 +931,7 @@ function HORDE:GetDefaultItemsData()
     {Berserker=true, Heavy=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, override_maxarmor=true, armor=200}, "items/armor_200.png", {Survivor=5, Berserker=25, Assault=15, Heavy=20})
     
     HORDE:CreateItem("Equipment", "Advanced Kevlar Armor", "armor_survivor", 1000, 0, "Distinguished Survivor armor.\n\nFills up 100 of your armor bar and override if your limit is lower.\nProvides 5% increased damage resistance.",
-    {Survivor=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, armor=100}, "items/armor_survivor.png", {Survivor=30}, 1)
+    {Survivor=true, SWAT=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, armor=100}, "items/armor_survivor.png", {Survivor=30}, 1)
     HORDE:CreateItem("Equipment", "Assault Vest", "armor_assault", 1000, 0, "Distinguished Assault armor.\n\nFills up 100 of your armor bar and override if your limit is lower.\nProvides 8% increased Ballistic damage resistance.",
     {Assault=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, armor=100}, "items/armor_assault.png", {Assault=30}, 1)
     HORDE:CreateItem("Equipment", "Bulldozer Suit", "armor_heavy", 1000, 0, "Distinguished Heavy armor.\n\nFills up 125 of your armor bar and override if your limit is lower.",

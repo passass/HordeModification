@@ -898,7 +898,7 @@ net.Receive("Horde_BuyItemAmmoPrimary", function (len, ply)
     end
 
     local is_maxammo = net.ReadBool()
-    
+
     local price
     if is_maxammo then
         price = HORDE:Ammo_RefillCost(ply, HORDE.items[class])
@@ -908,7 +908,7 @@ net.Receive("Horde_BuyItemAmmoPrimary", function (len, ply)
     
     if ply:Horde_GetMoney() >= price then
         local wpn = ply:GetWeapon(class)
-        if HORDE:GiveAmmo(ply, wpn, is_maxammo and HORDE.Ammo_Max or 1) then 
+        if HORDE:GiveAmmo(ply, wpn, is_maxammo and HORDE:Ammo_GetTotalLimit(wpn) or 1) then
 			ply:Horde_AddMoney(-price)
 			ply:Horde_SyncEconomy()
 		end

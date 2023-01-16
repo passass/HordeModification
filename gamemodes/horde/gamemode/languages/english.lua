@@ -170,6 +170,7 @@ Complexity: EASY
 
 {1} more movement speed. ({2} per level, up to {3}).
 {4} increased reload speed and firerate in slow motion. ({5} per level, up to {6}).
+5 slow motion stacks instead of 3.
 
 Gain Adrenaline when you kill an enemy.
 Adrenaline increases damage and speed by {7}.]]

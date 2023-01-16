@@ -189,8 +189,7 @@ function PANEL:AmmoDoClick(max_ammo, IsSecondary)
         return
     end
     local wep = LocalPlayer():GetWeapon(self.item.class)
-    local cur_ammo = LocalPlayer():GetAmmoCount(wep:GetPrimaryAmmoType())
-    if cur_ammo >= HORDE:Ammo_GetMaxAmmo(wep) then return end
+    if HORDE:Ammo_RemainToFillAmmo(wep) <= 0 then return end
     local price
     if max_ammo then
         price = HORDE:Ammo_RefillCost(LocalPlayer(), self.item)
@@ -749,8 +748,8 @@ function PANEL:Paint()
             local x, y =  self.buy_btn:GetPos()
             y = y - self.buy_btn:GetTall()
             local start_pos = x + 15
-            local classes = {"Survivor", "Assault", "Heavy", "Medic", "Demolition", "Ghost", "Engineer", "Berserker", "Warden", "Cremator"}
-            for _, class in pairs(classes) do
+            --local classes = {"Survivor", "Assault", "Heavy", "Medic", "Demolition", "Ghost", "Engineer", "Berserker", "Warden", "Cremator", "SWAT"}
+            for class, _  in pairs(HORDE.classes) do
                 local level = HORDE:WeaponLevelGetRequiredLevelClass(ply, self.item.levels, class)--self.item.levels[class]
                 if level and level > 0 then
                     local rank, rank_level = HORDE:LevelToRank(level)

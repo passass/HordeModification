@@ -11,6 +11,7 @@ HORDE.Class_Engineer = "Engineer"
 HORDE.Class_Berserker = "Berserker"
 HORDE.Class_Warden = "Warden"
 HORDE.Class_Cremator = "Cremator"
+HORDE.Class_SWAT = "SWAT"
 
 -- Creates a Horde class
 function HORDE:CreateClass(name, extra_description, max_hp, movespd, sprintspd, base_perk, perks, order, display_name, model, icon, subclasses)
@@ -260,6 +261,23 @@ function HORDE:GetDefaultClassesData()
         9,nil,nil,nil,
         {HORDE.Class_Cremator}
     )
+
+    HORDE:CreateClass(
+        HORDE.Class_SWAT,
+        "Has full access to SMGs.",
+        100,
+        GetConVar("horde_base_walkspeed"):GetInt(),
+        GetConVar("horde_base_runspeed"):GetInt(),
+        "swat_base",
+        {
+            [1] = {title = "Maneuverability", choices = {"assault_ambush", "assault_speedreload"}},--"assault_charge"}},
+            [2] = {title = "Adaptability", choices = {"heavy_liquid_armor", "swat_extendedclipsize"}},
+            [3] = {title = "Tank", choices = {"berserker_breathing_technique", "swat_berserker"}},
+            [4] = {title = "Conditioning", choices = {"assault_heightened_reflex", "swat_bandolier"}},
+        },
+        10,nil,nil,nil,
+        {HORDE.Class_SWAT}
+    )
 end
 
 if SERVER then
@@ -363,6 +381,7 @@ HORDE.classes_to_subclasses = {
     [HORDE.Class_Warden] = {HORDE.Class_Warden},
     [HORDE.Class_Berserker] = {HORDE.Class_Berserker},
     [HORDE.Class_Engineer] = {HORDE.Class_Engineer},
+    [HORDE.Class_SWAT] = {HORDE.Class_SWAT},
 }
 HORDE.classes_to_order = {
     [HORDE.Class_Survivor] = 0,
@@ -375,6 +394,7 @@ HORDE.classes_to_order = {
     [HORDE.Class_Berserker] = 7,
     [HORDE.Class_Warden] = 8,
     [HORDE.Class_Cremator] = 9,
+    [HORDE.Class_SWAT] = 10,
 }
 HORDE.order_to_class_name = {
     [0] = HORDE.Class_Survivor,
@@ -387,6 +407,7 @@ HORDE.order_to_class_name = {
     [7] = HORDE.Class_Berserker,
     [8] = HORDE.Class_Warden,
     [9] = HORDE.Class_Cremator,
+    [10] = HORDE.Class_SWAT,
 }
 HORDE.subclass_name_to_crc = {}
 HORDE.subclasses_to_classes = {}

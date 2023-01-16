@@ -3,7 +3,7 @@ SWEP.Spawnable = true -- this obviously has to be set to true
 SWEP.Category = "ArcCW - MW3" -- edit this if you like
 SWEP.AdminOnly = false
 
-SWEP.PrintName = "MP5A2 SUPMod"
+SWEP.PrintName = "MP5A2 SUP MedMod"
 SWEP.Trivia_Class = "Submachine Gun"
 SWEP.Trivia_Desc = "A submachinegun derivative of the G3 design chambered in 9mm. Known for its use by the British SAS."
 SWEP.Trivia_Manufacturer = "Heckler & Koch"
@@ -30,6 +30,7 @@ SWEP.WorldModelOffset = {
 }
 SWEP.ViewModelFOV = 60
 
+HORDE.Syringe:ApplyMedicSkills(SWEP, 10)
 SWEP.Damage = 50
 SWEP.DamageMin = 25 -- damage done at maximum range
 SWEP.RangeMin = 25
@@ -54,7 +55,7 @@ SWEP.RecoilSide = 0.24
 SWEP.VisualRecoilMult = 0
 SWEP.RecoilRise = 0.1
 
-SWEP.Delay = 60 / 775 -- 60 / RPM.
+SWEP.Delay = 60 / 700 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
@@ -74,8 +75,8 @@ SWEP.NPCWeaponType = {
 SWEP.NPCWeight = 100
 
 SWEP.AccuracyMOA = 2.5 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 375 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 100
+SWEP.HipDispersion = 550 -- inaccuracy added by hip firing.
+SWEP.MoveDispersion = 150
 
 SWEP.Primary.Ammo = "pistol" -- what ammo type the gun uses
 SWEP.MagID = "mp5" -- the magazine pool this gun draws from

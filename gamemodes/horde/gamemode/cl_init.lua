@@ -151,18 +151,7 @@ function HORDE:ToggleMapConfig()
 end
 
 function HORDE:ToggleConfigMenu()
-    if not HORDE.ConfigMenuGUI then
-        HORDE.ConfigMenuGUI = vgui.Create("HordeConfigMenu")
-        HORDE.ConfigMenuGUI:SetVisible(false)
-    end
-
-    if HORDE.ConfigMenuGUI:IsVisible() then
-        HORDE.ConfigMenuGUI:Hide()
-        gui.EnableScreenClicker(false)
-    else
-        HORDE.ConfigMenuGUI:Show()
-        gui.EnableScreenClicker(true)
-    end
+    notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
 end
 
 -- Entity Highlights

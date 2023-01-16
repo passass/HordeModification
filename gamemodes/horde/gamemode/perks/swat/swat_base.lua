@@ -5,10 +5,7 @@ Complexity: EASY
 
 {1} more movement speed. ({2} per level, up to {3}).
 {4} increased reload speed and firerate in slow motion. ({5} per level, up to {6}).
-5 slow motion stacks instead of 3.
-
-Gain Adrenaline when you kill an enemy.
-Adrenaline increases damage and speed by {7}.]]
+]]
 PERK.Params = {
     [1] = {percent = true, level = 0.008, max = 0.20, classname = HORDE.Class_Assault},
     [2] = {value = 0.008, percent = true},
@@ -21,28 +18,23 @@ PERK.Params = {
 
 PERK.Hooks = {}
 PERK.Hooks.Horde_OnSetPerk = function(ply, perk)
-    if SERVER and perk == "assault_base" then
-        ply:Horde_SetMaxAdrenalineStack(ply:Horde_GetMaxAdrenalineStack() + 1)
+    if SERVER and perk == "swat_base" then
     end
 end
 
---[[PERK.Hooks.Horde_SlowMotion_start_Bonus = HORDE.SlowMotion_Template_RPMandReloadBonus
-PERK.Hooks.Horde_SlowMotion_end_Bonus = PERK.Hooks.Horde_SlowMotion_start_Bonus]]
-
 PERK.Hooks.Horde_OnUnsetPerk = function(ply, perk)
-    if SERVER and perk == "assault_base" then
-        ply:Horde_SetMaxAdrenalineStack(ply:Horde_GetMaxAdrenalineStack() - 1)
+    if SERVER and perk == "swat_base" then
     end
 end
 
 PERK.Hooks.Horde_PlayerMoveBonus = function(ply, bonus_walk, bonus_run)
-    if not ply:Horde_GetPerk("assault_base") then return end
-    bonus_walk.more = bonus_walk.more * ply:Horde_GetPerkLevelBonus("assault_base")
-    bonus_run.more = bonus_run.more * ply:Horde_GetPerkLevelBonus("assault_base")
+    if not ply:Horde_GetPerk("swat_base") then return end
+    bonus_walk.more = bonus_walk.more * ply:Horde_GetPerkLevelBonus("swat_base")
+    bonus_run.more = bonus_run.more * ply:Horde_GetPerkLevelBonus("swat_base")
 end
 
 PERK.Hooks.SlowMotion_RPMBonus_Allow = function(ply) 
-	return ply:Horde_GetPerk("assault_base")
+	return ply:Horde_GetPerk("swat_base")
 end
 
 PERK.Hooks.SlowMotion_ReloadBonus_Allow = PERK.Hooks.SlowMotion_RPMBonus_Allow
@@ -51,7 +43,7 @@ PERK.Hooks.SlowMotion_ReloadBonus_Allow = PERK.Hooks.SlowMotion_RPMBonus_Allow
 
 PERK.Hooks.Horde_PrecomputePerkLevelBonus = function (ply)
     if SERVER then
-        ply:Horde_SetPerkLevelBonus("assault_base", 1 + math.min(0.20, 0.008 * ply:Horde_GetLevel(HORDE.Class_Assault)))
+        ply:Horde_SetPerkLevelBonus("swat_base", 1 + math.min(0.20, 0.008 * ply:Horde_GetLevel(HORDE.Class_Assault)))
         ply:Horde_SetPerkLevelBonus("slomo_bonus", math.min(2, 0.08 * ply:Horde_GetLevel(HORDE.Class_Assault)))
     end
 end
