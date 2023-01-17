@@ -207,7 +207,7 @@ SWEP.Attachments = {
     }, --2
     {
         PrintName = "Tactical",
-        Slot = "bo1_tacpistol",
+        Slot = "tac",
         VMScale = Vector(0.75, 0.75, 0.75),
         Bone = "tag_weapon",
         Offset = {
@@ -218,7 +218,7 @@ SWEP.Attachments = {
     }, --3
     { --4
         PrintName = "Fire Group",
-        Slot = {"bo1_fcg"},
+        Slot = "fcg",
         ExcludeFlags = {"wolf_ee"},
     },
     {
@@ -229,12 +229,12 @@ SWEP.Attachments = {
     },
     {
         PrintName = "Ammo Type",
-        Slot = {"ammo_pap", "bo1_ammo"},
+        Slot = "ammo_bullet",
         ExcludeFlags = {"wolf_ee"},
     }, --5
     {
         PrintName = "Perk",
-        Slot = {"bo1_perk", "bo1_perk_wolfmg"}
+        Slot = "perk"
     }, --6
     {
         PrintName = "Charm",

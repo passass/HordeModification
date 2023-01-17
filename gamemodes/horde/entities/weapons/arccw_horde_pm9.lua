@@ -182,7 +182,7 @@ SWEP.Attachments = {
     },
     { --4
         PrintName = "Tactical",
-        Slot = "bo1_tacpistol", "tac_pistol",
+        Slot = {"bo1_tacpistol", "tac_pistol"},
         VMScale = Vector(0.85, 0.85, 0.85),
         WMScale = Vector(0.85, 0.85, 0.85),
         Bone = "tag_weapon",
@@ -198,7 +198,7 @@ SWEP.Attachments = {
     },
     { --5
         PrintName = "Ammo Type",
-        Slot = "ammo",
+        Slot = "ammo_bullet",
     },
     {
         PrintName = "Perk",

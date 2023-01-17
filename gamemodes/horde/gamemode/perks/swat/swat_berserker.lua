@@ -7,7 +7,7 @@ PERK.Params = {
 
 PERK.Hooks = {}
 PERK.Hooks.Horde_OnSetMaxHealth = function(ply, bonus)
-    if SERVER and ply:Horde_GetPerk("berserker_savagery") then
+    if SERVER and ply:Horde_GetPerk("swat_berserker") then
         bonus.increase = bonus.increase + 0.25
     end
 end

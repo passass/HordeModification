@@ -287,12 +287,14 @@ local function CalculateTotalMult(wep, modifier)
 	end
 
 	if special_conditions[modifier] and special_conditions[modifier].calculate and special_conditions[modifier].calculate(wep, total_mult) then
-		
+		return
 	end
+
+	wep[modifier] = total_mult
+
 	if wep.ArcCW then
 		wep.ModifiedCache[modifier] = true
-		wep.TickCache_Mults[modifier] = nil
-		wep[modifier] = total_mult
+		wep.TickCache_Mults[modifier] = nil	
 		if wep.ModifiedCache_Permanent then
 			wep.ModifiedCache_Permanent[modifier] = true
 		end

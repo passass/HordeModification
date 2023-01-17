@@ -333,8 +333,8 @@ if CLIENT then
 			timer.Simple(0, function() if IsValid(self) then self:DoLHIKAnimation(key, time, true) end end)
 			return
 		end
-
-		local vm = TFA and TFA.INS2 and IsValid(TFA.INS2.HandsEnt) and TFA.INS2.HandsEnt or self:GetOwner():GetViewModel()
+        local owner = self:GetOwner()
+		local vm = TFA and TFA.INS2 and IsValid(TFA.INS2.HandsEnt) and TFA.INS2.HandsEnt or owner.GetViewModel and owner:GetViewModel()
 		if !IsValid(vm) then return end
 
 		local lhik_model

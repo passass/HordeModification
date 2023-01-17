@@ -215,7 +215,7 @@ SWEP.Attachments = {
         CorrectiveAng = Angle(-0.5, 0, 0),
         GivesFlags = {"rail"},
     },
-    {
+    --[[{
         PrintName = "Barrel",
         DefaultAttName = "RIS Barrel",
         Slot = {"mw3_mp5_barrel"},
@@ -226,7 +226,7 @@ SWEP.Attachments = {
             vang = Angle(0, 0, 0),
         },
 		--Installed="mw3e_barrel_mp5_sd", Integral=true
-    },
+    },]]
     { --2
         PrintName = "Muzzle",
         DefaultAttName = "Standard Muzzle",
@@ -299,39 +299,15 @@ SWEP.Attachments = {
 SWEP.RejectAttachments = {
 }
 
-SWEP.Hook_NameChange = function(wep, name)
-    local pap = wep:GetBuff_Override("PackAPunch")
-
-    local gunname = "HK MP5A2"
-
-    if wep.Attachments[2].Installed == "cod4e_barrel_mp5_sd" then
-        gunname = "HK MP5SD3"
-    end
-
-    if pap then
-        gunname = "HK MP115 Nimrod"
-        if wep.Attachments[2].Installed == "cod4e_barrel_mp5_sd" then
-            gunname = "HK MP115 Semiramis"
-        end
-    end
-
-    return gunname
-end
-
 SWEP.Hook_ModifyBodygroups = function(wep, data)
     local vm = data.vm
-    local papcamo = wep:GetBuff_Override("PackAPunch")
 
-    if wep.Attachments[2].Installed then
+    --[[if wep.Attachments[2].Installed then
         vm:SetBodygroup(2,1)
-    end
+    end]]
 
     if wep.Attachments[1].Installed then
         vm:SetBodygroup(2,2)
-    end
-
-    if papcamo then
-        vm:SetSkin(2)
     end
 end
 

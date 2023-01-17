@@ -271,7 +271,7 @@ function HORDE:GetDefaultClassesData()
         "swat_base",
         {
             [1] = {title = "Maneuverability", choices = {"assault_ambush", "assault_speedreload"}},--"assault_charge"}},
-            [2] = {title = "Adaptability", choices = {"heavy_liquid_armor", "swat_extendedclipsize"}},
+            [2] = {title = "Adaptability", choices = {"swat_rapidfire", "swat_extendedclipsize"}},
             [3] = {title = "Tank", choices = {"berserker_breathing_technique", "swat_berserker"}},
             [4] = {title = "Conditioning", choices = {"assault_heightened_reflex", "swat_bandolier"}},
         },
