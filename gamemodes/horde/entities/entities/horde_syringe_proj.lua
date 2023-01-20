@@ -133,7 +133,7 @@ end
 function ENT:PhysicsCollide( data, physobj )
 
 	if self.HitObject then return end
-	if IsValid(data.HitEntity) then 
+	if IsValid(data.HitEntity) and !self.MarkForDeleted then 
 		local owner = self:GetOwner()
 		if data.HitEntity == self:GetOwner() then return end
 		if data.HitEntity:IsNPC() then
@@ -160,7 +160,7 @@ function ENT:PhysicsCollide( data, physobj )
                 HORDE:OnPlayerHeal(data.HitEntity, healinfo)
 			end
 		end
-		
+		self.MarkForDeleted = true
 		self:Remove()
 		return true
 	end

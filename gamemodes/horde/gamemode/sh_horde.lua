@@ -252,7 +252,7 @@ end
 
 local special_conditions = {
 	Mult_MeleeTime = {
-		preinit = init_meleeattackspeed_table,
+		postinit = init_meleeattackspeed_table,
 		calculate = calculate_total_meleeattackspeed,
 		add_modifier_if = HORDE.IsMeleeWeapon,
 	},
@@ -303,22 +303,26 @@ end
 
 
 local function InitModifierTable(wep, modifier)
-	if special_conditions[modifier] and special_conditions[modifier].preinit and special_conditions[modifier].preinit(wep) then
-		return
-	end
 	if !wep.Horde_ModifiersTable then
 		wep.Horde_ModifiersTable = {}
 	end
+	
+	if special_conditions[modifier] and special_conditions[modifier].preinit and special_conditions[modifier].preinit(wep) then
+		return
+	end
+	
 	local init
 	if wep.Horde_ModifiersTable[modifier] and wep.Horde_ModifiersTable[modifier]["init"] then
 		init = wep.Horde_ModifiersTable[modifier]["init"]
 	end
+	
 	wep.Horde_ModifiersTable[modifier] = {}
 	if init then
 		wep.Horde_ModifiersTable[modifier]["init"] = init
 	elseif wep[modifier] then
 		wep.Horde_ModifiersTable[modifier]["init"] = wep[modifier]
 	end
+	
 	if special_conditions[modifier] and special_conditions[modifier].postinit then
 		special_conditions[modifier].postinit(wep)
 	end

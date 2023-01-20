@@ -754,8 +754,8 @@ local function autoinclude(dir)
 end
 
 autoinclude(searchdir)
-
-include(searchdir .. "/horde_modifs.lua")
+AddCSLuaFile("weapons/arccw_base/horde_modifs.lua")
+include("weapons/arccw_base/horde_modifs.lua")
 
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "NWState")
