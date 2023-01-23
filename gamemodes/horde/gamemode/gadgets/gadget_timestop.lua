@@ -3,7 +3,7 @@ GADGET.Description =
 [[Stop Time for 5 seconds.]]
 GADGET.Icon = "items/gadgets/timestop.png"
 GADGET.Duration = 6
-GADGET.Cooldown = 5--90
+GADGET.Cooldown = 90
 GADGET.Active = true
 GADGET.Params = {}
 GADGET.Hooks = {}
