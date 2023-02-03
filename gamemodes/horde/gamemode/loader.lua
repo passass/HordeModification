@@ -135,6 +135,7 @@ else
 
 	NEW_include("cl_economy.lua")
 	NEW_include("cl_achievement.lua")
+	NEW_include("cl_hitnumbers.lua")
 	NEW_include("gui/cl_gameinfo.lua")
 	NEW_include("gui/cl_status.lua")
 	NEW_include("gui/cl_ready.lua")

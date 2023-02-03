@@ -141,7 +141,6 @@ SWEP.Animations = {
     },
     ["reload"] = {
         Source = "reload",
-        Time = 1,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         SoundTable = {
 						{s = "weapons/pistol/pistol_reload1.wav", t = 0},

@@ -12,6 +12,7 @@ local shop_icons = {
 ["Gadget"] = Material("horde/categories/gadget.png"),
 }
 
+local stats_offset = 145
 
 local PANEL = {}
 
@@ -451,14 +452,14 @@ function PANEL:Paint(w, h)
     local mat = Material("weight.png", "mips smooth")
     surface.SetMaterial(mat)
     surface.SetDrawColor(Color(255,255,255))
-    surface.DrawTexturedRect(self:GetWide() - 60, 14, 20, 20)
+    surface.DrawTexturedRect(self:GetWide() - 60 - stats_offset, 14, 20, 20)
     text = translate.Get("Shop_Cash") .. ": " .. tostring(LocalPlayer():Horde_GetMoney()) .. '$ ' .. ' ' .. tostring(LocalPlayer():Horde_GetSkullTokens()) .. '       ' .. weight_text
-    draw.SimpleText(text, 'Heading', self:GetWide() - 60, 24, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+    draw.SimpleText(text, 'Heading', self:GetWide() - 60 - stats_offset, 24, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 
     local mat = Material("skull.png", "mips smooth")
     surface.SetMaterial(mat)
     surface.SetDrawColor(Color(255,255,255))
-    surface.DrawTexturedRect(self:GetWide() - surface.GetTextSize(weight_text) * 1.5 - 30, 14, 20, 20)
+    surface.DrawTexturedRect(self:GetWide() - surface.GetTextSize(weight_text) * 1.5 - 50 - stats_offset, 14, 20, 20)
 end
 
 vgui.Register("HordeShop", PANEL)
