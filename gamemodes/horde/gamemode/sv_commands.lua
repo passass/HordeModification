@@ -129,7 +129,8 @@ function Shop(ply)
         return
     end]]--
 
-    if ply:Alive() then
+    local res = hook.Run("Horde_OnPlayerOpenShop", ply)
+    if res ~= true then
         if HORDE.has_buy_zone and (not ply:Horde_GetInBuyZone()) then
             return
         end
@@ -339,6 +340,7 @@ concommand.Add("horde_testing_gorlami", function (ply, cmd, args)
         local amount = 500
         ply:Horde_AddSkullTokens(amount)
         ply:Horde_SyncEconomy()
+        RunConsoleCommand("horde_testing_disable_level_restrictions")
     end
 end)
 

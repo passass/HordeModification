@@ -90,7 +90,7 @@ function SWEP:PrimaryAttack()
 		-- Even though the viewmodel has looping IDLE anim at all times, we need this to make fire animation work in multiplayer
 		timer.Create( "weapon_idle" .. self:EntIndex(), self:SequenceDuration(), 1, function() if ( IsValid( self ) ) then self:SendWeaponAnim( ACT_VM_IDLE ) end end )
 
-		self:StartRegenPoints(.08)
+		self:StartRegenPoints(.15)
 
 	else
 
@@ -110,12 +110,16 @@ function SWEP:SecondaryAttack()
 	local need = self.HealAmount
 	if ( IsValid( ent ) ) then need = self.HealAmount end
 
-	if ( IsValid( ent ) && self:Clip1() >= need) then
+	if ( IsValid( ent ) && self:Clip1() >= need && ( ent:IsPlayer() or ent:GetClass() == "npc_vj_horde_antlion") ) then
 
 		self:TakePrimaryAmmo( need )
 
         local healinfo = HealInfo:New({amount = 20, healer = self.Owner, immediately = false})
-        HORDE:OnPlayerHeal(ent, healinfo)
+        if ent:IsPlayer() then
+			HORDE:OnPlayerHeal(ent, healinfo)
+		elseif ent:GetClass() == "npc_vj_horde_antlion" then
+			HORDE:OnAntlionHeal(ent, healinfo)
+		end
 		ent:EmitSound( HealSound )
 
 		self:SendWeaponAnim( ACT_VM_PRIMARYATTACK )
@@ -125,7 +129,7 @@ function SWEP:SecondaryAttack()
 
 		timer.Create( "weapon_idle" .. self:EntIndex(), self:SequenceDuration(), 1, function() if ( IsValid( self ) ) then self:SendWeaponAnim( ACT_VM_IDLE ) end end )
 
-		self:StartRegenPoints(.16)
+		self:StartRegenPoints(.2)
 
 	else
 

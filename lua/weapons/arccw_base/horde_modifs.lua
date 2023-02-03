@@ -320,6 +320,8 @@ end
 
 if CLIENT then
 
+    
+
 	local function qerp(delta, a, b)
 		local qdelta = -(delta ^ 2) + (delta * 2)
 

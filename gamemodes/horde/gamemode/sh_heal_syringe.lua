@@ -90,6 +90,9 @@ function HORDE.Syringe:ApplyMedicSkills(wep, hptoheal)
                 if ent:IsPlayer() then
                     local healinfo = HealInfo:New({amount = hptoheal, healer = ply, immediately = false})
                     HORDE:OnPlayerHeal(ent, healinfo)
+                elseif ent:GetClass() == "npc_vj_horde_antlion" then
+                    local healinfo = HealInfo:New({amount = 10, healer = self.Owner})
+                    HORDE:OnAntlionHeal(ent, healinfo)
                 elseif ent:IsNPC() then
                     local dmg = DamageInfo()
                     dmg:SetDamage(25)

@@ -48,6 +48,12 @@ end
 
 local plymeta = FindMetaTable("Player")
 
+function HORDE:OnAntlionHeal(npc, healinfo, silent)
+    hook.Run("Horde_OnAntlionHeal", npc, healinfo)
+    npc:Horde_Evolve(healinfo:GetHealAmount() * 1.5)
+    npc:SetHealth(math.min(npc:GetMaxHealth() * (1 + healinfo:GetOverHealPercentage()), npc:Health() + healinfo:GetHealAmount()))
+end
+
 function plymeta:Horde_AddHealAmount(amount)
     if GetConVar("horde_enable_sandbox"):GetInt() == 1 then return end
     if not self.Horde_HealAmount then self.Horde_HealAmount = 0 end

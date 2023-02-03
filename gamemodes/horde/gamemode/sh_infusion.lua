@@ -136,7 +136,7 @@ Weapon damage is unaffected by perks or gadgets.
 [HORDE.Infusion_Rejuvenating] = [[
 Amplifies weapon healing/leeching by 25%.
 
-25% less weapon damage.
+20% less weapon damage.
 ]],
 [HORDE.Infusion_Quicksilver] = [[
 Increases/decreases weapon damage based on player's available weight.
@@ -151,10 +151,10 @@ Reduces player damage taken based on weapon weight.
 
 Decrease 1% damage taken for every 1 weight on the weapon.
 
-25% less weapon damage.
+20% less weapon damage.
 ]],
 [HORDE.Infusion_Siphoning] = [[
-+1 health when you kill enemy.
++1 health when you kill an enemy.
 
 25% less weapon damage.
 ]],
@@ -234,7 +234,7 @@ local function concussive_damage(ply, npc, bonus, hitgroup, dmginfo)
         bonus.more = bonus.more * 0.75
         dmginfo:SetDamageType(DMG_CLUB)
     end
-    npc:Horde_AddStun(dmginfo:GetDamage() * 0.25)
+    npc:Horde_AddDebuffBuildup(HORDE.Status_Stun, dmginfo:GetDamage() * 0.25, ply, dmginfo:GetDamagePosition())
 end
 
 local function flaming_damage(ply, npc, bonus, hitgroup, dmginfo)
@@ -284,11 +284,11 @@ local function impaling_damage(ply, npc, bonus, hitgroup, dmginfo)
 end
 
 local function rejuvenating_damage(ply, npc, bonus, hitgroup, dmginfo)
-    bonus.more = bonus.more * 0.75
+    bonus.more = bonus.more * 0.8
 end
 
 local function siphoning_damage(ply, npc, bonus, hitgroup, dmginfo)
-    bonus.more = bonus.more * 0.75
+    bonus.more = bonus.more * 0.8
 end
 
 local function quicksilver_damage(ply, npc, bonus, hitgroup, dmginfo)

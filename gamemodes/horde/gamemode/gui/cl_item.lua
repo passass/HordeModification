@@ -82,11 +82,26 @@ function PANEL:SetData(item, description_panel, infusion_panel)
 
     self.buy_btn = btn
 
-    local weight_panel = vgui.Create("DLabel", self)
+    local weight_panel = vgui.Create("DPanel", self)
     weight_panel:Dock(RIGHT)
     weight_panel:SetSize(50, weight_panel:GetTall())
-    weight_panel:SetFont("Item")
-    weight_panel:SetText("[" .. tostring(self.weight) .."]")
+    weight_panel:DockMargin(10,0,10,0)
+    weight_panel.Paint = function () end
+
+    local weight_panel_text = vgui.Create("DLabel", weight_panel)
+    weight_panel_text:Dock(LEFT)
+    weight_panel_text:SetSize(10, weight_panel:GetTall())
+    weight_panel_text:SetFont("Item")
+    weight_panel_text:SetText(tostring(self.weight))
+    weight_panel_text:SetContentAlignment(6)
+    local weight_panel_icon = vgui.Create("DImage", weight_panel)
+    weight_panel_icon:SetSize(25, 25)
+    weight_panel_icon:SetPos(10, 6)
+    weight_panel_icon:SetMaterial(Material("weight.png", "mips smooth"))
+    --weight_panel_icon:SetPos(10,5)
+    self.weight_panel = weight_panel
+    self.weight_panel_text = weight_panel_text
+    self.weight_panel_icon = weight_panel_icon
     self.weight_panel = weight_panel
 
     local price_panel = vgui.Create("DLabel", self)
@@ -107,9 +122,9 @@ function PANEL:SetData(item, description_panel, infusion_panel)
     end
 
     if LocalPlayer():Horde_GetInfusion(self.item.class) == HORDE.Infusion_None then
-        infusion_btn:SetText("Infusion: " .. "None")
+        infusion_btn:SetText(translate.Get("Game_Infusion") .. ": " .. translate.Get("Infusion_None"))
     else
-        infusion_btn:SetText("Infusion: " .. HORDE.Infusion_Names[LocalPlayer():Horde_GetInfusion(self.item.class)])
+        infusion_btn:SetText(translate.Get("Game_Infusion") .. ": " .. translate.Get("Infusion_" .. HORDE.Infusion_Names[LocalPlayer():Horde_GetInfusion(self.item.class)]))
     end
     infusion_btn:SetFont("Category")
 
@@ -204,6 +219,8 @@ function PANEL:Paint()
         if LocalPlayer():HasWeapon(self.item.class) or LocalPlayer():Horde_GetGadget() == self.item.class or (LocalPlayer().Horde_drop_entities and LocalPlayer().Horde_drop_entities[self.item.class]) then
             self.price_panel:SetTextColor(HORDE.color_crimson)
             self.price_panel:SetText("Owned")
+            self.weight_panel_text:SetTextColor(HORDE.color_crimson)
+            self.weight_panel_icon:SetImageColor(HORDE.color_crimson)
             if self.item.category == "Attachment" or self.item.category == "Gadget" or self.item.category == "Equipment" or self.item.category == "Explosive" or self.item.category == "Special" then
             else
                 self.infusion_btn:SetVisible(true)
@@ -211,20 +228,22 @@ function PANEL:Paint()
 
             local infusion = LocalPlayer():Horde_GetInfusion(self.item.class)
             if infusion == HORDE.Infusion_None then
-                self.infusion_btn:SetText("Infusion: " .. "None")
+                self.infusion_btn:SetText(translate.Get("Game_Infusion") .. ": " .. translate.Get("Infusion_None"))
             else
-                self.infusion_btn:SetText("Infusion: " .. HORDE.Infusion_Names[infusion])
+                self.infusion_btn:SetText(translate.Get("Game_Infusion") .. ": " .. translate.Get("Infusion_" .. HORDE.Infusion_Names[infusion]))
             end
         else
             self.infusion_btn:SetVisible(false)
             if is_rich then
                 surface.SetTextColor(self.text_color)
-                self.weight_panel:SetTextColor(self.text_color)
-                self.price_panel:SetTextColor(self.text_color)
+                    self.weight_panel_text:SetTextColor(self.text_color)
+                    self.weight_panel_icon:SetImageColor(self.text_color)
+                    self.price_panel:SetTextColor(self.text_color)
             else
                 surface.SetTextColor(self.text_color_poor)
-                self.weight_panel:SetTextColor(self.text_color_poor)
-                self.price_panel:SetTextColor(self.text_color_poor)
+                    self.weight_panel_text:SetTextColor(self.text_color)
+                    self.weight_panel_icon:SetImageColor(self.text_color)
+                    self.price_panel:SetTextColor(self.text_color_poor)
             end
             if self.skull_tokens and self.skull_tokens > 0 then
                 if self.price <= 0 then

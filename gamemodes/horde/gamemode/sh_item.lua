@@ -199,7 +199,8 @@ function HORDE:GetDefaultGadgets()
         Survivor={Survivor=15},
         SWAT = {SWAT=10}
     })
-    HORDE:CreateGadgetItem("gadget_transcendance", 3000, 1, {Survivor=true}, {Survivor=20})
+    HORDE:CreateGadgetItem("gadget_resistance_booster", 2500, 1, {Survivor=true}, {Survivor=20})
+    HORDE:CreateGadgetItem("gadget_ultimate_booster", 4000, 3, {Survivor=true}, {Survivor=25})
 	
     HORDE:CreateGadgetItem("gadget_iv_injection", 2000, 1, {Assault=true, SWAT=true}, {
         VariousConditions=true,
@@ -209,11 +210,13 @@ function HORDE:GetDefaultGadgets()
     HORDE:CreateGadgetItem("gadget_cortex", 2500, 1, {Assault=true}, {Assault=10})
     HORDE:CreateGadgetItem("gadget_neuro_amplifier", 3000, 2, {Assault=true}, {Assault=15})
     HORDE:CreateGadgetItem("gadget_ouroboros", 3000, 3, {Assault=true}, {Assault=20})
+    --HORDE:CreateGadgetItem("gadget_time_alter", 3000, 3, {Assault=true}, {Assault=25})
 
     HORDE:CreateGadgetItem("gadget_life_diffuser", 2000, 1, {Medic=true}, {Medic=5}, {HORDE.DMG_POISON})
     HORDE:CreateGadgetItem("gadget_projectile_launcher_heal", 2500, 2, {Medic=true}, {Medic=10}, {HORDE.DMG_POISON})
     HORDE:CreateGadgetItem("gadget_healing_beam", 2500, 2, {Medic=true}, {Medic=15}, {HORDE.DMG_POISON})
     HORDE:CreateGadgetItem("gadget_steroid", 3000, 1, {Medic=true}, {Medic=20})
+    --HORDE:CreateGadgetItem("gadget_defibrillator", 3500, 2, {Medic=true}, {Medic=25})
 
     HORDE:CreateGadgetItem("gadget_energy_shield", 2000, 1, {Heavy=true}, {Heavy=5})
     HORDE:CreateGadgetItem("gadget_hardening_injection", 2500, 1, {Heavy=true}, {Heavy=10})
@@ -224,6 +227,7 @@ function HORDE:GetDefaultGadgets()
     HORDE:CreateGadgetItem("gadget_projectile_launcher_blast", 2500, 2, {Demolition=true}, {Demolition=10}, {HORDE.DMG_BLAST})
     HORDE:CreateGadgetItem("gadget_nitrous_propellor", 2500, 2, {Demolition=true}, {Demolition=15})
     HORDE:CreateGadgetItem("gadget_ied", 3000, 3, {Demolition=true}, {Demolition=20}, {HORDE.DMG_BLAST})
+    HORDE:CreateGadgetItem("gadget_nuke", 3000, 4, {Demolition=true}, {Demolition=25}, {HORDE.DMG_BLAST})
 
     HORDE:CreateGadgetItem("gadget_optical_camouflage", 2500, 1, {Ghost=true}, {Ghost=5})
     HORDE:CreateGadgetItem("gadget_projectile_launcher_ballistic", 2500, 2, {Ghost=true}, {Ghost=10}, {HORDE.DMG_BALLISTIC})
@@ -253,15 +257,20 @@ function HORDE:GetDefaultGadgets()
 
     HORDE:CreateGadgetItem("gadget_armored", 3000, 2, {SWAT=true}, {SWAT=15})
     HORDE:CreateGadgetItem("gadget_smgpower", 3500, 3, {SWAT=true}, {SWAT=20})
+    --HORDE:CreateGadgetItem("gadget_ion_cannon", 3000, 3, {Cremator=true}, {Cremator=25})
 
-    
     -- Droppable Gadgets
     HORDE:CreateGadgetItem("gadget_vitality_shard", 500, 0)
     HORDE:CreateGadgetItem("gadget_damage_shard", 500, 0)
     HORDE:CreateGadgetItem("gadget_agility_shard", 500, 0)
+    HORDE:CreateGadgetItem("gadget_cleansing_shard", 500, 0)
     HORDE:CreateGadgetItem("gadget_matriarch_womb", 50, 0, nil, nil, nil, true)
     HORDE:CreateGadgetItem("gadget_unstable_injection", 50, 0, nil, nil, nil, true)
     HORDE:CreateGadgetItem("gadget_hellfire_tincture", 50, 0, nil, nil, nil, true)
+    HORDE:CreateGadgetItem("gadget_specimen_crystal_small", 200, 0, nil, nil, nil, true)
+    HORDE:CreateGadgetItem("gadget_specimen_crystal_medium", 500, 0, nil, nil, nil, true)
+    HORDE:CreateGadgetItem("gadget_specimen_crystal_large", 1000, 0, nil, nil, nil, true)
+    HORDE:CreateGadgetItem("gadget_elixir", 1000, 0, nil, nil, nil, true)
 end
 
 function HORDE:GetDefaultItemInfusions()
@@ -269,12 +278,13 @@ function HORDE:GetDefaultItemInfusions()
     local melee_slash_infusions = {HORDE.Infusion_Ruination, HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}HORDE.items["weapon_stunstick"].infusions = melee_blunt_infusions
     HORDE.items["weapon_crowbar"].infusions = melee_blunt_infusions
     HORDE.items["arccw_horde_knife"].infusions = melee_slash_infusions
+    HORDE.items["arccw_horde_machete"].infusions = melee_slash_infusions
     HORDE.items["arccw_horde_axe"].infusions = melee_slash_infusions
     HORDE.items["arccw_horde_katana"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Flaming, HORDE.Infusion_Arctic, HORDE.Infusion_Galvanizing, HORDE.Infusion_Septic, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
     HORDE.items["arccw_horde_bat"].infusions = melee_blunt_infusions
     HORDE.items["arccw_horde_chainsaw"].infusions = melee_slash_infusions
     HORDE.items["arccw_horde_inferno_blade"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Flaming, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
-    HORDE.items["arccw_horde_mjollnir"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
+    HORDE.items["arccw_horde_mjollnir"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Concussive, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
 	HORDE.items["horde_stormgiant"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
 	HORDE.items["horde_dualsword"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
     HORDE.items["horde_riotshield"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
@@ -420,7 +430,7 @@ function HORDE:GetDefaultItemInfusions()
     HORDE.items["arccw_horde_nade_molotov"].infusions = {}
     HORDE.items["arccw_horde_incendiary_launcher"].infusions = {}
 
-    HORDE.items["weapon_horde_medkit"].infusions = {HORDE.Infusion_Rejuvenating}
+    --HORDE.items["weapon_horde_medkit"].infusions = {HORDE.Infusion_Rejuvenating}
 end
 
 function HORDE:GetDefaultItemsData()
@@ -807,6 +817,8 @@ function HORDE:GetDefaultItemsData()
     {Engineer=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=2}, "items/npc_vortigaunt.png", {Engineer=2}, nil, {HORDE.DMG_LIGHTNING})
     HORDE:CreateItem("Special",    "Combat Bot",     "npc_vj_horde_combat_bot",   2750, 9, "A resilient humanoid robot designed to engage enemies head-on.\nUses powerful melee attacks and ranged boulder attacks.",
     {Engineer=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=1}, "items/npc_combat_bot.png", {Engineer=3}, nil, {HORDE.DMG_BLUNT})
+        --HORDE:CreateItem("Special",    "Gunship",     "npc_vj_horde_gunship",   2750, 9, "Attack helicopter.",
+    --{Engineer=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=100, yaw=0, limit=1, size=0.1}, "items/npc_combat_bot.png", {Engineer=0}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Special",    "Hivehand",       "horde_hivehand",       2000,  6, "Organic weapon used by Xen soldiers.\nHas infinite ammo.\nPrimary fire generates homing ricocheting shots.\nSecondary fire rapidly unloads the entire weapon.",
     {Engineer=true}, 2, -1, nil, nil, {Engineer=4}, nil, {HORDE.DMG_BALLISTIC})
     HORDE:CreateItem("Special",    "Wunderwaffe DG-2",       "arccw_horde_wunderwaffe",       3500,  8, "Wunderwaffe DG-2.\nA wonder weapon.\nShoots electric balls that kill a zombies.",
@@ -914,7 +926,28 @@ function HORDE:GetDefaultItemsData()
     {Heavy=true}, -1, -1, nil, nil, nil, nil, {HORDE.DMG_PHYSICAL}, nil, {"Carcass"}, true)
 
 	
-	
+	HORDE:CreateItem("Special",    "Pheropod",   "horde_pheropod",   0,  11,
+    [[Only usable by Hatcher subclass!
+    Pheropods that can hatch and control alien Antlions.
+    
+    LMB: Throw Pod
+    Throws a Pheropod at the target, forcing the Antlions to perform range attacks at the target.
+    Pods can also heal Antlion for 5% health.
+    RMB: Raise Antlion (40 Energy)
+    Creates an Antlion that follows you around. Heal Antlion to accelerate evolution.
+    HOLD RMB to force Antlions to your location.
+    Antlion gains new effects each stage:
+    - Stage I:
+        - Bug Pulse: Every 5 seconds, generates a pulse that heals players nearby for 5% health.
+    - Stage II:
+        - Increased health and damage.
+        - Increased Aroma Pulse radius and reduce Bug Pulse cooldown.
+        - 50% increased Poison damage resistance.
+    - Stage III:
+        - Increased health, damage and attack speed.
+        - Increased Aroma Pulse radius and reduce Bug Pulse cooldown.
+        - Immune to Poison damage and Break.]],
+    {Medic=true}, -1, -1, nil, nil, nil, nil, {HORDE.DMG_SLASH, HORDE.DMG_POISON}, nil, {"Hatcher"}, true)
     HORDE:CreateItem("Equipment",  "Medkit",         "weapon_horde_medkit",      50,   1, "Rechargeble medkit.\nRMB to self-heal, LMB to heal others.",
     nil, 10, -1, nil, "items/weapon_medkit.png", nil, nil, nil, nil, {"Medic"})
     HORDE:CreateItem("Equipment",  "Health Vial",    "item_healthvial",    15,   0, "A capsule filled with sticky green liquid.\nHeals instantly when picked up.",
@@ -964,8 +997,50 @@ function HORDE:GetDefaultItemsData()
 end
 
 HORDE.GetArcCWAttachments = function ()
-    -- Optics
     local x1_sightsprice = 500
+    local x4_sightsprice = 750
+
+    local thermalandothers_sightsprice = 1000
+    --test
+    local some_sights = {
+    {"arccw_1p87", "1P87 (RDS)", x1_sightsprice}, 
+    {"arccw_ahos446", "AHOS 446 (RDS)", x1_sightsprice}, 
+    {"arccw_compm4s", "CompM4s (RDS)", x1_sightsprice}, 
+    {"arccw_compm4_magnifier", "CompM4s w/ Magnifier (x3)", x4_sightsprice}, 
+    {"arccw_compm5", "CompM5 (RDS)", x1_sightsprice}, 
+    {"arccw_coyote", " Coyote (RDS)", x1_sightsprice}, 
+    {"arccw_ekp807", "EKP-8-07 Kobra (RDS)", x1_sightsprice}, 
+    {"arccw_ekp807_magnifier", x1_sightsprice}, 
+    {"arccw_hd33", "Tru-Brite (RDS)", x1_sightsprice}, 
+    {"arccw_kemper", "Kemper XL (RDS)", x1_sightsprice}, 
+    {"arccw_lco", "Leupold Carbine Optic (RDS)", x1_sightsprice}, 
+    {"arccw_lcodevo", "LCO & D-EVO (Hybrid)", x1_sightsprice}, 
+    {"arccw_leomk4cqt", "Leupold Mark 4 CQ/T", x4_sightsprice}, 
+    {"arccw_mepro", "Mepro MOR (RDS)", x1_sightsprice}, 
+    {"arccw_mosin", "PU Scope", x4_sightsprice}, 
+    {"arccw_pilad", "Pilad 'Weaver' (RDS)", x1_sightsprice}, 
+    {"arccw_pkas", "PK-AS (RDS)", x1_sightsprice}, 
+    {"arccw_pks07", "PKS07", x4_sightsprice}, 
+    {"arccw_ps320", "PS320", x4_sightsprice},
+    {"arccw_reh", "REH's Custom (RDS)", x1_sightsprice}, 
+    {"arccw_romeo4", "SIG Sauer Romeo4 (RDS)", x1_sightsprice}, 
+    {"arccw_rusak", "Rusak (RDS)", x1_sightsprice}, 
+    {"arccw_trimro", "Trijicon MRO (RDS)", x1_sightsprice}, 
+    {"arccw_trirx01", "Trijicon RX01 (RDS)", x1_sightsprice}, 
+    {"arccw_trirx34", "Trijicon RX34 (RDS)", x1_sightsprice}, 
+    {"arccw_warriort1", "Warrior T1 (RDS)", x1_sightsprice}, 
+    {"arccw_x1kobra", "Warriot X1 Kobra (RDS)", x1_sightsprice}, 
+    {"arccw_xps", "EOTech XPS (RDS)", x1_sightsprice}, 
+    {"arccw_xps_magnifier", "XPS w/ Magnifier", x4_sightsprice}
+    }
+
+    for k, v in pairs(some_sights) do 
+        HORDE:CreateItem("Attachment", v[2], v[1], v[3],  0, "RDS",
+        nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Optic"})
+    end
+
+    -- Optics
+    
     HORDE:CreateItem("Attachment", "C-MORE (RDS)",   "go_optic_cmore",  x1_sightsprice,  0, "RDS",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Optic"})
     HORDE:CreateItem("Attachment", "EOTech 553 (RDS)",    "go_optic_eotech",  x1_sightsprice,  0, "RDS",
@@ -987,7 +1062,7 @@ HORDE.GetArcCWAttachments = function ()
 	
 	
 
-    local x4_sightsprice = 750
+    
     HORDE:CreateItem("Attachment", "PVS-4 (2x)",   "go_optic_pvs4",  x4_sightsprice,  0, "RDS",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Optic"})
     HORDE:CreateItem("Attachment", "Leupold HAMR (Hybrid)",   "go_optic_hamr",  x4_sightsprice,  0, "RDS",
@@ -1002,7 +1077,7 @@ HORDE.GetArcCWAttachments = function ()
     HORDE:CreateItem("Attachment", "CheyTac (2-4.3x)",   "optic_cheytacscope",  x4_sightsprice,  0, "RDS",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Optic"})
 	
-    local thermalandothers_sightsprice = 1000
+    
 	HORDE:CreateItem("Attachment", "Thermal Scope",   "optic_mw2_thermal",  thermalandothers_sightsprice,  0, "RDS",
     nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Optic"})
 	
@@ -1472,4 +1547,48 @@ function plymeta:Horde_SetUpgrade(class, level)
         net.Send(self)
     end
     self.Horde_Upgrades[class] = level
+end
+
+function HORDE:IsMeleeItem(class)
+    return HORDE.items[class] and HORDE.items[class].category == "Melee"
+end
+
+function HORDE:IsPistolItem(class)
+    return HORDE.items[class] and HORDE.items[class].category == "Pistol"
+end
+
+function HORDE:IsSMGItem(class)
+    return HORDE.items[class] and HORDE.items[class].category == "SMG"
+end
+
+function HORDE:IsRifleItem(class)
+    return HORDE.items[class] and HORDE.items[class].category == "Rifle"
+end
+
+function HORDE:IsShotgunItem(class)
+    return HORDE.items[class] and HORDE.items[class].category == "Shotgun"
+end
+
+function HORDE:IsMGItem(class)
+    return HORDE.items[class] and HORDE.items[class].category == "MG"
+end
+
+function HORDE:IsExplosiveItem(class)
+    return HORDE.items[class] and HORDE.items[class].category == "Explosive"
+end
+
+function HORDE:IsSpecialItem(class)
+    return HORDE.items[class] and HORDE.items[class].category == "Special"
+end
+
+function HORDE:IsEquipmentItem(class)
+    return HORDE.items[class] and HORDE.items[class].category == "Equipment"
+end
+
+function HORDE:IsAttachmentItem(class)
+    return HORDE.items[class] and HORDE.items[class].category == "Attachment"
+end
+
+function HORDE:IsGadgetItem(class)
+    return HORDE.items[class] and HORDE.items[class].category == "Gadget"
 end
