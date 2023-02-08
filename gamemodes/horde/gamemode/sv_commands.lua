@@ -50,10 +50,7 @@ function Start(ply)
             ply:PrintMessage(HUD_PRINTTALK, "Game has already started!")
         end
     else
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("You do not have access to this command.")
-        net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotification("You can't get ready when you are dead!", 1, ply)
         return
     end
 end
@@ -61,10 +58,7 @@ end
 function Ready(ply)
     if HORDE.current_wave > 0 then return end
     if not ply:Alive() then
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("You can't get ready when you are dead!")
-        net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotificationDenyAccess(ply)
         return
     end
     
@@ -96,10 +90,7 @@ end
 
 function End(ply)
     if not ply:IsAdmin() then
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("You do not have access to this command.")
-        net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotificationDenyAccess(ply)
         return
     end
     HORDE.start_game = false
@@ -109,25 +100,8 @@ end
 
 function Shop(ply)
     if GetConVar("horde_enable_shop"):GetInt() == 0 then
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("Shop has been disabled.")
-        net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotification("Shop has been disabled.", 1, ply)
     end
-    --[[if not ply:Alive() then
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("You can't buy when you are dead!")
-        net.WriteInt(1,2)
-        net.Send(ply)
-        returnif HORDE:IsBallisticDamage(dmginfo) then return HORDE.DMG_BALLISTIC end
-    end
-    if HORDE.current_break_time <= 0 then
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("You cannot shop after a wave has started.")
-        net.WriteInt(1,2)
-        net.Send(ply)
-        return
-    end]]--
 
     local res = hook.Run("Horde_OnPlayerOpenShop", ply)
     if res ~= true then
@@ -136,10 +110,7 @@ function Shop(ply)
         end
 
         if HORDE.current_break_time <= 0 then
-            net.Start("Horde_LegacyNotification")
-            net.WriteString("You cannot shop after a wave has started.")
-            net.WriteInt(1,2)
-            net.Send(ply)
+            HORDE:SendNotification("You cannot shop after a wave has started.", 1, ply)
             return
         end
     end
@@ -150,29 +121,20 @@ end
 
 function ItemConfig(ply)
     if HORDE.start_game then
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("You cannot open config after a game has started.")
-        net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotification("You cannot open config after a game has started.", 1, ply)
         return
     end
     if ply:IsSuperAdmin() then
         net.Start("Horde_ToggleItemConfig")
         net.Send(ply)
     else
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("You do not have access to this command.")
-        net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotificationDenyAccess(ply)
     end
 end
 
 function EnemyConfig(ply)
     if HORDE.start_game then
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("You cannot open config after a game has started.")
-        net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotification("You cannot open config after a game has started.", 1, ply)
         return
     end
     if ply:IsSuperAdmin() then
@@ -181,38 +143,26 @@ function EnemyConfig(ply)
         net.Start("Horde_ToggleEnemyConfig")
         net.Send(ply)
     else
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("You do not have access to this command.")
-        net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotificationDenyAccess(ply)
     end
 end
 
 function ClassConfig(ply)
     if HORDE.start_game then
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("You cannot open config after a game has started.")
-        net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotification("You cannot open config after a game has started.", 1, ply)
         return
     end
     if ply:IsSuperAdmin() then
         net.Start("Horde_ToggleClassConfig")
         net.Send(ply)
     else
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("You do not have access to this command.")
-        net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotificationDenyAccess(ply)
     end
 end
 
 function MapConfig(ply)
     if HORDE.start_game then
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("You cannot open config after a game has started.")
-        net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotification("You cannot open config after a game has started.", 1, ply)
         return
     end
     if ply:IsSuperAdmin() then
@@ -220,10 +170,7 @@ function MapConfig(ply)
         net.Start("Horde_ToggleMapConfig")
         net.Send(ply)
     else
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("You do not have access to this command.")
-        net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotificationDenyAccess(ply)
     end
 end
 
@@ -329,10 +276,7 @@ end)
 
 concommand.Add("horde_testing_gorlami", function (ply, cmd, args)
     if GetConVar("horde_enable_sandbox"):GetInt() == 0 then
-        net.Start("Horde_LegacyNotification")
-            net.WriteString("Command only available in sandbox mode.")
-            net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotificationSandboxOnly(ply)
         return
     end
     if ply:IsAdmin() then
@@ -346,10 +290,7 @@ end)
 
 concommand.Add("horde_testing_free_perks", function (ply, cmd, args)
     if GetConVar("horde_enable_sandbox"):GetInt() == 0 then
-        net.Start("Horde_LegacyNotification")
-            net.WriteString("Command only available in sandbox mode.")
-            net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotificationSandboxOnly(ply)
         return
     end
     if ply:IsAdmin() then
@@ -360,10 +301,7 @@ end)
 
 concommand.Add("horde_testing_wave_goto", function (ply, cmd, args)
     if GetConVar("horde_enable_sandbox"):GetInt() == 0 then
-        net.Start("Horde_LegacyNotification")
-            net.WriteString("Command only available in sandbox mode.")
-            net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotificationSandboxOnly(ply)
         return
     end
     if ply:IsAdmin() then
@@ -375,10 +313,7 @@ end)
 
 concommand.Add("horde_testing_disable_level_restrictions", function (ply, cmd, args)
     if GetConVar("horde_enable_sandbox"):GetInt() == 0 then
-        net.Start("Horde_LegacyNotification")
-            net.WriteString("Command only available in sandbox mode.")
-            net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotificationSandboxOnly(ply)
         return
     end
     HORDE.disable_levels_restrictions = 1
@@ -388,10 +323,7 @@ end)
 
 concommand.Add("horde_testing_give_skull_tokens", function (ply, cmd, args)
     if GetConVar("horde_enable_sandbox"):GetInt() == 0 then
-        net.Start("Horde_LegacyNotification")
-            net.WriteString("Command only available in sandbox mode.")
-            net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotificationSandboxOnly(ply)
         return
     end
     local amount = math.floor(tonumber(args[1]))
@@ -409,10 +341,7 @@ end)
 
 concommand.Add("horde_testing_spawn_enemy", function (ply, cmd, args)
     if GetConVar("horde_enable_sandbox"):GetInt() == 0 then
-        net.Start("Horde_LegacyNotification")
-            net.WriteString("Command only available in sandbox mode.")
-            net.WriteInt(1,2)
-        net.Send(ply)
+        HORDE:SendNotificationSandboxOnly(ply)
         return
     end
     local name = args[1]

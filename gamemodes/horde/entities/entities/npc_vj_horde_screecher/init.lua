@@ -49,7 +49,7 @@ function ENT:CustomOnInitialize()
 	self:AddRelationship("npc_headcrab_poison D_LI 99")
 	self:AddRelationship("npc_headcrab_fast D_LI 99")
 	
-	self.TimerName = "Horde_ScreecherTimer" .. self:EntIndex() 
+	self.TimerName = "Horde_ScreecherTimer" .. self:EntIndex()
 end
 
 function ENT:Horde_StartTimeStop()

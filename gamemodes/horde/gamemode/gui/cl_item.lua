@@ -51,11 +51,11 @@ function PANEL:SetData(item, description_panel, infusion_panel)
     self.skull_tokens = item.skull_tokens or 0
     self.description_panel = description_panel
     self.infusion_panel = infusion_panel
-    self.player_class = LocalPlayer():Horde_GetClass().name
+    self.player_class = MySelf:Horde_GetClass().name
 
     self.level_satisfy = true
     if self.item.levels then
-        self.level_satisfy = HORDE:WeaponLevelLessThanYour(LocalPlayer(), self.item.levels)
+        self.level_satisfy = HORDE:WeaponLevelLessThanYour(MySelf, self.item.levels)
     end
 
     local btn = vgui.Create("DButton", self)
@@ -121,10 +121,10 @@ function PANEL:SetData(item, description_panel, infusion_panel)
         pnl:SetTextInset(15, 0)
     end
 
-    if LocalPlayer():Horde_GetInfusion(self.item.class) == HORDE.Infusion_None then
+    if MySelf:Horde_GetInfusion(self.item.class) == HORDE.Infusion_None then
         infusion_btn:SetText(translate.Get("Game_Infusion") .. ": " .. translate.Get("Infusion_None"))
     else
-        infusion_btn:SetText(translate.Get("Game_Infusion") .. ": " .. translate.Get("Infusion_" .. HORDE.Infusion_Names[LocalPlayer():Horde_GetInfusion(self.item.class)]))
+        infusion_btn:SetText(translate.Get("Game_Infusion") .. ": " .. translate.Get("Infusion_" .. HORDE.Infusion_Names[MySelf:Horde_GetInfusion(self.item.class)]))
     end
     infusion_btn:SetFont("Category")
 
@@ -211,12 +211,12 @@ end
 
 function PANEL:Paint()
     if self.item ~= nil then
-        local is_rich = LocalPlayer():Horde_GetMoney() >= self.item.price and LocalPlayer():Horde_GetSkullTokens() >= (self.item.skull_tokens or 0) and LocalPlayer():Horde_GetWeight() >= self.item.weight
+        local is_rich = MySelf:Horde_GetMoney() >= self.item.price and MySelf:Horde_GetSkullTokens() >= (self.item.skull_tokens or 0) and MySelf:Horde_GetWeight() >= self.item.weight
         surface.SetDrawColor(self.bg_color)
         surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
         surface.SetFont("Item")
 
-        if LocalPlayer():HasWeapon(self.item.class) or LocalPlayer():Horde_GetGadget() == self.item.class or (LocalPlayer().Horde_drop_entities and LocalPlayer().Horde_drop_entities[self.item.class]) then
+        if MySelf:HasWeapon(self.item.class) or MySelf:Horde_GetGadget() == self.item.class or (MySelf.Horde_drop_entities and MySelf.Horde_drop_entities[self.item.class]) then
             self.price_panel:SetTextColor(HORDE.color_crimson)
             self.price_panel:SetText("Owned")
             self.weight_panel_text:SetTextColor(HORDE.color_crimson)
@@ -226,7 +226,7 @@ function PANEL:Paint()
                 self.infusion_btn:SetVisible(true)
             end
 
-            local infusion = LocalPlayer():Horde_GetInfusion(self.item.class)
+            local infusion = MySelf:Horde_GetInfusion(self.item.class)
             if infusion == HORDE.Infusion_None then
                 self.infusion_btn:SetText(translate.Get("Game_Infusion") .. ": " .. translate.Get("Infusion_None"))
             else
@@ -265,7 +265,7 @@ function PANEL:Paint()
             end
         end
 
-        if (not LocalPlayer():HasWeapon(self.item.class)) and (not self.level_satisfy) then
+        if (not MySelf:HasWeapon(self.item.class)) and (not self.level_satisfy) then
             surface.SetTextColor(Color(80,80,80))
         else
             surface.SetTextColor(Color(255,255,255))

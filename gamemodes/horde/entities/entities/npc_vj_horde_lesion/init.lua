@@ -67,7 +67,7 @@ function ENT:Rage()
     self.Raging = true
     sound.Play("npc/fast_zombie/fz_frenzy1.wav", self:GetPos(), 100, 75)
     self:VJ_ACT_PLAYACTIVITY("BR2_Roar", true, 1.5, false)
-    timer.Simple(1.5, function ()
+    timer.Create(self.TimerName, 1.5, 1, function()
         if not IsValid(self) then return end
         self.AnimTbl_Run = ACT_RUN
         self.HasLeapAttack = true
@@ -75,6 +75,18 @@ function ENT:Rage()
         self.Raging = false
         self:SetColor(Color(255, 0, 0))
     end)
+end
+
+function ENT:Horde_StartTimeStop()
+    local id = self:GetCreationID()
+	timer.Stop(self.TimerName)
+    timer.Stop("Horde_FlayerRage" .. id)
+end
+
+function ENT:Horde_EndTimeStop()
+    local id = self:GetCreationID()
+	timer.Start(self.TimerName)
+    timer.Start("Horde_FlayerRage" .. id)
 end
 
 function ENT:CustomOnInitialize()
@@ -95,6 +107,8 @@ function ENT:CustomOnInitialize()
 	self:AddRelationship("npc_headcrab_fast D_LI 99")
 
     self:EmitSound("horde/lesion/lesion_roar.ogg", 1500, 80, 1, CHAN_STATIC)
+
+    self.TimerName = "Horde_LesionRageTimer" .. self:EntIndex()
 end
 
 function ENT:CustomOnMeleeAttack_AfterChecks(hitEnt, isProp)

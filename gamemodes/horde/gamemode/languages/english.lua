@@ -12,6 +12,7 @@ resistance vs. less damage taken: same as above.
 translate.AddLanguage("en", "English")
 
 -- Game Info
+LANGUAGE["Game_Preparing..."] = "Preparing..."
 LANGUAGE["Game_Ready"] = "Ready"
 LANGUAGE["Game_Not Ready"] = "Not Ready"
 LANGUAGE["Game_Players_Ready"] = "Players Ready"
@@ -148,7 +149,18 @@ Increases weapon damage based on your current Necrosis buildup.
 Gain 10 Necrosis buildup per second while holding this weapon.
 ]]
 
+-- Scoreboard
+LANGUAGE["Scoreboard_Name"] = "Name"
+LANGUAGE["Scoreboard_Class"] = "Class"
+LANGUAGE["Scoreboard_Perks"] = "Perks"
+LANGUAGE["Scoreboard_Gadget"] = "Gadget"
+LANGUAGE["Scoreboard_Money"] = "Money"
+LANGUAGE["Scoreboard_Kill"] = "Kill"
+LANGUAGE["Scoreboard_Death"] = "Death"
+LANGUAGE["Scoreboard_Ping"] = "Ping"
+
 -- Shop
+LANGUAGE["Shop_Not_Enough_Money_Or_Carrying_Capacity"] = "Not Enough Money or Carrying Capacity!"
 -- Categories
 LANGUAGE["Shop_Class"] = "Class"
 LANGUAGE["Shop_Cash"] = "Cash"

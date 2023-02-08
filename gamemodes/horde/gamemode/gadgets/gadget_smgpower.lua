@@ -13,7 +13,7 @@ GADGET.Hooks.Horde_OnPlayerDamage = function (ply, npc, bonus, hitgroup, dmginfo
     local inflictor = dmginfo:GetInflictor()
     if IsValid(inflictor) and inflictor:IsWeapon() then
         local item = HORDE.items[inflictor:GetClass()]
-        if item and item.category == "SMG" then
+        if HORDE:IsSMGItem(item) then
             bonus.increase = bonus.increase + 0.25
         end 
     end

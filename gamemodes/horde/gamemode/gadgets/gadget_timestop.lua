@@ -3,7 +3,7 @@ GADGET.Description =
 [[Stop Time for 5 seconds.]]
 GADGET.Icon = "items/gadgets/timestop.png"
 GADGET.Duration = 6
-GADGET.Cooldown = 90
+GADGET.Cooldown = 5
 GADGET.Active = true
 GADGET.Params = {}
 GADGET.Hooks = {}
@@ -105,7 +105,7 @@ local mutations = {
 }
 
 function HORDE:TimeStop_freeze_npc(ent)
-	if ent.Horde_StartTimeStop and ent:Horde_StartTimeStop() then return end 
+	if ent.Horde_StartTimeStop and ent:Horde_StartTimeStop() then return end
     local phys = ent:GetPhysicsObject()
     if IsValid(phys) then
         phys:Sleep()
@@ -157,7 +157,7 @@ function HORDE:TimeStop_freeze_npc(ent)
 	
 	for i, mutation in pairs(mutations) do
 		local id = ent:GetCreationID()
-		if timer.Exists("Horde_Mutation_" .. mutation .. id) then 
+		if timer.Exists("Horde_Mutation_" .. mutation .. id) then
 			timer.Pause("Horde_Mutation_" .. mutation .. id)
 		end
 	end
@@ -393,20 +393,29 @@ local function start_timestop(ply)
     net.WriteBool(true)
     net.Broadcast()
     timer.Simple(.5, function()
+
+        local npc_slowed = {}
+        local frozed_entities = {}
+        local shotted_bullets = {}
 	
 		TimeStopStart = CurTime()
 		
 		local players_healed = {}
 
+        hook.Add("EntityFireBullets", "Horde_TimeStop", function(ent, data)
+            table.insert(shotted_bullets, {wep = data.Weapon, data = data, dir = data.Dir})
+            return false
+        end)
+
         for _, ply2 in pairs(player.GetAll()) do
             if ply2:Alive() and ply2 != ply then
                 ply2:Freeze(true)
                 ply2:Lock()
-				if ply2.Horde_HealHPRemain then
-					players_healed[ply2] = {ply2.Horde_HealHPRemain, ply2.Horde_HealLastMaxHealth}
-					ply2.Horde_HealHPRemain = nil
-					timer.Remove("Horde_" .. ply2:EntIndex() .. "SlowlyHeal")
-				end
+                if ply2.Horde_HealHPRemain then
+                    players_healed[ply2] = {ply2.Horde_HealHPRemain, ply2.Horde_HealLastMaxHealth}
+                    ply2.Horde_HealHPRemain = nil
+                    timer.Remove("Horde_" .. ply2:EntIndex() .. "SlowlyHeal")
+                end
                 local wep = ply2:GetActiveWeapon()
                 if IsValid(wep) and wep.ArcCW and wep:GetReloading() then
                     wep:SetNextPrimaryFire(wep:GetNextPrimaryFire() + 6.2)
@@ -423,10 +432,6 @@ local function start_timestop(ply)
                 end
             end
         end
-
-        local npc_slowed = {}
-        local frozed_entities = {}
-        local shotted_bullets = {}
 
         for _, ent in pairs(ents.FindByClass("npc_*")) do
             if !ent:IsNPC() then continue end
@@ -519,6 +524,7 @@ local function start_timestop(ply)
 				hook.Remove("WeaponEquip", "Horde_TimeStop")
 				hook.Remove( "OnEntityCreated", "Horde_TimeStop")
                 hook.Remove("Horde_SlowHeal_NotAllow", "Horde_TimeStop")
+                hook.Remove("EntityFireBullets", "Horde_TimeStop")
 				unfreeze_mutations()
 				unfreeze_mutations_progress(ply)
 
