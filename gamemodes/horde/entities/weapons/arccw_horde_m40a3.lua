@@ -34,10 +34,10 @@ SWEP.ViewModelFOV = 60
 
 SWEP.DefaultBodygroups = "0000000000"
 
-SWEP.Damage = 135
-SWEP.DamageMin = 100 -- damage done at maximum range
+SWEP.Damage = 95
+SWEP.DamageMin = 90 -- damage done at maximum range
 SWEP.RangeMin = 40
-SWEP.Range = 400
+SWEP.Range = 1000
 SWEP.Penetration = 7
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
@@ -209,7 +209,7 @@ SWEP.Attachments = {
     }, --3
     {
         PrintName = "Tactical",
-        Slot = {"bo1_tacprimary"},
+        Slot = "tac",
         VMScale = Vector(0.75, 0.75, 0.75),
         Bone = "tag_weapon",
         Offset = {

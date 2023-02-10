@@ -42,6 +42,7 @@ include("gui/cl_perkbutton.lua")]]
 -- include loader
 include("loader.lua")
 
+
 -- Some users report severe lag with halo
 CreateConVar("horde_enable_halo", 1, FCVAR_LUA_CLIENT, "Enables highlight for last 10 enemies.")
 
@@ -53,8 +54,6 @@ hook.Add("InitPostEntity", "GetLocal", function()
     gamemode.Call("HookGetLocal", MySelf)
     RunConsoleCommand("initpostentity")
 end)
-
-
 
 function HORDE:ToggleShop()
     if not HORDE.ShopGUI then
@@ -162,7 +161,18 @@ function HORDE:ToggleMapConfig()
 end
 
 function HORDE:ToggleConfigMenu()
-    notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
+    if not HORDE.ConfigMenuGUI then
+        HORDE.ConfigMenuGUI = vgui.Create("HordeConfigMenu")
+        HORDE.ConfigMenuGUI:SetVisible(false)
+    end
+
+    if HORDE.ConfigMenuGUI:IsVisible() then
+        HORDE.ConfigMenuGUI:Hide()
+        gui.EnableScreenClicker(false)
+    else
+        HORDE.ConfigMenuGUI:Show()
+        gui.EnableScreenClicker(true)
+    end
 end
 
 -- Entity Highlights
@@ -199,6 +209,7 @@ net.Receive("Horde_HighlightEntities", function (len, ply)
     elseif render == HORDE.render_highlight_ammoboxes then
         hook.Add("PreDrawHalos", "Horde_AddAmmoBoxHalos", function()
             halo.Add(ents.FindByClass("horde_ammobox"), Color(0, 255, 0), 1, 1, 1, true, true)
+            halo.Add(ents.FindByClass("horde_gadgetbox"), Color(255, 0, 0), 1, 1, 1, true, true)
         end)
         timer.Simple(10, function ()
             hook.Remove("PreDrawHalos", "Horde_AddAmmoBoxHalos")
@@ -227,12 +238,12 @@ net.Receive("Horde_HunterMarkHighlight", function(len,ply)
     end)
 end)
 
-net.Receive("Horde_RemoveHunterMarkHighlight", function(len,ply)
-    hook.Remove("PreDrawHalos", "Horde_HunterMarkHalo" .. net.ReadEntity():EntIndex())
-end)
-
 net.Receive("Horde_RemoveDeathMarkHighlight", function(len,ply)
     hook.Remove("PreDrawHalos", "Horde_DeathMarkHalo" .. net.ReadEntity():EntIndex())
+end)
+
+net.Receive("Horde_RemoveHunterMarkHighlight", function(len,ply)
+    hook.Remove("PreDrawHalos", "Horde_HunterMarkHalo" .. net.ReadEntity():EntIndex())
 end)
 
 net.Receive("Horde_ToggleShop", function ()
@@ -240,23 +251,23 @@ net.Receive("Horde_ToggleShop", function ()
 end)
 
 net.Receive("Horde_ToggleItemConfig", function ()
-    HORDE:ToggleItemConfig()
+    notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
 end)
 
 net.Receive("Horde_ToggleEnemyConfig", function ()
-    HORDE:ToggleEnemyConfig()
+    notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
 end)
 
 net.Receive("Horde_ToggleClassConfig", function ()
-    HORDE:ToggleClassConfig()
+    notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
 end)
 
 net.Receive("Horde_ToggleMapConfig", function ()
-    HORDE:ToggleMapConfig()
+    notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
 end)
 
 net.Receive("Horde_ToggleConfigMenu", function ()
-    HORDE:ToggleConfigMenu()
+    notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
 end)
 
 net.Receive("Horde_ToggleStats", function ()
@@ -287,7 +298,7 @@ net.Receive("Horde_ForceCloseShop", function ()
     gui.EnableScreenClicker(false)
 end)
 
-net.Receive("Horde_LegacyNotification", function(length)
+net.Receive("Horde_SideNotification", function(length)
     local str = net.ReadString()
     local type = net.ReadInt(2)
     if string.find(str, "bought") then
@@ -295,6 +306,12 @@ net.Receive("Horde_LegacyNotification", function(length)
     else
         HORDE:PlayNotification(str, type)
     end
+end)
+
+net.Receive("Horde_SideNotificationDebuff", function(length)
+    local debuff = net.ReadUInt(32)
+    local debuff_str = translate.Get("Notifications_Debuff_" .. HORDE.Status_String[debuff]) or HORDE.Debuff_Notifications[debuff]
+    HORDE:PlayNotification(debuff_str, 0, HORDE.Status_Icon[debuff], HORDE.STATUS_COLOR[debuff])
 end)
 
 net.Receive("Horde_SyncItems", function ()

@@ -157,17 +157,15 @@ function PANEL:Init()
             btn:SetSize(ratio * 40, 40)
         end
 
-        local p = 0
+        local p = 50
         local t = 0
 
         btn.Paint = function(pnl, w, h)
             if text == "Class/Perks" then
                 if pnl:GetActive() then
                     draw.RoundedBox(5, 0, 0, w, h, Color(40,40,40,230))
-                    class_panel_active = true
                 else
                     draw.RoundedBox(5, 0, 0, w, h, Color(220, 20, 60, p % 225))
-                    class_panel_active = nil
                     if p >= 224 then
                         t = 1
                     elseif p < 50 then
@@ -175,9 +173,9 @@ function PANEL:Init()
                     end
 
                     if t == 0 then
-                        p = p + 1
+                        p = p + 1.5
                     else
-                        p = p - 1
+                        p = p - 1.5
                     end
                 end
 

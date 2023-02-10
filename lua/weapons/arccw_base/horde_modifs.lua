@@ -761,3 +761,5 @@ function SWEP:FireRocket(ent, vel, ang, dontinheritvel)
 
     return rocket
 end
+
+SWEP.ReloadInSights = true

@@ -724,7 +724,7 @@ function PANEL:Paint()
 
 
                     self.ammo_ten_btn:SetTextColor(Color(255,255,255))
-                    self.ammo_ten_btn:SetText(translate.Get("Shop_Buy_Ammo_All") .. " (" .. HORDE:Ammo_GetMaxAmmo(ply:GetWeapon(self.item.class)) .. "max " .. tostring(HORDE:Ammo_RefillCost(ply, self.item)) .. "$)")
+                    self.ammo_ten_btn:SetText((translate.Get("Shop_Buy_Ammo_All") or "Buy All") .. " (" .. HORDE:Ammo_GetMaxAmmo(ply:GetWeapon(self.item.class)) .. "max " .. tostring(HORDE:Ammo_RefillCost(ply, self.item)) .. "$)")
                     self.ammo_ten_btn:SetWide(self:GetWide() / 2)
                     self.ammo_ten_btn.Paint = function ()
                         surface.SetDrawColor(HORDE.color_crimson)
