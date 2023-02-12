@@ -3,10 +3,34 @@ GADGET.Description =
 [[Stop Time for 5 seconds.]]
 GADGET.Icon = "items/gadgets/timestop.png"
 GADGET.Duration = 6
-GADGET.Cooldown = 5
+GADGET.Cooldown = 75
 GADGET.Active = true
 GADGET.Params = {}
 GADGET.Hooks = {}
+
+local shooted_bullets = {}
+local function Weapons_Stop_Beams()
+    hook.Add("EntityFireBullets", "Horde_TimeStop", function(ent, data)
+        table.insert(shooted_bullets, {wep = data.Weapon, data = data, dir = data.Dir, attacker = data.Attacker})
+        return false
+    end)
+end
+local function Weapons_Start_Beams()
+    hook.Remove("EntityFireBullets", "Horde_TimeStop")
+    for i, bul in pairs(shooted_bullets) do
+        timer.Simple(math.min(.55, 0.04 * (i ^ .5)), function()
+            bul.data.TracerName = "arccw_tracer_timestop"
+            bul.data.Dir = bul.dir
+            if IsValid(bul.wep) and bul.wep.ArcCW then
+                bul.wep:DoPrimaryFire(false, bul.data)
+            else
+                print("gsdggsd")
+                bul.attacker:FireBullets(bul.data, true)
+            end
+        end)
+    end
+    table.Empty(shooted_bullets)
+end
 
 if CLIENT then
     local cur_tick = 0
@@ -18,6 +42,7 @@ if CLIENT then
         timestop_start_time = CurTime()
 
         if is_start then
+            Weapons_Stop_Beams()
             timer.Simple(.6, function()
                 timestop_start_time = CurTime()
                 hook.Add("RenderScreenspaceEffects", "TimeStop_screeneffect", function()
@@ -70,6 +95,9 @@ if CLIENT then
                 end)
             end)
         else
+            timer.Simple(1.2, function()
+                Weapons_Start_Beams()
+            end)
             timer.Remove("TimerStopTicking")
             hook.Add("RenderScreenspaceEffects", "TimeStop_screeneffect", function()
                 local ct = CurTime()
@@ -396,16 +424,10 @@ local function start_timestop(ply)
 
         local npc_slowed = {}
         local frozed_entities = {}
-        local shotted_bullets = {}
 	
 		TimeStopStart = CurTime()
 		
 		local players_healed = {}
-
-        hook.Add("EntityFireBullets", "Horde_TimeStop", function(ent, data)
-            table.insert(shotted_bullets, {wep = data.Weapon, data = data, dir = data.Dir})
-            return false
-        end)
 
         for _, ply2 in pairs(player.GetAll()) do
             if ply2:Alive() and ply2 != ply then
@@ -450,44 +472,11 @@ local function start_timestop(ply)
                 HORDE:TimeStop_freeze_npc(ent)
                 
                 table.insert(npc_slowed, ent)
-
-                timer.Simple(0.2, function()
-                    if !ent:IsValid() then return end
-                    ent:SetSchedule(SCHED_NPC_FREEZE)
-                end)
             elseif IsEntity(ent) and !ent:IsWeapon() then
                 freeze_entity(ent)
                 table.insert(frozed_entities, ent)
             end
         end )
-
-        for _, wep in pairs(ply:GetWeapons()) do
-
-            wep.oldDoPrimaryFire = wep.DoPrimaryFire
-
-            wep.DoPrimaryFire = function(self, isent, data)
-                if isent then
-                    self:oldDoPrimaryFire(isent, data)
-                else
-                    table.insert(shotted_bullets, {wep = self, data = data, dir = data.Dir})
-                end
-            end
-        end
-
-        hook.Add("WeaponEquip", "Horde_TimeStop", function(wep)
-            timer.Simple(0, function()
-                if !IsValid(wep) or wep:GetOwner() != ply then return end
-                wep.oldDoPrimaryFire = wep.DoPrimaryFire
-
-                wep.DoPrimaryFire = function(self, isent, data)
-                    if isent then
-                        self:oldDoPrimaryFire(isent, data)
-                    else
-                        table.insert(shotted_bullets, {wep = self, data = data, dir = data.Dir})
-                    end
-                end
-            end)
-        end)
 		
 		hook.Add("Horde_SlowHeal_NotAllow", "Horde_TimeStop", function(ply2, amount, overhealmult)
 			if ply == ply2 then return end
@@ -508,9 +497,18 @@ local function start_timestop(ply)
 				ent:SetSchedule(SCHED_NPC_FREEZE)
 			end
 		end)
+
+        timer.Simple(1, function()
+			for _, ent in pairs(npc_slowed) do
+				if not ent:IsValid() then continue end
+                HORDE:TimeStop_freeze_npc(ent)
+				ent:SetSchedule(SCHED_NPC_FREEZE)
+			end
+		end)
 	
 		freeze_mutations()
 		freeze_mutations_progress(ply)
+        Weapons_Stop_Beams()
 		
         timer.Simple(5, function()
             net.Start("Horde_TimeStop")
@@ -518,13 +516,13 @@ local function start_timestop(ply)
             net.Broadcast()
 
             timer.Simple(1.2, function()
+
 				TimeStopStart = 0
 				TimeStopProceed = false
                 hook.Remove("Horde_CanSlowTime", "Horde_TimeStop")
 				hook.Remove("WeaponEquip", "Horde_TimeStop")
 				hook.Remove( "OnEntityCreated", "Horde_TimeStop")
                 hook.Remove("Horde_SlowHeal_NotAllow", "Horde_TimeStop")
-                hook.Remove("EntityFireBullets", "Horde_TimeStop")
 				unfreeze_mutations()
 				unfreeze_mutations_progress(ply)
 
@@ -537,17 +535,7 @@ local function start_timestop(ply)
                     end
                 end
                 
-                for i, bul in pairs(shotted_bullets) do
-                    timer.Simple(math.min(.55, 0.04 * (i ^ .5)), function()
-                        bul.data.TracerName = "arccw_tracer_timestop"
-                        bul.data.Dir = bul.dir
-                        if IsValid(bul.wep) and bul.wep.ArcCW then
-                            bul.wep:DoPrimaryFire(false, bul.data)
-                        else
-                            ply:FireBullets(bul.data, true)
-                        end
-                    end)
-                end
+                Weapons_Start_Beams()
 
                 for _, ent in pairs(npc_slowed) do
                     if !IsValid(ent) then continue end

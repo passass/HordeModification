@@ -48,16 +48,15 @@ function ENT:CustomOnInitialize()
 	--self:SetModelScale(1.25, 0)
 	self:AddRelationship("npc_headcrab_poison D_LI 99")
 	self:AddRelationship("npc_headcrab_fast D_LI 99")
-	
-	self.TimerName = "Horde_ScreecherTimer" .. self:EntIndex()
 end
 
 function ENT:Horde_StartTimeStop()
 	self.timestoped = true
-	if timer.Exists(self.TimerName) then 
-		self:ShockAttack((self.BlastsCount == 0 and 1.5 or .2) + HORDE.TimeStop_TimeEnough() - timer.TimeLeft(self.TimerName))
+	local timername = "Horde_ScreecherTimer" .. self:EntIndex()
+	if timer.Exists(timername) then
+		self:ShockAttack((self.BlastsCount == 0 and 1.5 or .2) + HORDE.TimeStop_TimeEnough() - timer.TimeLeft(timername))
 	end
-	timer.Remove("timer_act_stopattacks"..self:EntIndex())
+	timer.Remove("timer_act_stopattacks" .. self:EntIndex())
 end
 
 function ENT:Horde_EndTimeStop() 
@@ -66,7 +65,7 @@ end
 
 function ENT:ShockAttack(delay)
 	if self.Horde_Stunned then return end
-	timer.Create(self.TimerName, delay, 1, function()
+	timer.Create("Horde_ScreecherTimer" .. self:EntIndex(), delay, 1, function()
 		if not self:IsValid() then return end
 		local dmg = DamageInfo()
 		dmg:SetAttacker(self)

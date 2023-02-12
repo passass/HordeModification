@@ -24,15 +24,6 @@ SWEP.Secondary.CanBash = false
 SWEP.Secondary.MaxCombo = -1
 SWEP.Primary.MaxCombo = -1
 
--- nZombies Stuff
-SWEP.NZWonderWeapon		= true	-- Is this a Wonder-Weapon? If true, only one player can have it at a time. Cheats aren't stopped, though.
---SWEP.NZRePaPText		= "your text here"	-- When RePaPing, what should be shown? Example: Press E to your text here for 2000 points.
---SWEP.NZPaPName				= "BIG FUCKING HAMMER"
-SWEP.NZPaPReplacement 	= "tfa_cso_stormgiant_tw"	-- If Pack-a-Punched, replace this gun with the entity class shown here.
-SWEP.NZPreventBox		= false	-- If true, this gun won't be placed in random boxes GENERATED. Users can still place it in manually.
-SWEP.NZTotalBlackList	= false	-- if true, this gun can't be placed in the box, even manually, and can't be bought off a wall, even if placed manually. Only code can give this gun.
-SWEP.PaPMats			= {}
-
 SWEP.Precision = 50
 
 SWEP.Offset = {
@@ -103,7 +94,7 @@ SWEP.Primary.Attacks = {
 		['act'] = ACT_VM_PRIMARYATTACK, -- Animation; ACT_VM_THINGY, ideally something unique per-sequence
 		['len'] = 100, -- Trace source; X ( +right, -left ), Y ( +forward, -back ), Z ( +up, -down )
 		['dir'] = Vector(-240,0,0), -- Trace dir/length; X ( +right, -left ), Y ( +forward, -back ), Z ( +up, -down )
-		['dmg'] = 250, --This isn't overpowered enough, I swear!!
+		['dmg'] = 300, --This isn't overpowered enough, I swear!!
 		['dmgtype'] = DMG_CLUB, --DMG_SLASH,DMG_CRUSH, etc.
 		['delay'] = 1, --Delay
 		['spr'] = true, --Allow attack while sprinting?
@@ -124,7 +115,7 @@ SWEP.Secondary.Attacks = {
 		['act'] = ACT_VM_SECONDARYATTACK, -- Animation; ACT_VM_THINGY, ideally something unique per-sequence
 		['len'] = 125, -- Trace source; X ( +right, -left ), Y ( +forward, -back ), Z ( +up, -down )
 		['dir'] = Vector(0,0,-100), -- Trace dir/length; X ( +right, -left ), Y ( +forward, -back ), Z ( +up, -down )
-		['dmg'] = 350, --Nope!! Not overpowered!!
+		['dmg'] = 400, --Nope!! Not overpowered!!
 		['dmgtype'] = DMG_CLUB, --DMG_SLASH,DMG_CRUSH, etc.
 		['delay'] = 1, --Delay
 		['spr'] = true, --Allow attack while sprinting?
