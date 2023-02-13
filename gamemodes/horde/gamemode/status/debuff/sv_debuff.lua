@@ -105,6 +105,8 @@ function entmeta:Horde_AddDebuffBuildup(debuff, buildup, inflictor, pos)
 		
 		hook.Run("Horde_OnPlayerDebuffApplyPost", self, debuff, bonus, inflictor)
     else
+        if self.Horde_Immune_Status_All then return end
+        if self.Horde_Immune_Status and self.Horde_Immune_Status[debuff] then return end
         local bonus = {apply = 1, more = 1, increase = 0}
 		local cancallhook = inflictor and inflictor:IsValid() and inflictor:IsPlayer()
         if cancallhook then
@@ -243,6 +245,8 @@ function entmeta:Horde_AddDebuffBuildup(debuff, buildup, inflictor, pos)
                     util.Effect( "horde_status_shock", e, true, true )
                 end
             end)
+        elseif debuff == HORDE.Status_Stun then
+            self:Horde_AddStun(duration)
         end
 
         self.Horde_Debuff_Active[debuff] = true

@@ -201,19 +201,23 @@ SWEP.Animations = {
     },
     ["ready"] = {
         Source = "base_draw",
+        Mult=.5,
         Time = .25
     },
     ["draw"] = {
         Source = "base_draw",
+        Mult=.5,
         Time = 1
     },
     ["reload"] = {
-        MinProgress = 3.66, ForceEnd = true,
+        MinProgress = 3.1, ForceEnd = true,
+        Mult=1/1.2,
         Source = "base_reload",
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
     },
     ["reload_empty"] = {
         MinProgress = 3.75,
+        Mult=1/1.2,
         Source = "base_reloadempty", ForceEnd = true,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
     },

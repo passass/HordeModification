@@ -235,7 +235,7 @@ end
 hook.Add("Horde_OnNPCKilled", "StartSlowMotion", function(victim, killer, inflictor)
     if inflictor:IsNPC() or CurTime() == last_slowmotion_called_timing then return end
     if last_player_called_slowmotion == NULL and
-	math.random() > 0.08 or last_player_called_slowmotion != NULL and
+	math.random() > 0.07 or last_player_called_slowmotion != NULL and
 	(killer != last_player_called_slowmotion or last_player_called_count >= (killer:Horde_GetPerk("assault_base") and 5 or 3)) or
         hook.Run("Horde_CanSlowTime")
     then return end

@@ -250,7 +250,7 @@ net.Receive("Horde_ToggleShop", function ()
     HORDE:ToggleShop()
 end)
 
-net.Receive("Horde_ToggleItemConfig", function ()
+--[[net.Receive("Horde_ToggleItemConfig", function ()
     notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
 end)
 
@@ -268,6 +268,26 @@ end)
 
 net.Receive("Horde_ToggleConfigMenu", function ()
     notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
+end)]]
+
+net.Receive("Horde_ToggleItemConfig", function ()
+    HORDE:ToggleItemConfig()
+end)
+
+net.Receive("Horde_ToggleEnemyConfig", function ()
+    HORDE:ToggleEnemyConfig()
+end)
+
+net.Receive("Horde_ToggleClassConfig", function ()
+    HORDE:ToggleClassConfig()
+end)
+
+net.Receive("Horde_ToggleMapConfig", function ()
+    HORDE:ToggleMapConfig()
+end)
+
+net.Receive("Horde_ToggleConfigMenu", function ()
+    HORDE:ToggleConfigMenu()
 end)
 
 net.Receive("Horde_ToggleStats", function ()

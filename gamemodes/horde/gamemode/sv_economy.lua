@@ -828,7 +828,6 @@ net.Receive("Horde_SelectClass", function (len, ply)
 	end
     ply:Horde_SetClass(class)
     ply:Horde_SetSubclass(name, subclass_name)
-    print(not_regive_starter_weapons)   
     if not_regive_starter_weapons then
         for _, wpn in pairs(ply:GetWeapons()) do
             if hook.Run("PlayerCanPickupWeapon", ply, wpn) == true then 

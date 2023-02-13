@@ -18,6 +18,9 @@ ENT.AdminSpawnable		= false
 end]]
 local default_hp = 300
 ENT.VJ_AddEntityToSNPCAttackList = true
+ENT.Horde_Immune_Status = {
+	[HORDE.Status_Bleeding] = true
+}
 if CLIENT then
 
 	function ENT:Draw()
@@ -55,7 +58,8 @@ else
 		if hp > 0 then
 			self:SetHealth(hp)
 		else
-			print(self:EmitSound("physics/concrete/concrete_break" .. math.random(2, 3) .. ".wav"))
+			self:EmitSound("physics/concrete/concrete_break" .. math.random(2, 3) .. ".wav")
+			self:GetNWEntity("HordeOwner"):Horde_RemoveDropEntity("horde_barricadekit", self:GetCreationID())
 			SafeRemoveEntity(self)
 		end
 	end
@@ -90,16 +94,16 @@ function ENT:Initialize()
 	self:SetSolid( SOLID_VPHYSICS )
 	self:PhysicsInit( SOLID_VPHYSICS )
 
+	local phys = self:GetPhysicsObject()
+	if phys:IsValid() then
+		phys:EnableMotion( false )
+		phys:AddGameFlag(FVPHYSICS_NO_IMPACT_DMG)
+		phys:Wake()
+	end
+	self:SetCollisionBounds( Vector(-51, -51, -51), Vector(51, 51, 51) )
+	--self:SetCollisionGroup(COLLISION_GROUP_NONE)
+	self:SetHealth(default_hp)
 	if SERVER then
-		local phys = self:GetPhysicsObject()
-		if phys:IsValid() then
-			phys:EnableMotion( false )
-			phys:AddGameFlag(FVPHYSICS_NO_IMPACT_DMG)
-			phys:Wake()
-		end
-		self:SetCollisionBounds( Vector(-51, -51, -51), Vector(51, 51, 51) )
-		--self:SetCollisionGroup(COLLISION_GROUP_NONE)
-		self:SetHealth(default_hp)
 		self:SetMaxHealth(default_hp)
 		local owner = self:GetNWEntity("HordeOwner")
 		if IsValid(owner) then
