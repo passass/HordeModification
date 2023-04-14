@@ -58,6 +58,7 @@ if SERVER then
 util.AddNetworkString("Horde_SideNotification")
 util.AddNetworkString("Horde_SideNotificationDebuff")
 util.AddNetworkString("Horde_PlayerInit")
+util.AddNetworkString("Horde_SideNotificationObjective")
 util.AddNetworkString("Horde_SyncItems")
 util.AddNetworkString("Horde_SyncEnemies")
 util.AddNetworkString("Horde_SyncClasses")
@@ -71,7 +72,7 @@ end
 
 HORDE = {}
 HORDE.__index = HORDE
-HORDE.version = "1.1.9.0"
+HORDE.version = "1.2.0.0"
 print("[HORDE] HORDE Version is " .. HORDE.version) -- Sanity check
 
 HORDE.color_crimson = Color(220, 20, 60, 225)

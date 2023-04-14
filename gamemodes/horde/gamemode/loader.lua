@@ -155,6 +155,14 @@ else
 	NEW_include("gui/cl_3d2d.lua")
 	NEW_include("gui/cl_subclassbutton.lua")
 	NEW_include("gui/cl_perkbutton.lua")
+
+	NEW_include("gui/npcinfo/sh_npcinfo.lua")
+	NEW_include("gui/npcinfo/cl_npcinfo.lua")
+
+	NEW_include("status/sh_mind.lua")
+	NEW_include("gui/scoreboard/dpingmeter.lua")
+	NEW_include("gui/scoreboard/dheaderpanel.lua")
+	NEW_include("gui/scoreboard/dplayerline.lua")
 end
 
 local function ExtInclude(name, dir)

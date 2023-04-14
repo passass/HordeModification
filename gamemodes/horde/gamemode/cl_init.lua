@@ -56,6 +56,26 @@ hook.Add("InitPostEntity", "GetLocal", function()
 end)
 
 function HORDE:ToggleShop()
+    if MySelf:Horde_GetCurrentSubclass() == "Necromancer" or MySelf:Horde_GetCurrentSubclass() == "Artificer" or MySelf:Horde_GetCurrentSubclass() == "Warlock" then
+        if not HORDE.ShopGUI then
+            HORDE.ShopGUI = vgui.Create("HordeSpellForge")
+            HORDE.ShopGUI:SetVisible(false)
+        end
+    
+        if HORDE.ShopGUI:IsVisible() then
+            HORDE.ShopGUI:Hide()
+            gui.EnableScreenClicker(false)
+        else
+            HORDE.ShopGUI:Remove()
+            if HORDE.StatsGUI then
+                HORDE.StatsGUI:Remove()
+            end
+            HORDE.ShopGUI = vgui.Create("HordeSpellForge")
+            HORDE.ShopGUI:Show()
+            gui.EnableScreenClicker(true)
+        end
+        return
+    end
     if not HORDE.ShopGUI then
         HORDE.ShopGUI = vgui.Create("HordeShop")
         HORDE.ShopGUI:SetVisible(false)
@@ -250,26 +270,6 @@ net.Receive("Horde_ToggleShop", function ()
     HORDE:ToggleShop()
 end)
 
---[[net.Receive("Horde_ToggleItemConfig", function ()
-    notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
-end)
-
-net.Receive("Horde_ToggleEnemyConfig", function ()
-    notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
-end)
-
-net.Receive("Horde_ToggleClassConfig", function ()
-    notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
-end)
-
-net.Receive("Horde_ToggleMapConfig", function ()
-    notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
-end)
-
-net.Receive("Horde_ToggleConfigMenu", function ()
-    notification.AddLegacy("Config Menu is not working in this addon!!!", NOTIFY_ERROR, 5)
-end)]]
-
 net.Receive("Horde_ToggleItemConfig", function ()
     HORDE:ToggleItemConfig()
 end)
@@ -332,6 +332,12 @@ net.Receive("Horde_SideNotificationDebuff", function(length)
     local debuff = net.ReadUInt(32)
     local debuff_str = translate.Get("Notifications_Debuff_" .. HORDE.Status_String[debuff]) or HORDE.Debuff_Notifications[debuff]
     HORDE:PlayNotification(debuff_str, 0, HORDE.Status_Icon[debuff], HORDE.STATUS_COLOR[debuff])
+end)
+
+net.Receive("Horde_SideNotificationObjective", function(length)
+    local obj = net.ReadUInt(4)
+    local str = net.ReadString()
+    HORDE:PlayNotification(str, 0, HORDE.Objective_Icon[obj], Color(0,255,0))
 end)
 
 net.Receive("Horde_SyncItems", function ()
@@ -404,3 +410,5 @@ killicon.AddAlias("arccw_horde_awp", "arccw_go_awp")
 killicon.AddAlias("arccw_horde_barret", "arccw_mw2_barrett")
 killicon.Add("arccw_nade_medic", "arccw/weaponicons/arccw_nade_medic", Color(0, 0, 0, 255))
 killicon.Add("npc_turret_floor", "vgui/hud/npc_turret_floor", Color(0, 0, 0, 255))
+killicon.Add("npc_vj_horde_shotgun_turret", "vgui/hud/npc_turret_floor", Color(0, 0, 0, 255))
+killicon.Add("npc_vj_horde_sniper_turret", "vgui/hud/npc_turret_floor", Color(0, 0, 0, 255))

@@ -102,8 +102,8 @@ function HORDE:GetDefaultClassesData()
         {
             [1] = {title = "Survival", choices = {"medic_antibiotics", "assault_charge"}},
             [2] = {title = "Improvise", choices = {"berserker_breathing_technique", "demolition_frag_cluster"}},
-            [3] = {title = "Imprinting", choices = {"heavy_liquid_armor", "assault_speedreload"}},--"cremator_entropy_shield"}},
-            [4] = {title = "Inspired Learning", choices = {"ghost_headhunter", "heavy_floating_carrier"}},--"engineer_symbiosis"}},
+            [3] = {title = "Imprinting", choices = {"heavy_liquid_armor", "assault_speedreload"}},
+            [4] = {title = "Inspired Learning", choices = {"ghost_headhunter", "carcass_anabolic_gland"}},
         },
         0,nil,nil,nil,
         {HORDE.Class_Survivor}
@@ -620,9 +620,11 @@ hook.Add("InitPostEntity", "Horde_PlayerInit", function()
                 class = HORDE.Class_Survivor
             end
             local f2 = file.Read("horde/class_choices.txt", "DATA")
+            -- I Seriously don't understand what it's supposed to do.
+            --[[if HORDE.subclasses_to_classes[f2] then
             if HORDE.subclasses_to_classes[f2] then
                 f2 = HORDE.subclasses_to_classes[f2]
-            end
+            end]]--
 
             if f2 then
                 HORDE:SendSavedPerkChoices(f2)

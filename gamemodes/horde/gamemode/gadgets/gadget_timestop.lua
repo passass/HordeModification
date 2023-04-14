@@ -24,7 +24,6 @@ local function Weapons_Start_Beams()
             if IsValid(bul.wep) and bul.wep.ArcCW then
                 bul.wep:DoPrimaryFire(false, bul.data)
             else
-                print("gsdggsd")
                 bul.attacker:FireBullets(bul.data, true)
             end
         end)
