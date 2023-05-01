@@ -508,10 +508,6 @@ SWEP.RejectAttachments = {
     -- ["optic_docter"] = true -- stop this attachment from being usable on this gun
 }
 
-SWEP.AttachmentOverrides = {
-    -- ["optic_docter"] = {} -- allows you to overwrite atttbl values
-}
-
 SWEP.TTT_DoNotAttachOnBuy = false -- don't give all attachments when bought
 
 SWEP.Attachments = {}
@@ -606,7 +602,8 @@ SWEP.Attachments = {}
 -- use SWEP/wep.Hook_SelectInsertAnimation to change the shotgun reload insert animation
 -- use SWEP/wep.Hook_SelectFireAnimation to change the fire animation
 -- use SWEP/wep.Hook_SelectCycleAnimation to change the cycle/pump animation
--- use SWEP/wep.Hook_SelectBashAnimation to change the bash animation
+-- use SWEP/wep.Hook_SelectBashAnim to change the bash animation
+-- use SWEP/wep.Hook_SelectJamAnim to change the jam animation
 
 -- which sequence to derive the sight autosolver from.
 SWEP.AutosolveSourceSeq = "idle"
@@ -725,7 +722,6 @@ SWEP.Bodygroups = {} -- [0] = 1, [1] = 0...
 local searchdir = "weapons/arccw_base"
 
 local blacklist = {["horde_modifs.lua"] = true, ["shared.lua"] = true}
-
 local function autoinclude(dir)
     local files, dirs = file.Find(searchdir .. "/*.lua", "LUA")
 
@@ -810,6 +806,7 @@ function SWEP:OnRestore()
     self:SetReloadingREAL(0)
     self:SetWeaponOpDelay(0)
     self:SetMagUpIn(0)
+    self:SetNWPriorityAnim(0)
 
     self:KillTimers()
     self:Initialize()
@@ -881,7 +878,7 @@ function SWEP:BarrelHitWall()
         hitwallcache = {0, CurTime()}
     end
 
-    if !hitwallcache or hitwallcache[1] ~= CurTime() then
+    if !hitwallcache or hitwallcache[2] ~= CurTime() then
 
         local offset = self:GetBuff("BarrelOffsetHip")
 

@@ -44,7 +44,7 @@ function PANEL:SetData(item, description_panel, infusion_panel)
             self.loc_name = self.name
         end
     end
-
+    
     self.description = item.description
     self.weight = item.weight
     self.price = item.price
