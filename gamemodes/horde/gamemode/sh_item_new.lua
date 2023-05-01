@@ -113,19 +113,6 @@ end
         "item_battery",
     }
 
-    HORDE.items["arccw_go_9mm"] = nil
-        HORDE.items["arccw_go_glock"] = nil
-        --HORDE.items["arccw_go_glock"] = nil
-       --[[ HORDE.items.arccw_go_usp = nil
-        HORDE.items.arccw_go_p2000 = nil
-        HORDE.items.arccw_go_p250 = nil
-        HORDE.items.arccw_go_p250 = nil
-        HORDE.items.arccw_go_r8 = nil
-        HORDE.items.arccw_go_deagle = nil
-        HORDE.items.arccw_go_m1911 = nil
-        HORDE.items.arccw_go_cz75 = nil
-        HORDE.items.arccw_go_m9 = nil
-        HORDE.items.arccw_go_fiveseven = nil]]
     local old_itemsdata = HORDE.GetDefaultItemsData
     local new_itemsdata = function()
 
@@ -149,10 +136,10 @@ end
         {Berserker=true}, 10, -1, nil, nil, {Berserker=10}, nil, {HORDE.DMG_SLASH})
         HORDE:CreateItem("Melee",      "Mjölnir",       "arccw_horde_mjollnir",    3000, 8, "A warhammer embued with electric energy.\n\nPress RMB to charge the weapon.\nCharged attack creates a lightning storm on impact.",
         {Berserker=true}, 10, -1, nil, nil, {Berserker=20}, nil, {HORDE.DMG_BLUNT, HORDE.DMG_LIGHTNING})
-        HORDE:CreateItem("Melee",      "Dual Swords",       "horde_dualsword",  6000, 8, "Dual Swords which hit very quickly or slow and strong",
+        HORDE:CreateItem("Melee",      "Dual Swords",       "arccw_horde_dualsword",  6000, 8, "Dual Swords which hit very quickly or slow and strong",
         {Berserker=true}, 10, -1, nil, nil, {Berserker=30}, 1, {HORDE.DMG_SLASH})
         
-        HORDE:CreateItem("Melee",      "StormGiant",       "horde_stormgiant",  6000, 10, "A big hammer which hit very slow but strong",
+        HORDE:CreateItem("Melee",      "StormGiant",       "arccw_horde_stormgiant",  6000, 10, "A big hammer which hit very slow but strong",
         {Berserker=true}, 10, -1, nil, nil, {Berserker=30}, 1, {HORDE.DMG_BLUNT})
 
         HORDE:CreateItem("Pistol",     "9mm",            "arccw_horde_9mm",   10,  1, "Combine standard sidearm.",
@@ -211,6 +198,8 @@ end
         {Ghost=true}, 5, -1, nil, nil, {Ghost=5}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("SMG",        "SMG1",           "arccw_horde_smg1",   100, 3, "A compact, fully automatic firearm.",
         {Assault=true, Heavy=true, Survivor=true, SWAT=true}, 5, -1, nil, "items/hl2/weapon_smg1.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Assault", "Heavy", "SpecOps", "SWAT"})
+        HORDE:CreateItem("SMG",        "TMP",            "arccw_horde_tmp",   1000, 3, "Steyr TMP.\nA select-fire 9×19mm Parabellum caliber machine pistol.",
+        {Medic=true, Assault=true, Heavy=true, Survivor=true, Cremator=true, SWAT=true}, 8, -1, nil, nil, {Survivor=2}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("SMG",        "UZI",            "arccw_horde_uzi",   1250, 3, "UZI Submachine Gun.\nDesigned by Captain (later Major) Uziel Gal of the IDF following the 1948 Arab–Israeli War.",
         {Medic=true, Assault=true, Heavy=true, Survivor=true, Cremator=true, SWAT=true}, 8, -1, nil, nil, {Survivor=3}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("SMG",        "Mac10",          "arccw_horde_mac10",    1500, 4, "Military Armament Corporation Model 10.\nBoasts a high rate of fire,\nwith poor spread accuracy and high recoil as trade-offs.",
@@ -1094,8 +1083,8 @@ end
         HORDE.items["arccw_horde_ak47supmod"].infusions = ballistic_infusions_rifles
         HORDE.items["arccw_horde_type95"].infusions = ballistic_infusions_rifles
         HORDE.items["arccw_horde_svu"].infusions = ballistic_infusions_sniper_rifles
-        HORDE.items["horde_stormgiant"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
-        HORDE.items["horde_dualsword"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
+        HORDE.items["arccw_horde_stormgiant"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
+        HORDE.items["arccw_horde_dualsword"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
         HORDE.items["horde_riotshield"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
         HORDE.items["arccw_horde_ballistic_knife"].infusions = melee_slash_infusions
     end

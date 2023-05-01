@@ -189,6 +189,3 @@ function AnalyzeDirection(direction)
 end
 
 AnalyzeDirection("")
-	timer.Create("testingnew0", 1, 0, function() 
-		print(table.Count(HORDE.items))
-	end)

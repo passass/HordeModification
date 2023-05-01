@@ -1,5 +1,4 @@
 if GetConVar("horde_enable_slomo"):GetInt() == 0 then return end
-
 HORDE.SlowMotion_MovementSpeedBonus = function(ply, bonus_walk, bonus_run)
 	local stage = HORDE:SlowMotion_GetStage()
     if stage == 1 then return end
@@ -232,7 +231,7 @@ function HORDE.SlowMotion_Start()
     end)
 end
 
-hook.Add("Horde_OnNPCKilled", "StartSlowMotion", function(victim, killer, inflictor)
+hook.Add("Horde_OnEnemyKilled", "StartSlowMotion", function(victim, killer, inflictor)
     if inflictor:IsNPC() or CurTime() == last_slowmotion_called_timing then return end
     if last_player_called_slowmotion == NULL and
 	math.random() > 0.07 or last_player_called_slowmotion != NULL and

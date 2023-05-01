@@ -341,7 +341,7 @@ hook.Add("Horde_OnPlayerDamageTaken", "Horde_ApplyFusionDamageTaken", function (
     end
 end)
 
-hook.Add("Horde_OnNPCKilled", "Horde_ApplyFusionOnKill", function (victim, ply, wpn)
+hook.Add("Horde_OnEnemyKilled", "Horde_ApplyFusionOnKill", function (victim, ply, wpn)
     if not ply.Horde_Infusions then return end
     local curr_weapon = HORDE:GetCurrentWeapon(ply)
     if not curr_weapon:IsValid() or not wpn:IsValid() then return end
