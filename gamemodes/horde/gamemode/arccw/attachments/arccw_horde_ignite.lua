@@ -1,4 +1,3 @@
-if engine.ActiveGamemode() != "horde" then att.Ignore = true return end
 att.PrintName = "Dragon's Breath"
 att.Icon = Material("entities/acwatt_ammo_dragon.png")
 att.Description = "Incendiary load shotgun shells deal extra damage at both close and long range, as well as igniting targets within its effective range. However, a reduced magazine is equipped."
@@ -8,7 +7,7 @@ att.Desc_Pros = {
 att.Desc_Cons = {
 }
 att.AutoStats = true
-att.Slot = "ammo_bullet"
+att.Slot = {"ammo_bullet", "go_bullet"}
 
 att.Mult_PrecisionMOA = 2
 att.Mult_ShootPitch = 0.85

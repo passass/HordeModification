@@ -260,7 +260,7 @@ end
         {Demolition=true}, 12, -1, nil, nil, {Demolition=5}, nil, {HORDE.DMG_BLAST})
 
         HORDE:CreateItem("Shotgun",    "Pump-Action",    "arccw_horde_shotgun",100, 3, "A standard 12-gauge shotgun.",
-        {Warden=true, Survivor=true}, 6, -1, nil, "items/hl2/weapon_shotgun.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {HORDE.DMG_BALLISTIC})
+        {Warden=true, Survivor=true}, 6, -1, nil, "items/hl2/weapon_shotgun.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Warden"})
         HORDE:CreateItem("Shotgun",    "Sawn-Off",           "arccw_horde_db_sawnoff",     1000, 3, "Sawn-Off.\nBasic double-barrel shotgun manufactured as an entry-level hunting weapon.",
         {Assault=true, SWAT=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 3, -1, nil, nil, {Warden=1}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Shotgun",    "Nova",           "arccw_go_nova",     1000, 4, "Benelli Nova.\nItalian pump-action 12-gauge shotgun.",
@@ -383,10 +383,6 @@ end
         HORDE:CreateItem("Rifle",    "AK Medic",         "arccw_horde_ak47medic", 3000, 8, "A Ak47 with M203 Medic Module.",
         {Medic=true}, 10, 115, nil, nil, {Medic=15}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
 
-        HORDE:CreateItem("MG",         "Negev",          "arccw_go_negev",     2250, 9, "IWI Negev.\nA 5.56×45mm NATO light machine gun developed by the IWI.",
-        {Heavy=true, Survivor=true}, 25, -1, nil, nil, {Heavy=3}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("MG",         "M249",           "arccw_go_m249para",  2500, 9, "M249 light machine gun.\nA gas operated and air-cooled weapon of destruction.",
-        {Heavy=true, Survivor=true}, 40, -1, nil, nil, {Heavy=2}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("MG",         "Stoner",           "arccw_horde_stoner",  2500, 8, "Stoner.\nA Rifle with 60 rounds in mag.",
         {Heavy=true, Survivor=true}, 20, -1, nil, nil, {Heavy=3}, nil, {HORDE.DMG_BALLISTIC})
         --HORDE:CreateItem("MG",         "RPK",           "arccw_mw2_rpk",   2750, 9, "M249 light machine gun.\nA gas operated and air-cooled weapon of destruction.",
@@ -399,8 +395,6 @@ end
         }, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("MG",         "MG4",            "arccw_mw2_mg4",      3000, 10, "Heckler & Koch MG4.\nA belt-fed 5.56 mm light machine gun that replaced MG3.",
         {Heavy=true}, 40, -1, nil, nil, {Heavy=10}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("MG",         "M240B",          "arccw_mw2_m240",     3000, 10, "M240 Bravo.\nFires 7.62mm NATO ammunition.\nEquipped by U.S. Armed Forces.",
-        {Heavy=true}, 50, -1, nil, nil, {Heavy=10}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("MG",         "AUG HBAR",       "arccw_horde_aug_hbar",3000, 9, "Steyr AUG HBAR.\nA light-support machine gun variant of the AUG assault rifle.",
         {Heavy=true}, 25, -1, nil, nil, {Heavy=11}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("MG",         "Stoner LMG A1",         "arccw_horde_stonera1",     3500, 10, "Stoner LMG A1 - very strong LMG.\nFires a bit slowly but a strong bullets.",
@@ -978,7 +972,7 @@ end
                     lvl_per_tier=5
                 },
             },
-            {"OverLoad",  "uc_tp_overload",  1250,},
+            {"OverLoad",  "perk_overload",  1250,},
             {"Endurance",  "perk_fastmovementspeed",  500, lvls = 3,
                 commoncondition = {
                     class="Survivor",

@@ -1,4 +1,3 @@
-if engine.ActiveGamemode() != "horde" then att.Ignore = true return end
 att.PrintName = "Kebrinium"
 att.Icon = Material("entities/acwatt_ammo_explosive.png")
 att.Description = "Special bullets made by KerkOTech. These bullets have an explosive charge inside. The explosion is very effective against armor, but due to possible weapon issues, reduced magazines are issued."
@@ -12,7 +11,7 @@ att.Desc_Neutrals = {
     "Blast radius is 96 HU / 2.4m",
 }
 att.AutoStats = true
-att.Slot = "ammo_bullet"
+att.Slot = {"ammo_bullet", "go_bullet"}
 
 --att.MagReducer = true
 

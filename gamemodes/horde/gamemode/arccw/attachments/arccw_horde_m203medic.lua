@@ -1,4 +1,3 @@
-if engine.ActiveGamemode() != "horde" then att.Ignore = true return end
 att.PrintName = "M203 (MN)"
 att.Icon = Material("entities/acwatt_ubgl_m203.png")
 att.Description = "American-made underbarrel grenade launcher. Fires high explosive shells."

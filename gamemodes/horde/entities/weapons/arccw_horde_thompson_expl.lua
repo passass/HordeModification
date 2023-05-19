@@ -235,11 +235,11 @@ SWEP.Attachments = {
         PrintName = "Ammo Type",
         Slot = {"ammo_bullet"},
         Integral = true,
-        Installed = "ammo_kebrinium",
+        Installed = "ammo_explosive",
     },
     {
         PrintName = "Perk",
-        Slot = "perk"
+        Slot = "go_perk"
     },
     {
         PrintName = "Charm",

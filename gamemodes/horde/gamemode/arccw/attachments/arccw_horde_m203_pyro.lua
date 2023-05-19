@@ -1,4 +1,3 @@
-if engine.ActiveGamemode() != "horde" then att.Ignore = true return end
 att.PrintName = "Molotov Launcher"
 att.Icon = Material("entities/acwatt_mw2_ubgl_m203.png", "smooth")
 att.Description = "Weapon-exclusive grenade launcher with its own unique animations."

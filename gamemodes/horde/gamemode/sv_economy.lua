@@ -25,6 +25,16 @@ util.AddNetworkString("Horde_SyncMaxWeight")
 
 local plymeta = FindMetaTable("Player")
 
+function plymeta:Horde_SetMaxArmor(base)
+    timer.Simple(0, function ()
+        if not self:IsValid() then return end
+        base = self:Horde_GetArmorLimit(DeleteSpecArmor, DontResetRegularArmor) / (100 / (base or 100))
+        local bonus = {increase = 0, more = 1, add = 0}
+        hook.Run("Horde_OnSetMaxArmor", self, bonus)
+        self:SetMaxArmor(bonus.add + base * bonus.more * (1 + bonus.increase))
+    end)
+end
+
 function plymeta:Horde_SetMaxHealth(base)
     timer.Simple(0, function ()
         if not self:IsValid() then return end
@@ -48,7 +58,7 @@ end
 
 local ClassesWhichCanBuy200Armor = {Berserker = true, Heavy = true}
 
-function plymeta:Horde_ResetArmorLimit(DeleteSpecArmor, DontResetRegularArmor)
+function plymeta:Horde_GetArmorLimit()
     local specialarmor = self.Horde_Special_Armor
     local maxarmor = 50
     if DontResetRegularArmor then
@@ -60,21 +70,9 @@ function plymeta:Horde_ResetArmorLimit(DeleteSpecArmor, DontResetRegularArmor)
         maxarmor = self.RegularArmorLimit > 150 and 50 or maxarmor
     end
     if not DeleteSpecArmor and specialarmor then
-        self:SetMaxArmor(math.max(maxarmor, HORDE.items[specialarmor].entity_properties.armor))
-    else
-        self:SetMaxArmor(maxarmor)
-
-        if (specialarmor) then
-            if SERVER then
-                net.Start("Horde_SyncSpecialArmor")
-                    net.WriteString(specialarmor)
-                    net.WriteUInt(0, 3)
-                net.Send(self)
-            end
-            self.Horde_Special_Armor = nil
-        end
+        maxarmor = math.max(maxarmor, HORDE.items[specialarmor].entity_properties.armor)
     end
-    self:SetArmor(math.min(self:GetMaxArmor(), self:Armor()))
+    return maxarmor
 end
 
 function plymeta:Horde_SetWeight(weight)
@@ -225,6 +223,7 @@ function plymeta:Horde_GetDropEntities()
 end
 
 function plymeta:Horde_DropMoney(amount)
+    if not amount then amount = 50 end
 	amount = math.floor(tonumber(amount)) -- ensure that unholy amounts of money are not being dropped
 	if not amount or amount < 50 then amount = 50 end 
     if self:Horde_GetMoney() >= amount and self:Alive() then
@@ -288,7 +287,7 @@ function plymeta:Horde_RecalcWeight()
 end
 
 hook.Add("PlayerSpawn", "Horde_Economy_Sync", function (ply)
-    if ply.Horde_Has_Ice_Coffin == true then return end
+    if ply.Horde_Fake_Respawn == true then return end
     hook.Run("Horde_ResetStatus", ply)
     net.Start("Horde_ClearStatus")
     net.Send(ply)
@@ -320,7 +319,7 @@ hook.Add("PlayerSpawn", "Horde_Economy_Sync", function (ply)
         net.Send(ply)
     end
     timer.Simple(0, function()
-        ply:Horde_ResetArmorLimit()
+        ply:Horde_SetMaxArmor()
     end)
     if ply:Horde_GetGadget() then
         local item = HORDE.items[ply:Horde_GetGadget()]
@@ -937,7 +936,9 @@ net.Receive("Horde_SelectClass", function (len, ply)
     ply:Horde_SetWeight(ply:Horde_GetMaxWeight() - occupied_weight)
     
     timer.Simple(0, function()
-        ply:Horde_ResetArmorLimit(true, true)
+        ply.RegularArmorLimit = nil
+        ply.Horde_Special_Armor = nil
+        ply:Horde_SetMaxArmor()
     end)
     
     ply:Horde_UnsetGadget()

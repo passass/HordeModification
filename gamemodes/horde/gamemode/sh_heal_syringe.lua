@@ -84,7 +84,7 @@ function HORDE.Syringe:ApplyMedicSkills(wep, hptoheal)
             local effectdata = EffectData()
             effectdata:SetOrigin(tr.HitPos)
             effectdata:SetRadius(50)
-            util.Effect("heal_mist", effectdata)
+            util.Effect("horde_heal_mist", effectdata)
 
             for _, ent in pairs(ents.FindInSphere(tr.HitPos, 100)) do
                 if ent:IsPlayer() then

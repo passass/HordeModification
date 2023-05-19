@@ -1,7 +1,6 @@
-local firerate = 5
+local firerate = 15
 
-if engine.ActiveGamemode() != "horde" then att.Ignore = true return end
-att.PrintName = "Frantic Firing Frenzy (level - 1)"
+att.PrintName = "Frantic Firing Frenzy (level - 3)"
 att.Icon = Material("entities/acwatt_go_perk_rapidfire.png", "mips smooth")
 att.Description = "Slightly improves rate of fire."
 att.Desc_Pros = {

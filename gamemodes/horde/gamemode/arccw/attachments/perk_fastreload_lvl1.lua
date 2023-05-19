@@ -1,7 +1,7 @@
-local reloadspeed = 20
+local reloadspeed = 10
 local total_reloadspeed = 1 - reloadspeed / 100
-local level = "3"
-if engine.ActiveGamemode() != "horde" then att.Ignore = true return end
+local level = "1"
+
 att.PrintName = "Rushed Reloading" .. " (level - " .. level .. ")"
 att.Icon = Material("entities/acwatt_perk_fastreload.png")
 att.Description = "Improves reloading speed by " .. tostring(reloadspeed) .. "% through improved magwell design."

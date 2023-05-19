@@ -88,7 +88,7 @@ if SERVER then
 	NEW_include("status/buff/sv_phalanx.lua")
 	NEW_include("status/buff/sv_aerial_guard.lua")
 	NEW_include("status/buff/sv_warden_aura.lua")
-	NEW_include("status/buff/sv_entropy_shield.lua")
+	--NEW_include("status/buff/sv_entropy_shield.lua")
 	NEW_include("status/buff/sv_foresight.lua")
 	NEW_include("status/debuff/sv_debuff.lua")
 	NEW_include("status/debuff/sv_hinder.lua")
@@ -157,29 +157,37 @@ local function ExtInclude(name, dir)
 		if SERVER then
 			include(name)
 		end
-	elseif sep[1] == "sh" then
-		if SERVER then
-			AddCSLuaFile(name)
-			include(name)
-		else
-			include(name)
-		end
 	elseif sep[1] == "cl" then
 		if SERVER then
 			AddCSLuaFile(name)
 		else
 			include(name)
 		end
+	elseif sep[1] == "sh" then
+		if SERVER then
+			AddCSLuaFile(name)
+		end
+		include(name)
 	end
 end
 
 -- Run this on both client and server
-function AnalyzeDirection(direction)
+function AnalyzeDirection(direction, all_shared, pre_callback, post_callback)
     local files, dirs = file.Find( "horde/gamemode/" .. direction .. "*", "LUA" )
 
     for k,v in pairs(files) do
         if !blacklist[direction .. v] then
-        	ExtInclude(v, direction)
+			if all_shared then
+				local name = direction .. v
+				if pre_callback and pre_callback(direction, v) then continue end
+				if SERVER then
+					NEW_AddCSLuaFile(name)
+				end
+				NEW_include(name)
+				if post_callback then post_callback(direction, v) end
+			else
+        		ExtInclude(v, direction)
+			end
 		end
     end
 
@@ -188,4 +196,19 @@ function AnalyzeDirection(direction)
     end
 end
 
+
+AnalyzeDirection("arccw/attachments/", true, function(dir, name)
+	if !ArcCWInstalled then
+		blacklist[dir .. name] = true
+		return true
+	end
+
+	att = {}
+	
+end, function(dir, name)
+	if att and att.Slot  then
+		ArcCW.LoadAttachmentType( att, string.Split(name, ".")[1] )
+	end
+	att = nil
+end)
 AnalyzeDirection("")

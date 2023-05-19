@@ -1,4 +1,3 @@
-if engine.ActiveGamemode() != "horde" then att.Ignore = true return end
 att.PrintName = "Overload"
 
 att.Icon = Material("entities/att/arccw_uc_tp_overload.png", "smooth mips")

@@ -221,7 +221,8 @@ SWEP.Attachments = {
     },
     {
         PrintName = "Ammo Type",
-        Slot = "ammo_bullet",
+        Slot = "go_ammo",
+        DefaultAttName = "Standard Ammo",
         Integral = true,
         Installed = "arccw_horde_ignite",
     },
@@ -232,7 +233,7 @@ SWEP.Attachments = {
     },
     {
         PrintName = "Perk",
-        Slot = "perk"
+        Slot = "go_perk"
     },
     {
         PrintName = "Camouflage",

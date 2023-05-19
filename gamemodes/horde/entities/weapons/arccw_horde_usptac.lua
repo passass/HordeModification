@@ -200,7 +200,7 @@ SWEP.Attachments = {
     }, --4
     {
         PrintName = "Perk",
-        Slot = "perk"
+        Slot = "go_perk"
     }, --5
     {
         PrintName = "Charm",

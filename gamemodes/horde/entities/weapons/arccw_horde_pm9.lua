@@ -198,11 +198,12 @@ SWEP.Attachments = {
     },
     { --5
         PrintName = "Ammo Type",
-        Slot = "ammo_bullet",
+        Slot = "go_ammo",
+        DefaultAttName = "Standard Ammo",
     },
     {
         PrintName = "Perk",
-        Slot = "perk"
+        Slot = "go_perk"
     }, --11
     { --8
         PrintName = "Charm",

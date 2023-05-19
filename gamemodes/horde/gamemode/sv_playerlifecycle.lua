@@ -418,7 +418,7 @@ function HORDE:PlayerInit(ply)
     end
     
     timer.Simple(0.1, function()
-        ply:Horde_ResetArmorLimit()
+        ply:Horde_SetMaxArmor()
     end)
 
     hook.Run("Horde_ResetStatus", ply)
@@ -575,6 +575,7 @@ HORDE.VoteChangeMap = function (ply)
 end
 
 hook.Add("PlayerSpawn", "Horde_PlayerInitialSpawn", function(ply)
+    if ply.Horde_Fake_Respawn == true then return end
     if ply:IsValid() then
         ply:SetCollisionGroup(15)
         ply:SetCanZoom(false)
