@@ -370,8 +370,7 @@ end
             Ghost = {Ghost=5},
             Survivor = {Ghost=5, Survivor=10},
         }, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "SCAR-H",           "arccw_go_scar",       2500, 8, "FN SCAR-H.\nAn assault rifle developed by Belgian manufacturer FN Herstal.",
-        {Survivor=true,  Ghost=true}, 15, -1, nil, nil, {Ghost=7, Assault=3}, nil, {HORDE.DMG_BALLISTIC})
+        HORDE.items["arccw_horde_scarh"].levels = {Ghost=7, Assault=3}
         HORDE:CreateItem("Rifle",      "G3",             "arccw_horde_g3",      3000, 8, "G3 Battle Rifle.\nA 7.62×51mm NATO, select-fire battle rifle developed by H&K.",
         {Ghost=true}, 15, -1, nil, nil, {Ghost=8, Assault=7}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Rifle",      "FN FAL",         "arccw_horde_fal",     3000, 8, "FN FAL.\nA battle rifle designed by Belgian and manufactured by FN Herstal.",
@@ -413,8 +412,6 @@ end
 
         HORDE:CreateItem("Explosive",  "Frag Grenade",   "weapon_frag",        100,  0, "A standard frag grenade.\nGood for crowd control.",
         {Assault=true, Heavy=true, SWAT=true, Demolition=true, Survivor=true, Ghost=true, Engineer=true, Warden=true, Cremator=true}, 100, -1, nil, nil, nil, nil, {HORDE.DMG_BLAST}, nil, {"Demolition"})
-        HORDE:CreateItem("Explosive",  "M67 Grenade",    "arccw_horde_nade_frag",1500,  2, "M67 High Explosive Fragmentation Grenade.\nMilitary grade, does large amounts of Blast damage.",
-        {Demolition=true}, 100, -1, nil, nil, {Demolition=2}, nil, {HORDE.DMG_BLAST})
         HORDE:CreateItem("Explosive",  "M79 GL",         "arccw_horde_m79",    2000,  6, "M79 Grenade Launcher.\nShoots 40x46mm grenades the explodes on impact.",
         {Demolition=true, Survivor=true}, 10, -1, nil, nil, {Demolition=3}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
         HORDE:CreateItem("Explosive",  "Sticky Launcher",  "horde_sticky_launcher", 2500,  7, "Sticky grenade launcher.\nLaunches grenades that stick to surfaces and entities.\n\nRMB to detonate.",
@@ -1062,7 +1059,6 @@ end
         HORDE.items["arccw_horde_stg44"].infusions = ballistic_infusions_rifles
         HORDE.items["arccw_horde_ak117"].infusions = ballistic_infusions_rifles
 
-        HORDE.items["arccw_go_scar"].infusions = ballistic_infusions_sniper_rifles
         HORDE.items["arccw_horde_m40a3"].infusions = ballistic_infusions_sniper_rifles
         HORDE.items["arccw_horde_hkg28"].infusions = ballistic_infusions_sniper_rifles
         HORDE.items["arccw_horde_m14"].infusions = ballistic_infusions_sniper_rifles
@@ -1073,7 +1069,6 @@ end
         HORDE.items["arccw_horde_r8"].infusions = ballistic_infusions_light
         HORDE.items["arccw_horde_deagle"].infusions = ballistic_infusions_light
         HORDE.items["arccw_horde_m1911"].infusions = ballistic_infusions_light
-        HORDE.items["arccw_horde_nade_frag"].infusions = {}
         HORDE.items["arccw_horde_stonera1"].infusions = ballistic_infusions_mg_rifles
         HORDE.items["arccw_horde_stoner"].infusions = ballistic_infusions_mg_rifles
 
