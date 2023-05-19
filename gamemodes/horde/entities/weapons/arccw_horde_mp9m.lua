@@ -1,10 +1,15 @@
+if not ArcCWInstalled then return end
+if CLIENT then
+    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_go_mp9")
+    killicon.Add("arccw_horde_mp9m", "arccw/weaponicons/arccw_go_mp9", Color(0, 0, 0, 255))
+end
 SWEP.Base = "arccw_base"
 SWEP.Spawnable = true -- this obviously has to be set to true
-SWEP.Category = "ArcCW - GSO (SMGs)" -- edit this if you like
+SWEP.Category = "ArcCW - Horde" -- edit this if you like
 SWEP.AdminOnly = false
 
-SWEP.PrintName = "MP9N"
-SWEP.Trivia_Class = "Machine Pistol"
+SWEP.PrintName = "MP9N Medic PDW"
+SWEP.Trivia_Class = "PDW"
 SWEP.Trivia_Desc = "9mm machine pistol developed from the Steyr TMP, with side-folding stock."
 SWEP.Trivia_Manufacturer = "Brugger and Thomet"
 SWEP.Trivia_Calibre = "9x19mm Parabellum"
@@ -22,10 +27,8 @@ SWEP.ViewModelFOV = 60
 
 SWEP.DefaultBodygroups = "000000000000"
 
-SWEP.Damage = 26
-SWEP.DamageMin = 20
-SWEP.Horde_MaxMags = 15
-SWEP.Primary.Ammo = "smg1"
+SWEP.Damage = 35
+SWEP.DamageMin = 13 -- damage done at maximum range
 SWEP.Range = 45 -- in METRES
 SWEP.Penetration = 6
 SWEP.DamageType = DMG_BULLET
@@ -42,7 +45,7 @@ SWEP.RecoilSide = 0.215
 SWEP.RecoilRise = 0.1
 SWEP.RecoilPunch = 2.5
 
-SWEP.Delay = 60 / 850 -- 60 / RPM.
+SWEP.Delay = 60 / 900 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
@@ -55,10 +58,7 @@ SWEP.Firemodes = {
         Mode = 0
     }
 }
-if CLIENT then
-    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_go_mp9.vtf")
-    killicon.Add("arccw_horde_mp9", "arccw/weaponicons/arccw_go_mp9", Color(0, 0, 0, 255))
-end
+
 SWEP.NPCWeaponType = "weapon_smg1"
 SWEP.NPCWeight = 100
 
@@ -66,6 +66,7 @@ SWEP.AccuracyMOA = 12 -- accuracy in Minutes of Angle. There are 60 MOA in a deg
 SWEP.HipDispersion = 250 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 75
 
+SWEP.Primary.Ammo = "pistol" -- what ammo type the gun uses
 SWEP.MagID = "mp9" -- the magazine pool this gun draws from
 
 SWEP.ShootVol = 110 -- volume of shoot sound
@@ -453,3 +454,6 @@ sound.Add({
     volume = 1.0,
     sound = "arccw_go/mp9/mp9_cliphit.wav"
 })
+
+
+HORDE.Syringe:ApplyMedicSkills(SWEP, 15)

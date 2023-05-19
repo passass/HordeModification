@@ -55,6 +55,20 @@ hook.Add("InitPostEntity", "GetLocal", function()
     RunConsoleCommand("initpostentity")
 end)
 
+net.Receive("Horde_HighlightSonar", function (len, ply)
+    local entity = net.ReadEntity()
+    local highlight = net.ReadBool()
+    local idx = entity:EntIndex()
+    if highlight == true then
+        hook.Add("PreDrawHalos", "Horde_SonarHalo" .. idx, function()
+            if !entity:IsValid() then hook.Remove("PreDrawHalos", "Horde_SonarHalo" .. idx) end
+            halo.Add({entity}, Color(255, 255, 255), 5, 5, 1, true, true)
+        end)
+    else
+        hook.Remove("PreDrawHalos", "Horde_SonarHalo" .. idx)
+    end
+end)
+
 function HORDE:ToggleShop()
     if MySelf:Horde_GetCurrentSubclass() == "Necromancer" or MySelf:Horde_GetCurrentSubclass() == "Artificer" or MySelf:Horde_GetCurrentSubclass() == "Warlock" then
         if not HORDE.ShopGUI then

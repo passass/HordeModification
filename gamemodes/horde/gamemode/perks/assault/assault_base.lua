@@ -4,19 +4,23 @@ The Assault class is an all-purpose fighter with high mobility and a focus on Ad
 Complexity: EASY
 
 {1} more movement speed. ({2} per level, up to {3}).
-{4} increased reload speed and firerate in slow motion. ({5} per level, up to {6}).
+{4} increased Ballistic damage. ({5} per level, up to {6}).
+{7} increased reload speed and firerate in slow motion. ({8} per level, up to {9}).
 5 slow motion stacks instead of 3.
 
 Gain Adrenaline when you kill an enemy.
-Adrenaline increases damage and speed by {7}.]]
+Adrenaline increases damage and speed by {10}.]]
 PERK.Params = {
     [1] = {percent = true, level = 0.008, max = 0.20, classname = HORDE.Class_Assault},
     [2] = {value = 0.008, percent = true},
     [3] = {value = 0.20, percent = true},
-    [4] = {percent = true, level = .08, max = 2, classname = HORDE.Class_Assault},
-    [5] = {value = .08, percent = true},
-    [6] = {value = 2, percent = true},
-    [7] = {value = 0.06, percent = true},
+    [4] = {percent = true, level = 0.004, max = 0.1, classname = HORDE.Class_Assault},
+    [5] = {value = 0.004, percent = true},
+    [6] = {value = 0.1, percent = true},
+    [7] = {percent = true, level = .08, max = 2, classname = HORDE.Class_Assault},
+    [8] = {value = .08, percent = true},
+    [9] = {value = 2, percent = true},
+    [10] = {value = 0.06, percent = true},
 }
 
 PERK.Hooks = {}
