@@ -1,0 +1,10 @@
+ArcCW.AttachmentBlacklistTable["go_perk_diver"] = true
+ArcCW.AttachmentBlacklistTable["go_perk_light"] = true
+ArcCW.AttachmentBlacklistTable["go_perk_quickdraw"] = true
+ArcCW.AttachmentBlacklistTable["go_perk_cowboy"] = true
+ArcCW.AttachmentBlacklistTable["perk_fastreload"] = true
+ArcCW.AttachmentBlacklistTable["go_perk_rapidfire"] = true
+ArcCW.AttachmentBlacklistTable["go_perk_burst"] = true
+ArcCW.AttachmentBlacklistTable["go_perk_fastreload"] = true
+ArcCW.AttachmentBlacklistTable["perk_headshot"] = true
+ArcCW.AttachmentBlacklistTable["perk_fastreload"] = true

@@ -1,0 +1,1 @@
+CreateConVar("horde_enable_slomo", 1, FCVAR_SERVER_CAN_EXECUTE, "Enabled Slomo.")
