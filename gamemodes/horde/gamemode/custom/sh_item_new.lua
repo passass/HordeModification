@@ -141,6 +141,7 @@ end
         weapon_horde_medkit = "weapon_hordeext_medkit",
         horde_sticky_launcher = "hordeext_sticky_launcher",
         arccw_horde_nade_incendiary = "arccw_hordeext_nade_incendiary",
+        arccw_horde_heat_crossbow = "arccw_hordeext_heat_crossbow",
     }
 
     local old_itemsdata = HORDE.GetDefaultItemsData
