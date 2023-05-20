@@ -192,7 +192,7 @@ end
 net.Receive("Horde_BuyItem", function (len, ply)
     if not ply:IsValid() or not ply:Alive() then return end
     local class = net.ReadString()
-    print("Horde_BuyItem", class)
+
     local price = HORDE.items[class].price
     local weight = HORDE.items[class].weight
     local levels = HORDE.items[class].levels
@@ -525,7 +525,7 @@ net.Receive("Horde_SelectClass", function (len, ply)
 	if !not_regive_starter_weapons then
 		not_regive_starter_weapons = HORDE.start_money != ply:Horde_GetMoney()
 	end
-    print("not_regive_starter_weapons", not_regive_starter_weapons)
+
     ply:Horde_SetClass(class)
     ply:Horde_SetSubclass(name, subclass_name)
     if not_regive_starter_weapons then
@@ -605,8 +605,6 @@ net.Receive("Horde_BuyItemAmmoPrimary", function (len, ply)
     else
         price = HORDE:Ammo_RefillOneMagCost(ply, HORDE.items[class])
     end
-
-    print("Horde_BuyItemAmmoPrimary", is_maxammo)
     
     if ply:Horde_GetMoney() >= price then
         local wpn = ply:GetWeapon(class)

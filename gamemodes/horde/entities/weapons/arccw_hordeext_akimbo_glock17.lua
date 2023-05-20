@@ -1,5 +1,6 @@
 if not ArcCWInstalled then return end
 if CLIENT then
+    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_horde_akimbo_glock17")
     killicon.AddAlias("arccw_horde_akimbo_glock17", "arccw_go_glock")
 end
 SWEP.Base = "arccw_horde_akimbo_base"
@@ -232,7 +233,7 @@ SWEP.Attachments = {
             vang = Angle(0, 0, 0),
         },
         Hidden = true,
-        Installed = "horde_akimbo_glock17",
+        Installed = "hordeext_akimbo_glock17",
         Integral = true,
     },
     {

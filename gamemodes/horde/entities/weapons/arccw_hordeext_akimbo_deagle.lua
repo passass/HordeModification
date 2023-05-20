@@ -1,6 +1,7 @@
 if not ArcCWInstalled then return end
 if CLIENT then
-    killicon.AddAlias("arccw_horde_akimbo_m9", "arccw_go_m9")
+    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_horde_akimbo_deagle")
+    killicon.AddAlias("arccw_horde_akimbo_deagle", "arccw_go_deagle")
 end
 SWEP.Base = "arccw_horde_akimbo_base"
 SWEP.Spawnable = true
@@ -8,7 +9,7 @@ SWEP.Category = "ArcCW - MW2"
 SWEP.AdminOnly = false
 SWEP.WeaponCamBone = tag_camera
 
-SWEP.PrintName = "M9"
+SWEP.PrintName = "Desert Eagle"
 SWEP.Trivia_Class = "Handgun"
 SWEP.Trivia_Desc = "Semi-automatic (single fire)"
 
@@ -16,62 +17,62 @@ SWEP.Slot = 1
 
 SWEP.UseHands = true
 
-SWEP.ViewModel = "models/weapons/arccw/fesiugmw2/c_beretta_akimbo_test2.mdl"
+SWEP.ViewModel = "models/weapons/arccw/fesiugmw2/c_desert_eagle_3.mdl"
 SWEP.MirrorVMWM = true
 SWEP.WorldModelOffset = {
-    pos = Vector(-9, 3, -3.5),
+    pos = Vector(-9, 3, -4),
     ang = Angle(-7, 0, 180),
-    scale = 1.25
+    scale = 1.125
 }
-SWEP.WorldModel = "models/weapons/w_pist_elite_single.mdl"
+SWEP.WorldModel = "models/weapons/w_pist_deagle.mdl"
 SWEP.ViewModelFOV = 65
 SWEP.ClipsPerAmmoBox = 2
-SWEP.Damage = 42
-SWEP.DamageMin = 21
-SWEP.Range = 50  -- GAME UNITS * 0.025 = METRES
-SWEP.Penetration = 6
+SWEP.Damage = 90
+SWEP.DamageMin = 42
+SWEP.Range = 55  -- GAME UNITS * 0.025 = METRES
+SWEP.Penetration = 10
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
-
 SWEP.Horde_MaxMags = 40
+
 SWEP.ChamberSize = 0
-SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
-SWEP.ExtendedClipSize = 25
-SWEP.ReducedClipSize = 10
+SWEP.Primary.ClipSize = 7 -- DefaultClip is automatically set.
+SWEP.ExtendedClipSize = 10
+SWEP.ReducedClipSize = 4
 
-SWEP.Recoil = 0.300
-SWEP.RecoilSide = 0.225
+SWEP.Recoil = 2.25 / 1.5
+SWEP.RecoilSide = 1.75 / 1.5
 SWEP.RecoilRise = 0.1
-SWEP.RecoilPunch = 2.5
+SWEP.RecoilPunch = 2.5 / 1.5
 
-SWEP.Delay = 0.079 -- 60 / RPM.
+SWEP.Delay = 0.1 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
     },
     {
-        Mode = 0
-    }
+        Mode = 0,
+    },
 }
 
-SWEP.NPCWeaponType = {"weapon_pistol"}
+SWEP.NPCWeaponType = {"weapon_357"}
 SWEP.NPCWeight = 100
 
-SWEP.AccuracyMOA = 9 / 2 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 200 / 2 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 25
+SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.HipDispersion = 250 / 2 -- inaccuracy added by hip firing.
+SWEP.MoveDispersion = 50
 
-SWEP.Primary.Ammo = "pistol" -- what ammo type the gun uses
+SWEP.Primary.Ammo = "357" -- what ammo type the gun uses
 
-SWEP.ShootVol = 110 -- volume of shoot sound
-SWEP.ShootPitch = 100 -- pitch of shoot sound
+SWEP.ShootVol = 130 -- volume of shoot sound
+SWEP.ShootPitch = 115 -- pitch of shoot sound
 
-SWEP.ShootSound =			"weapons/fesiugmw2/fire/m9.wav"
---SWEP.DistantShootSound =	"weapons/arccw/m4a1/m4a1_us_distant_03.wav"
+SWEP.ShootSound =			"weapons/fesiugmw2/fire/deagle.wav"
+--SWEP.DistantShootSound =	"weapons/fesiugmw2/fire_distant/deagle.wav"
 SWEP.ShootSoundSilenced =	"weapons/fesiugmw2/fire/usp45_sil.wav"
 
-SWEP.MuzzleEffect = "muzzleflash_4"
+SWEP.MuzzleEffect = "muzzleflash_pistol_deagle"
 SWEP.ShellModel = "models/shells/shell_9mm.mdl"
 SWEP.ShellScale = 1
 SWEP.ShellRotateAngle = Angle(0, 90, 0)
@@ -90,8 +91,8 @@ SWEP.BulletBones = { -- the bone that represents bullets in gun/mag
 }
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-1.953, 0, 1.572),
-    Ang = Angle(-2.096, 0, 0),
+    Pos = Vector(-1.554, 2.392, 0.9),
+    Ang = Angle(-0.347, 0, 0),
     ViewModelFOV = 65,
     Magnification = 1,
 }
@@ -100,12 +101,12 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "revolver"
 SWEP.HoldtypeSights = "revolver"
 
-SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
+SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_REVOLVER
 
 SWEP.ActivePos = Vector(0, 0, 1)
 SWEP.ActiveAng = Angle(0, 0, 0)
 
-SWEP.CustomizePos = Vector(3, 0, -1)
+SWEP.CustomizePos = Vector(4, -3, -1)
 SWEP.CustomizeAng = Angle(10, 19, 0)
 
 SWEP.CrouchPos = Vector(-2.764, -0.927, -0.202)
@@ -122,7 +123,7 @@ SWEP.BarrelOffsetHip = Vector(2, 0, -2)
 
 SWEP.BarrelLength = 18
 
-SWEP.ExtraSightDist = 5
+SWEP.ExtraSightDist = 15
 
 -----[ Tactical knife sheet ]------
 	SWEP.CanBash				= true -- Tac knife will save us
@@ -137,27 +138,22 @@ SWEP.ExtraSightDist = 5
 	SWEP.MeleeHitNPCSound		= "MW2Common.Melee.HitFleshy_Slice"
 
 SWEP.AttachmentElements = {
-    ["railthegrind"] = {
-        VMElements = {
-            {
-                Model = "models/weapons/arccw/fesiugmw2/atts/pistolrail_1.mdl",
-                Bone = "tag_weapon",
-                Offset = {
-                    pos = Vector(0, -0.075, -0.5),
-                    ang = Angle(0, 0, 0),
-                }
-            }
-        },
+    ["nolaser"] = {
+        VMBodygroups = {{ind = 2, bg = 1}},
+        WMBodygroups = {},
+    },
+    ["skin_gold"] = {
+        VMBodygroups = {{ind = 0, bg = 1}},
+        WMBodygroups = {},
     },
     ["altirons"] = {
         Override_IronSightStruct = {
-            Pos = Vector(-1.64, -2.346, 0.119),
-            Ang = Angle(-0.3, 0, 0),
+            Pos = Vector(-1.701, -2.346, -0.1),
+            Ang = Angle(-0.347, 0, 0),
             ViewModelFOV = 65,
             Magnification = 1,
         },
-        VMBodygroups = {{ind = 1, bg = 1}}, -- m1911 is an old fart and doesn't have the knife bone all the way back so we hide it in qc and show it here instead
-        WMBodygroups = {},
+        VMBodygroups = {{ind = 1, bg = 1}},
     },
 }
 
@@ -168,11 +164,14 @@ SWEP.Attachments = {
         Slot = "optic_lp",
         Bone = "tag_weapon",
         Offset = {
-            vpos = Vector(-0.7, -0.075, 2.1),
+            vpos = Vector(0, 0, 0),
             vang = Angle(0, 0, 0),
         },
+        SlideAmount = {
+            vmin = Vector(3.2, 0, 1.7),
+            vmax = Vector(5.5, 0, 1.7),
+        },
         ExcludeFlags = {"arcticfixyoshit1","cantuseshitinakimboyet"},
-        InstalledEles = {"railthegrind"},
     },
     {
         PrintName = "Muzzle",
@@ -180,13 +179,12 @@ SWEP.Attachments = {
         Slot = "muzzle",
         Bone = "tag_weapon",
         Offset = {
-            vpos = Vector(5.214, -0.085, 1.194),
+            vpos = Vector(6.2, 0, 1),
             vang = Angle(0, 0, 0),
             wpos = Vector(26.648, 0.782, -8.042),
             wang = Angle(-9.79, 0, 180)
         },
         ExcludeFlags = {"cantuseshitinakimboyet"},
-		VMScale = Vector(0.67, 0.67, 0.67),
     },
     {
         PrintName = "Underbarrel",
@@ -198,16 +196,18 @@ SWEP.Attachments = {
             wpos = Vector(14.329, 0.602, -4.453),
             wang = Angle(-10.216, 0, 180)
         },
-        MergeSlots = {8}, Integral = true,
+        InstalledEles = {"nolaser"},
+        MergeSlots = {9}, Integral = true,
     },
     {
         PrintName = "Tactical",
-        Slot = "tac_pistol",
+        Slot = "tac",
         Bone = "tag_weapon",
         Offset = {
-            vpos = Vector(3.5, 0, 0),
+            vpos = Vector(4.4, 0, 0),
             vang = Angle(0, 0, 0),
         },
+        InstalledEles = {"nolaser"},
     },
     {
         PrintName = "Fire Group",
@@ -225,6 +225,14 @@ SWEP.Attachments = {
         Slot = "go_perk"
     },
     {
+        PrintName = "Skin",
+        Slot = {"skin_mw2deagle"},
+        DefaultAttName = "Two-Tone",
+        FreeSlot = true,
+		Hidden = false,
+		DefaultAttIcon = Material("entities/acwatt_deagle_mw2.png", "smooth")
+    },
+    {
         PrintName = "Akimbotest",
         DefaultAttName = "No LH",
         Slot = "akimbotest",
@@ -234,21 +242,33 @@ SWEP.Attachments = {
             vang = Angle(0, 0, 0),
         },
         Hidden = true,
-        Installed = "horde_akimbo_m9",
+        Installed = "hordeext_akimbo_deagle",
+    },
+    {
+        PrintName = "Charm",
+        Slot = "charm",
+        FreeSlot = true,
+        Bone = "tag_weapon",
+        Offset = {
+            vpos = Vector(3, -0.4, 0.5),
+            vang = Angle(0, 0, 0),
+            wpos = Vector(9.625, 2.5, -3.75),
+            wang = Angle(0, 0, 180)
+        },
     },
 }
 
 SWEP.Hook_SelectReloadAnimation = function(wep, anim)
     if wep.Attachments[3].Installed == "mw2_tacticalknife" then
         return anim .. "_knife"
-    elseif wep.Attachments[8].Installed then
+    elseif wep.Attachments[9].Installed then
         return anim .. "_akimbo_right"
     end
 end
 SWEP.Hook_TranslateAnimation = function(wep, anim)
     if wep.Attachments[3].Installed == "mw2_tacticalknife" then
         return anim .. "_knife"
-    elseif wep.Attachments[8].Installed then
+    elseif wep.Attachments[9].Installed then
         return anim .. "_akimbo_right"
     end
 end
@@ -264,73 +284,58 @@ SWEP.Animations = {
     },
     ["enter_sprint"] = {
         Source = "sprint_in",
-        Time = 10/30
+        Time = 11/30
     },
     ["idle_sprint"] = {
         Source = "sprint_loop",
-        Time = 30/40
+        Time = 31/40
     },
     ["exit_sprint"] = {
         Source = "sprint_out",
-        Time = 10/30
+        Time = 11/30
     },
     ["draw"] = {
         Source = "pullout",
         SoundTable = {{s = "MW2Common.Deploy", 		t = 0}},
-        Time = 31/30 /4,
+        Time = 29/30 /4,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
     ["holster"] = {
         Source = "putaway",
-        Time = 32/30 /4,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["draw_empty"] = {
-        Source = "pullout_empty",
-        SoundTable = {{s = "MW2Common.Deploy", 		t = 0}},
-        Time = 31/30 /4,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["holster_empty"] = {
-        Source = "putaway_empty",
-        Time = 30/30 /4,
+        Time = 33/30 /4,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
     ["fire"] = {
         Source = "fire",
-        Time = 9/30,
+        Time = 15/30,
         ShellEjectAt = 0,
     },
     ["fire_iron"] = {
         Source = "fire_ads",
-        Time = 13/30,
+        Time = 15/30,
         ShellEjectAt = 0,
     },
     ["fire_empty"] = {
-        Source = "lastfire",
-        Time = 9/30,
+        Source = "fire_last",
+        Time = 15/30,
         ShellEjectAt = 0,
     },
     ["fire_iron_empty"] = {
-        Source = "lastfire",
-        Time = 9/30,
+        Source = "fire_last",
+        Time = 15/30,
         ShellEjectAt = 0,
     },
     ["reload"] = {
         Source = "reload",
-        Time = 51/30,
+        Time = 58/30,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         SoundTable = {
-						{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_clipout_v2.wav", 	t = 9/24},
-						{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_clipin_v2.wav", 	t = 27/24},
+						{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipout_v1.wav", 	t = 10/30},
+						{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipin_v1.wav", 	t = 39/30},
 					},
         Checkpoints = {24, 97},
         FrameRate = 30,
@@ -340,12 +345,12 @@ SWEP.Animations = {
     },
     ["reload_empty"] = {
         Source = "reload_empty",
-        Time = 60/30,
+        Time = 62/30,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         SoundTable = {
-						{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_clipout_v2.wav", 	t = 9/24},
-						{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_clipin_v2.wav", 	t = 27/24},
-						{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_chamber_v2.wav", 	t = 36/24},
+						{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipout_v1.wav", 	t = 10/30},
+						{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipin_v1.wav", 	t = 39/30},
+						{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_chamber_v1.wav", 	t = 47/30},
 					},
         Checkpoints = {24, 97, 131},
         FrameRate = 37,
@@ -357,10 +362,6 @@ SWEP.Animations = {
 --------- LE TACTICAL KNIFE XDXDXDXD---------------------
 ---------------------------------------------------------
 		["idle_knife"] = {
-			Source = "idle_knife",
-			Time = 300/30
-		},
-		["idle_empty_knife"] = {
 			Source = "idle_knife",
 			Time = 300/30
 		},
@@ -378,22 +379,22 @@ SWEP.Animations = {
 		},
 		["fire_knife"] = {
 			Source = "fire_knife",
-			Time = 8/30,
+			Time = 15/30,
 			ShellEjectAt = 0,
 		},
 		["fire_iron_knife"] = {
 			Source = "fire_ads_knife",
-			Time = 8/30,
+			Time = 15/30,
 			ShellEjectAt = 0,
 		},
 		["fire_empty_knife"] = {
-			Source = "lastfire_knife",
-			Time = 8/30,
+			Source = "fire_knife",
+			Time = 15/30,
 			ShellEjectAt = 0,
 		},
 		["fire_iron_empty_knife"] = {
-			Source = "lastfire_knife",
-			Time = 8/30,
+			Source = "fire_knife",
+			Time = 15/30,
 			ShellEjectAt = 0,
 		},
 		["draw_knife"] = {
@@ -406,33 +407,18 @@ SWEP.Animations = {
 		},
 		["holster_knife"] = {
 			Source = "putaway_knife",
-			Time = 31/30 /4,
-			LHIK = true,
-			LHIKIn = 0,
-			LHIKOut = 0.35,
-		},
-		["draw_empty_knife"] = {
-			Source = "pullout_knife",
-			SoundTable = {{s = "MW2Common.Deploy", 		t = 0}},
-			Time = 29/30 /4,
-			LHIK = true,
-			LHIKIn = 0,
-			LHIKOut = 0.35,
-		},
-		["holster_empty_knife"] = {
-			Source = "putaway_knife",
-			Time = 31/30 /4,
+			Time = 33/30 /4,
 			LHIK = true,
 			LHIKIn = 0,
 			LHIKOut = 0.35,
 		},
 		["reload_knife"] = {
 			Source = "reload_knife",
-			Time = 51/24,
+			Time = 58/30,
 			TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
 			SoundTable = {
-							{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_clipout_v2.wav", 	t = 7/24},
-							{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_clipin_v2.wav", 	t = 25/24},
+							{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipout_v1.wav", 	t = 10/30},
+							{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipin_v1.wav", 	t = 39/30},
 						},
 			Checkpoints = {24, 97},
 			FrameRate = 30,
@@ -442,12 +428,12 @@ SWEP.Animations = {
 		},
 		["reload_empty_knife"] = {
 			Source = "reload_empty_knife",
-			Time = 46/24,
+			Time = 62/30,
 			TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
 			SoundTable = {
-							{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_clipout_v2.wav", 	t = 6/24},
-							{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_clipin_v2.wav", 	t = 25/24},
-							{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_chamber_v2.wav", 	t = 37/24},
+							{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipout_v1.wav", 	t = 10/30},
+							{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipin_v1.wav", 	t = 39/30},
+							{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_chamber_v1.wav", 	t = 47/30},
 						},
 			Checkpoints = {24, 97, 131},
 			FrameRate = 37,
@@ -461,16 +447,17 @@ SWEP.Animations = {
 			Time = 97/120 / 1.6, -- damn you universal
 			LHIK = true,
 		},
+
 ---------------------------------------------------------
 --------- LE akimbo gun ---------------------
 ---------------------------------------------------------
     ["idle_akimbo_right"] = {
         Source = "idle_akimbo_right",
-        Time = 2/30
+        Time = 200/30
     },
     ["idle_empty_akimbo_right"] = {
         Source = "idle_empty_akimbo_right",
-        Time = 2/30
+        Time = 200/30
     },
     ["enter_sprint_akimbo_right"] = {
         Source = "sprint_in_akimbo_right",
@@ -487,41 +474,41 @@ SWEP.Animations = {
     ["draw_akimbo_right"] = {
         Source = "pullout_akimbo_right",
         SoundTable = {{s = "MW2Common.Deploy", 		t = 0}},
-        Time = 26/30 /4,
+        Time = 30/30 /4,
     },
     ["holster_akimbo_right"] = {
         Source = "putaway_akimbo_right",
-        Time = 26/30 /4,
+        Time = 34/30 /4,
     },
     ["fire_akimbo_right"] = {
         Source = "fire_akimbo_right",
-        Time = 6/30,
+        Time = 16/30,
         ShellEjectAt = 0,
     },
     ["fire_empty_akimbo_right"] = {
         Source = "fire_last_akimbo_right",
-        Time = 6/30,
+        Time = 16/30,
         ShellEjectAt = 0,
     },
     ["reload_akimbo_right"] = {
         Source = "reload_akimbo_right",
-        Time = 70/40,
-        MinProgress = 1.2,
+        Time = 58/30,
+        MinProgress = 1.429,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         SoundTable = {
-						{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_clipout_v2.wav", 	t = 4/40},
-						{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_clipin_v2.wav", 	t = 39/40},
+						{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipout_v1.wav", 	t = 10/30},
+						{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipin_v1.wav", 	t = 39/30},
 					},
     },
     ["reload_empty_akimbo_right"] = {
         Source = "reload_empty_akimbo_right",
-        Time = 89/40,
-        MinProgress = 1.2,
+        Time = 63/30,
+        MinProgress = 1.429,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         SoundTable = {
-						{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_clipout_v2.wav", 	t = 4/40},
-						{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_clipin_v2.wav", 	t = 45/40},
-						{s = "weapons/fesiugmw2/foley/wpfoly_beretta9mm_reload_chamber_v2.wav", 	t = 65/40},
+						{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipout_v1.wav", 	t = 10/30},
+						{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_clipin_v1.wav", 	t = 39/30},
+						{s = "weapons/fesiugmw2/foley/wpfoly_de50_reload_chamber_v1.wav", 	t = 48/30},
 					},
     },
 }
