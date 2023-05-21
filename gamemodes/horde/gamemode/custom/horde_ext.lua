@@ -18,7 +18,10 @@ if SERVER then
 end
 
 local blacklist = {["horde_ext.lua"] = true}
-local blacklist_folders = {["post_init"] = true, ["subclasses"] = true, ["perks"] = true, ["gui"] = true, gadgets = true, mutations = true}
+local blacklist_folders = {
+	["post_init"] = true, ["arccw"] = true, ["subclasses"] = true, ["perks"] = true, ["gadgets"] = true, ["mutations"] = true,
+	--["gui"] = true, ["status"] = true
+}
 local function NEW_AddCSLuaFile(name)
 	blacklist[name] = true
 	AddCSLuaFile(name)
@@ -32,6 +35,7 @@ local function ExtInclude(name, dir)
 
 	local sep = string.Split(name, "_")
 	name = dir .. name
+	print("name", name)
 	-- Determine where to load the files
 	if sep[1] == "sv" then
 		if SERVER then
@@ -54,11 +58,10 @@ end
 -- Run this on both client and server
 function AnalyzeDirection(direction, all_shared, pre_callback, post_callback, not_in_custom, dont_analyze_folders)
     local files, dirs = file.Find( "horde/gamemode/" .. (not_in_custom and "" or "custom/") .. direction .. "*", "LUA" )
-
-    for k,v in pairs(files) do
+	for k,v in pairs(files) do
         if !blacklist[direction .. v] then
 			if all_shared then
-				local name = (not_in_custom and "horde/gamemode/" or "") .. direction .. v
+				local name = (not_in_custom and "horde/gamemode/" or "horde/gamemode/custom/") .. direction .. v
 				if pre_callback and pre_callback(direction, v) then continue end
 				if SERVER then
 					NEW_AddCSLuaFile(name)
@@ -66,15 +69,14 @@ function AnalyzeDirection(direction, all_shared, pre_callback, post_callback, no
 				NEW_include(name)
 				if post_callback then post_callback(direction, v) end
 			else
-        		ExtInclude(v, (not_in_custom and "horde/gamemode/" or "") .. direction)
+        		ExtInclude(v, (not_in_custom and "horde/gamemode/" or "horde/gamemode/custom/") .. direction)
 			end
 		end
     end
 	if !dont_analyze_folders then
-		for k,v in pairs(dirs) do
-			local dir_ = string.Split(direction, "/")
-			if !blacklist_folders[dir_[#dir_]] then
-				AnalyzeDirection(direction .. v .. "/" )
+		for k, dirname in pairs(dirs) do
+			if !blacklist_folders[dirname] then
+				AnalyzeDirection(direction .. dirname .. "/", all_shared, pre_callback, post_callback, not_in_custom)
 			end
 		end
 	end
@@ -95,13 +97,26 @@ end, function(dir, name)
 	end
 	att = nil
 end)
+AnalyzeDirection("gadgets/", true, function(dir, name)
+	GADGET = {}
+end, function(dir, name)
+	if GADGET.Ignore then return end
+	GADGET.ClassName = string.lower(GADGET.ClassName or string.Explode(".", name)[1])
+	GADGET.SortOrder = GADGET.SortOrder or 0
+
+	hook.Run("Horde_OnLoadGadget", GADGET)
+
+	HORDE.gadgets[GADGET.ClassName] = GADGET
+
+	for k, v in pairs(GADGET.Hooks or {}) do
+		hook.Add(k, "horde_gadget_" .. GADGET.ClassName, v)
+	end
+
+	GADGET = nil
+end)
 AnalyzeDirection("tfa/", true, nil, nil, true)
 AnalyzeDirection("")
 
 hook.Add( "InitPostEntity", "HORDE_EXT", function()
-	AnalyzeDirection("custom/post_init/", nil, nil, nil, true)
-
-	timer.Simple(0, function()
-		AnalyzeDirection("custom/post_init/gui/", nil, nil, nil, true)
-	end)
+	AnalyzeDirection("post_init/")
 end )

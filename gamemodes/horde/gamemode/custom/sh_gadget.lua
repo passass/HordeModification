@@ -1,5 +1,3 @@
-
-
 if SERVER then
     function HORDE:UseGadget(ply)
         local gadget = ply:Horde_GetGadget()

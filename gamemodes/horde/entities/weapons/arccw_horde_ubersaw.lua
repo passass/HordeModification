@@ -43,7 +43,6 @@ end
 SWEP.ViewModel		= "models/weapons/red/medic/v_bonesaw_red.mdl"
 SWEP.WorldModel		= "models/weapons/w_models/w_bonesaw.mdl"
 SWEP.ViewModelFOV = 70
-print("gdsagasd")
 SWEP.MeleeDamage = 65
 
 SWEP.PrimaryBash = true
