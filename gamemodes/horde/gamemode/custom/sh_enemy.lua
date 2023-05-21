@@ -32,9 +32,5 @@ function HORDE:GetDefaultEnemiesData()
                 enemy.class = standart_to_ext[id]
             end
         end
-        if HORDE.NPCS[id] then
-            HORDE.NPCS[standart_to_ext[id]] = HORDE.NPCS[id]
-            HORDE.NPCS[id] = nil
-        end
     end
 end

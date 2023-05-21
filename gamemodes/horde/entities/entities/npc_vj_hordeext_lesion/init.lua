@@ -120,6 +120,7 @@ function ENT:CustomOnInitialize()
 
     self:AddRelationship("npc_headcrab_poison D_LI 99")
 	self:AddRelationship("npc_headcrab_fast D_LI 99")
+
     local mat = Material("models/horde/lesion/lesion_sheet", "mips smooth")
     self:SetSubMaterial(0, "models/horde/lesion/lesion_sheet")
     self:EmitSound("horde/lesion/lesion_roar.ogg", 1500, 80, 1, CHAN_STATIC)
@@ -141,7 +142,7 @@ function ENT:UnRage()
     self.DamageReceived = 0
     self.HasLeapAttack = false
     self.AnimTbl_Run = ACT_WALK
-    self:SetColor(Color(255, 255, 255))
+    self:SetColor(Color(255,255,255))
     local id = self:GetCreationID()
     timer.Remove("Horde_FlayerRage" .. id)
     timer.Create("Horde_FlayerRage" .. id, 10, 1, function ()
@@ -150,16 +151,16 @@ function ENT:UnRage()
     end)
 end
 
+function ENT:CustomOnLeapAttack_BeforeChecks(hitEnt, isProp)
+    self:EmitSound("horde/lesion/lesion_leap.ogg")
+end
+
 function ENT:CustomOnLeapAttack_AfterChecks(hitEnt, isProp)
     if isProp then return end
     if hitEnt and IsValid(hitEnt) and (HORDE:IsPlayerOrMinion(hitEnt) == true) then
         self:UnRage()
         hitEnt:Horde_AddDebuffBuildup(HORDE.Status_Bleeding, 60, self)
     end
-end
-
-function ENT:CustomOnLeapAttack_BeforeChecks(hitEnt, isProp)
-    self:EmitSound("horde/lesion/lesion_leap.ogg")
 end
 
 function ENT:CustomOnTakeDamage_AfterDamage(dmginfo, hitgroup)
@@ -171,4 +172,4 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo, hitgroup)
     end
 end
 
-VJ.AddNPC("Lesion","npc_vj_horde_lesion", "Zombies")
+VJ.AddNPC("Lesion","npc_vj_hordeext_lesion", "Zombies")

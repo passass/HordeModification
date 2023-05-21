@@ -348,7 +348,7 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo, hitgroup)
     end
 end
 
-VJ.AddNPC("Wallace Breen","npc_vj_horde_breen", "Zombies")
+VJ.AddNPC("Wallace Breen","npc_vj_hordeext_breen", "Zombies")
 /*-----------------------------------------------
 	*** Copyright (c) 2012-2017 by DrVrej, All rights reserved. ***
 	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,

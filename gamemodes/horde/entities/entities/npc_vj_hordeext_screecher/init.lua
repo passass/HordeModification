@@ -124,4 +124,4 @@ function ENT:CustomOnThink()
 	end
 end
 
-VJ.AddNPC("Screecher","npc_vj_horde_screecher", "Zombies")
+VJ.AddNPC("Screecher","npc_vj_hordeext_screecher", "Zombies")

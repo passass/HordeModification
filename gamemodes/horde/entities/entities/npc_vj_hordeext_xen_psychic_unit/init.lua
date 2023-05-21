@@ -354,4 +354,4 @@ function ENT:RangeAttackCode()
 	self.AlreadyDoneRangeAttackFirstProjectile = true
 end
 
-VJ.AddNPC("Xen Psychic Unit","npc_vj_horde_xen_psychic_unit", "Zombies")
+VJ.AddNPC("Xen Psychic Unit","npc_vj_hordeext_xen_psychic_unit", "Zombies")

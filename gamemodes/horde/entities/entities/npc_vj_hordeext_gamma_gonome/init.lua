@@ -391,4 +391,4 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo, hitgroup)
     end
 end
 
-VJ.AddNPC("Gamma Gonome","npc_vj_horde_gamma_gonome", "Zombies")
+VJ.AddNPC("Gamma Gonome","npc_vj_hordeext_gamma_gonome", "Zombies")

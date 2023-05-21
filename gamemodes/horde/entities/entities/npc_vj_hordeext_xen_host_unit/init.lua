@@ -178,4 +178,4 @@ function ENT:RangeAttackCode_GetShootPos(projectile)
 	return (self:GetEnemy():GetPos() - self:GetPos()) *0.45 + self:GetUp() *600
 end
 
-VJ.AddNPC("Xen Host Unit","npc_vj_horde_xen_host_unit", "Zombies")
+VJ.AddNPC("Xen Host Unit","npc_vj_hordeext_xen_host_unit", "Zombies")

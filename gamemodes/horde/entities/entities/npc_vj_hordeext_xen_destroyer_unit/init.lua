@@ -408,4 +408,4 @@ function ENT:CustomOnThink_AIEnabled()
 	end
 end
 
-VJ.AddNPC("Xen Destroyer Unit","npc_vj_horde_xen_destroyer_unit", "Zombies")
+VJ.AddNPC("Xen Destroyer Unit","npc_vj_hordeext_xen_destroyer_unit", "Zombies")

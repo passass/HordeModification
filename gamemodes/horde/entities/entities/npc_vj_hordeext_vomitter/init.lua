@@ -149,4 +149,4 @@ end
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 
-VJ.AddNPC("Vomitter","npc_vj_horde_vomitter", "Zombies")
+VJ.AddNPC("Vomitter","npc_vj_hordeext_vomitter", "Zombies")
