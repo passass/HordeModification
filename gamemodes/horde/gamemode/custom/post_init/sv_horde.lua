@@ -777,10 +777,6 @@ function HORDE:SpawnEnemies(enemies, valid_nodes)
 end
 
 function HORDE:SpawnEnemy(enemy, pos)
-    print("HORDE:SpawnEnemy(enemy, pos)")
-    PrintTable(HORDE.NPCS)
-    PrintTable(enemy)
-    print(enemy.class)
     local npc_info = HORDE.NPCS[enemy.class]
     if not npc_info then
         HORDE:SendNotification("NPC " .. enemy.class .. " does not exist.", 1)
