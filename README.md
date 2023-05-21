@@ -18,4 +18,4 @@ to enable mod do this:
 1. enter in the field of external lua "horde_ext"
 2.Have Fun!!!!
 
-mod for horde 1.1.8
+mod for horde 1.1.2.1
