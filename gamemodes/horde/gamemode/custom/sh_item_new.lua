@@ -103,12 +103,12 @@ end
         "arccw_go_p250",
         "arccw_go_r8",
         "arccw_go_deagle",
-        "arccw_go_m1911",
         "arccw_go_cz75",
         "arccw_go_m9",
         "arccw_go_fiveseven",
         "arccw_go_mac10","arccw_go_mp9","arccw_go_mp5","arccw_go_ump","arccw_go_bizon","arccw_go_p90",
         "arccw_go_870",
+        "arccw_mw2_m1911",
         "item_battery",
     }
 

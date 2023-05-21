@@ -103,7 +103,7 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
 				heal_bonus = heal_bonus * 1.25
 			end
 		end
-        if not healinfo:IsImmediately() then
+        if healinfo:IsImmediately() == false then
             ply:Horde_SlowHeal(heal_bonus * healinfo:GetHealAmount(), maxhealth_mult)
         else
             ply:SetHealth(
@@ -114,7 +114,7 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
             )
         end
     else
-        if not healinfo:IsImmediately() then
+        if healinfo:IsImmediately() == false then
             ply:Horde_SlowHeal(healinfo:GetHealAmount(), maxhealth_mult)
         else
             ply:SetHealth(

@@ -9,7 +9,7 @@ ENT.Category		= "Horde"
 
 if (CLIENT) then
     local Name = "Baby Headcrab"
-    local LangName = "npc_vj_horde_headcrab_baby"
+    local LangName = "npc_vj_hordeext_headcrab_baby"
     language.Add(LangName, Name)
     killicon.Add(LangName,"HUD/killicons/default",Color(255,80,0,255))
     language.Add("#"..LangName, Name)

@@ -47,3 +47,11 @@ local function Horde_LoadPerks()
 end
 
 Horde_LoadPerks()
+
+function HORDE:Horde_GetWaveForPerk(perk_level)
+    if HORDE.waves_for_perk then
+        return HORDE.waves_for_perk[perk_level] or 1
+    end
+
+    return GetConVar("horde_perk_start_wave"):GetInt() + math.Round((perk_level - 1) * GetConVar("horde_perk_scaling"):GetFloat())
+end

@@ -9,7 +9,7 @@ ENT.Category        = "Horde"
 
 if (CLIENT) then
 local Name = "Xen Host Unit"
-local LangName = "npc_vj_horde_xen_host_unit"
+local LangName = "npc_vj_hordeext_xen_host_unit"
 language.Add(LangName, Name)
 killicon.Add(LangName,"HUD/killicons/default",Color(255,80,0,255))
 language.Add("#"..LangName, Name)

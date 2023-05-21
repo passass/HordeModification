@@ -9,7 +9,7 @@ ENT.Category		= "Zombies"
 
 if (CLIENT) then
     local Name = "Screecher"
-    local LangName = "npc_vj_horde_screecher"
+    local LangName = "npc_vj_hordeext_screecher"
     language.Add(LangName, Name)
     killicon.Add(LangName,"HUD/killicons/default",Color(255,80,0,255))
     language.Add("#"..LangName, Name)
