@@ -35,7 +35,7 @@ local function ExtInclude(name, dir)
 
 	local sep = string.Split(name, "_")
 	name = dir .. name
-	print("name", name)
+
 	-- Determine where to load the files
 	if sep[1] == "sv" then
 		if SERVER then
