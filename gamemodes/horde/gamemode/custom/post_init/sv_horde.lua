@@ -1038,7 +1038,7 @@ function HORDE:Direct()
 
         -- Spawn boss
         local wave = HORDE.current_wave % HORDE.max_max_waves
-        if wave == 0 then wave = 10 end
+        if wave == 0 then wave = HORDE.max_max_waves end
         local has_boss = HORDE.bosses_normalized[wave]
         if has_boss and (not horde_boss_spawned) and (not HORDE.horde_boss) then
             if HORDE.boss_spawns and #HORDE.boss_spawns > 0 then
