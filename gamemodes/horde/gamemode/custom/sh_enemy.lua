@@ -136,37 +136,44 @@ function HORDE:GetDefaultEnemiesData_4Waves()
     HORDE:CreateEnemy("Sprinter", "npc_vj_horde_sprinter",                  0.80,  2, false, 1, 1, 1, 1)
     HORDE:CreateEnemy("Crawler",    "npc_vj_horde_crawler",                 0.40,  2, false, 1, 1, 1, 1)
     HORDE:CreateEnemy("Fast Zombie",      "npc_fastzombie",                 0.20,  2, false, 0.75, 1, 1, 1)
-    HORDE:CreateEnemy("Poison Zombie",  "npc_poisonzombie",                 0.20,  2, false, 1, 1, 1.1, 1)
-    HORDE:CreateEnemy("Zombine", "npc_vj_horde_zombine",                    0.10,  2, false, 1, 1, 1.1, 1, nil,nil,nil,nil,nil,nil,nil,1)
+    HORDE:CreateEnemy("Poison Zombie",  "npc_poisonzombie",                 0.20,  2, false, 1, 1.1, 1, 1)
+    HORDE:CreateEnemy("Zombine", "npc_vj_horde_zombine",                    0.15,  2, false, 1, 1.1, 1, 1)
     HORDE:CreateEnemy("Exploder", "npc_vj_horde_exploder",                  0.20,  2, true, 1, 1, 1.25, 1)
-    HORDE:CreateEnemy("Vomitter", "npc_vj_horde_vomitter",                  0.10,  2, true, 1, 1, 1.25, 1)
-    HORDE:CreateEnemy("Scorcher", "npc_vj_horde_scorcher",                  0.05,  2, true, 1, 1, 1.5, 1)
+    HORDE:CreateEnemy("Vomitter", "npc_vj_horde_vomitter",                  0.15,  2, true, 1, 1, 1.25, 1)
     HORDE:CreateEnemy("Screecher","npc_vj_horde_screecher",                 0.15,  2, true, 1, 1, 1.25, 1)
-    HORDE:CreateEnemy("Hulk",   "npc_vj_horde_hulk",                        0.05,  2, true, 1, 1, 2, 1, nil,nil,nil,nil,nil,nil,nil,1)
+    HORDE:CreateEnemy("Mutated Hulk",  "npc_vj_mutated_hulk",       1, 2, true,  1, 1, 10, 1, nil, nil, nil,
+    {is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=1.0, music="music/hl2_song20_submix0.mp3", music_duration=104}, nil, nil, nil, nil, {gadget="gadget_unstable_injection", drop_rate=0.5})
+    --HORDE:CreateEnemy("Subject: Grigori","npc_vj_horde_grigori",    1, 5, true,  1, 1, 10, 1, nil, nil, nil,
+    --{is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=0.75, music="music/hl2_song19.mp3", music_duration=115}, "none")
+    HORDE:CreateEnemy("Plague Berserker","npc_vj_horde_platoon_berserker",    0.35, 2, true,  1, 1, 10, 1, nil, nil, nil,
+    {is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=0.75, music="music/hl2_song19.mp3", music_duration=115})
+    HORDE:CreateEnemy("Plague Heavy","npc_vj_horde_platoon_heavy",    0.35, 2, true,  1, 1, 10, 1, nil, nil, nil,
+    {is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=0.75, music="music/hl2_song3.mp3", music_duration=91})
+    HORDE:CreateEnemy("Plague Demolition","npc_vj_horde_platoon_demolitionist",    0.35, 2, true,  1, 1, 10, 1, nil, nil, nil,
+    {is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=0.75, music="music/hl2_song19.mp3", music_duration=115})
+    HORDE:CreateEnemy("Hell Knight",  "npc_vj_horde_hellknight",    1, 2, true, 1, 1, 10, 1, nil, nil, nil,
+    {is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=0.5, music="music/hl2_song3.mp3", music_duration=91}, "none", nil, nil, nil, {gadget="gadget_hellfire_tincture", drop_rate=0.5})
+    HORDE:CreateEnemy("Xen Host Unit","npc_vj_horde_xen_host_unit", 1, 2, true, 1, 1, 10, 1, nil, nil, nil,
+    {is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=0.5, music="music/hl2_song20_submix0.mp3", music_duration=104}, "none", nil, nil, nil, {gadget="gadget_matriarch_womb", drop_rate=0.5})
 
     HORDE:CreateEnemy("Walker", "npc_vj_horde_walker",                      1.00,  3, false, 1, 1, 1, 1)
     HORDE:CreateEnemy("Sprinter", "npc_vj_horde_sprinter",                  0.80,  3, false, 1, 1, 1, 1)
     HORDE:CreateEnemy("Crawler",    "npc_vj_horde_crawler",                 0.40,  3, false, 1, 1, 1, 1)
     HORDE:CreateEnemy("Fast Zombie",      "npc_fastzombie",                 0.20,  3, false, 0.75, 1, 1, 1)
-    HORDE:CreateEnemy("Poison Zombie",  "npc_poisonzombie",                 0.20,  3, false, 1, 1.1, 1, 1)
-    HORDE:CreateEnemy("Zombine", "npc_vj_horde_zombine",                    0.15,  3, false, 1, 1.1, 1, 1)
-    HORDE:CreateEnemy("Exploder", "npc_vj_horde_exploder",                  0.20,  3, true, 1, 1, 1.25, 1)
-    HORDE:CreateEnemy("Vomitter", "npc_vj_horde_vomitter",                  0.15,  3, true, 1, 1, 1.25, 1)
-    HORDE:CreateEnemy("Screecher","npc_vj_horde_screecher",                 0.15,  3, true, 1, 1, 1.25, 1)
-    HORDE:CreateEnemy("Mutated Hulk",  "npc_vj_mutated_hulk",       1, 3, true,  1, 1, 10, 1, nil, nil, nil,
-    {is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=1.0, music="music/hl2_song20_submix0.mp3", music_duration=104}, nil, nil, nil, nil, {gadget="gadget_unstable_injection", drop_rate=0.5})
-    --HORDE:CreateEnemy("Subject: Grigori","npc_vj_horde_grigori",    1, 5, true,  1, 1, 10, 1, nil, nil, nil,
-    --{is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=0.75, music="music/hl2_song19.mp3", music_duration=115}, "none")
-    HORDE:CreateEnemy("Plague Berserker","npc_vj_horde_platoon_berserker",    0.35, 3, true,  1, 1, 10, 1, nil, nil, nil,
-    {is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=0.75, music="music/hl2_song19.mp3", music_duration=115})
-    HORDE:CreateEnemy("Plague Heavy","npc_vj_horde_platoon_heavy",    0.35, 3, true,  1, 1, 10, 1, nil, nil, nil,
-    {is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=0.75, music="music/hl2_song3.mp3", music_duration=91})
-    HORDE:CreateEnemy("Plague Demolition","npc_vj_horde_platoon_demolitionist",    0.35, 3, true,  1, 1, 10, 1, nil, nil, nil,
-    {is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=0.75, music="music/hl2_song19.mp3", music_duration=115})
-    HORDE:CreateEnemy("Hell Knight",  "npc_vj_horde_hellknight",    1, 3, true, 1, 1, 10, 1, nil, nil, nil,
-    {is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=0.5, music="music/hl2_song3.mp3", music_duration=91}, "none", nil, nil, nil, {gadget="gadget_hellfire_tincture", drop_rate=0.5})
-    HORDE:CreateEnemy("Xen Host Unit","npc_vj_horde_xen_host_unit", 1, 3, true, 1, 1, 10, 1, nil, nil, nil,
-    {is_boss=true, end_wave=true, unlimited_enemies_spawn=false, enemies_spawn_threshold=0.5, music="music/hl2_song20_submix0.mp3", music_duration=104}, "none", nil, nil, nil, {gadget="gadget_matriarch_womb", drop_rate=0.5})
+    HORDE:CreateEnemy("Poison Zombie",  "npc_poisonzombie",                 0.15,  3, false, 1, 1, 1, 1)
+    HORDE:CreateEnemy("Zombine", "npc_vj_horde_zombine",                    0.08,  3, false, 1, 1, 1, 1)
+    HORDE:CreateEnemy("Charred Zombine", "npc_vj_horde_charred_zombine",    0.06,  3, false, 1, 1, 1.1, 1)
+    HORDE:CreateEnemy("Plague Soldier", "npc_vj_horde_plague_soldier",      0.05,  3, false, 1, 1, 1.25, 1)
+    HORDE:CreateEnemy("Exploder", "npc_vj_horde_exploder",                  0.15,  3, true, 1, 1, 1.25, 1)
+    HORDE:CreateEnemy("Blight", "npc_vj_horde_blight",                      0.05,  3, true, 1, 1, 1.5, 1)
+    HORDE:CreateEnemy("Vomitter", "npc_vj_horde_vomitter",                  0.10,  3, true, 1, 1, 1.25, 1)
+    HORDE:CreateEnemy("Scorcher", "npc_vj_horde_scorcher",                  0.05,  3, true, 1, 1, 1.5, 1)
+    HORDE:CreateEnemy("Screecher","npc_vj_horde_screecher",                 0.10,  3, true, 1, 1, 1.25, 1)
+    HORDE:CreateEnemy("Weeper","npc_vj_horde_weeper",                       0.05,  3, true, 1, 1, 1.5, 1)
+    HORDE:CreateEnemy("Hulk",   "npc_vj_horde_hulk",                        0.03,  3, true, 1, 1, 2, 1, nil,nil,nil,nil,nil,nil,nil,1)
+    HORDE:CreateEnemy("Yeti",   "npc_vj_horde_yeti",                        0.02,  3, true, 1, 1, 3, 1, nil,nil,nil,nil,nil,nil,nil,1)
+    HORDE:CreateEnemy("Lesion", "npc_vj_horde_lesion",                      0.02,  3, true, 1, 1, 2, 1, nil,nil,nil,nil,nil,nil,nil,1)
+    HORDE:CreateEnemy("Plague Elite", "npc_vj_horde_plague_elite",          0.015,  3, true, 1, 1, 3, 1, nil,nil,nil,nil,nil,nil,nil,1)
 
     HORDE:CreateEnemy("zombie vj",        "npc_vj_zss_czombie",      1,    4, false, 1, 1, 1, 1, nil)
     HORDE:CreateEnemy("zombie fast",      "npc_fastzombie",          1,    4, false, 1, 1, 1, 1, nil)

@@ -3,7 +3,7 @@ HORDE.SlowMotion_MovementSpeedBonus = function(ply, bonus_walk, bonus_run)
 	local stage = HORDE:SlowMotion_GetStage()
     if stage == 1 then return end
 
-	if !hook.Run("SlowMotion_MovementSpeedBonus_Allow", ply) then return end
+	if !ply:Horde_CallClassHook("SlowMotion_MovementSpeedBonus_Allow", ply) then return end
 	
 	local slomo_bonus = ply:Horde_GetPerkLevelBonus("slomo_bonus")
     if not slomo_bonus or slomo_bonus <= 0 then return end
@@ -16,7 +16,7 @@ end
 hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotion_MovementSpeedBonus)
 
 HORDE.SlowMotion_RPMBonus = function(ply, slow_motion_stage, slomo_bonus)
-	if !hook.Run("SlowMotion_RPMBonus_Allow", ply) then return end
+	if !ply:Horde_CallClassHook("SlowMotion_RPMBonus_Allow", ply) then return end
 
     if not slomo_bonus or slomo_bonus <= 0 then return end
 	
@@ -30,7 +30,7 @@ HORDE.SlowMotion_RPMBonus = function(ply, slow_motion_stage, slomo_bonus)
 end
 
 HORDE.SlowMotion_ReloadBonus = function(ply, slow_motion_stage, slomo_bonus)
-	if !hook.Run("SlowMotion_ReloadBonus_Allow", ply) then return end
+	if !ply:Horde_CallClassHook("SlowMotion_ReloadBonus_Allow", ply) then return end
 
 	if not slomo_bonus or slomo_bonus <= 0 then return end
 
@@ -42,7 +42,7 @@ HORDE.SlowMotion_ReloadBonus = function(ply, slow_motion_stage, slomo_bonus)
 end
 
 HORDE.SlowMotion_MeleeAttackSpeedBonus = function(ply, slow_motion_stage, slomo_bonus)
-	if !hook.Run("SlowMotion_MeleeAttackSpeedBonus_Allow", ply) then return end
+	if !ply:Horde_CallClassHook("SlowMotion_MeleeAttackSpeedBonus_Allow", ply) then return end
 	
 	if not slomo_bonus or slomo_bonus <= 0 then return end
 	
@@ -53,10 +53,29 @@ HORDE.SlowMotion_MeleeAttackSpeedBonus = function(ply, slow_motion_stage, slomo_
 	HORDE:Modifier_AddToWeapons(ply, "Mult_MeleeTime", "slomotion", 1 / Lerp((slomo_bonus / 2) * (1 / slow_motion_stage / 3), 1, 3))
 end
 
+HORDE.SlowMotion_ZoomSpeedBonus = function(ply, slow_motion_stage, slomo_bonus)
+	if !ply:Horde_CallClassHook("SlowMotion_ZoomSpeedBonus_Allow", ply) then return end
+	
+	if not slomo_bonus or slomo_bonus <= 0 then return end
+	
+	if slow_motion_stage == 1.0 then
+		HORDE:Modifier_AddToWeapons(ply, "Mult_SightTime", "slomotion")
+		return
+	end
+	HORDE:Modifier_AddToWeapons(ply, "Mult_SightTime", "slomotion", 1 / Lerp((slomo_bonus / 2) * (1 / slow_motion_stage / 3), 1, 3))
+end
+
+local bonus_hooks = {
+    HORDE.SlowMotion_ZoomSpeedBonus,
+    HORDE.SlowMotion_MeleeAttackSpeedBonus,
+    HORDE.SlowMotion_ReloadBonus,
+    HORDE.SlowMotion_RPMBonus,
+}
+
 local function call_all_bonus_hooks(ply, slow_motion_stage, slomo_bonus)
-	HORDE.SlowMotion_MeleeAttackSpeedBonus(ply, slow_motion_stage, slomo_bonus)
-	HORDE.SlowMotion_ReloadBonus(ply, slow_motion_stage, slomo_bonus)
-	HORDE.SlowMotion_RPMBonus(ply, slow_motion_stage, slomo_bonus)
+    for k, bonushook in pairs(bonus_hooks) do
+        bonushook(ply, slow_motion_stage, slomo_bonus)
+    end
 end
 
 hook.Add("Horde_SlowMotion_start_Bonus", "Horde_SlowMotion_CalculateBonuses", call_all_bonus_hooks)
@@ -232,7 +251,7 @@ function HORDE.SlowMotion_Start()
 end
 
 hook.Add("Horde_OnEnemyKilled", "StartSlowMotion", function(victim, killer, inflictor)
-    if inflictor:IsNPC() or CurTime() == last_slowmotion_called_timing then return end
+    if IsValid(inflictor) and inflictor:IsNPC() or CurTime() == last_slowmotion_called_timing then return end
     if last_player_called_slowmotion == NULL and
 	math.random() > 0.07 or last_player_called_slowmotion != NULL and
 	(killer != last_player_called_slowmotion or last_player_called_count >= (killer:Horde_GetPerk("assault_base") and 5 or 3)) or

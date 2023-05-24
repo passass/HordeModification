@@ -52,9 +52,9 @@ SWEP.TracerWidth = 3
 SWEP.ChamberSize = 1-- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 20 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 0.45
-SWEP.RecoilSide = 0.4
-SWEP.RecoilRise = 0.6
+SWEP.Recoil = 0.4
+SWEP.RecoilSide = 0.3
+SWEP.RecoilRise = 0.55
 SWEP.VisualRecoilMult = 1
 
 SWEP.Delay = 60 / 950 -- 60 / RPM.
@@ -78,7 +78,7 @@ SWEP.NPCWeaponType = {
 SWEP.NPCWeight = 100
 
 SWEP.AccuracyMOA = 2 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
+SWEP.HipDispersion = 450 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 150
 
 SWEP.Primary.Ammo = "ar2" -- what ammo type the gun uses

@@ -1,5 +1,5 @@
 if engine.ActiveGamemode() != "horde" then return end
-
+print("gfpdsgsfdg")
 function SWEP:InitialDefaultClip()
     if !self.Primary.Ammo then return end
 

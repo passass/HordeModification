@@ -9,12 +9,16 @@ Cannot run during Tactical Mode.
 50% reduced movement speed during Tactical Mode.
 
 {1} more movement speed during Tactical Mode. ({2} per level, up to {3})
-{1} increased headshot damage during Tactical Mode. ({2} per level, up to {3})]]
+{1} increased headshot damage during Tactical Mode. ({2} per level, up to {3})
+{slomo1} increased reload speed and firerate in slow motion. ({slomo2} per level, up to {slomo3}).]]
 PERK.Icon = "materials/subclasses/specops.png"
 PERK.Params = {
     [1] = {percent = true, base = 0, level = 0.01, max = 0.25, classname = "SpecOps"},
     [2] = {value = 0.01, percent = true},
     [3] = {value = 0.25, percent = true},
+    slomo1 = {percent = true, level = .08, max = 2, classname = "SpecOps"},
+    slomo2 = {value = .08, percent = true},
+    slomo3 = {value = 2, percent = true},
 }
 
 PERK.Hooks = {}
@@ -22,6 +26,7 @@ PERK.Hooks = {}
 PERK.Hooks.Horde_PrecomputePerkLevelBonus = function (ply)
     if SERVER then
         ply:Horde_SetPerkLevelBonus("specops_base", math.min(0.25, 0.01 * ply:Horde_GetLevel("SpecOps")))
+        ply:Horde_SetPerkLevelBonus("slomo_bonus", math.min(2, 0.08 * ply:Horde_GetLevel("SpecOps")))
     end
 end
 
@@ -169,3 +174,9 @@ PERK.Hooks.HUDPaint = function()
 		ScrW() / 2, ScrH() - 50, nv_color, TEXT_ALIGN_CENTER)
 	end
 end
+
+PERK.Hooks.SlowMotion_RPMBonus_Allow = function(ply)
+	return true
+end
+
+PERK.Hooks.SlowMotion_ReloadBonus_Allow = PERK.Hooks.SlowMotion_RPMBonus_Allow

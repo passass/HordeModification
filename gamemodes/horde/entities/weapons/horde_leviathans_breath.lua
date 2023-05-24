@@ -252,11 +252,25 @@ end
 function SWEP:Shoot(...)
 	self:SetNWFloat("ChargeFinal", self:GetCharge())
 
-	-- if self:GetOwner():IsPlayer() then
-	-- 	ParticleEffectAttach("D2VoidBlastSmall_Main", 3, self, self:LookupAttachment("muzzle"))
-	-- end
+	self:StopSound(self:GetStatL("Primary.DrawSound"))
+	if self:GetStatL("Primary.ChargedSound") and IsFirstTimePredicted()  and not ( sp and CLIENT ) then
+		if self:GetCharge() >= 0.9 then
+			self:EmitSound(self:GetStatL("Primary.ChargedSound"))
+		else
+			self:EmitSound(self:GetStatL("Primary.UnchargedSound"))
+		end
+	end
 
-	BaseClass.Shoot(self, ...)
+	self:TakePrimaryAmmo(self:GetStatL("Primary.AmmoConsumption"))
+	self:PlayAnimation(self.BowAnimations.shoot)
+	self:ShootBulletInformation()
+	self:SetCharge(0)
+	self:SetShaking(false)
+	local rate = 1 / self:GetAnimationRate(self:GetLastSequence())
+	self:ScheduleStatus(TFA.Enum.STATUS_BOW_SHOOT, 0.1 * rate)
+	local length = self:GetActivityLength() * rate
+	self:ScheduleStatus(TFA.Enum.STATUS_RELOADING, length - (length * 0.25))
+	self:SetDrawing(false)
 end
 
 local ballistics_distcv = GetConVar("sv_tfa_ballistics_mindist")
@@ -283,7 +297,7 @@ end
 
 local cv_forcemult = GetConVar("sv_tfa_force_multiplier")
 
-function SWEP:ShootBullet(damage, recoil, num_bullets, aimcone, disablericochet, bulletoverride) print("gds")
+function SWEP:ShootBullet(damage, recoil, num_bullets, aimcone, disablericochet, bulletoverride)
 	if not IsFirstTimePredicted() and not game.SinglePlayer() then return end
 	local chargeTable = self:GetStatL("Primary.Damage_Charge")
 	local mult = Lerp(math.Clamp(self:GetCharge() - self.ChargeThreshold, 0, 1 - self.ChargeThreshold) / (1 - self.ChargeThreshold), chargeTable[1], chargeTable[2])

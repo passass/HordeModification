@@ -1,13 +1,13 @@
 PERK.PrintName = "Survivor Base"
 PERK.Description = [[The Survivor class can be played into any class to fill in missing roles for the team.\nComplexity: EASY.
 
-{1} increased reload speed and movement speed in slow motion. ({2} per level, up to {3})
+{slomo1} increased reload speed and movement speed in slow motion. ({slomo2} per level, up to {slomo3})
 ]]
 
 PERK.Params = {
-    [1] = {percent = true, level = .08, max = 2, classname = HORDE.Class_Survivor},
-    [2] = {value = .08, percent = true},
-    [3] = {value = 2, percent = true},
+    slomo1 = {percent = true, level = .08, max = 2, classname = HORDE.Class_Survivor},
+    slomo2 = {value = .08, percent = true},
+    slomo3 = {value = 2, percent = true},
 }
 
 PERK.Hooks = {}
@@ -26,7 +26,7 @@ PERK.Hooks.Horde_OnUnsetPerk = function(ply, perk)
 end
 
 PERK.Hooks.SlowMotion_ReloadBonus_Allow = function(ply)
-	return ply:Horde_GetPerk("survivor_base")
+	return true
 end
 
 PERK.Hooks.SlowMotion_MovementSpeedBonus_Allow = PERK.Hooks.SlowMotion_ReloadBonus_Allow

@@ -5,7 +5,7 @@ Complexity: HIGH
 
 {1} increased Slashing and Blunt damage. ({2} per level, up to {3}).
 {4} increased Global damage resistance. ({5} per level, up to {6}).
-{7} increased movement speed in slow motion and attack speed with melee weapons. ({8} per level, up to {9}).
+{slomo1} increased movement speed in slow motion and attack speed with melee weapons. ({slomo2} per level, up to {slomo3}).
 
 Aerial Parry: Jump to reduce Physical damage taken by {10}.]]
 PERK.Params = {
@@ -15,27 +15,28 @@ PERK.Params = {
     [4] = {percent = true, level = 0.008, max = 0.20, classname = HORDE.Class_Berserker},
     [5] = {value = 0.008, percent = true},
     [6] = {value = 0.20, percent = true},
-    [7] = {percent = true, level = .08, max = 2, classname = HORDE.Class_Berserker},
-    [8] = {value = .08, percent = true},
-    [9] = {value = 2, percent = true},
     [10] = {value = 0.65, percent = true},
+
+    slomo1 = {percent = true, level = .08, max = 2, classname = HORDE.Class_Berserker},
+    slomo2 = {value = .08, percent = true},
+    slomo3 = {value = 2, percent = true},
 }
 
 PERK.Hooks = {}
 PERK.Hooks.Horde_OnSetPerk = function(ply, perk)
-    if SERVER and perk == "berserker_base" then
+    if SERVER then
         ply:Horde_SetAerialGuardEnabled(1)
     end
 end
 
 PERK.Hooks.Horde_OnUnsetPerk = function(ply, perk)
-    if SERVER and perk == "berserker_base" then
+    if SERVER then
         ply:Horde_SetAerialGuardEnabled(0)
     end
 end
 
-PERK.Hooks.SlowMotion_MovementSpeedBonus_Allow = function(ply) 
-	return ply:Horde_GetPerk("berserker_base")
+PERK.Hooks.SlowMotion_MovementSpeedBonus_Allow = function(ply)
+	return true
 end
 
 PERK.Hooks.SlowMotion_MeleeAttackSpeedBonus_Allow = PERK.Hooks.SlowMotion_MovementSpeedBonus_Allow

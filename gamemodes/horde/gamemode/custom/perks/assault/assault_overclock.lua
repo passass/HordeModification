@@ -7,13 +7,13 @@ PERK.Params = {
 
 PERK.Hooks = {}
 PERK.Hooks.Horde_OnSetPerk = function(ply, perk)
-    if SERVER and perk == "assault_overclock" then
+    if SERVER then
         ply:Horde_SetMaxAdrenalineStack(ply:Horde_GetMaxAdrenalineStack() + 3)
     end
 end
 
 PERK.Hooks.Horde_OnUnsetPerk = function(ply, perk)
-    if SERVER and perk == "assault_overclock" then
+    if SERVER then
         ply:Horde_SetMaxAdrenalineStack(ply:Horde_GetMaxAdrenalineStack() - 3)
     end
 end

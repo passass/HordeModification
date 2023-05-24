@@ -28,13 +28,13 @@ SWEP.WorldModelOffset = {
 SWEP.DefaultSkin = 0
 SWEP.DefaultWMSkin = 0
 
-SWEP.MeleeDamage = 40
+SWEP.MeleeDamage = 33
 SWEP.Melee2Damage = 180
 
 SWEP.PrimaryBash = true
 SWEP.CanBash = true
 SWEP.MeleeDamageType = DMG_SLASH
-SWEP.MeleeRange = 70
+SWEP.MeleeRange = 50
 SWEP.MeleeAttackTime = 0
 SWEP.MeleeTime = .135
 SWEP.MeleeGesture = ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE
@@ -46,10 +46,10 @@ SWEP.Melee2Time = .5
 SWEP.Melee2Gesture = ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE
 
 SWEP.MeleeSwingSound = {
-    --"weapons/tfa_cso/dual_sword/swing_1.wav", "weapons/tfa_cso/dual_sword/swing_2.wav", "weapons/tfa_cso/dual_sword/swing_3.wav", "weapons/tfa_cso/dual_sword/swing_4.wav", "weapons/tfa_cso/dual_sword/swing_5.wav"
+    "weapons/tfa_cso/dual_sword/swing_1.wav", "weapons/tfa_cso/dual_sword/swing_2.wav", "weapons/tfa_cso/dual_sword/swing_3.wav", "weapons/tfa_cso/dual_sword/swing_4.wav", "weapons/tfa_cso/dual_sword/swing_5.wav"
 }
 SWEP.MeleeMissSound = {
-    --"weapons/tfa_cso/dual_sword/swing_1.wav", "weapons/tfa_cso/dual_sword/swing_2.wav", "weapons/tfa_cso/dual_sword/swing_3.wav", "weapons/tfa_cso/dual_sword/swing_4.wav", "weapons/tfa_cso/dual_sword/swing_5.wav"
+    "weapons/tfa_cso/dual_sword/swing_1.wav", "weapons/tfa_cso/dual_sword/swing_2.wav", "weapons/tfa_cso/dual_sword/swing_3.wav", "weapons/tfa_cso/dual_sword/swing_4.wav", "weapons/tfa_cso/dual_sword/swing_5.wav"
 }
 SWEP.MeleeHitSound = {
     "weapons/tfa_cso/dual_sword/hit_wall.wav"

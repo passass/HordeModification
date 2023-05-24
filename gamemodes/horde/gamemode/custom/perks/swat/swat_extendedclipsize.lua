@@ -7,13 +7,13 @@ PERK.Params = {
 
 PERK.Hooks = {}
 PERK.Hooks.Horde_OnSetPerk = function(ply, perk)
-    if SERVER and perk == "swat_extendedclipsize" then
+    if SERVER then
         HORDE:Modifier_AddToWeapons(ply, "Mult_ClipSize", "swat_extendedclipsize", 1 + 1 / 3)
     end
 end
 
 PERK.Hooks.Horde_OnUnsetPerk = function(ply, perk)
-    if SERVER and perk == "swat_extendedclipsize" then
+    if SERVER then
         HORDE:Modifier_AddToWeapons(ply, "Mult_ClipSize", "swat_extendedclipsize")
     end
 end

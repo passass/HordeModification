@@ -7,14 +7,14 @@ PERK.Params = {
 
 PERK.Hooks = {}
 PERK.Hooks.Horde_OnSetPerk = function(ply, perk)
-    if SERVER and perk == "swat_bandolier" then
+    if SERVER then
         HORDE:Modifier_AddToWeapons(ply, "Horde_MaxMags", "swat_bandolier", 1.5)
         HORDE:Modifier_AddToWeapons(ply, "Horde_TotalMaxAmmoMult", "swat_bandolier", 1.5)
     end
 end
 
 PERK.Hooks.Horde_OnUnsetPerk = function(ply, perk)
-    if SERVER and perk == "swat_bandolier" then
+    if SERVER then
         HORDE:Modifier_AddToWeapons(ply, "Horde_MaxMags", "swat_bandolier")
         HORDE:Modifier_AddToWeapons(ply, "Horde_TotalMaxAmmoMult", "swat_bandolier")
         HORDE:Ammo_CheckForValidWorking(ply)

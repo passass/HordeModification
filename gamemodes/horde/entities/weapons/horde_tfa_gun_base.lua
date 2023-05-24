@@ -3,11 +3,11 @@ if SERVER then
 end
 
 DEFINE_BASECLASS("tfa_gun_base")
-local hudhangtime_cvar = GetConVar("cl_tfa_hud_hangtime")
-local hudfade_cvar = GetConVar("cl_tfa_hud_ammodata_fadein")
+--local hudhangtime_cvar = GetConVar("cl_tfa_hud_hangtime")
+--local hudfade_cvar = GetConVar("cl_tfa_hud_ammodata_fadein")
 function SWEP:DoDrawCrosshair() end
 function SWEP:DrawHUDAmmo()
-	local self2 = self:GetTable()
+	--[[local self2 = self:GetTable()
 	local stat = self2.GetStatus(self)
 
 	if self2.GetStatL(self, "BoltAction") then
@@ -122,14 +122,6 @@ function SWEP:DrawHUDAmmo()
 			xx = xx - TFA.Fonts.SleekHeightMedium / 3
 		end
 
---[[str = string.upper(self:GetFireModeName() .. (#self2.GetStatL(self, "FireModes") > 2 and " | +" or ""))
-
-		if self:IsJammed() then
-			str = str .. "\n" .. language.GetPhrase("tfa.hud.jammed")
-		end
-
-		draw.DrawText(str, "TFASleekSmall", xx + 1, yy + 1, ColorAlpha(self2.TextColContrast, myalpha), TEXT_ALIGN_RIGHT)
-		draw.DrawText(str, "TFASleekSmall", xx, yy, ColorAlpha(self2.TextCol, myalpha), TEXT_ALIGN_RIGHT)]]
 		yy = yy + TFA.Fonts.SleekHeightSmall
 		xx = xx - TFA.Fonts.SleekHeightSmall / 3
 
@@ -189,7 +181,7 @@ function SWEP:DrawHUDAmmo()
 				draw.DrawText(str, "TFASleekSmall", xx, yy, ColorAlpha(self2.TextCol, myalpha), TEXT_ALIGN_RIGHT)
 			end
 		end
-	end
+	end]]
 end
 function SWEP:GenerateInspectionDerma() end
 local cv_forcemult = GetConVar("sv_tfa_force_multiplier")

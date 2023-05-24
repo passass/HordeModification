@@ -368,7 +368,6 @@ function SWEP:AutoDetectForce()
 end
 
 function SWEP:ShootBullet(damage, recoil, num_bullets, aimcone, disablericochet, bulletoverride)
-	print("gswa")
 	if not IsFirstTimePredicted() and not game.SinglePlayer() then return end
 	local chargeTable = self:GetStatL("Primary.Damage_Charge")
 	local mult = Lerp(math.Clamp(self:GetCharge() - self.ChargeThreshold, 0, 1 - self.ChargeThreshold) / (1 - self.ChargeThreshold), chargeTable[1], chargeTable[2])

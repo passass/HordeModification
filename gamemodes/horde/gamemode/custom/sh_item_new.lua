@@ -163,13 +163,14 @@ end
         }, nil, {HORDE.DMG_BLUNT})
         HORDE:CreateItem("Melee",      "Übersaw",        "arccw_horde_ubersaw",     1750,  4, "Übersaw.\nMedic Knife.",
         {Medic=true}, 10, -1, nil, nil, {Berserker=3, Medic=4}, nil, {HORDE.DMG_SLASH})
-        HORDE:CreateItem("Melee",      "Chainsaw",       "arccw_horde_chainsaw",2500, 8, "Brrrrrrrrrrrrrrrr.\n\nHold RMB to saw through enemies.\nDeals a lot more damage when using ammo.",
-        {Berserker=true}, 10, -1, nil, nil, {Berserker=10}, nil, {HORDE.DMG_SLASH})
-        HORDE:CreateItem("Melee",      "Mjölnir",       "arccw_horde_mjollnir",    3000, 8, "A warhammer embued with electric energy.\n\nPress RMB to charge the weapon.\nCharged attack creates a lightning storm on impact.",
-        {Berserker=true}, 10, -1, nil, nil, {Berserker=20}, nil, {HORDE.DMG_BLUNT, HORDE.DMG_LIGHTNING})
+
+        HORDE.items["arccw_horde_chainsaw"].levels = {Berserker=10}
+        HORDE.items["arccw_horde_jotuun"].levels = {Berserker=10}
+        HORDE.items["arccw_horde_mjollnir"].levels = {Berserker=20}
+        HORDE.items["arccw_horde_zweihander"].levels = {Berserker=20}
+
         HORDE:CreateItem("Melee",      "Dual Swords",       "arccw_horde_dualsword",  6000, 8, "Dual Swords which hit very quickly or slow and strong",
         {Berserker=true}, 10, -1, nil, nil, {Berserker=30}, 1, {HORDE.DMG_SLASH})
-        
         HORDE:CreateItem("Melee",      "StormGiant",       "arccw_horde_stormgiant",  6000, 10, "A big hammer which hit very slow but strong",
         {Berserker=true}, 10, -1, nil, nil, {Berserker=30}, 1, {HORDE.DMG_BLUNT})
 

@@ -6,74 +6,70 @@ function HORDE.IsMeleeWeapon(wep)
     return arccw_melees_bases[wep.Base] or tfa_melees_base[wep.Base]
 end
 
-local function calculate_total_meleeattackspeed(wep, total_mult)
-    if wep.ArcCW and arccw_melees_bases[wep.Base] then
-        wep.ModifiedCache["Mult_MeleeTime"] = true
-        wep.TickCache_Mults["Mult_MeleeTime"] = nil
-        wep.Mult_MeleeTime = total_mult
-
-        wep.ModifiedCache["Mult_MeleeTime"] = true
-        if wep.ModifiedCache_Permanent then
-            wep.ModifiedCache_Permanent["Mult_MeleeTime"] = true
-        end
-        
-        if wep.Animations.bash then
-            wep.Animations.bash.Mult = wep.Horde_Mult_MeleeTimeMults_bash * total_mult
-        end
-        
-        if wep.Animations.bash2 then
-            wep.Animations.bash2.Mult = wep.Horde_Mult_MeleeTimeMults_bash2 * total_mult
-        end
-    elseif wep.IsTFAWeapon and tfa_melees_base[wep.Base] then
-        if wep.Primary.Attacks then
-            if !wep.SequenceRateOverride then wep.SequenceRateOverride = {} end
-            if !wep.SequenceRateOverrideScaled then wep.SequenceRateOverrideScaled = {} end
-            for _, attacktable in pairs(wep.Primary.Attacks) do
-            if !attacktable.act then continue end
-                local mult = (wep["Horde_Mult_MeleeTimeMults_" .. attacktable.act] or 1) * (1 / total_mult)
-                if mult == 1 then
-                    mult = nil
-                end
-                wep.SequenceRateOverride[attacktable.act] = mult
-                wep.SequenceRateOverrideScaled[attacktable.act] = mult
-                wep.StatCache2["SequenceRateOverrideScaled." .. attacktable.act] = nil
-                wep.StatCache2["SequenceRateOverride." .. attacktable.act] = nil
-            end
-            wep:ClearStatCache()
-        end
-    end
-    return true
-end
-
-
-local function init_meleeattackspeed_table(wep)
-    if wep.ArcCW and arccw_melees_bases[wep.Base] then
-        if wep.Animations.bash then
-            wep.Horde_Mult_MeleeTimeMults_bash = wep.Animations.bash.Mult or 1
-        end
-        
-        if wep.Animations.bash2 then
-            wep.Horde_Mult_MeleeTimeMults_bash2 = wep.Animations.bash2.Mult or 1
-        end
-    elseif wep.IsTFAWeapon and tfa_melees_base[wep.Base] then
-        if wep.Primary.Attacks then
-            if !wep.SequenceRateOverride then wep.SequenceRateOverride = {} end
-            if !wep.SequenceRateOverrideScaled then wep.SequenceRateOverrideScaled = {} end
-            for _, attacktable in pairs(wep.Primary.Attacks) do
-                if !attacktable.act then continue end
-                wep["Horde_Mult_MeleeTimeMults_" .. attacktable.act] = wep.SequenceRateOverride[attacktable.act] or 1
-            end
-        end
-    end
-    return true
-end
-
 -- melee attack mults
 
 local special_conditions = {
     Mult_MeleeTime = {
-        postinit = init_meleeattackspeed_table,
-        calculate = calculate_total_meleeattackspeed,
+        postinit =
+            function(wep) if wep.ArcCW and arccw_melees_bases[wep.Base] then
+                if wep.Animations.bash then
+                    wep.Horde_Mult_MeleeTimeMults_bash = wep.Animations.bash.Mult or 1
+                end
+                
+                if wep.Animations.bash2 then
+                    wep.Horde_Mult_MeleeTimeMults_bash2 = wep.Animations.bash2.Mult or 1
+                end
+            elseif wep.IsTFAWeapon and tfa_melees_base[wep.Base] then
+                if wep.Primary.Attacks then
+                    if !wep.SequenceRateOverride then wep.SequenceRateOverride = {} end
+                    if !wep.SequenceRateOverrideScaled then wep.SequenceRateOverrideScaled = {} end
+                    for _, attacktable in pairs(wep.Primary.Attacks) do
+                        if !attacktable.act then continue end
+                        wep["Horde_Mult_MeleeTimeMults_" .. attacktable.act] = wep.SequenceRateOverride[attacktable.act] or 1
+                    end
+                end
+            end
+            return true
+        end,
+        calculate =
+        function(wep, total_mult)
+            if wep.ArcCW and arccw_melees_bases[wep.Base] then
+                wep.ModifiedCache["Mult_MeleeTime"] = true
+                wep.TickCache_Mults["Mult_MeleeTime"] = nil
+                wep.Mult_MeleeTime = total_mult
+        
+                wep.ModifiedCache["Mult_MeleeTime"] = true
+                if wep.ModifiedCache_Permanent then
+                    wep.ModifiedCache_Permanent["Mult_MeleeTime"] = true
+                end
+                
+                if wep.Animations.bash then
+                    wep.Animations.bash.Mult = wep.Horde_Mult_MeleeTimeMults_bash * total_mult
+                end
+                
+                if wep.Animations.bash2 then
+                    wep.Animations.bash2.Mult = wep.Horde_Mult_MeleeTimeMults_bash2 * total_mult
+                end
+            elseif wep.IsTFAWeapon and tfa_melees_base[wep.Base] then
+                if wep.Primary.Attacks then
+                    if !wep.SequenceRateOverride then wep.SequenceRateOverride = {} end
+                    if !wep.SequenceRateOverrideScaled then wep.SequenceRateOverrideScaled = {} end
+                    for _, attacktable in pairs(wep.Primary.Attacks) do
+                    if !attacktable.act then continue end
+                        local mult = (wep["Horde_Mult_MeleeTimeMults_" .. attacktable.act] or 1) * (1 / total_mult)
+                        if mult == 1 then
+                            mult = nil
+                        end
+                        wep.SequenceRateOverride[attacktable.act] = mult
+                        wep.SequenceRateOverrideScaled[attacktable.act] = mult
+                        wep.StatCache2["SequenceRateOverrideScaled." .. attacktable.act] = nil
+                        wep.StatCache2["SequenceRateOverride." .. attacktable.act] = nil
+                    end
+                    wep:ClearStatCache()
+                end
+            end
+            return true
+        end,
         add_modifier_if = HORDE.IsMeleeWeapon,
     },
     Horde_MaxMags = {
@@ -87,6 +83,84 @@ local special_conditions = {
         preinit = function(wep)
             if !wep.Horde_TotalMaxAmmoMult then
                 wep.Horde_TotalMaxAmmoMult = 1
+            end
+        end
+    },
+    Mult_ReloadTime = {
+        preinit = function(wep)
+            if wep.IsTFAWeapon and wep.SequenceRateOverride and wep.SequenceRateOverride[ACT_VM_RELOAD] then
+                wep.Horde_ModifiersTable["Mult_ReloadTime"] = {}
+                wep.Horde_ModifiersTable["Mult_ReloadTime"]["init"] = wep.SequenceRateOverride[ACT_VM_RELOAD]
+            end
+        end,
+        calculate = function(wep, total_mult)
+            if wep.IsTFAWeapon then
+                total_mult = 1 / total_mult
+                
+                if !wep.SequenceRateOverride then wep.SequenceRateOverride = {} end
+                if !wep.SequenceRateOverrideScaled then wep.SequenceRateOverrideScaled = {} end
+
+                if wep.ChargeRate then
+                    wep.SequenceRateOverride[174] = total_mult
+                    wep.SequenceRateOverrideScaled[174] = total_mult
+                    wep.SequenceRateOverride[181] = 1 / total_mult
+                    wep.SequenceRateOverrideScaled[181] = 1 / total_mult
+                    wep.SequenceRateOverride[6] = total_mult
+                    wep.SequenceRateOverrideScaled[6] = total_mult
+                    wep.SequenceRateOverride[3] = total_mult ^ .5
+                    wep.SequenceRateOverrideScaled[3] = total_mult ^ .5
+                    wep.SequenceRateOverride[1] = total_mult
+                    wep.SequenceRateOverrideScaled[1] = total_mult
+
+                    wep.StatCache2["SequenceRateOverrideScaled." .. 174] = nil
+                    wep.StatCache2["SequenceRateOverride." .. 174] = nil
+                    wep.StatCache2["SequenceRateOverrideScaled." .. 181] = nil
+                    wep.StatCache2["SequenceRateOverride." .. 181] = nil
+                    wep.StatCache2["SequenceRateOverrideScaled." .. 6] = nil
+                    wep.StatCache2["SequenceRateOverride." .. 6] = nil
+                    wep.StatCache2["SequenceRateOverrideScaled." .. 3] = nil
+                    wep.StatCache2["SequenceRateOverride." .. 3] = nil
+                    wep.StatCache2["SequenceRateOverrideScaled." .. 1] = nil
+                    wep.StatCache2["SequenceRateOverride." .. 1] = nil
+                end
+
+                wep.SequenceRateOverride[ACT_VM_RELOAD] = total_mult
+                wep.SequenceRateOverrideScaled[ACT_VM_RELOAD] = total_mult
+                wep.SequenceRateOverride[ACT_VM_RELOAD_EMPTY] = total_mult
+                wep.SequenceRateOverrideScaled[ACT_VM_RELOAD_EMPTY] = total_mult
+
+                wep.StatCache2["SequenceRateOverrideScaled." .. ACT_VM_RELOAD] = nil
+                wep.StatCache2["SequenceRateOverride." .. ACT_VM_RELOAD] = nil
+                wep.StatCache2["SequenceRateOverrideScaled." .. ACT_VM_RELOAD_EMPTY] = nil
+                wep.StatCache2["SequenceRateOverride." .. ACT_VM_RELOAD_EMPTY] = nil
+                wep:ClearStatCache()
+                return true
+            end
+        end
+    },
+    Mult_RPM = {
+        preinit = function(wep)
+            if wep.IsTFAWeapon then
+                if wep.ChargeRate then
+                    wep.Horde_ModifiersTable["Mult_RPM"] = {}
+                    wep.Horde_ModifiersTable["Mult_RPM"]["init"] = wep.ChargeRate
+                elseif wep.Primary and wep.Primary.RPM then
+                    wep.Horde_ModifiersTable["Mult_RPM"] = {}
+                    wep.Horde_ModifiersTable["Mult_RPM"]["init"] = wep.Primary.RPM
+                end
+            end
+        end,
+        calculate = function(wep, total_mult)
+            if wep.IsTFAWeapon then
+                if wep.ChargeRate then
+                    wep.ChargeRate = total_mult
+                    wep.StatCache2["ChargeRate"] = nil
+                    wep:ClearStatCache()
+                elseif wep.Primary and wep.Primary.RPM then
+                    wep.Primary_TFA.RPM = total_mult
+                    wep:ClearStatCache()
+                    return true
+                end
             end
         end
     },
@@ -114,7 +188,7 @@ local function CalculateTotalMult(wep, modifier)
 
     if wep.ArcCW then
         wep.ModifiedCache[modifier] = true
-        wep.TickCache_Mults[modifier] = nil	
+        wep.TickCache_Mults[modifier] = nil
         if wep.ModifiedCache_Permanent then
             wep.ModifiedCache_Permanent[modifier] = true
         end
