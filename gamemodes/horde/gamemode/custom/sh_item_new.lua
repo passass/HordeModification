@@ -128,8 +128,6 @@ end
         arccw_horde_mp7m = "arccw_hordeext_mp7m",
         arccw_horde_mp9m = "arccw_hordeext_mp9m",
         arccw_horde_mp40 = "arccw_hordeext_mp40",
-        arccw_horde_nade_molotov = "arccw_hordeext_nade_molotov",
-        arccw_horde_nade_stun = "arccw_hordeext_nade_stun",
         arccw_horde_rpg7 = "arccw_hordeext_rpg7",
         arccw_horde_shotgun = "arccw_hordeext_shotgun",
         arccw_horde_smg1 = "arccw_hordeext_smg1",
@@ -140,7 +138,11 @@ end
         horde_welder = "hordeext_welder",
         weapon_horde_medkit = "weapon_hordeext_medkit",
         horde_sticky_launcher = "hordeext_sticky_launcher",
+
         arccw_horde_nade_incendiary = "arccw_hordeext_nade_incendiary",
+        arccw_horde_nade_molotov = "arccw_hordeext_nade_molotov",
+        arccw_horde_nade_stun = "arccw_hordeext_nade_stun",
+
         arccw_horde_heat_crossbow = "arccw_hordeext_heat_crossbow",
     }
 
@@ -453,7 +455,7 @@ end
         HORDE:CreateItem("Explosive",  "Gjallarhorn",        "horde_gjallarhorn",   3500,  12, "Gjallarhorn the wonder weapon.\nIt fire rocket which breaks into many pieces of rockets.",
         {Demolition=true}, 30, -1, nil, nil, {Demolition=20}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
         
-        HORDE:CreateItem("Explosive",  "Chain Grenade",        "horde_chaingrenade",   3500,  4, "A grenade which explode 3 times.",
+        HORDE:CreateItem("Explosive",  "Chain Grenade",        "arccw_hordeext_nade_chain",   3500,  4, "A grenade which explode 3 times.",
         {Demolition=true}, 8, -1, nil, nil, {Demolition=20}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
         
         HORDE:CreateItem("Explosive",  "Deathbringer",        "horde_deathbringer",   6000,  12, "Deathbringer.\nIt fire circle of energy which breaks into many circles.",

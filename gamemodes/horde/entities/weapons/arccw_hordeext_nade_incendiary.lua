@@ -6,3 +6,4 @@ end
 SWEP.Base = "arccw_horde_nade_incendiary"
 SWEP.ForceDefaultAmmo = 0
 SWEP.ShootEntity = "arccw_thr_hordeext_incendiary"
+SWEP.KeepIfEmpty = true

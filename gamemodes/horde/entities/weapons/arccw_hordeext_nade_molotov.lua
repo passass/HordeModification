@@ -7,3 +7,4 @@ SWEP.Base = "arccw_horde_nade_molotov"
 SWEP.Horde_MaxMags = 60
 SWEP.ShootEntity = "arccw_thr_hordeext_molotov"
 SWEP.ForceDefaultAmmo = 0
+SWEP.KeepIfEmpty = true
