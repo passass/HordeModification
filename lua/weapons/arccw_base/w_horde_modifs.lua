@@ -1,5 +1,17 @@
 if engine.ActiveGamemode() != "horde" then return end
-print("gfpdsgsfdg")
+
+function SWEP:ChangeVar(varname, value, priority)
+    self.ModifiedCache_Permanent[varname] = true
+    self.ModifiedCache[varname] = true
+    self.TickCache_Overrides[varname] = nil
+    self.TickCache_Mults[varname] = nil
+    self.TickCache_Adds[varname] = nil
+    self[varname] = value
+    if priority then
+        self[varname .. "_Priority"] = priority
+    end
+end
+
 function SWEP:InitialDefaultClip()
     if !self.Primary.Ammo then return end
 

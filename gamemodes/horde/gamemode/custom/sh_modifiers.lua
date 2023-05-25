@@ -91,6 +91,18 @@ local special_conditions = {
             if wep.IsTFAWeapon and wep.SequenceRateOverride and wep.SequenceRateOverride[ACT_VM_RELOAD] then
                 wep.Horde_ModifiersTable["Mult_ReloadTime"] = {}
                 wep.Horde_ModifiersTable["Mult_ReloadTime"]["init"] = wep.SequenceRateOverride[ACT_VM_RELOAD]
+            elseif wep.ArcCW and wep.ChargeWeapon then
+                if wep.Animations["charging"].Mult then
+                    wep.Animations["charging"].oldMult = wep.Animations["charging"].Mult
+                end
+
+                if wep.Animations["fire"].Mult then
+                    wep.Animations["fire"].oldMult = wep.Animations["fire"].Mult
+                end
+
+                if wep.Animations["fire_iron"] and wep.Animations["fire_iron"].Mult then
+                    wep.Animations["fire_iron"].oldMult = wep.Animations["fire_iron"].Mult
+                end
             end
         end,
         calculate = function(wep, total_mult)
@@ -134,6 +146,18 @@ local special_conditions = {
                 wep.StatCache2["SequenceRateOverrideScaled." .. ACT_VM_RELOAD_EMPTY] = nil
                 wep.StatCache2["SequenceRateOverride." .. ACT_VM_RELOAD_EMPTY] = nil
                 wep:ClearStatCache()
+                return true
+            elseif wep.ArcCW and wep.ChargeWeapon then
+                total_mult = 1 / total_mult
+                wep.Animations["charging"].Mult = (wep.Animations["charging"].oldMult or 1) * (1 / total_mult)
+                wep.Animations["fire"].Mult = (wep.Animations["fire"].oldMult or 1) * (1 / total_mult)
+                if wep.Animations["fire_iron"] then
+                    wep.Animations["fire_iron"].Mult = (wep.Animations["fire_iron"].oldMult or 1) * (1 / total_mult)
+                end
+
+                wep:ChangeVar("Mult_Charge_Speed", 1 / total_mult)
+                wep:ChangeVar("Mult_Charge_ReloadAfter_Timer", 1 / total_mult)
+
                 return true
             end
         end

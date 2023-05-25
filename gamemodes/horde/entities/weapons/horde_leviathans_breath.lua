@@ -219,7 +219,6 @@ SWEP.CustomBulletCallback = function(attacker, trace, dmginfo)
 		blast:SetAngles(attacker:EyeAngles())
 		blast:Spawn()
 		phys = blast:GetPhysicsObject()
-		
 	end
 end
 SWEP.DontThrowArrow = true

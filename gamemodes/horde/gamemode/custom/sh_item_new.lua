@@ -461,7 +461,7 @@ end
         HORDE:CreateItem("Explosive",  "Deathbringer",        "horde_deathbringer",   6000,  12, "Deathbringer.\nIt fire circle of energy which breaks into many circles.",
         {Demolition=true}, 30, -1, nil, nil, {Demolition=30}, 1, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
         
-        HORDE:CreateItem("Explosive",  "Leviathan's Sigh",        "horde_leviathans_breath",   6000,  9, "Leviathan's Sigh.\nBow that fire a exlopsion arrow.",
+        HORDE:CreateItem("Explosive",  "Leviathan's Breath",        "arccw_horde_levbreath",   6000,  9, "Leviathan's Breath.\nBow that fire a exlopsion arrow.",
         {Demolition=true}, 5, -1, nil, nil, {Demolition=30}, 1, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
         
         HORDE:CreateItem("Explosive",  "Xenophage",        "horde_xenophage",   6000,  9, "Xenophage.\nShots a small rocket.",
