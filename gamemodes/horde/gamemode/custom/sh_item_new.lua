@@ -1182,6 +1182,34 @@ end
         new_gadgets()
     end
 
+if GetConVarNumber("horde_default_item_config") != 0 then
+    local function GetItemsData()
+        if SERVER then
+            if not file.IsDir("horde", "DATA") then
+                file.CreateDir("horde")
+                return
+            end
+    
+            if file.Read("horde/items.txt", "DATA") then
+                local t = util.JSONToTable(file.Read("horde/items.txt", "DATA"))
+
+                for _, item in pairs(t) do
+                    if item.name == "" or item.class == "" or item.name == nil or item.category == nil or item.class == nil or item.ammo_price == nil or item.secondary_ammo_price == nil then
+                        HORDE:SendNotification("Item config file validation failed! Please update your file or delete it.", 1)
+                        return
+                    end
+                end
+
+                print("[HORDE] - Loaded custom item config.")
+
+                return t
+            end
+        end
+    end
+
+    CONFIG.items = GetItemsData()
+end
+
 --[[if SERVER and not (GetConVar("horde_external_lua_config"):GetString() and GetConVar("horde_external_lua_config"):GetString() ~= "") and GetConVarNumber("horde_default_item_config") != 0 then
     HORDE:GetDefaultItemsData()
     GetStarterWeapons()
