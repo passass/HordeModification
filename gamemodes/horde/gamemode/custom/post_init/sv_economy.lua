@@ -530,12 +530,13 @@ net.Receive("Horde_SelectClass", function (len, ply)
     ply:Horde_SetSubclass(name, subclass_name)
     if not_regive_starter_weapons then
         for _, wpn in pairs(ply:GetWeapons()) do
-            if hook.Run("PlayerCanPickupWeapon", ply, wpn) == true then 
-                occupied_weight = occupied_weight + HORDE.items[wpn:GetClass()].weight
+            local wpnclass = wpn:GetClass()
+            if HORDE.items[wpnclass] and hook.Run("PlayerCanPickupWeapon", ply, wpn) == true then
+                occupied_weight = occupied_weight + HORDE.items[wpnclass].weight
                 continue
             end
             if IsValid(wpn) and wpn.CantDropWep then
-                ply:StripWeapon(wpn:GetClass())
+                ply:StripWeapon(wpnclass)
             else
                 ply:DropWeapon(wpn)
             end

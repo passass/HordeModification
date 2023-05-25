@@ -1,5 +1,5 @@
 local reloadspeed = 20
-local total_reloadspeed = 1 - reloadspeed / 100
+local total_reloadspeed = 1 / (1 + reloadspeed / 100)
 local level = "3"
 att.PrintName = "Rushed Reloading" .. " (level - " .. level .. ")"
 att.Icon = Material("entities/acwatt_perk_fastreload.png")

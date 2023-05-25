@@ -1,5 +1,5 @@
 local reloadspeed = 10
-local total_reloadspeed = 1 - reloadspeed / 100
+local total_reloadspeed = 1 / (1 + reloadspeed / 100)
 local level = "1"
 
 att.PrintName = "Rushed Reloading" .. " (level - " .. level .. ")"
