@@ -2,20 +2,14 @@ SWEP.Base = "arccw_horde_bowbase"
 SWEP.Spawnable = true -- this obviously has to be set to true
 SWEP.Category = "ArcCW - Horde" -- edit this if you like
 SWEP.AdminOnly = false
-
-if CLIENT then
-    SWEP.WepSelectIcon = surface.GetTextureID("vgui/killicons/destiny_leviathans_breath.vtf")
-    killicon.Add("arccw_horde_levbreath", "vgui/killicons/destiny_leviathans_breath", Color(255, 255, 255, 255))
-end
-
 SWEP.PrintName = "Leviathan's Breath"
 
 SWEP.Slot = 2
 
 SWEP.UseHands = true
 if CLIENT then
-    SWEP.WepSelectIcon = surface.GetTextureID("vgui/hud/tfa_at_as_val.vtf")
-    killicon.Add("arccw_horde_asval", "vgui/hud/tfa_at_as_val", Color(255, 255, 255, 255))
+    SWEP.WepSelectIcon = surface.GetTextureID("vgui/killicons/destiny_leviathans_breath.vtf")
+    killicon.Add("arccw_horde_levbreath", "vgui/killicons/destiny_leviathans_breath", Color(255, 255, 255, 255))
 end
 
 SWEP.ViewModel						= "models/weapons/LeviathansBreath/c_Leviathans_Breath.mdl"
