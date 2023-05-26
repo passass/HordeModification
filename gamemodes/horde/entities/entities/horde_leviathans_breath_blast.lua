@@ -70,8 +70,8 @@ function ENT:Think()
 				v:SetLocalVelocity(((self:GetPos() - v:GetPos()) * -20) + v:GetUp()*500)
 				//Get distance from self to v but invert it so the closer they are the more damage they take
 				local dist = (self:GetPos() - v:GetPos()):Length()
-				local dmgamt = 1 - (dist / 250)
-				self.dmg_struct:SetDamage( dmgamt * 100 )
+				local dmgamt = math.max(0, 1 - (dist / 250))
+				self.dmg_struct:SetDamage( dmgamt * 250 )
 				self.dmg_struct:SetInflictor( self.wep )
 				v:TakeDamageInfo( self.dmg_struct )
 			end

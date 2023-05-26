@@ -33,7 +33,7 @@ SWEP.Throwing = true
 SWEP.Primary.ClipSize = 1
 
 
-SWEP.MuzzleVelocity = 1000
+SWEP.MuzzleVelocity = 600
 SWEP.Horde_MaxMags = 35
 SWEP.ShootEntity 			= "horde_chaingrenade_exp"	--NAME OF ENTITY GOES HERE
 

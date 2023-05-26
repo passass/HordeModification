@@ -65,11 +65,26 @@ HORDE.SlowMotion_ZoomSpeedBonus = function(ply, slow_motion_stage, slomo_bonus)
 	HORDE:Modifier_AddToWeapons(ply, "Mult_SightTime", "slomotion", 1 / Lerp((slomo_bonus / 2) * (1 / slow_motion_stage / 3), 1, 3))
 end
 
+HORDE.SlowMotion_CycleTimeMult = function(ply, slow_motion_stage, slomo_bonus)
+	if !ply:Horde_CallClassHook("SlowMotion_CycleTimeMult_Allow", ply) then return end
+	
+	if not slomo_bonus or slomo_bonus <= 0 then return end
+	
+	if slow_motion_stage == 1.0 then
+		HORDE:Modifier_AddToWeapons(ply, "Mult_CycleTime", "slomotion")
+		return
+	end
+	HORDE:Modifier_AddToWeapons(ply, "Mult_CycleTime", "slomotion", 1 / (slomo_bonus + 1))
+end
+
+
+
 local bonus_hooks = {
     HORDE.SlowMotion_ZoomSpeedBonus,
     HORDE.SlowMotion_MeleeAttackSpeedBonus,
     HORDE.SlowMotion_ReloadBonus,
     HORDE.SlowMotion_RPMBonus,
+    HORDE.SlowMotion_CycleTimeMult,
 }
 
 local function call_all_bonus_hooks(ply, slow_motion_stage, slomo_bonus)

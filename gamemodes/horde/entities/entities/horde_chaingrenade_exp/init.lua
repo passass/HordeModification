@@ -63,7 +63,7 @@ function ENT:Explosion()
 	
 	HORDE:MakeExplosionEffect(self.Entity:GetPos())
 
-	util.BlastDamage(self.Entity, self.Owner, self.Entity:GetPos(), 250, 160)
+	util.BlastDamage(self.Entity, self.Owner, self.Entity:GetPos(), 250, 280)
 	--																radius, damage
 	
 	local shake = ents.Create("env_shake")

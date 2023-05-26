@@ -119,7 +119,7 @@ end
         arccw_horde_akimbo_m9 = "arccw_hordeext_akimbo_m9",
         arccw_horde_akimbo_glock17 = "arccw_hordeext_akimbo_glock17",
         arccw_horde_m16m203 = "arccw_hordeext_m16m203",
-        arccw_horde_m32 = "arccw_hordeext_m32",
+        --arccw_horde_m32 = "arccw_hordeext_m32",
         arccw_horde_m79 = "arccw_hordeext_m32",
         arccw_horde_medic_9mm = "arccw_hordeext_medic_9mm",
         arccw_horde_medic_acr = "arccw_hordeext_medic_acr",
@@ -313,8 +313,9 @@ end
         {Assault=true, SWAT=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 10, -1, nil, nil, {Warden=5}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Shotgun",    "Model 1887",  "arccw_horde_m1887",    2000, 5, "Model 1887.\nModel 1887 is Lever-Action shotgun.",
         {Assault=true, SWAT=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 10, -1, nil, nil, {Warden=5}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Shotgun",    "Trench Gun",     "arccw_horde_trenchgun", 2250, 6, "Winchester Model 1200.\nShoots incendiary pellets.",
-        {Warden=true, Cremator=true}, 15, -1, nil, nil, {Warden=3, Cremator=1}, nil, {HORDE.DMG_FIRE}, {HORDE.Infusion_Quality, HORDE.Infusion_Impaling})
+
+        HORDE.items["arccw_horde_trenchgun"].levels = {Warden=3, Cremator=1}
+        
         HORDE:CreateItem("Shotgun",    "Executioner",        "arccw_horde_exec",  2250, 6, "Executioner.\nA automatic shotgun like the judge.",
         {Survivor=true, Warden=true}, 15, -1, nil, nil, {Warden=8}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Shotgun",    "Striker",        "arccw_horde_striker", 2500, 8, "Armsel Striker.\nA 12-gauge shotgun with a revolving cylinder from South Africa.",
@@ -335,7 +336,7 @@ end
         {Warden=true}, 50, -1, nil, nil, {Warden=18}, nil, {HORDE.DMG_BALLISTIC})
 
 
-        HORDE:CreateItem("Shotgun",    "BooMer",           "arccw_horde_bymich",  2500, 6, "BooMer.\nA longer version of Sawn-Off that shoots explosive bullets.",
+        HORDE:CreateItem("Shotgun",    "BooMer",           "arccw_horde_bymich",  2000, 6, "BooMer.\nA longer version of Sawn-Off that shoots explosive bullets.",
         {Demolition=true}, 8, -1, nil, nil, {Demolition=10, Warden=5}, nil, {HORDE.DMG_BLAST})
 
         HORDE:CreateItem("Rifle",      "AR15",           "arccw_horde_ar15",     2000, 6, "AR-15 Style Rifle.\nA lightweight semi-automatic rifle based on ArmaLite AR-15 design.",
@@ -453,18 +454,18 @@ end
         {Demolition=true}, 15, -1, nil, nil, {Demolition=15}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
 
         HORDE:CreateItem("Explosive",  "Gjallarhorn",        "horde_gjallarhorn",   3500,  12, "Gjallarhorn the wonder weapon.\nIt fire rocket which breaks into many pieces of rockets.",
-        {Demolition=true}, 30, -1, nil, nil, {Demolition=20}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
+        {Demolition=true}, 25, -1, nil, nil, {Demolition=20}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
         
         HORDE:CreateItem("Explosive",  "Chain Grenade",        "arccw_hordeext_nade_chain",   3500,  4, "A grenade which explode 3 times.",
-        {Demolition=true}, 8, -1, nil, nil, {Demolition=20}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
+        {Demolition=true}, 20, -1, nil, nil, {Demolition=20}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
         
-        HORDE:CreateItem("Explosive",  "Deathbringer",        "horde_deathbringer",   6000,  12, "Deathbringer.\nIt fire circle of energy which breaks into many circles.",
-        {Demolition=true}, 30, -1, nil, nil, {Demolition=30}, 1, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
+        HORDE:CreateItem("Explosive",  "Deathbringer",        "arccw_horde_deathbringer",   6000,  10, "Deathbringer.\nIt fire circle of energy which breaks into many circles.",
+        {Demolition=true}, 10, -1, nil, nil, {Demolition=30}, 1, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
         
         HORDE:CreateItem("Explosive",  "Leviathan's Breath",        "arccw_horde_levbreath",   6000,  9, "Leviathan's Breath.\nBow that fire a exlopsion arrow.",
-        {Demolition=true}, 5, -1, nil, nil, {Demolition=30}, 1, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
+        {Demolition=true}, 8, -1, nil, nil, {Demolition=30}, 1, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
         
-        HORDE:CreateItem("Explosive",  "Xenophage",        "horde_xenophage",   6000,  9, "Xenophage.\nShots a small rocket.",
+        HORDE:CreateItem("Explosive",  "Xenophage",        "arccw_horde_xenophage",   6000,  9, "Xenophage.\nShots a small rocket.",
         {Demolition=true}, 15, -1, nil, nil, {Demolition=30}, 1, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
 
         HORDE:CreateItem("Explosive",      "Crossbow",           "arccw_horde_crossbow",     2625, 7, "Crossbow.\nA Crossbow with explosive arrows.",

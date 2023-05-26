@@ -24,8 +24,8 @@ SWEP.WorldModelOffset = {
 }
 SWEP.ViewModelFOV = 60
 
-SWEP.Damage = 65
-SWEP.DamageMin = 155 -- damage done at maximum range
+SWEP.Damage = 325
+SWEP.DamageMin = 250 -- damage done at maximum range
 SWEP.RangeMin = 150
 SWEP.Range = 250 -- in METRES
 SWEP.Penetration = 10
@@ -40,7 +40,8 @@ SWEP.TracerWidth = 3
 
 SWEP.ChamberSize = 0-- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
-SWEP.Horde_MaxMags = 50
+SWEP.Horde_MaxMags = 80
+SWEP.ClipsPerAmmoBox = 5
 SWEP.Recoil = 0.2
 SWEP.RecoilSide = 0.2
 SWEP.RecoilRise = 0.75
@@ -79,7 +80,6 @@ SWEP.MuzzleEffect = "muzzleflash_4"
 SWEP.ShellModel = "models/shells/shell_556.mdl"
 SWEP.ShellPitch = 90
 SWEP.ShellScale = 1.5
-SWEP.Horde_MaxMags = 30
 
 SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
@@ -134,58 +134,6 @@ SWEP.BarrelLength = 27
 SWEP.ExtraSightDist = 5
 
 SWEP.Attachments = {
-    { --1
-        PrintName = "Optic", -- print name
-        DefaultAttName = "Iron Sights",
-        Slot = {"optic", "optic_lp"}, -- what kind of attachments can fit here, can be string or table
-        Bone = "A_Optic",
-        
-        VMScale = Vector(1.25, 1.25, 1.25),
-        Offset = {
-            vpos = Vector(0, 0, 3.6), -- offset that the attachment will be relative to the bone
-            vang = Angle(90, 0, 90),
-            wpos = Vector(6, 0, -5),
-            wang = Angle(-10, 180, 180),
-        },
-    },
-    { --4
-        PrintName = "Underbarrel",
-        Slot = {"foregrip"},
-        Bone = "A_LaserFlashlight",
-        Offset = {
-            vpos = Vector(.5, 0, 0),
-            vang = Angle(0, 0, 180),
-            wpos = Vector(13, 0, -5),
-            wang = Angle(170, 180, 0)
-        },
-    },
-    { --7
-        PrintName = "Tactical",
-        Slot = {"tac"},
-        Bone = "A_LaserFlashlight",
-        Offset = {
-            vpos = Vector(4.6, 0, 0), -- offset that the attachment will be relative to the bone
-            vang = Angle(0, 0, 90),
-            wpos = Vector(23, 1.42, -7.5),
-            wang = Angle(-10, 0, 90)
-        },
-    },
-    { --12
-        PrintName = "Perk",
-        Slot = {"bo1_perk", "bo1_perk_wolfmg"},
-    },
-    { --13
-        PrintName = "Charm",
-        Slot = "charm",
-        FreeSlot = true,
-        Bone = "tag_weapon",
-        Offset = {
-            vpos = Vector(2, -0.75, 2), -- offset that the attachment will be relative to the bone
-            vang = Angle(0, 0, 0),
-            wpos = Vector(6.25, 1.9, -3),
-            wang = Angle(-7.5, 0, 180)
-        },
-    },
 }
 
 SWEP.TriggerDelay = 1 -- Set to true to play the "trigger" animation before firing. Delay time is dependent on animation time.
@@ -213,6 +161,7 @@ SWEP.Animations = {
     },
     ["charging"] = {
         Source = "drawarrow",
+        Mult = 0.71,
         SoundTable = {
             {t = 0, s = Sound ("TFA_LEVIATHANSBREATH_DRAW.1")},
         },
@@ -223,7 +172,7 @@ SWEP.Animations = {
 
 SWEP.Charge_Sounds_HasUnchargedSound = true
 SWEP.Charge_ReloadAfter_Timer = 1.2
-SWEP.Charge_Speed = 1.4
+SWEP.Charge_Speed = 1
 SWEP.Charge_Sounds_UnchargedSound = Sound ("TFA_LEVIATHANSBREATH_DRYFIRE.1")
 
 SWEP.BowChargeMat = Material("models/LeviathansBreath/LeviathansBreathcharge")

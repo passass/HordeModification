@@ -28,7 +28,7 @@ local function Weapons_Start_Beams()
             end
         end)
     end
-    table.Empty(shooted_bullets)
+    table.Empty(shooted_bullets)    
 end
 
 if CLIENT then
@@ -175,10 +175,23 @@ function HORDE:TimeStop_freeze_npc(ent)
     ent.oldHasRangeAttack = ent.HasRangeAttack
     ent.HasRangeAttack = false
 	
-	if ent.CustomOnThink then 
+	if ent.CustomOnThink then
 		ent.oldCustomOnThink = ent.CustomOnThink
 		ent.CustomOnThink = function() end
 	end
+
+    local timername = "Horde_TimeStop_FreezeNPC" .. ent:EntIndex()
+
+    timer.Create(timername, 0.1, 0, function()
+        if !IsValid(ent) then
+            timer.Remove(timername)
+            return
+        end
+        if ent:GetCurrentSchedule() ~= SCHED_NPC_FREEZE then
+			ent:SetSchedule(SCHED_NPC_FREEZE)
+			ent:SetMoveVelocity(Vector(0,0,0))
+		end
+    end)
 	
     if ent.StopAttacks then ent:StopAttacks(true) end
 	
@@ -222,10 +235,14 @@ function HORDE:TimeStop_unfreeze_npc(ent)
     ent.HasRangeAttack = ent.oldHasRangeAttack
     ent.oldHasRangeAttack = nil
 	
-	if ent.CustomOnThink then 
+	if ent.CustomOnThink then
 		ent.CustomOnThink = ent.oldCustomOnThink
 		ent.oldCustomOnThink = nil
 	end
+
+    local timername = "Horde_TimeStop_FreezeNPC" .. ent:EntIndex()
+
+    timer.Remove(timername)
 	
 	for i, mutation in pairs(mutations) do
 		local id = ent:GetCreationID()
@@ -238,7 +255,7 @@ end
 local TimeStopStart = 0
 local TimeStopProceed = false
 
-function HORDE.TimeStop_TimeEnough() 
+function HORDE.TimeStop_TimeEnough()
 	return TimeStopStart + 6.2 - CurTime()
 end
 
@@ -320,7 +337,7 @@ local function freeze_mutations()
 end
 
 local function unfreeze_mutations()
-	for id, _ in pairs(HORDE:Mutations_Nemesis_GetAll()) do 
+	for id, _ in pairs(HORDE:Mutations_Nemesis_GetAll()) do
 		timer.UnPause("Horde_Mutation_Nemesis" .. id)
 	end
 

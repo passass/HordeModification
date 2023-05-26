@@ -169,7 +169,7 @@ function ENT:Explode()
 	end
 
 	self:EmitSound("TFA_DEATHBRINGER_EXPLODE.1", 75, 100, 1)
-	util.BlastDamage(self.Owner, self.Owner, self:GetPos(), 140, 50)
+	util.BlastDamage(self.Owner, self.Owner, self:GetPos(), 200, 80)
 	ParticleEffect("deathbringer_impact", self:GetPos(), Angle(-90, 0, 0), self)
 	--self:EmitSound("TFA_INS2_RPG7.2")
 	timer.Simple(0.1, function() if IsValid(self) then self:Remove() end end)

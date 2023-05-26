@@ -24,8 +24,8 @@ SWEP.ViewModel = "models/weapons/arccw/c_db.mdl"
 SWEP.WorldModel = "models/weapons/arccw/w_db.mdl"
 SWEP.ViewModelFOV = 60
 
-SWEP.Damage = 18
-SWEP.DamageMin = 6 -- damage done at maximum range
+SWEP.Damage = 40
+SWEP.DamageMin = 18 -- damage done at maximum range
 SWEP.Range = 35 -- in METRES
 SWEP.Penetration = 2
 SWEP.DamageType = DMG_BUCKSHOT

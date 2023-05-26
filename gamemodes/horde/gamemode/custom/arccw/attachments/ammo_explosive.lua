@@ -32,7 +32,7 @@ end]]
 --att.Hidden = true
 att.Hook_BulletHit = function(wep, data)
     local ent = data.tr.Entity
-    util.BlastDamage(wep, wep:GetOwner(), data.tr.HitPos, 96, wep:GetDamage(data.range))
+    util.BlastDamage(wep, wep:GetOwner(), data.tr.HitPos, 150, wep:GetDamage(data.range) / wep:GetBuff("Num"))
     data.damage = 0
     if ent:IsValid() and ent:GetClass() == "npc_helicopter" then
         data.dmgtype = DMG_AIRBOAT

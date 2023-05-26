@@ -49,7 +49,8 @@ SWEP.Primary.Damage					= 180
 SWEP.Primary.HullSize 				= 1
 SWEP.DamageType 					= DMG_BLAST
 
-SWEP.Horde_MaxMags = 35
+SWEP.Horde_MaxMags = 55
+SWEP.ClipsPerAmmoBox = 4
 
 -- PROJECTILES
 SWEP.Primary.Projectile = "horde_ghorn_rocket" -- Entity to shoot
