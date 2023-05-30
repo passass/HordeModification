@@ -14,6 +14,7 @@ function HORDE:Ammo_CheckForValidWorking(ply) -- CALL FOR CHECK FOR AMMO LIMIT
     end
 
     for ammotype, maxammos in pairs(ammos_type) do
+        print(ammotype, maxammos)
         local MaxAmmoForTypeOfAmmo = 0
         for _, maxammo in pairs(maxammos) do
             MaxAmmoForTypeOfAmmo = math.max(maxammo, MaxAmmoForTypeOfAmmo)
@@ -23,10 +24,9 @@ function HORDE:Ammo_CheckForValidWorking(ply) -- CALL FOR CHECK FOR AMMO LIMIT
 end
 
 function HORDE:Ammo_RemainToFillAmmo(wep) -- AMMO ENOUGH TO FULL REFILL
-    local maxclip1 = (wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1)
-    if maxclip1 == -1 then maxclip1 = 1 end
+    local clipsize = wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1
     return math.max(0, HORDE:Ammo_GetMaxAmmo(wep) +
-        math.max(0, maxclip1 - wep:Clip1()) - wep:GetOwner():GetAmmoCount(wep:GetPrimaryAmmoType()))
+        math.max(0, clipsize - wep:Clip1()) - wep:GetOwner():GetAmmoCount(wep:GetPrimaryAmmoType()))
 end
 
 function HORDE:Ammo_RefillCost(ply, item) -- REFILL ALL
@@ -49,10 +49,11 @@ function HORDE:Ammo_RefillOneMagCost(ply, item) -- REFILL ONE MAG
 end
 
 function HORDE:Ammo_GetMaxAmmo(wep) -- MAX AMMO ON WEAPON
-    if wep.Primary and wep.Primary.ClipSize == -1 then
+    local clipsize = wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1
+    if clipsize == -1 then
         return HORDE:Ammo_GetTotalLimit(wep)
     end
-    local total = (wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1) * (wep.Horde_MaxMags or HORDE.Ammo_DefaultMaxMags)
+    local total = clipsize * (wep.Horde_MaxMags or HORDE.Ammo_DefaultMaxMags)
     return math.min(HORDE:Ammo_GetTotalLimit(wep), total)
 end
 
