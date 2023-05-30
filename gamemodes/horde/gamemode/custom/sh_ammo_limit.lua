@@ -14,7 +14,6 @@ function HORDE:Ammo_CheckForValidWorking(ply) -- CALL FOR CHECK FOR AMMO LIMIT
     end
 
     for ammotype, maxammos in pairs(ammos_type) do
-        print(ammotype, maxammos)
         local MaxAmmoForTypeOfAmmo = 0
         for _, maxammo in pairs(maxammos) do
             MaxAmmoForTypeOfAmmo = math.max(maxammo, MaxAmmoForTypeOfAmmo)
