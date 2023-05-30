@@ -120,7 +120,9 @@ end
         arccw_horde_akimbo_glock17 = "arccw_hordeext_akimbo_glock17",
         arccw_horde_m16m203 = "arccw_hordeext_m16m203",
         --arccw_horde_m32 = "arccw_hordeext_m32",
-        arccw_horde_m79 = "arccw_hordeext_m32",
+        arccw_horde_law = "arccw_hordeext_law",
+        arccw_horde_javelin = "arccw_hordeext_javelin",
+        arccw_horde_m79 = "arccw_hordeext_m79",
         arccw_horde_medic_9mm = "arccw_hordeext_medic_9mm",
         arccw_horde_medic_acr = "arccw_hordeext_medic_acr",
         arccw_horde_mp5 = "arccw_hordeext_mp5",
@@ -441,17 +443,13 @@ end
 
         HORDE:CreateItem("Explosive",  "Frag Grenade",   "weapon_frag",        100,  0, "A standard frag grenade.\nGood for crowd control.",
         {Assault=true, Heavy=true, SWAT=true, Demolition=true, Survivor=true, Ghost=true, Engineer=true, Warden=true, Cremator=true}, 100, -1, nil, nil, nil, nil, {HORDE.DMG_BLAST}, nil, {"Demolition"})
-        HORDE:CreateItem("Explosive",  "M79 GL",         "arccw_horde_m79",    2000,  6, "M79 Grenade Launcher.\nShoots 40x46mm grenades the explodes on impact.",
-        {Demolition=true, Survivor=true}, 10, -1, nil, nil, {Demolition=3}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
-        HORDE:CreateItem("Explosive",  "Sticky Launcher",  "horde_sticky_launcher", 2500,  7, "Sticky grenade launcher.\nLaunches grenades that stick to surfaces and entities.\n\nRMB to detonate.",
-        {Demolition=true}, 50, -1, nil, nil, {Demolition=7}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
-        HORDE:CreateItem("Explosive",  "M32 GL",         "arccw_horde_m32",    3000,  8, "Milkor Multiple Grenade Launcher.\nA lightweight 40mm six-shot revolver grenade launcher.",
-        {Demolition=true}, 50, -1, nil, nil, {Demolition=8}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
-        
-        HORDE:CreateItem("Explosive",  "RPG-7",          "arccw_horde_rpg7",   3000,  8, "Ruchnoy Protivotankoviy Granatomyot.\nAnti-tank rocket launcher developed by Soviet Union.",
-        {Demolition=true}, 15, -1, nil, nil, {Demolition=10}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
-        HORDE:CreateItem("Explosive",  "M72 LAW",        "arccw_horde_law",   3500,  9, "M72 Light Anti-Armor Weapon.\nFocuses on raw destructive power instead of area of effect.\nVery good for clearing the area.",
-        {Demolition=true}, 15, -1, nil, nil, {Demolition=15}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
+
+        HORDE.items["arccw_horde_m79"].levels = {Demolition=3}
+        HORDE.items["horde_sticky_launcher"].levels = {Demolition=7}
+        HORDE.items["arccw_horde_m32"].levels = {Demolition=8}
+        HORDE.items["arccw_horde_rpg7"].levels = {Demolition=10}
+        HORDE.items["arccw_horde_law"].levels = {Demolition=13}
+        HORDE.items["arccw_horde_javelin"].levels = {Demolition=15}
 
         HORDE:CreateItem("Explosive",  "Gjallarhorn",        "horde_gjallarhorn",   3500,  12, "Gjallarhorn the wonder weapon.\nIt fire rocket which breaks into many pieces of rockets.",
         {Demolition=true}, 25, -1, nil, nil, {Demolition=20}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})

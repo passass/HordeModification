@@ -217,8 +217,8 @@ net.Receive("Horde_BuyItem", function (len, ply)
                         ply:Horde_AddDropEntity(class, ply:GetWeapon(class))
                         --ply:Horde_RemoveDropEntity(class, entity_creation_id, weightless)
                     end)
-                    
                 end
+                HORDE:Ammo_CheckForValidWorking(ply)
             elseif item.entity_properties.type == HORDE.ENTITY_PROPERTY_GIVE then
                 -- Give entity
                 if GetConVar("horde_default_item_config"):GetInt() == 1 and class == "item_battery" then
@@ -612,6 +612,7 @@ net.Receive("Horde_BuyItemAmmoPrimary", function (len, ply)
         if HORDE:GiveAmmo(ply, wpn, is_maxammo and HORDE:Ammo_GetTotalLimit(wpn) or 1) then
 			ply:Horde_AddMoney(-price)
 			ply:Horde_SyncEconomy()
+            HORDE:Ammo_CheckForValidWorking(ply)
 		end
     end
 end)

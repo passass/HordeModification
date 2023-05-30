@@ -21,10 +21,6 @@ SWEP.MirrorVMWM = false
     bone    =    "ValveBiped.Bip01_R_Hand",
 }
 ]]
-if CLIENT then
-    SWEP.WepSelectIcon = surface.GetTextureID("vgui/entities/tfa_jetgun.vtf")
-    killicon.Add("arccw_horde_jetgun", "vgui/entities/tfa_jetgun", Color(0, 0, 0, 255))
-end
 SWEP.ViewModelFOV = 65
 
 SWEP.Damage = 26

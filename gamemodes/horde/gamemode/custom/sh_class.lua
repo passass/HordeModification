@@ -1,6 +1,41 @@
 
 HORDE.Class_SWAT = "SWAT"
 
+local function GetClassData()
+    if SERVER then
+        if not file.IsDir("horde", "DATA") then
+            file.CreateDir("horde")
+            return
+        end
+
+        if file.Read("horde/class.txt", "DATA") then
+            local t = util.JSONToTable(file.Read("horde/class.txt", "DATA"))
+
+            for _, class in pairs(t) do
+                if class.display_name then
+                    HORDE.classes[class.name].display_name = class.display_name
+                end
+                if class.extra_description then
+                    HORDE.classes[class.name].extra_description = class.extra_description
+                end
+                if class.model then
+                    HORDE.classes[class.name].model = class.model
+                end
+                if class.base_perk then
+                    HORDE.classes[class.name].base_perk = class.base_perk
+                end
+                if class.perks then
+                    HORDE.classes[class.name].perks = class.perks
+                end
+                if class.icon then
+                    HORDE.classes[class.name].icon = class.icon
+                end
+            end
+        end
+    end
+end
+
+
 function HORDE:GetDefaultClassesData()
     HORDE:CreateClass(
         HORDE.Class_Survivor,

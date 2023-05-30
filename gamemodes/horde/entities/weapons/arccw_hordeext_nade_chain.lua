@@ -34,7 +34,8 @@ SWEP.Primary.ClipSize = 1
 
 
 SWEP.MuzzleVelocity = 600
-SWEP.Horde_MaxMags = 35
+SWEP.Horde_MaxMags = 40
+SWEP.ClipsPerAmmoBox = 4
 SWEP.ShootEntity 			= "horde_chaingrenade_exp"	--NAME OF ENTITY GOES HERE
 
 SWEP.TTTWeaponType = "weapon_zm_molotov"
