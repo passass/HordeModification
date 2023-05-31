@@ -636,6 +636,12 @@ function HORDE:WaveEnd()
         timer.Simple(1, function()
             HORDE:SendNotification("Tier " .. horde_perk_progress .. " perks have been unlocked!", 0)
             horde_perk_progress = horde_perk_progress + 1
+            if horde_perk_progress <= 4 and HORDE:Horde_GetWaveForPerk(horde_perk_progress) and HORDE.current_wave >= HORDE:Horde_GetWaveForPerk(horde_perk_progress) then
+            
+                HORDE:SendNotification("Tier " .. horde_perk_progress .. " perks have been unlocked!", 0)
+                horde_perk_progress = horde_perk_progress + 1
+
+            end
         end)
     end
     for _, ply in pairs(player.GetAll()) do

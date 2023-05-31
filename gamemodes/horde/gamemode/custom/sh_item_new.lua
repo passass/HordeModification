@@ -1,3 +1,38 @@
+local function calcTotalLevels(item)
+    local levels = item.levels
+    if levels.VariousConditions then
+        local total_levels = {}
+        for class_name, class_levels in pairs(levels) do
+            if class_name != "VariousConditions" then
+                for _, level in pairs(class_levels) do
+                    if !total_levels[class_name] then total_levels[class_name] = 0 end
+                    total_levels[class_name] = total_levels[class_name] + level
+                end
+            end
+        end
+        item.total_levels = total_levels
+    else
+        local total_levels = 0
+        for _, level in pairs(levels) do
+            total_levels = total_levels + level
+        end
+        item.total_levels = total_levels
+    end
+end
+
+local function changeLevelRequirement(itemname, level)
+    local item = HORDE.items[itemname]
+    item.levels = level
+    calcTotalLevels(item)
+end
+
+local function copyLevelRequirement(from, to)
+    local from_item = HORDE.items[from]
+    local to_item = HORDE.items[to]
+    to_item.levels = from_item.levels
+    to_item.total_levels = from_item.total_levels
+end
+
 function HORDE:CreateItem(category, name, class, price, weight, description, whitelist, ammo_price, secondary_ammo_price, entity_properties, shop_icon, levels, skull_tokens, dmgtype, infusions, starter_classes, hidden)
     if category == nil or name == nil or class == nil or price == nil or weight == nil or description == nil then return end
     if name == "" or class == "" then return end
@@ -168,10 +203,10 @@ end
         HORDE:CreateItem("Melee",      "Übersaw",        "arccw_horde_ubersaw",     1750,  4, "Übersaw.\nMedic Knife.",
         {Medic=true}, 10, -1, nil, nil, {Berserker=3, Medic=4}, nil, {HORDE.DMG_SLASH})
 
-        HORDE.items["arccw_horde_chainsaw"].levels = {Berserker=10}
-        HORDE.items["arccw_horde_jotuun"].levels = {Berserker=10}
-        HORDE.items["arccw_horde_mjollnir"].levels = {Berserker=20}
-        HORDE.items["arccw_horde_zweihander"].levels = {Berserker=20}
+        changeLevelRequirement("arccw_horde_chainsaw", {Berserker=10})
+        copyLevelRequirement("arccw_horde_chainsaw", "arccw_horde_jotuun")
+        changeLevelRequirement("arccw_horde_mjollnir", {Berserker=20})
+        copyLevelRequirement("arccw_horde_mjollnir", "arccw_horde_zweihander")
 
         HORDE:CreateItem("Melee",      "Dual Swords",       "arccw_horde_dualsword",  6000, 8, "Dual Swords which hit very quickly or slow and strong",
         {Berserker=true}, 10, -1, nil, nil, {Berserker=30}, 1, {HORDE.DMG_SLASH})
@@ -316,7 +351,7 @@ end
         HORDE:CreateItem("Shotgun",    "Model 1887",  "arccw_horde_m1887",    2000, 5, "Model 1887.\nModel 1887 is Lever-Action shotgun.",
         {Assault=true, SWAT=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 10, -1, nil, nil, {Warden=5}, nil, {HORDE.DMG_BALLISTIC})
 
-        HORDE.items["arccw_horde_trenchgun"].levels = {Warden=3, Cremator=1}
+        changeLevelRequirement("arccw_horde_trenchgun", {Warden=3, Cremator=1})
         
         HORDE:CreateItem("Shotgun",    "Executioner",        "arccw_horde_exec",  2250, 6, "Executioner.\nA automatic shotgun like the judge.",
         {Survivor=true, Warden=true}, 15, -1, nil, nil, {Warden=8}, nil, {HORDE.DMG_BALLISTIC})
@@ -341,40 +376,48 @@ end
         HORDE:CreateItem("Shotgun",    "BooMer",           "arccw_horde_bymich",  2000, 6, "BooMer.\nA longer version of Sawn-Off that shoots explosive bullets.",
         {Demolition=true}, 8, -1, nil, nil, {Demolition=10, Warden=5}, nil, {HORDE.DMG_BLAST})
 
-        HORDE:CreateItem("Rifle",      "AR15",           "arccw_horde_ar15",     2000, 6, "AR-15 Style Rifle.\nA lightweight semi-automatic rifle based on ArmaLite AR-15 design.",
-        {Medic=true, Assault=true, Survivor=true, Ghost=true, SWAT=true}, 10, -1, nil, nil, {Assault=2,Ghost=1}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "M14",           "arccw_horde_m14",     2200, 7, "M14.\nA semi-automatic rifle.",
-        {Survivor=true, Ghost=true}, 10, -1, nil, nil, {Ghost=3}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "FAMAS",          "arccw_horde_famas",    2250, 6, "FAMAS bullpup assault rifle.\nRecognised for its high rate of fire.",
-        {Medic=true, Assault=true, Survivor=true, SWAT=true}, 10, -1, nil, nil, {Assault=3}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "Galil",          "arccw_horde_ace",      2250, 6, "Galil ACE 22.\nDeveloped and originally manufactured by IMI.",
-        {Medic=true, Assault=true, Survivor=true, SWAT=true}, 10, -1, nil, nil, {Assault=3}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "AK47",           "arccw_horde_ak47",     2500, 7, "Avtomat Kalashnikova.\nA gas-operated, 7.62×39mm assault rifle developed in the Soviet Union.",
-        {Assault=true, Survivor=true}, 10, -1, nil, nil, {Assault=5}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "M4A1",           "arccw_horde_m4",       2500, 7, "Colt M4.\nA 5.56×45mm NATO, air-cooled, gas-operated, select fire carbine.",
-        {Assault=true, Survivor=true}, 10, -1, nil, nil, {Assault=5}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "SG556",          "arccw_horde_sg556",    2500, 7, "SIG SG 550.\nAn assault rifle manufactured by Swiss Arms AG.",
-        {Assault=true, Survivor=true}, 10, -1, nil, nil, {Assault=6}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "AUG",            "arccw_horde_aug",      2500, 7, "Steyr AUG.\nAn Austrian bullpup assault rifle.",
-        {Assault=true, Survivor=true}, 10, -1, nil, nil, {Assault=5}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "F2000",          "arccw_horde_f2000", 3000, 7, "FN F2000.\nAn ambidextrous bullpup rifle developed by FN.",
-        {Assault=true, Survivor=true}, 10, -1, nil, nil, {
+        HORDE.items["arccw_horde_ar15"].whitelist["SWAT"] = true
+        changeLevelRequirement("arccw_horde_ar15", {Assault=3,Ghost=1})
+        
+        changeLevelRequirement("arccw_horde_famas", {
+            VariousConditions=true,
+            Assault = {Assault=5},
+            Survivor = {Survivor=8},
+        })
+        copyLevelRequirement("arccw_horde_famas", "arccw_horde_ace")
+        changeLevelRequirement("arccw_horde_ak47", {
             VariousConditions=true,
             Assault = {Assault=8},
-            Survivor = {Assault=8, Survivor=15},
-        }, nil, {HORDE.DMG_BALLISTIC})
+            Survivor = {Survivor=12},
+        })
+
+        copyLevelRequirement("arccw_horde_ak47", "arccw_horde_m4") -- from to
+        copyLevelRequirement("arccw_horde_ak47", "arccw_horde_sg556")
+        copyLevelRequirement("arccw_horde_ak47", "arccw_horde_aug")
+
+        HORDE.items["arccw_horde_ak47"].whitelist["Survivor"] = true
+        HORDE.items["arccw_horde_m4"].whitelist = HORDE.items["arccw_horde_ak47"].whitelist
+        HORDE.items["arccw_horde_sg556"].whitelist = HORDE.items["arccw_horde_ak47"].whitelist
+        HORDE.items["arccw_horde_aug"].whitelist = HORDE.items["arccw_horde_ak47"].whitelist
+        changeLevelRequirement("arccw_horde_tavor", {Assault=10})
+        changeLevelRequirement("arccw_horde_f2000", {
+            VariousConditions=true,
+            Assault = {Assault=10},
+            Survivor = {Survivor=15},
+        })
+        changeLevelRequirement("arccw_horde_scarl", {Assault=15})
+
+        HORDE:CreateItem("Rifle",      "M14",           "arccw_horde_m14",     2200, 7, "M14.\nA semi-automatic rifle.",
+        {Survivor=true, Ghost=true}, 10, -1, nil, nil, {Ghost=3}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Rifle",      "STG-44",          "arccw_horde_stg44", 3000, 8, "STG-44.\nOld but effiency weapon.",
         {Assault=true, Survivor=true}, 10, -1, nil, nil, {
             VariousConditions=true,
             Assault = {Assault=9},
             Survivor = {Assault=9, Survivor=15},
         }, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "Tavor",          "arccw_horde_tavor", 3000, 7, "IWI Tavor-21.\nDesigned to maximize reliability, durability, and simplicity.",
-        {Assault=true}, 10, -1, nil, nil, {Assault=10}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Rifle",      "AK-117",          "arccw_horde_ak117", 3000, 7, "AK-117.\nNewest weapon of series AK.",
         {Engineer=true}, 10, -1, nil, nil, {Engineer=5, Assault=5}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "SCAR-L",         "arccw_horde_scarl", 3500, 8, "FN SCAR-L.\nAn assault rifle developed by Belgian manufacturer FN Herstal.\nLight version, chambered in 5.56x45mm NATO.",
-        {Assault=true}, 15, -1, nil, nil, {Assault=15}, nil, {HORDE.DMG_BALLISTIC})
+        
         HORDE:CreateItem("Rifle",      "AK12",         "arccw_kf2_ak12", 3500, 8, "AK12.\nA continue of famous rifle. \n Super Power",
         {Assault=true}, 15, -1, nil, nil, {Assault=16}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Rifle",      "AS Val",         "arccw_horde_asval", 3500, 7, "AS Val.\n Strong and fast weapon, but have small clip",
@@ -401,13 +444,12 @@ end
             Ghost = {Ghost=5},
             Survivor = {Ghost=5, Survivor=10},
         }, nil, {HORDE.DMG_BALLISTIC})
-        HORDE.items["arccw_horde_scarh"].levels = {Ghost=7, Assault=3}
-        HORDE:CreateItem("Rifle",      "G3",             "arccw_horde_g3",      3000, 8, "G3 Battle Rifle.\nA 7.62×51mm NATO, select-fire battle rifle developed by H&K.",
-        {Ghost=true}, 15, -1, nil, nil, {Ghost=8, Assault=7}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "FN FAL",         "arccw_horde_fal",     3000, 8, "FN FAL.\nA battle rifle designed by Belgian and manufactured by FN Herstal.",
-        {Ghost=true}, 15, -1, nil, nil, {Ghost=10}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "M200",           "arccw_horde_m200",    3250, 9, "CheyTec M200 Intervention.\nAmerican bolt-action sniper rifle.",
-        {Ghost=true}, 15, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
+
+        changeLevelRequirement("arccw_horde_scarh", {Ghost=7, Assault=3})
+        changeLevelRequirement("arccw_horde_g3", {Ghost=8, Assault=7})
+        changeLevelRequirement("arccw_horde_fal", { Ghost=10 })
+        changeLevelRequirement("arccw_horde_m200", { Ghost=9 })
+
         HORDE:CreateItem("Rifle",      "HK G28",    "arccw_horde_hkg28",  3500, 8, "HK G28 Semi-Auto Rifle.\nGood weapon for clearing area.",
         {Ghost=true}, 20, -1, nil, nil, {Ghost=15}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Rifle",      "Barrett AMR",    "arccw_horde_barret",  3500, 10, ".50 Cal Anti-Material Sniper Rifle.\nDoes huge amounts of ballistic damage.",
@@ -440,14 +482,14 @@ end
         {Heavy=true}, 50, -1, nil, nil, {Heavy=15}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("MG",         "GAU-19",         "arccw_horde_gau",     3500, 15, "GAU-19 rotary heavy machine gun.\nFires .50 BMG catridge at 1,300 rounds per minute.\n\nHold RMB to rev.",
         {Heavy=true}, 50, -1, nil, nil, {Heavy=20}, nil, {HORDE.DMG_BALLISTIC})
-
-        HORDE.items["arccw_horde_m79"].levels = {Demolition=3}
-        HORDE.items["horde_sticky_launcher"].levels = {Demolition=7}
-        HORDE.items["arccw_horde_m32"].levels = {Demolition=8}
-        HORDE.items["arccw_horde_rpg7"].levels = {Demolition=10}
-        HORDE.items["arccw_horde_law"].levels = {Demolition=13}
-        HORDE.items["arccw_horde_javelin"].levels = {Demolition=15}
-
+    
+        changeLevelRequirement("arccw_horde_m79", {Demolition=3})
+        changeLevelRequirement("horde_sticky_launcher", {Demolition=7})
+        changeLevelRequirement("arccw_horde_m32", {Demolition=8})
+        changeLevelRequirement("arccw_horde_rpg7", {Demolition=10})
+        changeLevelRequirement("arccw_horde_law", {Demolition=13})
+        changeLevelRequirement("arccw_horde_javelin", {Demolition=15})
+    
         HORDE:CreateItem("Explosive",  "Gjallarhorn",        "horde_gjallarhorn",   3500,  12, "Gjallarhorn the wonder weapon.\nIt fire rocket which breaks into many pieces of rockets.",
         {Demolition=true}, 25, -1, nil, nil, {Demolition=20}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
         
@@ -537,19 +579,17 @@ end
         {Cremator=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, armor=100}, "items/armor_cremator.png", {Cremator=30}, 1)
         HORDE:CreateItem("Equipment", "Battle Vest", "armor_berserker", 1000, 0, "Distinguished Berserker armor.\n\nFills up 100 of your armor bar and override if your limit is lower.\nProvides 8% increased Slashing/Blunt damage resistance.",
         {Berserker=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, armor=100}, "items/armor_berserker.png", {Berserker=30}, 1)
-        
 
-        HORDE.items['arccw_horde_doublebarrel'].levels = { Warden=6 }
-        HORDE.items['arccw_horde_spas12'].levels = { Warden=8 }
-        HORDE.items['arccw_horde_ssg08'].levels = { Ghost=5 }
-        HORDE.items['arccw_horde_negev'].levels = { Heavy=4 }
-        HORDE.items['arccw_horde_m249'].levels = { Heavy=4 }
-        HORDE.items['arccw_horde_mg4'].levels = { Heavy=10 }
-        HORDE.items['arccw_horde_rpd'].levels = { Heavy=10 }
-        HORDE.items['arccw_horde_m240'].levels = { Heavy=10 }
-        HORDE.items['horde_tau'].levels = { Cremator=8 }
-        HORDE.items['arccw_horde_heat_blaster'].levels = { Cremator=5 }
-        HORDE.items['arccw_horde_m200'].levels = { Ghost=9 }
+        changeLevelRequirement("arccw_horde_doublebarrel", { Warden=6 })
+        changeLevelRequirement("arccw_horde_spas12", { Warden=8 })
+        changeLevelRequirement("arccw_horde_ssg08", { Ghost=5 })
+        changeLevelRequirement("arccw_horde_negev", { Heavy=4 })
+        copyLevelRequirement("arccw_horde_negev", "arccw_horde_m249")
+        changeLevelRequirement("arccw_horde_mg4", { Heavy=10 })
+        copyLevelRequirement("arccw_horde_mg4", "arccw_horde_rpd")
+        copyLevelRequirement("arccw_horde_mg4", "arccw_horde_m240")
+        changeLevelRequirement("horde_tau", { Cremator=8 })
+        changeLevelRequirement("arccw_horde_heat_blaster", { Cremator=5 })
     end
 
     HORDE.starter_weapons = {}
@@ -578,6 +618,19 @@ end
         if ArcCWInstalled == true and GetConVar("horde_arccw_attinv_free"):GetInt() == 0 then
             print("[HORDE] ArcCW detected. Loading attachments into shop.")
             HORDE.GetArcCWAttachments()
+        end
+
+        local atts = {}
+
+        for class, data in pairs(HORDE.items) do
+            if 
+            data.category != "Attachment" or 
+            !data.entity_properties or
+            !data.entity_properties.arccw_attachment_wpn
+            then continue end
+            if !copy_from_to[data.entity_properties.arccw_attachment_wpn] then continue end
+
+            data.entity_properties.arccw_attachment_wpn = copy_from_to[data.entity_properties.arccw_attachment_wpn]
         end
 
         for from, to in pairs(copy_from_to) do 
