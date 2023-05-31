@@ -441,9 +441,6 @@ end
         HORDE:CreateItem("MG",         "GAU-19",         "arccw_horde_gau",     3500, 15, "GAU-19 rotary heavy machine gun.\nFires .50 BMG catridge at 1,300 rounds per minute.\n\nHold RMB to rev.",
         {Heavy=true}, 50, -1, nil, nil, {Heavy=20}, nil, {HORDE.DMG_BALLISTIC})
 
-        HORDE:CreateItem("Explosive",  "Frag Grenade",   "weapon_frag",        100,  0, "A standard frag grenade.\nGood for crowd control.",
-        {Assault=true, Heavy=true, SWAT=true, Demolition=true, Survivor=true, Ghost=true, Engineer=true, Warden=true, Cremator=true}, 100, -1, nil, nil, nil, nil, {HORDE.DMG_BLAST}, nil, {"Demolition"})
-
         HORDE.items["arccw_horde_m79"].levels = {Demolition=3}
         HORDE.items["horde_sticky_launcher"].levels = {Demolition=7}
         HORDE.items["arccw_horde_m32"].levels = {Demolition=8}
@@ -470,10 +467,10 @@ end
         {Demolition=true}, 6, -1, nil, nil, {Demolition=5}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Explosive",  "Incendiary Grenade",   "arccw_horde_nade_incendiary",        1000,   2, "Generates a pool of fire after some delay.\nSets everything on fire within its effect.",
         {Cremator=true}, 25, -1, nil, nil, {Cremator=2}, nil, {HORDE.DMG_FIRE})
-        --[[HORDE:CreateItem("Explosive",  "Incendiary Launcher",  "arccw_horde_incendiary_launcher", 3000,  8, "Incendiary Grenade Launcher.\nShoots incendiary grenades the erupt into flames on impact.",
-        {Cremator=true}, 50, -1, nil, nil, {Cremator=5}, nil, {HORDE.DMG_FIRE})]]
         HORDE:CreateItem("Explosive",    "Molotov Cocktail",  "arccw_horde_nade_molotov",     1750,  4, "Molotov Cocktail.",
         {Cremator=true}, 50, -1, nil, nil, {Cremator=5}, nil, {HORDE.DMG_BURN})
+        --[[HORDE:CreateItem("Explosive",  "Incendiary Launcher",  "arccw_horde_incendiary_launcher", 3000,  8, "Incendiary Grenade Launcher.\nShoots incendiary grenades the erupt into flames on impact.",
+        {Cremator=true}, 50, -1, nil, nil, {Cremator=5}, nil, {HORDE.DMG_FIRE})]]
         HORDE:CreateItem("Special",    "Sniper Turret",  "npc_vj_horde_sniper_turret",    1500,  5, "Combine heavy sniper turret.\n\nCovers a long range and deals heavy damage, but with limited sight.\nAims for the head if possible.",
         {Engineer=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=3}, "items/sniper_turret.png", {Engineer=4}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Special",    "Wunderwaffe DG-2",       "arccw_horde_wunderwaffe",       3500,  8, "Wunderwaffe DG-2.\nA wonder weapon.\nShoots electric balls that kill a zombies.",

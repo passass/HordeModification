@@ -157,7 +157,6 @@ function PANEL:Init()
 
         local p = 50
         local t = 0
-
         btn.Paint = function(pnl, w, h)
             if text == "Class/Perks" then
                 if pnl:GetActive() then
@@ -190,11 +189,11 @@ function PANEL:Init()
                 surface.SetDrawColor(0,0,0,0)
                 surface.DrawRect(0, 0, w, h)
                 if pnl:GetActive() then
-                    surface.SetDrawColor(Color(40,40,40,230))
+                    surface.SetDrawColor(Color(30,30,30,230))
                     surface.DrawRect(0, 0, w, h)
                 end
-                surface.SetDrawColor(255, 255, 255, 255)
                 surface.SetMaterial(icon)
+                surface.SetDrawColor(Color(255,255,255,255))
                 surface.DrawTexturedRect(0, 0, w, h)
             end
         end
@@ -407,7 +406,6 @@ function PANEL:ReloadAttachments(attachments, container, description_panel)
         end
         cat.Header:SetFont("Item")
         cat.Header:SetTextColor(Color(255,255,255))
-        --print(container:GetWide())--local divide_on = container:GetWide()
         cat.Header:SetSize(container:GetWide() - 16, 40)
 
         local ShopCategoryTabLayout = vgui.Create("DIconLayout")
