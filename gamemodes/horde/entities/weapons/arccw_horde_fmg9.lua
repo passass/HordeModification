@@ -31,7 +31,7 @@ if CLIENT then
     killicon.Add("arccw_horde_fmg9", "arccw/weaponicons/arccw_mw3e_fmg9", Color(0, 0, 0, 255))
 end
 SWEP.Damage = 27
-SWEP.DamageMin = 22 -- damage done at maximum range
+SWEP.DamageMin = 23 -- damage done at maximum range
 SWEP.RangeMin = 10
 SWEP.Range = 75 -- in METRES
 SWEP.Penetration = 6
@@ -50,7 +50,7 @@ SWEP.ChamberSize = 0 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 40 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 60
 
-SWEP.Recoil = 0.35
+SWEP.Recoil = 0.25
 SWEP.RecoilSide = 0.3
 SWEP.RecoilRise = 0.6
 

@@ -42,6 +42,6 @@ PERK.Hooks.Horde_PrecomputePerkLevelBonus = function (ply)
         ply:Horde_SetPerkLevelBonus("swat_base", 1 + math.min(1, 0.04 * ply:Horde_GetLevel("SWAT")))
         ply:Horde_SetPerkLevelBonus("slomo_bonus", math.min(2, 0.08 * ply:Horde_GetLevel("SWAT")))
         HORDE:Modifier_AddToWeapons(ply, "Mult_DrawTime", "swat_base", 1 / ply:Horde_GetPerkLevelBonus("swat_base"))
-        HORDE:Modifier_AddToWeapons(ply, "Mult_ReloadTime", "swat_base", 1 / ( 1 + math.min(25, ply:Horde_GetLevel("SWAT")) / 100 ))
+        HORDE:Modifier_AddToWeapons(ply, "Mult_ReloadTime", "swat_base", 1 - math.min(25, ply:Horde_GetLevel("SWAT")) / 100)
     end
 end

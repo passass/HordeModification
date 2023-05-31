@@ -218,7 +218,7 @@ function ENT:CustomOnMeleeAttack_BeforeChecks()
     end)
 end
 
-function ENT:ColdAttack(delay, timerindex)
+function ENT:ColdAttack(delay, dir, timerindex)
 	timer.Simple(delay - 1, function()
 		if not self:IsValid() then return end
         local rand = VectorRand()

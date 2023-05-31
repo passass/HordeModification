@@ -31,7 +31,7 @@ SWEP.WorldModelOffset = {
 SWEP.ViewModelFOV = 60
 
 SWEP.Damage = 50
-SWEP.DamageMin = 25 -- damage done at maximum range
+SWEP.DamageMin = 37 -- damage done at maximum range
 SWEP.RangeMin = 25
 SWEP.Range = 80 -- in METRES
 SWEP.Penetration = 6
@@ -96,7 +96,7 @@ SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 SWEP.ProceduralViewBobAttachment = 1
 SWEP.CamAttachment = 3
 
-SWEP.SpeedMult = 0.925
+SWEP.SpeedMult = 0.975
 SWEP.SightedSpeedMult = 0.45
 SWEP.SightTime = 0.3
 
