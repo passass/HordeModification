@@ -14,6 +14,20 @@ function HORDE:InBreak()
     return horde_in_break
 end
 
+local function GetCurrentWave()
+
+    local current_wave = ((HORDE.current_wave - 1) % HORDE.max_max_waves) + 1
+
+    if HORDE.current_wave > HORDE.max_max_waves then
+        local has_boss = HORDE.bosses_normalized[current_wave] and not table.IsEmpty(HORDE.bosses_normalized[current_wave])
+        return HORDE.max_max_waves - (has_boss and 0 or 1)
+    else
+        return current_wave
+    end
+
+    
+end
+
 hook.Add("EntityRemoved", "Horde_EntityRemoved", function(ent)
     if (ent:IsNPC() or ent:IsNextBot()) and ent:Horde_GetMostRecentAttacker() then
         HORDE:OnEnemyKilled(ent, ent:Horde_GetMostRecentAttacker())
@@ -177,7 +191,7 @@ function HORDE:SpawnBoss(enemies, valid_nodes)
         if not pos then return end
         table.RemoveByValue(valid_nodes, pos)
         local spawned_enemy
-        local enemy_wave = ((HORDE.current_wave - 1) % HORDE.max_max_waves) + 1
+        local enemy_wave = GetCurrentWave()
 
         local enemy = HORDE.bosses[HORDE.horde_boss_name .. tostring(enemy_wave)]
         enemy.is_elite = true
@@ -408,8 +422,10 @@ function HORDE:WaveStart()
         HORDE:SendNotification("No enemy config set for this wave. Falling back to previous wave settings.", 1)
     end
 
-    local current_wave = ((HORDE.current_wave - 1) % HORDE.max_max_waves) + 1
+    local current_wave = GetCurrentWave()
     horde_players_count = table.Count(player.GetAll())
+    
+
     horde_current_enemies_list = table.Copy(HORDE.enemies_normalized[current_wave])
     local difficulty_coefficient = HORDE.difficulty * 0.05
 
@@ -492,8 +508,7 @@ function HORDE:WaveStart()
         end
     end
 
-    local enemy_wave = ((HORDE.current_wave - 1) % HORDE.max_max_waves) + 1
-    horde_force_spawn_enemies = HORDE:GetForcedEnemiesOnWave(horde_current_enemies_list, enemy_wave, HORDE.total_enemies_this_wave_fixed)
+    horde_force_spawn_enemies = HORDE:GetForcedEnemiesOnWave(horde_current_enemies_list, current_wave, HORDE.total_enemies_this_wave_fixed)
 
     -- Close all the shop menus
     net.Start("Horde_ForceCloseShop")
@@ -692,7 +707,7 @@ function HORDE:SpawnEnemies(enemies, valid_nodes)
                 local p = math.random()
                 local p_cum = 0
                 local spawned_enemy
-                local enemy_wave = ((HORDE.current_wave - 1) % HORDE.max_max_waves) + 1
+                local enemy_wave = GetCurrentWave()
 
                 -- This in fact should not happen
                 if table.IsEmpty(horde_current_enemies_list) then
@@ -957,7 +972,6 @@ function HORDE:SpawnEnemy(enemy, pos)
     return spawned_enemy
 end
 
-
 local director_interval = 5
 if GetConVarNumber("horde_director_interval") then
     director_interval = math.max(9, GetConVarNumber("horde_director_interval"))
@@ -1038,6 +1052,8 @@ function HORDE:Direct()
 
     --Get valid nodes
     local valid_nodes = HORDE:GetValidNodes(enemies)
+    print("HORDE.boss_spawns")
+    PrintTable(HORDE.boss_spawns or {"nil"})
     if #valid_nodes > 0 then
         -- If we already have a boss, check if he is stuck.
         HORDE:CheckBossStuck()

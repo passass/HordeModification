@@ -78,7 +78,7 @@ SWEP.NPCWeaponType = {
 SWEP.NPCWeight = 100
 
 SWEP.AccuracyMOA = 2 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 450 -- inaccuracy added by hip firing.
+SWEP.HipDispersion = 350 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 150
 
 SWEP.Primary.Ammo = "ar2" -- what ammo type the gun uses

@@ -153,10 +153,6 @@ end
         arccw_horde_akimbo_deagle = "arccw_hordeext_akimbo_deagle",
         arccw_horde_akimbo_m9 = "arccw_hordeext_akimbo_m9",
         arccw_horde_akimbo_glock17 = "arccw_hordeext_akimbo_glock17",
-        arccw_horde_m16m203 = "arccw_hordeext_m16m203",
-        --arccw_horde_m32 = "arccw_hordeext_m32",
-        arccw_horde_law = "arccw_hordeext_law",
-        arccw_horde_javelin = "arccw_hordeext_javelin",
         arccw_horde_m79 = "arccw_hordeext_m79",
         arccw_horde_medic_9mm = "arccw_hordeext_medic_9mm",
         arccw_horde_medic_acr = "arccw_hordeext_medic_acr",
@@ -165,21 +161,26 @@ end
         arccw_horde_mp7m = "arccw_hordeext_mp7m",
         arccw_horde_mp9m = "arccw_hordeext_mp9m",
         arccw_horde_mp40 = "arccw_hordeext_mp40",
-        arccw_horde_rpg7 = "arccw_hordeext_rpg7",
+        
         arccw_horde_shotgun = "arccw_hordeext_shotgun",
         arccw_horde_smg1 = "arccw_hordeext_smg1",
         arccw_horde_tmp = "arccw_hordeext_tmp",
         arccw_horde_trenchgun = "arccw_hordeext_trenchgun",
         arccw_horde_vector = "arccw_hordeext_vector",
-        arccw_nade_medic = "arccw_hordeext_nade_medic",
-        horde_welder = "hordeext_welder",
         weapon_horde_medkit = "weapon_hordeext_medkit",
+        
+
+        horde_welder = "hordeext_welder",
+
+        --arccw_nade_medic = "arccw_hordeext_nade_medic",
+        --arccw_horde_nade_incendiary = "arccw_hordeext_nade_incendiary",
+        --arccw_horde_nade_molotov = "arccw_hordeext_nade_molotov",
+
+        arccw_horde_law = "arccw_hordeext_law",
+        arccw_horde_m16m203 = "arccw_hordeext_m16m203",
+        arccw_horde_javelin = "arccw_hordeext_javelin",
+        arccw_horde_rpg7 = "arccw_hordeext_rpg7",
         horde_sticky_launcher = "hordeext_sticky_launcher",
-
-        arccw_horde_nade_incendiary = "arccw_hordeext_nade_incendiary",
-        arccw_horde_nade_molotov = "arccw_hordeext_nade_molotov",
-        arccw_horde_nade_stun = "arccw_hordeext_nade_stun",
-
         arccw_horde_heat_crossbow = "arccw_hordeext_heat_crossbow",
     }
 
@@ -507,10 +508,10 @@ end
 
         HORDE:CreateItem("Explosive",      "Crossbow",           "arccw_horde_crossbow",     2625, 7, "Crossbow.\nA Crossbow with explosive arrows.",
         {Demolition=true}, 6, -1, nil, nil, {Demolition=5}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Explosive",  "Incendiary Grenade",   "arccw_horde_nade_incendiary",        1000,   2, "Generates a pool of fire after some delay.\nSets everything on fire within its effect.",
-        {Cremator=true}, 25, -1, nil, nil, {Cremator=2}, nil, {HORDE.DMG_FIRE})
-        HORDE:CreateItem("Explosive",    "Molotov Cocktail",  "arccw_horde_nade_molotov",     1750,  4, "Molotov Cocktail.",
-        {Cremator=true}, 50, -1, nil, nil, {Cremator=5}, nil, {HORDE.DMG_BURN})
+        --[[HORDE:CreateItem("Explosive",  "Incendiary Grenade",   "arccw_horde_nade_incendiary",        1000,   2, "Generates a pool of fire after some delay.\nSets everything on fire within its effect.",
+        {Cremator=true}, 25, -1, nil, nil, {Cremator=2}, nil, {HORDE.DMG_FIRE})]]
+        --[[HORDE:CreateItem("Explosive",    "Molotov Cocktail",  "arccw_horde_nade_molotov",     1750,  4, "Molotov Cocktail.",
+        {Cremator=true}, 50, -1, nil, nil, {Cremator=5}, nil, {HORDE.DMG_BURN})]]
         --[[HORDE:CreateItem("Explosive",  "Incendiary Launcher",  "arccw_horde_incendiary_launcher", 3000,  8, "Incendiary Grenade Launcher.\nShoots incendiary grenades the erupt into flames on impact.",
         {Cremator=true}, 50, -1, nil, nil, {Cremator=5}, nil, {HORDE.DMG_FIRE})]]
         HORDE:CreateItem("Special",    "Sniper Turret",  "npc_vj_horde_sniper_turret",    1500,  5, "Combine heavy sniper turret.\n\nCovers a long range and deals heavy damage, but with limited sight.\nAims for the head if possible.",

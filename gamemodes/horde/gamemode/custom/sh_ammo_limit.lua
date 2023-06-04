@@ -48,11 +48,16 @@ function HORDE:Ammo_RefillOneMagCost(ply, item) -- REFILL ONE MAG
 end
 
 function HORDE:Ammo_GetMaxAmmo(wep) -- MAX AMMO ON WEAPON
-    local clipsize = wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1
-    if clipsize == -1 then
-        return HORDE:Ammo_GetTotalLimit(wep)
+    local total
+    if wep.Primary and wep.Primary.MaxAmmo then
+        total = wep.Primary.MaxAmmo
+    else
+        local clipsize = wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1
+        if clipsize == -1 then
+            return HORDE:Ammo_GetTotalLimit(wep)
+        end
+        total = clipsize * (wep.Horde_MaxMags or HORDE.Ammo_DefaultMaxMags)
     end
-    local total = clipsize * (wep.Horde_MaxMags or HORDE.Ammo_DefaultMaxMags)
     return math.min(HORDE:Ammo_GetTotalLimit(wep), total)
 end
 

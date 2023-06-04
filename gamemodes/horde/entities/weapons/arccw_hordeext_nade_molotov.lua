@@ -8,6 +8,7 @@ SWEP.Horde_MaxMags = 60
 SWEP.ShootEntity = "arccw_thr_hordeext_molotov"
 SWEP.ForceDefaultAmmo = 0
 
+SWEP.Primary.MaxAmmo = nil
 SWEP.KeepIfEmpty = true
 function SWEP:Throw()
     if self:GetNextPrimaryFire() > CurTime() then return end

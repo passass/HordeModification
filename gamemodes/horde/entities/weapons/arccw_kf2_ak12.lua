@@ -22,26 +22,6 @@ game.AddParticles("particles/matsilagi_muzzle_kf.pcf")
 game.AddParticles("particles/kf2_flamethrower2.pcf")
 game.AddParticles("particles/ef_flamer.pcf")
 
---[[ KILLICONS ]]
-local ic =  Color( 255, 255, 255, 255 )
-if CLIENT then
-	killicon.Add("tfa_kf2r_9mm", "vgui/hud/tfa_kf2_9mm.vtf", ic)
-	killicon.Add("tfa_kf2r_aa12", "vgui/hud/tfa_kf2_aa12.vtf", ic)
-	killicon.Add("tfa_kf2r_ak12", "vgui/hud/tfa_kf2_ak12.vtf", ic)
-	killicon.Add("tfa_kf2r_ar15", "vgui/hud/tfa_kf2_ar15.vtf", ic)
-	killicon.Add("tfa_kf2r_double_barrel", "vgui/hud/tfa_kf2_doublebarrel.vtf", ic)
-	killicon.Add("tfa_kf2r_flamethrower", "vgui/hud/tfa_kf2_flamethrower.vtf", ic)
-	killicon.Add("tfa_kf2r_l85a2", "vgui/hud/tfa_kf2_l85a2.vtf", ic)
-	killicon.Add("tfa_kf2r_m4", "vgui/hud/tfa_kf2_m4.vtf", ic)
-	killicon.Add("tfa_kf2r_mb500", "vgui/hud/tfa_kf2_mb500.vtf", ic)
-	killicon.Add("tfa_kf2r_medic_assault", "vgui/hud/tfa_kf2_medicassault.vtf", ic)
-	killicon.Add("tfa_kf2r_medic_pistol", "vgui/hud/tfa_kf2_medicpist.vtf", ic)
-	killicon.Add("tfa_kf2r_medic_shotgun", "vgui/hud/tfa_kf2_medicshotgun.vtf", ic)
-	killicon.Add("tfa_kf2r_medic_smg", "vgui/hud/tfa_kf2_medicsmg.vtf", ic)
-	killicon.Add("tfa_kf2r_scar", "vgui/hud/tfa_kf2_scar.vtf", ic)	
-	killicon.Add("tfa_kf2r_deagle", "vgui/hud/tfa_kf2_deagle.vtf", ic)	
-end
-
 --[[ SOUNDS ]]
 if CLIENT then
 // 9MM
@@ -885,7 +865,7 @@ SWEP.Trivia_Mechanism = "Short Recoil"
 SWEP.Trivia_Country = "Austria"
 SWEP.Trivia_Year = 1993]]
 
-SWEP.Slot = 1
+SWEP.Slot = 2
 
 SWEP.UseHands = true
 
@@ -936,8 +916,8 @@ SWEP.NPCWeaponType = "weapon_pistol"
 SWEP.NPCWeight = 100
 
 SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 120 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 250
+SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
+SWEP.MoveDispersion = 300
 
 SWEP.Primary.Ammo = "ar2" -- what ammo type the gun uses
 

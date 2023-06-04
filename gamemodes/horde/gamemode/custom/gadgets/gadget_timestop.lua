@@ -3,10 +3,16 @@ GADGET.Description =
 [[Stop Time for 5 seconds.]]
 GADGET.Icon = "items/gadgets/timestop.png"
 GADGET.Duration = 6
-GADGET.Cooldown = 75
+GADGET.Cooldown = 60
 GADGET.Active = true
 GADGET.Params = {}
 GADGET.Hooks = {}
+
+local TimeStopProceed = false
+
+function HORDE.TimeStop_Proceed()
+	return TimeStopProceed
+end
 
 local shooted_bullets = {}
 local function Weapons_Stop_Beams()
@@ -28,7 +34,7 @@ local function Weapons_Start_Beams()
             end
         end)
     end
-    table.Empty(shooted_bullets)    
+    table.Empty(shooted_bullets)
 end
 
 if CLIENT then
@@ -39,6 +45,8 @@ if CLIENT then
         local is_start = net.ReadBool()
         cur_tick = 0
         timestop_start_time = CurTime()
+
+        TimeStopProceed = true
 
         if is_start then
             Weapons_Stop_Beams()
@@ -96,6 +104,7 @@ if CLIENT then
         else
             timer.Simple(1.2, function()
                 Weapons_Start_Beams()
+                TimeStopProceed = false
             end)
             timer.Remove("TimerStopTicking")
             hook.Add("RenderScreenspaceEffects", "TimeStop_screeneffect", function()
@@ -246,14 +255,13 @@ function HORDE:TimeStop_unfreeze_npc(ent)
 	
 	for i, mutation in pairs(mutations) do
 		local id = ent:GetCreationID()
-		if timer.Exists("Horde_Mutation_" .. mutation .. id) then 
+		if timer.Exists("Horde_Mutation_" .. mutation .. id) then
 			timer.UnPause("Horde_Mutation_" .. mutation .. id)
 		end
 	end
 end
 
 local TimeStopStart = 0
-local TimeStopProceed = false
 
 function HORDE.TimeStop_TimeEnough()
 	return TimeStopStart + 6.2 - CurTime()

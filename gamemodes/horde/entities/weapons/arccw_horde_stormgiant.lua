@@ -46,10 +46,10 @@ SWEP.Melee2Time = 1.3
 SWEP.Melee2Gesture = ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE2
 
 SWEP.MeleeSwingSound = {
-    --"weapons/tfa_cso/dual_sword/swing_1.wav", "weapons/tfa_cso/dual_sword/swing_2.wav", "weapons/tfa_cso/dual_sword/swing_3.wav", "weapons/tfa_cso/dual_sword/swing_4.wav", "weapons/tfa_cso/dual_sword/swing_5.wav"
+    "weapons/tfa_cso/stormgiant/midslash1.wav", "weapons/tfa_cso/stormgiant/midslash2.wav"
 }
 SWEP.MeleeMissSound = {
-    --"weapons/tfa_cso/dual_sword/swing_1.wav", "weapons/tfa_cso/dual_sword/swing_2.wav", "weapons/tfa_cso/dual_sword/swing_3.wav", "weapons/tfa_cso/dual_sword/swing_4.wav", "weapons/tfa_cso/dual_sword/swing_5.wav"
+    "weapons/tfa_cso/stormgiant/midslash1.wav", "weapons/tfa_cso/stormgiant/midslash2.wav"
 }
 SWEP.MeleeHitSound = {
     "weapons/tfa_cso/stormgiant/hit_world1.wav", "weapons/tfa_cso/stormgiant/hit_world2.wav", "weapons/tfa_cso/stormgiant/hit_world3.wav"
