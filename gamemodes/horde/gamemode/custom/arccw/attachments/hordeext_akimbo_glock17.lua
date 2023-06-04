@@ -72,9 +72,9 @@ att.Hook_Think = function(wep)
         wep:ReloadUBGL()
     elseif owner:KeyPressed(IN_ATTACK) then
         wep:SetInUBGL(false)
-    elseif mode == 2 and owner:KeyDown(IN_ATTACK2) or owner:KeyPressed(IN_ATTACK2) then
+    --[[elseif mode == 2 and owner:KeyDown(IN_ATTACK2) or owner:KeyPressed(IN_ATTACK2) then
         wep:SetInUBGL(true)
-        wep:ShootUBGL()
+        wep:ShootUBGL()]]
     end
 end
 
@@ -137,6 +137,8 @@ att.UBGL_Fire = function(wep, ubgl)
         tracer = wep:GetBuff_Override("Override_TracerFinal", wep.TracerFinal) or wep:GetBuff_Override("Override_Tracer", wep.Tracer)
     end
 
+    wep:DoRecoil()
+
     wep.Owner:FireBullets({
 		Src = wep.Owner:EyePos(),
 		Num = 1,
@@ -189,9 +191,9 @@ att.UBGL_Reload = function(wep, ubgl)
             {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_chamber_v1.wav", 	t = 67/40 * mult},
         })
     else
-        wep:DoLHIKAnimation("reload", 70/40 / mult)
-        wep:SetNextSecondaryFire(CurTime() + 70/40 / mult)
-        wep:SetMW2Masterkey_ShellInsertTime(CurTime() + 1.2 / mult)
+        wep:DoLHIKAnimation("reload", 70/40 * mult)
+        wep:SetNextSecondaryFire(CurTime() + 70/40 * mult)
+        wep:SetMW2Masterkey_ShellInsertTime(CurTime() + 1.2 * mult)
         wep:PlaySoundTable({
             {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_lift_v1.wav", 	t = 0},
             {s = "weapons/fesiugmw2/foley/wpfoly_glock_reload_clipout_v1.wav", 	t = 4/40 * mult},

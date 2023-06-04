@@ -72,9 +72,9 @@ att.Hook_Think = function(wep)
         wep:ReloadUBGL()
     elseif owner:KeyPressed(IN_ATTACK) then
         wep:SetInUBGL(false)
-    elseif mode == 2 and owner:KeyDown(IN_ATTACK2) or owner:KeyPressed(IN_ATTACK2) then
+    --[[elseif mode == 2 and owner:KeyDown(IN_ATTACK2) or owner:KeyPressed(IN_ATTACK2) then
         wep:SetInUBGL(true)
-        wep:ShootUBGL()
+        wep:ShootUBGL()]]
     end
 end
 
@@ -132,6 +132,8 @@ att.UBGL_Fire = function(wep, ubgl)
         tracernum = 1
         tracer = wep:GetBuff_Override("Override_TracerFinal", wep.TracerFinal) or wep:GetBuff_Override("Override_Tracer", wep.Tracer)
     end
+
+    wep:DoRecoil()
 
     wep.Owner:FireBullets({
 		Src = wep.Owner:EyePos(),

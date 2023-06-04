@@ -535,10 +535,10 @@ end
         HORDE:CreateItem("Special",    "Barricade Kit",  "horde_barricadekit", 1500,  4, "Barricade Kit.\nKit with barricade that block zombies movement",
         {Engineer=true}, -1, -1, {type=HORDE.ENTITY_PROPERTY_WPN, wep_that_place=true, limit=1}, nil, {Warden=10}, nil)--, {HORDE.DMG_LIGHTNING})
 
-        HORDE:CreateItem("Special",    "C4",  "horde_c4", 1500,  4, "C4.\nThrowable Bomb which explode on press detonator",
-        {Warden=true, Assault=true, Survivor=true, SWAT=true, Heavy=true, Ghost=true, Demolition=true}, 75, -1, nil, "entities/horde_c4.png", {Demolition=30}, nil, {HORDE.DMG_BLAST})
-        HORDE:CreateItem("Special",    "Claymore",  "horde_claymore", 1500,  3, "Claymore.\nBomb that explode on approaching enemies",
-        {Warden=true, Assault=true, Survivor=true, SWAT=true, Heavy=true, Ghost=true, Demolition=true}, 60, -1, nil, "entities/horde_claymore.png", {Demolition=15}, nil, {HORDE.DMG_BLAST})
+        HORDE:CreateItem("Special",    "C4",  "horde_c4", 1500,  2, "C4.\nThrowable Bomb which explode on press detonator",
+        {Warden=true, Assault=true, Survivor=true, SWAT=true, Heavy=true, Ghost=true, Demolition=true}, 75, -1, nil, "entities/horde_c4.png", {Demolition=20}, nil, {HORDE.DMG_BLAST})
+        HORDE:CreateItem("Special",    "Claymore",  "horde_claymore", 1250,  1, "Claymore.\nBomb that explode on approaching enemies",
+        {Warden=true, Assault=true, Survivor=true, SWAT=true, Heavy=true, Ghost=true, Demolition=true}, 60, -1, nil, "entities/horde_claymore.png", {Demolition=10}, nil, {HORDE.DMG_BLAST})
         HORDE:CreateItem("Special",    "M2 Flamethrower", "horde_m2",            2500,  8, "M2-2 Flamethrower.\nAn American man-portable backpack flamethrower.",
         {Cremator=true}, 50, -1, nil, nil, {Cremator=6}, nil, {HORDE.DMG_FIRE})
         HORDE:CreateItem("Special",    "Gluon Gun", "horde_gluon",            3000,  8, "Quantum Destabilizer.\nAn experimental weapon that fires a devastating laser.",

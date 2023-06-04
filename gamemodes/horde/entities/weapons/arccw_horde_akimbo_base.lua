@@ -1037,3 +1037,22 @@ function SWEP:ShouldDrawCrosshair()
     if self:GetNWState() == ArcCW.STATE_DISABLE then return false end
     return true
 end
+
+function SWEP:SecondaryAttack()
+	local fm = self:GetCurrentFiremode().Mode
+    self.Secondary.Automatic = fm == 2
+	self:SetInUBGL(true)
+	self:CanPrimaryAttack()
+
+	local delay = self:GetFiringDelay()
+
+    local curtime = CurTime()
+    local curatt = self:GetNextPrimaryFire()
+    local diff = curtime - curatt
+
+    if diff > engine.TickInterval() or diff < 0 then
+        curatt = curtime
+    end
+
+    self:SetNextSecondaryFire(curatt + delay)
+end

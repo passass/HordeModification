@@ -1052,8 +1052,6 @@ function HORDE:Direct()
 
     --Get valid nodes
     local valid_nodes = HORDE:GetValidNodes(enemies)
-    print("HORDE.boss_spawns")
-    PrintTable(HORDE.boss_spawns or {"nil"})
     if #valid_nodes > 0 then
         -- If we already have a boss, check if he is stuck.
         HORDE:CheckBossStuck()
