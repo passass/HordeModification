@@ -51,11 +51,13 @@ end
 Horde_LoadPerks()
 
 function plymeta:Horde_CallClassHook(hookname, ...)
-    for perkname, _ in pairs(self.Horde_Perks) do
-        local perk = HORDE.perks[perkname]
-        if perk and perk.Hooks and perk.Hooks[hookname] then
-            local res = perk.Hooks[hookname](...)
-            if res then return res end
+    if self.Horde_Perks then
+        for perkname, _ in pairs(self.Horde_Perks) do
+            local perk = HORDE.perks[perkname]
+            if perk and perk.Hooks and perk.Hooks[hookname] then
+                local res = perk.Hooks[hookname](...)
+                if res then return res end
+            end
         end
     end
     local cur_gadget = self:Horde_GetGadget()

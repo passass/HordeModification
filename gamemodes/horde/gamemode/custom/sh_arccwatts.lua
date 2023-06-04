@@ -1,10 +1,16 @@
-ArcCW.AttachmentBlacklistTable["go_perk_diver"] = true
-ArcCW.AttachmentBlacklistTable["go_perk_light"] = true
-ArcCW.AttachmentBlacklistTable["go_perk_quickdraw"] = true
-ArcCW.AttachmentBlacklistTable["go_perk_cowboy"] = true
-ArcCW.AttachmentBlacklistTable["perk_fastreload"] = true
-ArcCW.AttachmentBlacklistTable["go_perk_rapidfire"] = true
-ArcCW.AttachmentBlacklistTable["go_perk_burst"] = true
-ArcCW.AttachmentBlacklistTable["go_perk_fastreload"] = true
-ArcCW.AttachmentBlacklistTable["perk_headshot"] = true
-ArcCW.AttachmentBlacklistTable["perk_fastreload"] = true
+local function addToBlackList(attname)
+    if ArcCW.AttachmentTable[attname] then
+        ArcCW.AttachmentBlacklistTable[attname] = true
+    end
+end
+
+addToBlackList("go_perk_diver")
+addToBlackList("go_perk_light")
+addToBlackList("go_perk_quickdraw")
+addToBlackList("go_perk_cowboy")
+addToBlackList("perk_fastreload")
+addToBlackList("go_perk_rapidfire")
+addToBlackList("go_perk_burst")
+addToBlackList("go_perk_fastreload")
+addToBlackList("perk_headshot")
+addToBlackList("perk_fastreload")
