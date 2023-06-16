@@ -314,6 +314,9 @@ end
         HORDE:CreateItem("SMG", "FMG9","arccw_horde_fmg9", 3500, 6, "FMG9.\n Fast Firerate Compact SMG.",
         {SWAT=true}, 8, -1, nil, nil, {SWAT=17}, nil, {HORDE.DMG_BALLISTIC})
 
+        HORDE:CreateItem("SMG", "PP-19 Vityaz","arccw_horde_vityaz", 3500, 7, "PP-19 Vityaz.\n Powerful SMG.",
+        {SWAT=true}, 8, -1, nil, nil, {SWAT=17}, nil, {HORDE.DMG_BALLISTIC})
+
         HORDE:CreateItem("SMG",        "PP-90M1 Medic", "arccw_horde_pp90m1"  ,2500, 6, "PP-90M1 Medic.\nA modified version of PP-90M1 for medical purposes.\n\nPress B or ZOOM to fire healing darts.",
         {Medic=true}, 20, -1, nil, nil, {Medic=18}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
         HORDE:CreateItem("SMG",        "Vector Medic PDW","arccw_horde_vector",3000, 6, "KRISS Vector Gen I equipped with a medical dart launcher.\nUses an unconventional blowback system that results in its high firerate.\n\nPress B or ZOOM to fire healing darts.\nHealing dart recharges every 1.5 seconds.",
@@ -427,6 +430,8 @@ end
         {Assault=true}, 12, -1, nil, nil, {Assault=20}, nil, {HORDE.DMG_BALLISTIC})
         
         HORDE:CreateItem("Rifle",      "AN94",         "arccw_horde_an94", 6000, 9, "AN94.\nAn assault rifle with big damage and extended mag.",
+        {Assault=true}, 20, -1, nil, nil, {Assault=30}, 1, {HORDE.DMG_BALLISTIC})
+        HORDE:CreateItem("Rifle",      "Galil with extended mag",         "arccw_horde_machgungalil", 6000, 9, "Galil with extended mag.\nAn assault rifle with extended mag.",
         {Assault=true}, 20, -1, nil, nil, {Assault=30}, 1, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Rifle",      "AK47 SUP Mod",         "arccw_horde_ak47supmod", 6000, 9, "AK47 SUP Mod.\nAn AK47 with SUP Mod.",
         {Assault=true}, 20, -1, nil, nil, {Assault=30}, 1, {HORDE.DMG_BALLISTIC})
@@ -1163,6 +1168,7 @@ end
         HORDE.items["arccw_horde_mp5_sup"].infusions = ballistic_infusions_smgs
         HORDE.items["arccw_horde_pm9"].infusions = ballistic_infusions_smgs
         HORDE.items["arccw_horde_fmg9"].infusions = ballistic_infusions_smgs
+        HORDE.items["arccw_horde_vityaz"].infusions = ballistic_infusions_smgs
         HORDE.items["arccw_horde_mp40"].infusions = ballistic_infusions_smgs
         HORDE.items["arccw_horde_g36c"].infusions = ballistic_infusions_smgs
         HORDE.items["arccw_go_nova"].infusions = ballistic_infusions_light
@@ -1197,6 +1203,7 @@ end
         HORDE.items["arccw_horde_maverick"].infusions = ballistic_infusions_rifles
         HORDE.items["arccw_horde_asval"].infusions = ballistic_infusions_rifles
         HORDE.items["arccw_horde_an94"].infusions = ballistic_infusions_rifles
+        HORDE.items["arccw_horde_machgungalil"].infusions = ballistic_infusions_rifles
         HORDE.items["arccw_horde_ak47supmod"].infusions = ballistic_infusions_rifles
         HORDE.items["arccw_horde_type95"].infusions = ballistic_infusions_rifles
         HORDE.items["arccw_horde_svu"].infusions = ballistic_infusions_sniper_rifles

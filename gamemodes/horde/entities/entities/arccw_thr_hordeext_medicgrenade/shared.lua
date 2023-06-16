@@ -33,7 +33,7 @@ function entmeta:Horde_AddEffect_MedicGrenade(ent)
     timer.Create("Horde_MedicGrenadeEffect" .. id, 0.5, 0, function ()
         if not self:IsValid() then timer.Remove("Horde_MedicGrenadeEffect" .. id) return end
         if self:IsPlayer() then
-            local healinfo = HealInfo:New({amount=5, healer=ent.Owner, immediately = false})
+            local healinfo = HealInfo:New({amount=10, healer=ent.Owner, immediately = false})
             HORDE:OnPlayerHeal(self, healinfo)
         elseif ent:GetClass() == "npc_vj_horde_antlion" then
             local healinfo = HealInfo:New({amount=5, healer=self.Owner})
@@ -88,7 +88,7 @@ function ENT:Initialize()
         self:SetSolid(SOLID_VPHYSICS)
         self:PhysicsInit(SOLID_VPHYSICS)
         self:DrawShadow(true)
-        self:SetCollisionBounds(Vector(-150,-150,-100), Vector(150,150,100))
+        self:SetCollisionBounds(Vector(-125,-125,-100), Vector(125,125,100))
         self:SetTrigger(true)
         self:UseTriggerBounds(true, 24)
 
@@ -156,18 +156,17 @@ function ENT:Think()
         else
             if not self.emitter then self.emitter = ParticleEmitter(self:GetPos()) end
             if self.Ticks % 5 == 0 then
-                local smoke = self.emitter:Add("particles/smokey", self:GetPos())
+                local smoke = self.emitter:Add("particles/smokey", self:GetPos() + VectorRand() * 50)
                 smoke:SetGravity( Vector(0, 0, 1500) )
                 smoke:SetDieTime( math.Rand(0.5, 1) )
                 smoke:SetStartAlpha(1)
                 smoke:SetEndAlpha(0)
                 smoke:SetStartSize(10)
-                smoke:SetEndSize(300)
+                smoke:SetEndSize(250)
                 smoke:SetRoll( math.Rand(-180, 180) )
                 smoke:SetRollDelta( math.Rand(-0.2,0.2) )
                 smoke:SetColor(50, 200, 50)
                 smoke:SetAirResistance(1000)
-                smoke:SetPos( self:GetPos() )
                 smoke:SetLighting( false )
                 smoke:SetCollide(true)
                 smoke:SetBounce(0)

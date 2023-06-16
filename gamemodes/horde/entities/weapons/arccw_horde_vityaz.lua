@@ -19,10 +19,46 @@ SWEP.Trivia_Year = 1942
 
 SWEP.Slot = 2
 
+local function addSound(name, snd, level) 
+	sound.Add({name = name, ["sound"] = snd, level = level})
+end
+
+local function addFireSound(name, snd, volume, soundLevel, channel, pitchStart, pitchEnd, noDirection)
+	local tbl = {}
+	volume = volume or 1
+	soundLevel = soundLevel or 97
+	channel = channel or CHAN_AUTO
+	pitchStart = pitchStart or 92
+	pitchEnd = pitchEnd or 112
+	
+	tbl.name = name
+	tbl.sound = snd
+	
+	tbl.channel = channel
+	tbl.volume = volume
+	tbl.level = soundLevel
+	tbl.pitchstart = pitchStart
+	tbl.pitchend = pitchEnd
+	
+	sound.Add(tbl)
+end
+
+addFireSound("CW_KK_INS2_MP5K_FIRE", "weapons/mp5k/mp5k_fp.wav")
+addFireSound("CW_KK_INS2_MP5K_FIRE_SUPPRESSED", "weapons/mp5k/mp5k_suppressed_fp.wav")
+
+addSound("CW_KK_INS2_MP5K_BOLTBACK", "weapons/mp5k/handling/mp5k_boltback.wav")
+addSound("CW_KK_INS2_MP5K_BOLTLOCK", "weapons/mp5k/handling/mp5k_boltlock.wav")
+addSound("CW_KK_INS2_MP5K_BOLTRELEASE", "weapons/mp5k/handling/mp5k_boltrelease.wav")
+addSound("CW_KK_INS2_MP5K_EMPTY", "weapons/mp5k/handling/mp5k_empty.wav")
+addSound("CW_KK_INS2_MP5K_FIRESELECT", "weapons/mp5k/handling/mp5k_fireselect.wav")
+addSound("CW_KK_INS2_MP5K_MAGIN", "weapons/mp5k/handling/mp5k_magin.wav")
+addSound("CW_KK_INS2_MP5K_MAGOUT", "weapons/mp5k/handling/mp5k_magout.wav")
+addSound("CW_KK_INS2_MP5K_MAGRELEASE", "weapons/mp5k/handling/mp5k_magrelease.wav")
+
 SWEP.UseHands = true
 if CLIENT then
-    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_bo3_stg44.vtf")
-    killicon.Add("arccw_horde_stg44", "arccw/weaponicons/arccw_bo3_stg44", Color(0, 0, 0, 255))
+    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_mp5.vtf")
+    killicon.Add("arccw_horde_vityaz", "arccw/weaponicons/arccw_mp5", Color(0, 0, 0, 255))
 end
 --soap's smg
 SWEP.ViewModel		= "models/weapons/ethereal/v_vityaz.mdl"
@@ -55,11 +91,11 @@ SWEP.ChamberSize = 0-- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 30 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 60
 SWEP.ReducedClipSize = 20
-
-SWEP.Recoil = 0.25
-SWEP.RecoilSide = 0.08
+SWEP.Horde_MaxMags = 22
+SWEP.Recoil = 0.45
+SWEP.RecoilSide = 0.15
 SWEP.RecoilRise = 0.2
-SWEP.VisualRecoilMult = .5
+SWEP.VisualRecoilMult = .3
 
 SWEP.Delay = 60 / 700 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
@@ -184,7 +220,7 @@ SWEP.Attachments = {
             vpos = Vector(0, .5, -.5), -- offset that the attachment will be relative to the bone
             vang = Angle(0, 0, -90),
             wpos = Vector(18, 2.55, -4.5),
-            wang = Angle(-7.5, 0, 88)
+            wang = Angle(0, 0, 88)
         },
     },
     { --11
@@ -232,7 +268,7 @@ SWEP.Animations = {
         LHIKOut = .55, LHIKEaseOut = .3, SoundTable = {
         {t = 19/30, s = "CW_KK_INS2_MP5K_MAGRELEASE"},
 		{t = 24/30, s = "CW_KK_INS2_MP5K_MAGOUT"},
-		{t = 65/30, s = "CW_KK_INS2_MP5K_MAGIN"}, },
+		{t = 55/30, s = "CW_KK_INS2_MP5K_MAGIN"}, },
     },
     ["reload_empty"] = {
         Source = "base_reloadempty",
@@ -244,9 +280,9 @@ SWEP.Animations = {
         SoundTable = {
             {t = 19/30, s = "CW_KK_INS2_MP5K_MAGRELEASE"},
             {t = 24/30, s = "CW_KK_INS2_MP5K_MAGOUT"},
-            {t = 65/30, s = "CW_KK_INS2_MP5K_MAGIN"},
-            {t = 98/30, s = "CW_KK_INS2_MP5K_BOLTLOCK"},
-            {t = 102/30, s = "CW_KK_INS2_MP5K_BOLTRELEASE"},
+            {t = 55/30, s = "CW_KK_INS2_MP5K_MAGIN"},
+            {t = 75/30, s = "CW_KK_INS2_MP5K_BOLTLOCK"},
+            {t = 80/30, s = "CW_KK_INS2_MP5K_BOLTRELEASE"},
         },
     },
     ["holster"] = {

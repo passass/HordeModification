@@ -156,7 +156,7 @@ function ENT:PhysicsCollide( data, physobj )
 			self:FireBullets(bullet)
 		elseif data.HitEntity:IsPlayer() then
 			if IsValid(owner) then
-				local healinfo = HealInfo:New({amount = self.Syringe_Heal, healer = owner, immediately = true})
+				local healinfo = HealInfo:New({amount = self.Syringe_Heal, healer = owner, immediately = false})
                 HORDE:OnPlayerHeal(data.HitEntity, healinfo)
 			end
 		end
