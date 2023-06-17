@@ -25,6 +25,7 @@ function ENT:Initialize()
 	self.dmginfo:SetDamageType(DMG_SHOCK)
 	self.dmginfo:SetAttacker(self.Owner)
 	self.dmginfo:SetInflictor(self)
+	self.dmginfo:SetInflictor(self)
 	self.dmginfo:SetDamageForce(Vector(2,2,8))
 	self.dmginfo:SetDamage(50)
 end
@@ -129,6 +130,7 @@ function ENT:Zap(lastTargetPos, target)
 	target:EmitSound("sfx/levels/zombie/maps/asylum/traps/zom_arc/zom_arc_0"..math.random(0,1)..".ogg", 75, 100, 1, CHAN_ITEM)
 	
 	self.lastTargetPos = att
+	self.dmginfo:SetDamagePosition( att )
 	target:TakeDamageInfo(self.dmginfo)
 end
 

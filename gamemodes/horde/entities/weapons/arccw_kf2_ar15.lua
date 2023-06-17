@@ -2,7 +2,10 @@ SWEP.Base = "arccw_base"
 SWEP.Spawnable = true -- this obviously has to be set to true
 SWEP.Category = "ArcCW - Killing Floor 2" -- edit this if you like
 SWEP.AdminOnly = false
-
+if CLIENT then
+    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_go_ar15")
+    killicon.Add("arccw_kf2_ar15", "arccw/weaponicons/arccw_go_ar15", Color(0, 0, 0, 255))
+end
 SWEP.PrintName = "Colt M635"
 --[[SWEP.Trivia_Class = "Pistol"
 SWEP.Trivia_Desc = ".40 Caliber semi automatic pistol. Commonly used among police and popular with civilians for its reliability."
@@ -16,7 +19,7 @@ SWEP.Slot = 1
 
 SWEP.UseHands = true
 
-SWEP.ViewModel			= "models/weapons/kf2/arccw_v_ar15.mdl"
+SWEP.ViewModel			= "models/weapons/kf2/tfa_c_ar15.mdl"--"models/weapons/kf2/arccw_v_ar15.mdl"
 SWEP.WorldModel			= "models/weapons/kf2/tfa_w_ar15.mdl"
 
 SWEP.ActivePos = Vector(3,7.25,-1)
@@ -25,9 +28,10 @@ SWEP.ActivePos 							= Vector(4.6, 4, -1.6)
 SWEP.HolsterPos = Vector(4.8, 6, 0)
 SWEP.HolsterAng = Angle(-7.036, 30.016, 0)
 
-SWEP.Damage = 35
+SWEP.Damage = 22
 SWEP.DamageMin = 14 -- damage done at maximum range
-SWEP.Range = 30 -- in METRES
+SWEP.RangeMin = 15
+SWEP.Range = 45
 SWEP.Penetration = 3
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
@@ -40,7 +44,7 @@ SWEP.Primary.ClipSize = 20 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 30
 SWEP.ReducedClipSize = 10
 
-SWEP.Recoil = 0.6
+SWEP.Recoil = 0.8
 SWEP.RecoilSide = 0.35
 SWEP.RecoilRise = 3
 
@@ -70,7 +74,7 @@ SWEP.Primary.Ammo = "ar2" -- what ammo type the gun uses
 SWEP.ShootVol = 115 -- volume of shoot sound
 SWEP.ShootPitch = 100 -- pitch of shoot sound
 
-SWEP.ShootSound = "KF2_WEPS_1P_SND/WEP_9MM/fire1.wav"
+SWEP.ShootSound = {"weapons/kf2/ar15/fire1.wav", "weapons/kf2/ar15/fire2.wav", "weapons/kf2/ar15/fire3.wav"}
 SWEP.ShootSoundSilenced = "arccw_go/m4a1/m4a1_silencer_01.wav"
 
 SWEP.MuzzleEffect = "muzzleflash_pistol"
@@ -223,22 +227,22 @@ SWEP.Animations = {
         Source = {"shoot_iron", "shoot_iron2", "shoot_iron3"},
     },
     ["reload"] = {
-        Source = "reload", MinProgress = 3.66, ForceEnd = true,
+        Source = "reload", MinProgress = 3, ForceEnd = true,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
-        Checkpoints = {20, 26, 40},
+        Mult= .8,
         LHIK = true,
         LHIKIn = .8,
-        LHIKOut = 1.7,
+        LHIKOut = 1.3,
         LHIKEaseIn = 1,
-        LHIKEaseOut = .5,
+        LHIKEaseOut = .3,
     },
     ["reload_empty"] = {
-        Source = "reload_empty", MinProgress = 3.66, ForceEnd = true,
+        Source = "reload_empty", MinProgress = 3.1, ForceEnd = true,
+        Mult= .8,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
-        Checkpoints = {20, 26, 40, 60, 80},
         LHIK = true,
         LHIKIn = .8,
-        LHIKOut = 1.8,
+        LHIKOut = 1.3,
         LHIKEaseIn = 1,
         LHIKEaseOut = .5,
     },

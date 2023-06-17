@@ -43,7 +43,7 @@ SWEP.Primary.ClipSize = 30 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 45
 SWEP.ReducedClipSize = 15
 
-SWEP.Recoil = 2
+SWEP.Recoil = 1.7
 SWEP.RecoilSide = 1.1
 SWEP.RecoilRise = 1
 SWEP.VisualRecoilMult = 0.5
@@ -201,13 +201,9 @@ SWEP.Animations = {
     },
     ["ready"] = {
         Source = "base_draw",
-        Mult=.5,
-        Time = .25
     },
     ["draw"] = {
         Source = "base_draw",
-        Mult=.5,
-        Time = 1
     },
     ["reload"] = {
         MinProgress = 3.1, ForceEnd = true,

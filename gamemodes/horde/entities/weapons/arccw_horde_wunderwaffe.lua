@@ -31,7 +31,7 @@ SWEP.DamageMin = 20 -- damage done at maximum range
 SWEP.Range = 50 -- in METRES
 SWEP.Penetration = 20
 SWEP.DamageType = DMG_BULLET
-SWEP.ShootEntity = "wunderwaffe_entity_ball" -- entity to fire, if any
+SWEP.ShootEntity = "horde_wunderwaffe_entity_ball" -- entity to fire, if any
 SWEP.MuzzleVelocity = 8000 -- projectile or phys bullet muzzle velocity
 -- IN M/S
 
@@ -81,6 +81,7 @@ SWEP.Firemodes = {
 
 SWEP.NPCWeaponType = "weapon_pistol"
 SWEP.NPCWeight = 75
+SWEP.Horde_MaxMags = 25
 
 SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 150 -- inaccuracy added by hip firing.
@@ -104,7 +105,7 @@ SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 SWEP.ProceduralViewBobAttachment = 1
 SWEP.SightTime = 0.175
 
-SWEP.SpeedMult = 0.8
+SWEP.SpeedMult = 0.9
 SWEP.SightedSpeedMult = 0.8
 
 SWEP.BarrelLength = 20
@@ -199,6 +200,7 @@ SWEP.Animations = {
     ["reload"] = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Source = "reload",
+        Mult=.8
     },
 }
 
@@ -236,7 +238,7 @@ function SWEP:Hook_FireBullets(wep, bullettable)
             self.LoopingSound:Stop()
         end
     else
-		local orb1 = ents.Create("wunderwaffe_entity_ball")
+		local orb1 = ents.Create("horde_wunderwaffe_entity_ball")
 		local pos
 		if self:GetActiveSights().IronSight then
 			pos = own:GetShootPos() + own:GetUp()*-6

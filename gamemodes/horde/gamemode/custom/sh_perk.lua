@@ -71,11 +71,15 @@ function plymeta:Horde_CallClassHook(hookname, ...)
 end
 
 function HORDE:Horde_GetWaveForPerk(perk_level)
+    local startwave, perkscaling = GetConVar("horde_perk_start_wave"):GetInt(), GetConVar("horde_perk_scaling"):GetFloat()
+
+    if startwave == 0 and perkscaling == 0 then return 0 end
+
     if HORDE.waves_for_perk then
         return HORDE.waves_for_perk[perk_level] or 1
     end
 
-    return GetConVar("horde_perk_start_wave"):GetInt() + math.Round((perk_level - 1) * GetConVar("horde_perk_scaling"):GetFloat())
+    return startwave + math.Round((perk_level - 1) * perkscaling)
 end
 
 function plymeta:Horde_UnsetPerk(perk, shared)

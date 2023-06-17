@@ -5,7 +5,7 @@ local plymeta = FindMetaTable("Player")
 function plymeta:Horde_SetMaxArmor(base)
     timer.Simple(0, function ()
         if not self:IsValid() then return end
-        base = self:Horde_GetArmorLimit(DeleteSpecArmor, DontResetRegularArmor) / (100 / (base or 100))
+        base = self:Horde_GetArmorLimit() * ((base or 100) / 100)
         local bonus = {increase = 0, more = 1, add = 0}
         hook.Run("Horde_OnSetMaxArmor", self, bonus)
         self:SetMaxArmor(bonus.add + base * bonus.more * (1 + bonus.increase))
@@ -23,21 +23,11 @@ function plymeta:Horde_SetMaxHealth(base)
     end)
 end
 
-
-local ClassesWhichCanBuy200Armor = {Berserker = true, Heavy = true}
-
 function plymeta:Horde_GetArmorLimit()
     local specialarmor = self.Horde_Special_Armor
-    local maxarmor = 50
-    if DontResetRegularArmor then
-        maxarmor = self.RegularArmorLimit or maxarmor
-    else
-        self.RegularArmorLimit = nil
-    end
-    if self.RegularArmorLimit and !ClassesWhichCanBuy200Armor[self:Horde_GetClass().name] then
-        maxarmor = self.RegularArmorLimit > 150 and 50 or maxarmor
-    end
-    if not DeleteSpecArmor and specialarmor then
+    local maxarmor = self.RegularArmorLimit or 50
+
+    if specialarmor then
         maxarmor = math.max(maxarmor, HORDE.items[specialarmor].entity_properties.armor)
     end
     return maxarmor
@@ -46,8 +36,6 @@ end
 function plymeta:Horde_SetWeight(weight)
     self.Horde_weight = math.Clamp(weight, 0, self:Horde_GetMaxWeight())
 end
-
-
 
 function plymeta:Horde_RecalcWeight()
     local weight = 0
@@ -362,7 +350,7 @@ net.Receive("Horde_BuyItem", function (len, ply)
             elseif item.entity_properties.type == HORDE.ENTITY_PROPERTY_ARMOR then
                 local armorcount = item.entity_properties.armor
                 local maxarmor = ply:GetMaxArmor()
-                if string.sub(item.class, 1, 6) ~= "armor_" and string.sub(item.class, 1, 5) == "armor" then
+                if string.sub(item.class, 1, 6) ~= "armor_" then
                     if item.entity_properties.override_maxarmor then
                         if armorcount > maxarmor then
                             ply:SetMaxArmor(armorcount)

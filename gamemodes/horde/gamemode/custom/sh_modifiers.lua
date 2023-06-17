@@ -247,16 +247,13 @@ local function CalculateTotalMult(wep, modifier)
     tbl[modifier] = total_mult
         ]]
 
-    wep[modifier] = total_mult
-
     if wep_bases["arccw"](wep) then
-        wep.ModifiedCache[modifier] = true
-        wep.TickCache_Mults[modifier] = nil
-        if wep.ModifiedCache_Permanent then
-            wep.ModifiedCache_Permanent[modifier] = true
+        wep:ChangeVar(modifier, total_mult)
+    else
+        wep[modifier] = total_mult
+        if wep_bases["tfa"](wep) then
+            wep:ClearStatCache()
         end
-    elseif wep_bases["tfa"](wep) then
-        wep:ClearStatCache()
     end
 end
 
@@ -288,6 +285,10 @@ local function InitModifierTable(wep, modifier)
 end
 
 function HORDE:Modifier_AddManyToWeapons(ply, modifiers, primarykey, mult)
+    if mult then
+        mult = math.Round( mult, 4 )
+    end
+
     if !ply.Horde_ModifiersTable then
         ply.Horde_ModifiersTable = {}
     end
@@ -325,11 +326,13 @@ function HORDE:Modifier_AddManyToWeapons(ply, modifiers, primarykey, mult)
 
         CalculateTotalMult(wep, modifier)
     end
-    
 end
 
-
 function HORDE:Modifier_AddToWeapons(ply, modifier, primarykey, mult)
+    if mult then
+        mult = math.Round( mult, 4 )
+    end
+
     if !ply.Horde_ModifiersTable then
         ply.Horde_ModifiersTable = {}
     end
@@ -337,6 +340,11 @@ function HORDE:Modifier_AddToWeapons(ply, modifier, primarykey, mult)
         ply.Horde_ModifiersTable[modifier] = {}
     end
     ply.Horde_ModifiersTable[modifier][primarykey] = mult
+
+    if table.IsEmpty(ply.Horde_ModifiersTable[modifier]) then
+        ply.Horde_ModifiersTable[modifier] = nil
+    end
+
     for _, wep in pairs(ply:GetWeapons()) do
         if !CanAddModifier(wep, modifier) then continue end
         if !wep.Horde_ModifiersTable or !wep.Horde_ModifiersTable[modifier] then
@@ -374,12 +382,38 @@ function HORDE:LoadToWeaponModifier(wep)
         net.WriteEntity(wep)
         net.Send(ply)
     end
+
+    local inits = {}
+
+    if wep.Horde_ModifiersTable then
+
+        for modifier, mults in pairs(wep.Horde_ModifiersTable) do
+
+            if wep.Horde_ModifiersTable[modifier].init then
+                inits[modifier] = wep.Horde_ModifiersTable[modifier].init
+                wep:ChangeVar(modifier, inits[modifier])
+                wep[modifier] = inits[modifier]
+                continue
+            end
+
+            inits[modifier] = wep[modifier]
+            for primarykey, mult in pairs(mults) do
+                inits[modifier] = inits[modifier] / mult
+            end
+            
+            wep:ChangeVar(modifier, inits[modifier])
+        end
+    end
+
     for modifier, multtable in pairs(ply.Horde_ModifiersTable) do
         if !CanAddModifier(wep, modifier) then continue end
-        InitModifierTable(wep, modifier)
-        local init = wep.Horde_ModifiersTable[modifier]["init"]
+        if !wep.Horde_ModifiersTable or !wep.Horde_ModifiersTable[modifier] then
+            InitModifierTable(wep, modifier)
+        end
+
         wep.Horde_ModifiersTable[modifier] = table.Copy(multtable) or {}
-        wep.Horde_ModifiersTable[modifier]["init"] = init
+        wep.Horde_ModifiersTable[modifier]["init"] = inits[modifier]
+
         CalculateTotalMult(wep, modifier)
     end
 end

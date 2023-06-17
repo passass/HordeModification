@@ -44,8 +44,8 @@ SWEP.TracerWidth = 3
 SWEP.ChamberSize = 1-- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 60 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 0.7
-SWEP.RecoilSide = 0.5
+SWEP.Recoil = 0.6
+SWEP.RecoilSide = 0.35
 SWEP.RecoilRise = .9
 SWEP.VisualRecoilMult = .45
 
@@ -130,7 +130,7 @@ SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 SWEP.ProceduralViewBobAttachment = 1
 SWEP.CamAttachment = 3]]
 
-SWEP.SpeedMult = 0.95
+SWEP.SpeedMult = 0.9
 SWEP.SightedSpeedMult = 0.5
 SWEP.SightTime = 0.225
 

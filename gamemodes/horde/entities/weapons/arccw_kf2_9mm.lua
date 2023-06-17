@@ -16,9 +16,10 @@ SWEP.Slot = 1
 
 SWEP.UseHands = true
 
-SWEP.Damage = 42
-SWEP.DamageMin = 35 -- damage done at maximum range
-SWEP.Range = 40 -- in METRES
+SWEP.Damage = 14
+SWEP.DamageMin = 10 -- damage done at maximum range
+SWEP.RangeMin = 15
+SWEP.Range = 45
 SWEP.Penetration = 3
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
@@ -88,6 +89,17 @@ SWEP.ProceduralRegularFire = false
 SWEP.ProceduralIronFire = false
 
 SWEP.CaseBones = {}
+if CLIENT then
+    SWEP.WepSelectIcon = Material("items/hl2/weapon_pistol.png")
+    killicon.AddAlias("arccw_kf2_9mm", "weapon_9mm")
+end
+
+function SWEP:DrawWeaponSelection(x, y, w, h, a)
+    surface.SetDrawColor(255, 255, 255, a)
+    surface.SetMaterial(self.WepSelectIcon)
+
+    surface.DrawTexturedRect(x, y, w, w / 2)
+end
 
 SWEP.IronSightStruct = {
     Pos = Vector(0,10,0),
@@ -114,9 +126,9 @@ SWEP.WorldModelOffset = {
 
 SWEP.ViewModel			= "models/weapons/kf2/tfa_c_9mm.mdl"
 SWEP.WorldModel			= "models/weapons/kf2/tfa_w_9mm.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 65
 
-SWEP.ActivePos = Vector(3,7.25,-1)
+SWEP.ActivePos = Vector(3,7.25,0)
 SWEP.ActiveAng = Angle(0, 0, 0)
 
 SWEP.HolsterPos = Vector(4.8, 6, 0)
@@ -215,7 +227,7 @@ SWEP.Animations = {
         Source = {"shoot_iron", "shoot_iron2", "shoot_iron3"},
     },
     ["reload"] = {
-        Source = "reload", MinProgress = 2.5, ForceEnd = true,
+        Source = "reload", MinProgress = 2.35, ForceEnd = true,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         Checkpoints = {20, 26, 40},
         LHIK = true,
@@ -225,7 +237,7 @@ SWEP.Animations = {
         LHIKEaseOut = .6,
     },
     ["reload_empty"] = {
-        Source = "reload_empty", MinProgress = 2.75, ForceEnd = true,
+        Source = "reload_empty", MinProgress = 2.5, ForceEnd = true,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         Checkpoints = {20, 26, 40, 60, 80},
         LHIK = true,

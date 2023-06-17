@@ -45,10 +45,10 @@ function HORDE:GetDefaultClassesData()
         GetConVar("horde_base_runspeed"):GetInt(),
         "survivor_base",
         {
-            [1] = {title = "Survival", choices = {"medic_antibiotics", "assault_charge"}},
-            [2] = {title = "Improvise", choices = {"berserker_breathing_technique", "demolition_frag_cluster"}},
-            [3] = {title = "Imprinting", choices = {"heavy_liquid_armor", "assault_speedreload"}},
-            [4] = {title = "Inspired Learning", choices = {"ghost_headhunter", "specops_flare"}},
+            [1] = {title = "Survival", choices = {"berserker_breathing_technique", "medic_antibiotics", "swat_berserker"}},
+            [2] = {title = "Imprinting", choices = {"survivor_damagemaster", "swat_rapidfire", "assault_speedreload"}},
+            [3] = {title = "Improvise", choices = {"heavy_liquid_armor", "heavy_floating_carrier", "swat_bandolier"}}, -- {"heavy_liquid_armor", "heavy_floating_carrier"}},
+            [4] = {title = "Inspired Learning", choices = {"ghost_headhunter", "specops_flare", "survivor_rapidslomo"}},
         },
         0,nil,nil,nil,
         {HORDE.Class_Survivor}
@@ -62,7 +62,7 @@ function HORDE:GetDefaultClassesData()
         GetConVar("horde_base_runspeed"):GetInt(),
         "assault_base",
         {
-            [1] = {title = "Maneuverability", choices = {"assault_ambush", "assault_speedreload"}},--"assault_charge"}},
+            [1] = {title = "Maneuverability", choices = {"assault_ambush", "assault_charge", "assault_speedreload"}},--"assault_charge"}},
             [2] = {title = "Adaptability", choices = {"assault_drain", "assault_overclock"}},
             [3] = {title = "Aggression", choices = {"assault_cardiac_resonance", "assault_cardiac_overload"}},
             [4] = {title = "Conditioning", choices = {"assault_heightened_reflex", "assault_merciless_assault"}},

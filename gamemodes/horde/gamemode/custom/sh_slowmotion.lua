@@ -50,7 +50,7 @@ HORDE.SlowMotion_MeleeAttackSpeedBonus = function(ply, slow_motion_stage, slomo_
 		HORDE:Modifier_AddToWeapons(ply, "Mult_MeleeTime", "slomotion")
 		return
 	end
-	HORDE:Modifier_AddToWeapons(ply, "Mult_MeleeTime", "slomotion", 1 / Lerp((slomo_bonus / 2) * (1 / slow_motion_stage / 3), 1, 3))
+	HORDE:Modifier_AddToWeapons(ply, "Mult_MeleeTime", "slomotion", 1 / Lerp((slomo_bonus / 2) * (1 - slow_motion_stage) * 1.5, 1, 3))
 end
 
 HORDE.SlowMotion_ZoomSpeedBonus = function(ply, slow_motion_stage, slomo_bonus)
@@ -62,7 +62,7 @@ HORDE.SlowMotion_ZoomSpeedBonus = function(ply, slow_motion_stage, slomo_bonus)
 		HORDE:Modifier_AddToWeapons(ply, "Mult_SightTime", "slomotion")
 		return
 	end
-	HORDE:Modifier_AddToWeapons(ply, "Mult_SightTime", "slomotion", 1 / Lerp((slomo_bonus / 2) * (1 / slow_motion_stage / 3), 1, 3))
+	HORDE:Modifier_AddToWeapons(ply, "Mult_SightTime", "slomotion", 1 / Lerp((slomo_bonus / 2) * (1 - slow_motion_stage) * 1.5, 1, 3))
 end
 
 HORDE.SlowMotion_CycleTimeMult = function(ply, slow_motion_stage, slomo_bonus)
@@ -91,6 +91,8 @@ local function call_all_bonus_hooks(ply, slow_motion_stage, slomo_bonus)
     for k, bonushook in pairs(bonus_hooks) do
         bonushook(ply, slow_motion_stage, slomo_bonus)
     end
+
+    ply:Horde_CallClassHook("SlowMotion_Hook", ply, slow_motion_stage, slomo_bonus)
 end
 
 hook.Add("Horde_SlowMotion_start_Bonus", "Horde_SlowMotion_CalculateBonuses", call_all_bonus_hooks)
@@ -268,7 +270,7 @@ end
 hook.Add("Horde_OnEnemyKilled", "StartSlowMotion", function(victim, killer, inflictor)
     if IsValid(inflictor) and inflictor:IsNPC() or CurTime() == last_slowmotion_called_timing then return end
     if last_player_called_slowmotion == NULL and
-	math.random() > 0.07 or last_player_called_slowmotion != NULL and
+	math.random() > 0.05 or last_player_called_slowmotion != NULL and
 	(killer != last_player_called_slowmotion or last_player_called_count >= (killer:Horde_GetPerk("assault_base") and 5 or 3)) or
         hook.Run("Horde_CanSlowTime")
     then return end
