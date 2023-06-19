@@ -5,7 +5,8 @@ ENT.Spawnable 		= false
 ENT.AdminSpawnable 	= false
 
 ENT.CollidePCF = "originstaff_fire_impact"
-ENT.Damage = 100
+ENT.Damage = 175
+ENT.Horde_BurnDamage = 10
 ENT.MoveSpeed = 3500
 function ENT:Initialize()
 	self:SetModel( "models/props_junk/rock001a.mdl" )

@@ -197,7 +197,7 @@ SWEP.Attachments = {
     {
         PrintName = "Ammo Type",
         Slot = {"ammo_bullet"},
-        Installed = "ammo_explosive",
+        Installed = "arccw_horde_explosive",
         Integral = true,
     },
     {

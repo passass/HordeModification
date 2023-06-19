@@ -27,7 +27,7 @@ SWEP.ViewModel = "models/weapons/c_357.mdl"
 SWEP.MirrorVMWM = false
 SWEP.WorldModel = "models/weapons/w_357.mdl"
 SWEP.ViewModelFOV = 65
-
+SWEP.Horde_MaxMags = 30
 SWEP.WorldModelOffset = {
     pos        =    Vector(1, 0.964, -2),--Vector(-2.5, 4.25, -5.65),
     ang        =    Angle(0, 0, 180),--Angle(-5, -0.25, 180),

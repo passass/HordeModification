@@ -99,7 +99,7 @@ function HORDE:GetDefaultClassesData()
             [1] = {title = "Medicine", choices = {"medic_antibiotics", "medic_painkillers"}},
             [2] = {title = "Bio-Engineering", choices = {"medic_berserk", "medic_fortify"}},
             [3] = {title = "Enhancement", choices = {"medic_purify", "medic_haste"}},
-            [4] = {title = "Natural Selection", choices = {"medic_cellular_implosion", "medic_xcele"}},
+            [4] = {title = "Natural Selection", choices = {"medic_cellular_implosion", "medic_xcele", "engineer_rapidandreloadslomo"}},
         },
         3,nil,nil,nil,
         {HORDE.Class_Medic}
@@ -149,8 +149,8 @@ function HORDE:GetDefaultClassesData()
         {
             [1] = {title = "Craftsmanship", choices = {"engineer_tinkerer", "engineer_pioneer"}},
             [2] = {title = "Core", choices = {"engineer_fusion", "engineer_metabolism"}},
-            [3] = {title = "Manipulation", choices = {"engineer_antimatter_shield", "engineer_displacer"}},
-            [4] = {title = "Experimental", choices = {"engineer_symbiosis", "engineer_kamikaze"}},
+            [3] = {title = "Manipulation", choices = {"engineer_antimatter_shield", "engineer_displacer", "engineer_rapidandreloadslomo"}},
+            [4] = {title = "Experimental", choices = {"engineer_symbiosis", "engineer_kamikaze", "engineer_welderslomo"}},
         },
         6,nil,nil,nil,
         {HORDE.Class_Engineer}
@@ -184,7 +184,7 @@ function HORDE:GetDefaultClassesData()
             [1] = {title = "Sustain", choices = {"warden_bulwark", "warden_vitality"}},
             [2] = {title = "Resource Utilization", choices = {"warden_restock", "warden_inoculation"}},
             [3] = {title = "Escort", choices = {"warden_rejection_pulse", "warden_energize"}},
-            [4] = {title = "Coverage", choices = {"warden_ex_machina", "warden_resonance_cascade"}},
+            [4] = {title = "Coverage", choices = {"warden_ex_machina", "warden_resonance_cascade", "engineer_rapidandreloadslomo"}},
         },
         8,nil,nil,nil,
         {HORDE.Class_Warden}
@@ -201,7 +201,7 @@ function HORDE:GetDefaultClassesData()
             [1] = {title = "Chemicals", choices = {"cremator_methane", "cremator_napalm"}},
             [2] = {title = "Energy Absorption", choices = {"cremator_positron_array", "cremator_entropy_shield"}},
             [3] = {title = "Heat Manipulation", choices = {"cremator_hyperthermia", "cremator_ionization"}},
-            [4] = {title = "Energy Discharge", choices = {"cremator_firestorm", "cremator_incineration"}},
+            [4] = {title = "Energy Discharge", choices = {"cremator_firestorm", "cremator_incineration", "engineer_rapidandreloadslomo"}},
         },
         9,nil,nil,nil,
         {HORDE.Class_Cremator}

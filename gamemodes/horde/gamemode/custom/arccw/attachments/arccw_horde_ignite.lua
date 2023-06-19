@@ -22,10 +22,10 @@ att.Override_ImpactDecal = "FadingScorch"
 
 
 att.Hook_BulletHit = function(wep, hit)
-    local _, maxrng = wep:GetMinMaxRange()
-    if hit.range <= maxrng then
-	local ply = wep.Owner
-		if ply:Horde_GetGadget() ~= "gadget_hydrogen_burner" then 
+	local _, maxrng = wep:GetMinMaxRange()
+	if hit.range <= maxrng then
+		local ply = wep.Owner
+		if ply:Horde_GetGadget() != "gadget_hydrogen_burner" then
 			local ent = hit.tr.Entity
 			ent:Horde_SetMostRecentFireAttacker(ply, hit.dmg)
 			ent:Ignite(ply:Horde_GetApplyIgniteDuration())

@@ -1,24 +1,6 @@
-local shop_icons = {
-["Melee"] = Material("horde/categories/melee.png"),
-["Pistol"] = Material("horde/categories/pistol.png"),
-["Shotgun"] = Material("horde/categories/shotgun.png"),
-["SMG"] = Material("horde/categories/smg.png"),
-["Rifle"] = Material("horde/categories/rifle.png"),
-["MG"] = Material("horde/categories/mg.png"),
-["Explosive"] = Material("horde/categories/explosive.png"),
-["Special"] = Material("horde/categories/special.png"),
-["Equipment"] = Material("horde/categories/equipment.png"),
-["Attachment"] = Material("horde/categories/attachments.png"),
-["Gadget"] = Material("horde/categories/gadget.png"),
-}
-
-local stats_offset = 145
-
 local PANEL = {}
-local class_panel_active = nil
 
 function PANEL:Init()
-    local ply = MySelf
     if ScrW() <= 1600 or ScrH() < 1080 then
         self:SetSize(ScrW(), ScrH())
     else
@@ -26,7 +8,7 @@ function PANEL:Init()
     end
     self:SetPos((ScrW() / 2) - (self:GetWide() / 2), (ScrH() / 2) - (self:GetTall() / 2))
 
-    local close_btn = vgui.Create("DButton", self)
+    local close_btn = vgui.Create("DButton", self) 
     close_btn:SetFont("marlett")
     close_btn:SetText("r")
     close_btn.Paint = function() end
@@ -34,51 +16,6 @@ function PANEL:Init()
     close_btn:SetSize(32, 32)
     close_btn:SetPos(self:GetWide() - 40, 8)
     close_btn.DoClick = function() HORDE:ToggleShop() end
-    
-    --- PlayerModel Selector Button
-    local playermodelselector_btn = vgui.Create("DButton", self)
-    playermodelselector_btn:SetText("PlayerModel")
-    playermodelselector_btn.Paint = function() end
-    playermodelselector_btn:SetColor(Color(255, 255, 255))
-    playermodelselector_btn:SetSize(60, 60)
-    playermodelselector_btn:SetPos(self:GetWide() - 183, 8)
-    playermodelselector_btn:SetFont("Category")
-    playermodelselector_btn:SetTall(40)
-    playermodelselector_btn.DoClick = function()
-        HORDE:ToggleShop()
-        RunConsoleCommand( "playermodel_selector" )
-    end
-    playermodelselector_btn.PerformLayout = function(pnl)
-        pnl:SizeToContents()
-                pnl:SetWide(pnl:GetWide() + 34)
-                pnl:SetTall(pnl:GetTall() + 5)
-                DLabel.PerformLayout(pnl)
-        pnl:SetContentAlignment(4)
-        pnl:SetTextInset( 12, 0 )
-    end
-
-    playermodelselector_btn.Paint = function(pnl, w, h)
-        if pnl:GetActive() then
-            draw.RoundedBox(5, 0, 0, w, h, Color(40,40,40,230))
-        else
-            draw.RoundedBox(5, 0, 0, w, h, HORDE.color_crimson)
-        end
-    end
-
-    playermodelselector_btn.UpdateColours = function(pnl)
-        if pnl:GetActive() then
-            pnl:SetTextColor(HORDE.color_crimson)
-            return
-        end
-        if pnl.Hovered then
-            return
-        end
-        pnl:SetTextColor(Color(255, 255, 255))
-    end
-
-    playermodelselector_btn.GetActive = function(pnl) return pnl.Active or false end
-    playermodelselector_btn.SetActive = function(pnl, state) pnl.Active = state end
-    --- PlayerModel Selector Button
 
     local btn_container = vgui.Create("DHorizontalScroller", self)
     btn_container:SetTall(32)
@@ -102,10 +39,17 @@ function PANEL:Init()
     infusion_panel:Dock(LEFT)
     infusion_panel:SetSize(self:GetWide() / 2, self:GetTall() - 100)
     infusion_panel:SetVisible(false)
-	
+
     local btns = {}
     local firstBtn = true
     local attachments = {}
+    local spells = {
+        [HORDE.Spell_Slot_LMB] = {},
+        [HORDE.Spell_Slot_RMB] = {},
+        [HORDE.Spell_Slot_Utility] = {},
+        [HORDE.Spell_Slot_Reload] = {},
+    }
+    local spell_weapon = MySelf:Horde_GetSpellWeapon()
     local function createBtn(text, panel, dock)
         panel:SetParent(container)
         panel:Dock(FILL)
@@ -123,16 +67,15 @@ function PANEL:Init()
         end
 
         local btn
-        local icon
         if text == "Class/Perks" then
             btn = vgui.Create("DButton", self)
             btn:SetPos(9, 9)
             btn:SetTall(44)
-            local loc_text = translate.Get("Shop_" .. text) or text
-            btn:SetText(loc_text)
-            btn:SetFont("Category")
             btn.PerformLayout = function(pnl)
-                pnl:SizeToContents() pnl:SetWide(pnl:GetWide() + 12) DLabel.PerformLayout(pnl)
+                pnl:SizeToContents()
+                pnl:SetWide(pnl:GetWide() + 34)
+                pnl:SetTall(pnl:GetTall() + 5)
+                DLabel.PerformLayout(pnl)
                 pnl:SetContentAlignment(4)
                 pnl:SetTextInset( 12, 0 )
             end
@@ -140,20 +83,16 @@ function PANEL:Init()
             btn = vgui.Create("DButton", btn_container)
             btn_container:AddPanel(btn)
             btn:Dock(dock)
-            --[[btn.PerformLayout = function(pnl)
-                pnl:SizeToContents() 
-                pnl:SetWide(pnl:GetWide() + 12) 
-                pnl:SetTall( pnl:GetParent():GetTall() ) 
-                DLabel.PerformLayout(pnl)
+            btn.PerformLayout = function(pnl)
+                pnl:SizeToContents() pnl:SetWide(pnl:GetWide() + 12) pnl:SetTall( pnl:GetParent():GetTall() ) DLabel.PerformLayout(pnl)
                 pnl:SetContentAlignment(4)
                 pnl:SetTextInset( 12, 0 )
-            end]]
-            icon = shop_icons[text]
-            if !icon then icon = shop_icons["Rifle"] end
-            btn:SetText("")
-            local ratio = icon:Width() / icon:Height()
-            btn:SetSize(ratio * 40, 40)
+            end
         end
+
+        local loc_text = translate.Get("Shop_" .. text) or text
+        btn:SetText(loc_text)
+        btn:SetFont("Category")
 
         local p = 50
         local t = 0
@@ -183,18 +122,15 @@ function PANEL:Init()
                 else
                     surface.SetDrawColor(color_white)
                 end
-
+                
                 surface.DrawTexturedRect(w - h - 10, 0, h, h)
             else
                 surface.SetDrawColor(0,0,0,0)
                 surface.DrawRect(0, 0, w, h)
                 if pnl:GetActive() then
-                    surface.SetDrawColor(Color(30,30,30,230))
+                    surface.SetDrawColor(Color(40,40,40,230))
                     surface.DrawRect(0, 0, w, h)
                 end
-                surface.SetMaterial(icon)
-                surface.SetDrawColor(Color(255,255,255,255))
-                surface.DrawTexturedRect(0, 0, w, h)
             end
         end
 
@@ -223,9 +159,8 @@ function PANEL:Init()
             for k, v in pairs(btns) do v:SetActive(false) v:OnDeactivate() end
             pnl:SetActive(true) pnl:OnActivate()
             surface.PlaySound("UI/buttonclick.wav")
-            if text == "Attachment" then
-                -- Reload attachments everytime a player click this
-                self:ReloadAttachments(attachments, container, description_panel)
+            if text == "Spell" then
+                self:ReloadSpells(spells, container, description_panel)
             end
 
             if text == "Class/Perks" then
@@ -241,6 +176,8 @@ function PANEL:Init()
             else
                 description_panel:SetSize(self:GetWide() / 2, self:GetTall() - 100)
                 container:SetSize(self:GetWide() / 2, self:GetTall() - 100)
+                description_panel:SetVisible(false)
+                description_panel:SetVisible(true)
             end
         end
 
@@ -263,12 +200,61 @@ function PANEL:Init()
 
     local class = MySelf:Horde_GetClass()
 
-    for _, category in pairs(HORDE.categories) do
+    local ShopCategoryTab = vgui.Create("DPanel", self)
+    ShopCategoryTab.Paint = function () end
+
+    for _, spell in pairs(HORDE.spells) do
+        local has_weapon = nil
+        if spell.Weapon and spell_weapon then
+            for _, wpn in pairs(spell.Weapon) do
+                if wpn == spell_weapon:GetClass() then
+                    has_weapon = true
+                    break
+                end
+            end
+        end
+        if spell.Weapon == nil or has_weapon then
+            if MySelf:Horde_HasSpell(spell.ClassName) then
+                spell.cmp = -1
+            else
+                spell.cmp = spell.Price or 0
+            end
+            
+            table.insert(spells[spell.Slot], spell)
+            ::cont::
+        end
+    end
+
+    if not table.IsEmpty(spells) then
+        local f = function(a, b)
+            if a.cmp == b.cmp then
+                return a.ClassName < b.ClassName
+            else
+                return a.cmp < b.cmp
+            end
+        end
+        
+        table.sort(spells[HORDE.Spell_Slot_LMB], f)
+        table.sort(spells[HORDE.Spell_Slot_RMB], f)
+        table.sort(spells[HORDE.Spell_Slot_Utility], f)
+        table.sort(spells[HORDE.Spell_Slot_Reload], f)
+
+        self.SpellTab = vgui.Create("DPanel", self)
+        self.SpellTab.Paint = function () end
+        self.SpellTabLayout = vgui.Create("DCategoryList", self.SpellTab)
+        self.SpellTabLayout:Dock(FILL)
+        self.SpellTabLayout:DockMargin(8,8,8,8)
+        self.SpellTabLayout.Paint = function () end
+        self:ReloadSpells(spells, container, description_panel)
+        createBtn("Spell", self.SpellTab, LEFT)
+    end
+
+    for _, category in pairs({"Equipment", "Gadget"}) do
         local items = {}
 
         for _, item in pairs(HORDE.items) do
-                        if item.category == category and ((item.whitelist == nil) or (item.whitelist and item.whitelist[class.name]) or (MySelf:Horde_GetCurrentSubclass() == "Gunslinger" and item.category == "Pistol")) then
-                if (item.category == "Gadget" and MySelf:Horde_GetGadget() == item.class) or MySelf:HasWeapon(item.class) then
+            if item.category == category and (item.whitelist == nil) or (item.whitelist and item.whitelist[class.name]) then
+                if (item.category == "Gadget" and MySelf:Horde_GetGadget() == item.class) then
                     item.cmp = -1
                 else
                     if item.hidden == true then goto cont end
@@ -280,6 +266,7 @@ function PANEL:Init()
                 ::cont::
             end
         end
+        
 
         if table.IsEmpty(items) then goto cont end
 
@@ -315,42 +302,32 @@ function PANEL:Init()
             end
             return a_total_levels < b_total_levels
         end)
-
+        
         local ShopCategoryTab = vgui.Create("DPanel", self)
         ShopCategoryTab.Paint = function () end
+        local DScrollPanel = vgui.Create("DScrollPanel", ShopCategoryTab)
+        DScrollPanel:Dock(FILL)
+        local ShopCategoryTabLayout = vgui.Create("DIconLayout", DScrollPanel)
+        ShopCategoryTabLayout:Dock(FILL)
+        ShopCategoryTabLayout:SetBorder(8)
+        ShopCategoryTabLayout:SetSpaceX(8)
+        ShopCategoryTabLayout:SetSpaceY(8)
 
-        if category ~= "Attachment" then
-            local DScrollPanel = vgui.Create("DScrollPanel", ShopCategoryTab)
-            DScrollPanel:Dock(FILL)
-            local ShopCategoryTabLayout = vgui.Create("DIconLayout", DScrollPanel)
-            ShopCategoryTabLayout:Dock(FILL)
-            ShopCategoryTabLayout:SetBorder(8)
-            ShopCategoryTabLayout:SetSpaceX(8)
-            ShopCategoryTabLayout:SetSpaceY(8)
+        DScrollPanel:AddItem(ShopCategoryTabLayout)
 
-            DScrollPanel:AddItem(ShopCategoryTabLayout)
-
-            for _, item in pairs(items) do
-                if item.category == category then
-                    local model = vgui.Create("HordeShopItem")
-                    model:SetSize(container:GetWide() - 16, 40)
-                    model:SetData(item, description_panel, infusion_panel)
-                    ShopCategoryTabLayout:Add(model)
-                end
-            end
-
-            createBtn(category, ShopCategoryTab, LEFT)
-        else
-            for _, item in pairs(items) do
-                if item.entity_properties and item.entity_properties.is_arccw_attachment then
-                    if not attachments[item.entity_properties.arccw_attachment_type] then attachments[item.entity_properties.arccw_attachment_type] = {} end
-                    table.insert(attachments[item.entity_properties.arccw_attachment_type], item)
-                end
+        for _, item in pairs(items) do
+            if item.category == category then
+                local model = vgui.Create("HordeShopItem")
+                model:SetSize(container:GetWide() - 16, 40)
+                model:SetData(item, description_panel, infusion_panel)
+                ShopCategoryTabLayout:Add(model)
             end
         end
 
+        createBtn(category, ShopCategoryTab, LEFT)
+
         ::cont::
-    end    
+    end
 
     -- Class tab
     local ClassTab = vgui.Create("DPanel", self)
@@ -378,25 +355,12 @@ function PANEL:Init()
     end
 
     createBtn("Class/Perks", ClassTab, RIGHT)
-    
-    -- ArcCW Attachment Tab
-    if ArcCWInstalled and not table.IsEmpty(attachments) and GetConVar("horde_arccw_attinv_free"):GetInt() == 0 then
-        self.AttachmentTab = vgui.Create("DPanel", self)
-        self.AttachmentTab.Paint = function () end
-        self.AttachmentTabLayout = vgui.Create("DCategoryList", self.AttachmentTab)
-        self.AttachmentTabLayout:Dock(FILL)
-        self.AttachmentTabLayout:DockMargin(8,8,8,8)
-        self.AttachmentTabLayout.Paint = function () end
-        self:ReloadAttachments(attachments, container, description_panel)
-        createBtn("Attachment", self.AttachmentTab, LEFT)
-    end
 end
 
-function PANEL:ReloadAttachments(attachments, container, description_panel)
-    self.AttachmentTabLayout:Clear()
-    local ply = MySelf
-    for _, attachment_category in pairs(HORDE.arccw_attachment_categories) do
-        local cat = self.AttachmentTabLayout:Add(translate.Get("Shop_" .. attachment_category) or attachment_category)
+function PANEL:ReloadSpells(spells, container, description_panel)
+    self.SpellTabLayout:Clear()
+    for spell_slot, _ in pairs(HORDE.Spell_Slots) do
+        local cat = self.SpellTabLayout:Add(spell_slot)
         cat:SetHeaderHeight(40)
         cat:SetPaintBackground(false)
         cat:SetExpanded(false)
@@ -405,6 +369,7 @@ function PANEL:ReloadAttachments(attachments, container, description_panel)
             surface.DrawRect(0, 0, self:GetWide(), 40)
         end
         cat.Header:SetFont("Item")
+        cat.Header:SetText(HORDE.Spell_Slots[spell_slot])
         cat.Header:SetTextColor(Color(255,255,255))
         cat.Header:SetSize(container:GetWide() - 16, 40)
 
@@ -412,44 +377,25 @@ function PANEL:ReloadAttachments(attachments, container, description_panel)
         ShopCategoryTabLayout:SetBorder(8)
         ShopCategoryTabLayout:SetSpaceX(8)
         ShopCategoryTabLayout:SetSpaceY(8)
-        local all_attachments = attachments[attachment_category]
-        if all_attachments then
-            for _, item in pairs(all_attachments) do
-                local attach = item.entity_properties.arccw_attachment_wpn
-                if attach then
-                    if istable(attach) then
-                        local have_any_weapon = false
-                        for _, wep in pairs(attach) do
-                            if ply:HasWeapon(wep) then
-                                have_any_weapon = true
-                                break
-                            end
-                        end
-                        if not have_any_weapon then
-                            goto cont
-                        end
-                    else
-                        if not ply:HasWeapon(attach) then
-                            goto cont
-                        end
-                    end
-                end
-                local model = vgui.Create("HordeShopItem")
+        
+        if spells[spell_slot] then
+            for _, spell in pairs(spells[spell_slot]) do
+                local model = vgui.Create("HordeShopSpellItem")
                 model:SetSize(cat.Header:GetWide() - 16, 40)
-                model:SetData(item, description_panel)
+                model:SetData(spell, description_panel)
                 ShopCategoryTabLayout:Add(model)
 
                 ::cont::
             end
             cat:SetContents(ShopCategoryTabLayout)
-            --local tall = 40
-            --if attachments[attachment_category] then
-            local tall = 40 * #all_attachments
-            --end
+            local tall = 40
+            if spells[spell_slot] then
+                tall = 40 * (#spells[spell_slot])
+            end
             cat:SetTall(tall)
         end
     end
-    self.AttachmentTabLayout:InvalidateLayout(true)
+    self.SpellTabLayout:InvalidateLayout(true)
 end
 
 local skull_mat = Material("skull.png", "mips smooth")
@@ -464,20 +410,20 @@ function PANEL:Paint(w, h)
         draw.RoundedBox(0, 0, 0, w, h, HORDE.color_hollow)
     end
 
-
     local text
     local weight_text
     weight_text = translate.Get("Shop_Weight") .. ': ' .. tostring(MySelf:Horde_GetMaxWeight() - MySelf:Horde_GetWeight()) .. "/" .. MySelf:Horde_GetMaxWeight() .. ""
     surface.SetMaterial(weight_mat)
     surface.SetDrawColor(Color(255,255,255))
-    surface.DrawTexturedRect(self:GetWide() - 60 - stats_offset, 14, 20, 20)
+    surface.DrawTexturedRect(self:GetWide() - 60, 14, 20, 20)
+    
     local text2 = translate.Get("Shop_Cash") .. ": " .. tostring(MySelf:Horde_GetMoney()) .. '$ ' .. ' ' .. tostring(MySelf:Horde_GetSkullTokens())
     text = text2 .. '       ' .. weight_text
-    draw.SimpleText(text, 'Heading', self:GetWide() - 60 - stats_offset, 24, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+    draw.SimpleText(text, 'Heading', self:GetWide() - 60, 24, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 
     surface.SetMaterial(skull_mat)
     surface.SetDrawColor(Color(255,255,255))
-    surface.DrawTexturedRect(self:GetWide() - surface.GetTextSize(text) + surface.GetTextSize(text2) - 55 - stats_offset, 14, 20, 20)
+    surface.DrawTexturedRect(self:GetWide() - surface.GetTextSize(text) + surface.GetTextSize(text2) - 55, 14, 20, 20)
 end
 
-vgui.Register("HordeShop", PANEL)
+vgui.Register("HordeSpellForge", PANEL)

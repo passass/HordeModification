@@ -1,14 +1,14 @@
 att.PrintName = "Kebrinium"
 att.Icon = Material("entities/acwatt_ammo_explosive.png")
-att.Description = "Special bullets made by KerkOTech. These bullets have an explosive charge inside. The explosion is very effective against armor, but due to possible weapon issues, reduced magazines are issued."
+att.Description = "These bullets have an explosive charge inside. The explosion is very effective against armor, but due to possible weapon issues, reduced magazines are issued."
 att.Desc_Pros = {
     "Explosion on hit dealing additional 100% damage",
 }
 att.Desc_Cons = {
-    "-80% Magazine capacity",
+    --"-80% Magazine capacity",
 }
 att.Desc_Neutrals = {
-    "Blast radius is 96 HU / 2.4m",
+    "Blast radius is 150 HU / 3.75m",
 }
 att.AutoStats = true
 att.Slot = {"ammo_bullet", "go_bullet"}

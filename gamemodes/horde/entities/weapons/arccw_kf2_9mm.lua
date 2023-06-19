@@ -29,8 +29,6 @@ SWEP.MuzzleVelocity = 300 -- projectile or phys bullet muzzle velocity
 SWEP.CanFireUnderwater = true
 SWEP.ChamberSize = 1 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
-SWEP.ExtendedClipSize = 30
-SWEP.ReducedClipSize = 10
 
 SWEP.Recoil = 0.8
 SWEP.RecoilSide = 0.2
@@ -126,9 +124,9 @@ SWEP.WorldModelOffset = {
 
 SWEP.ViewModel			= "models/weapons/kf2/tfa_c_9mm.mdl"
 SWEP.WorldModel			= "models/weapons/kf2/tfa_w_9mm.mdl"
-SWEP.ViewModelFOV = 65
+SWEP.ViewModelFOV = 60
 
-SWEP.ActivePos = Vector(3,7.25,0)
+SWEP.ActivePos = Vector(3,5,-1)
 SWEP.ActiveAng = Angle(0, 0, 0)
 
 SWEP.HolsterPos = Vector(4.8, 6, 0)

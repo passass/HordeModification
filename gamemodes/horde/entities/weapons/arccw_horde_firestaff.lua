@@ -50,7 +50,7 @@ SWEP.ChamberSize = 0 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 9 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 9
 SWEP.ReducedClipSize = 9
-
+SWEP.Horde_MaxMags = 25
 SWEP.Recoil = 6.8
 SWEP.RecoilSide = 1
 SWEP.VisualRecoilMult = 0.1
@@ -148,7 +148,7 @@ SWEP.ExtraSightDist = 5
 SWEP.Attachments = {
     {
         PrintName = "Perk",
-        Slot = "go_perk"
+        Slot = "perk"
     },
 }
 

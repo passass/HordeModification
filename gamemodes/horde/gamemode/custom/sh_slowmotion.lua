@@ -1,98 +1,41 @@
 if GetConVar("horde_enable_slomo"):GetInt() == 0 then return end
-HORDE.SlowMotion_MovementSpeedBonus = function(ply, bonus_walk, bonus_run)
-	local stage = HORDE:SlowMotion_GetStage()
-    if stage == 1 then return end
 
-	if !ply:Horde_CallClassHook("SlowMotion_MovementSpeedBonus_Allow", ply) then return end
-	
-	local slomo_bonus = ply:Horde_GetPerkLevelBonus("slomo_bonus")
-    if not slomo_bonus or slomo_bonus <= 0 then return end
-	
-    local bonus_speed = 1 + slomo_bonus * (1 / stage / 3)
-    bonus_walk.more = bonus_walk.more * bonus_speed
-    bonus_run.more = bonus_run.more * bonus_speed
+function HORDE.SlowMotion_GetCompletenessSlomo(slow_motion_stage)
+    return (1 - slow_motion_stage) * 1.5
 end
 
-hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", HORDE.SlowMotion_MovementSpeedBonus)
-
-HORDE.SlowMotion_RPMBonus = function(ply, slow_motion_stage, slomo_bonus)
-	if !ply:Horde_CallClassHook("SlowMotion_RPMBonus_Allow", ply) then return end
-
-    if not slomo_bonus or slomo_bonus <= 0 then return end
-	
-	if slow_motion_stage == 1.0 then
-		HORDE:Modifier_AddToWeapons(ply, "Mult_RPM", "slomotion")
-		return
-	end
-	
-	local mult_rpm = 1 + (1 / slow_motion_stage / 3) * slomo_bonus
-    HORDE:Modifier_AddToWeapons(ply, "Mult_RPM", "slomotion", mult_rpm)
-end
-
-HORDE.SlowMotion_ReloadBonus = function(ply, slow_motion_stage, slomo_bonus)
-	if !ply:Horde_CallClassHook("SlowMotion_ReloadBonus_Allow", ply) then return end
-
-	if not slomo_bonus or slomo_bonus <= 0 then return end
-
-	if slow_motion_stage == 1.0 then
-		HORDE:Modifier_AddToWeapons(ply, "Mult_ReloadTime", "slomotion")
-		return
-	end
-    HORDE:Modifier_AddToWeapons(ply, "Mult_ReloadTime", "slomotion", 1 / (slomo_bonus + 1))
-end
-
-HORDE.SlowMotion_MeleeAttackSpeedBonus = function(ply, slow_motion_stage, slomo_bonus)
-	if !ply:Horde_CallClassHook("SlowMotion_MeleeAttackSpeedBonus_Allow", ply) then return end
-	
-	if not slomo_bonus or slomo_bonus <= 0 then return end
-	
-	if slow_motion_stage == 1.0 then
-		HORDE:Modifier_AddToWeapons(ply, "Mult_MeleeTime", "slomotion")
-		return
-	end
-	HORDE:Modifier_AddToWeapons(ply, "Mult_MeleeTime", "slomotion", 1 / Lerp((slomo_bonus / 2) * (1 - slow_motion_stage) * 1.5, 1, 3))
-end
-
-HORDE.SlowMotion_ZoomSpeedBonus = function(ply, slow_motion_stage, slomo_bonus)
-	if !ply:Horde_CallClassHook("SlowMotion_ZoomSpeedBonus_Allow", ply) then return end
-	
-	if not slomo_bonus or slomo_bonus <= 0 then return end
-	
-	if slow_motion_stage == 1.0 then
-		HORDE:Modifier_AddToWeapons(ply, "Mult_SightTime", "slomotion")
-		return
-	end
-	HORDE:Modifier_AddToWeapons(ply, "Mult_SightTime", "slomotion", 1 / Lerp((slomo_bonus / 2) * (1 - slow_motion_stage) * 1.5, 1, 3))
-end
-
-HORDE.SlowMotion_CycleTimeMult = function(ply, slow_motion_stage, slomo_bonus)
-	if !ply:Horde_CallClassHook("SlowMotion_CycleTimeMult_Allow", ply) then return end
-	
-	if not slomo_bonus or slomo_bonus <= 0 then return end
-	
-	if slow_motion_stage == 1.0 then
-		HORDE:Modifier_AddToWeapons(ply, "Mult_CycleTime", "slomotion")
-		return
-	end
-	HORDE:Modifier_AddToWeapons(ply, "Mult_CycleTime", "slomotion", 1 / (slomo_bonus + 1))
-end
-
-
+local formulas = {
+    static_inverted = function(slow_motion_stage, slomo_bonus) return 1 / (slomo_bonus + 1) end,
+    completeness = function(slow_motion_stage, slomo_bonus) return 1 + HORDE.SlowMotion_GetCompletenessSlomo(slow_motion_stage) * slomo_bonus end,
+    completeness_inverted = function(slow_motion_stage, slomo_bonus) return 1 / (1 + HORDE.SlowMotion_GetCompletenessSlomo(slow_motion_stage) * slomo_bonus) end,
+}
 
 local bonus_hooks = {
-    HORDE.SlowMotion_ZoomSpeedBonus,
-    HORDE.SlowMotion_MeleeAttackSpeedBonus,
-    HORDE.SlowMotion_ReloadBonus,
-    HORDE.SlowMotion_RPMBonus,
-    HORDE.SlowMotion_CycleTimeMult,
+    SlowMotion_ZoomSpeedBonus = {"Mult_SightTime", formulas.completeness_inverted},
+    SlowMotion_MeleeAttackSpeedBonus = {"Mult_MeleeTime", formulas.completeness_inverted},
+    SlowMotion_ReloadBonus = {"Mult_ReloadTime", formulas.static_inverted},
+    SlowMotion_RPMBonus = {"Mult_RPM", formulas.completeness},
+    SlowMotion_CycleTimeMult = {"Mult_CycleTime", formulas.static_inverted},
 }
 
 local function call_all_bonus_hooks(ply, slow_motion_stage, slomo_bonus)
-    for k, bonushook in pairs(bonus_hooks) do
-        bonushook(ply, slow_motion_stage, slomo_bonus)
+    for hookname, bonushook in pairs(bonus_hooks) do
+        if !ply:Horde_CallClassHook(hookname .. "_Allow", ply) then continue end
+
+        if slow_motion_stage == 1.0 then
+            HORDE:Modifier_AddToWeapons(ply, bonushook[1], "slomotion")
+            continue
+        end
+        HORDE:Modifier_AddToWeapons(ply, bonushook[1], "slomotion", bonushook[2](slow_motion_stage, slomo_bonus))
     end
 
     ply:Horde_CallClassHook("SlowMotion_Hook", ply, slow_motion_stage, slomo_bonus)
+
+    for _, wep in pairs(ply:GetWeapons()) do
+        if wep.SlowMotion_Hook then
+            wep:SlowMotion_Hook(slow_motion_stage, slomo_bonus)
+        end
+    end
 end
 
 hook.Add("Horde_SlowMotion_start_Bonus", "Horde_SlowMotion_CalculateBonuses", call_all_bonus_hooks)
@@ -109,10 +52,9 @@ if CLIENT then
         stage = net.ReadFloat()
         local bonus = net.ReadFloat()
 		local lp = LocalPlayer()
-		--Horde_SlowMotion_start_Bonus
-        --hook.Run("Horde_SlowMotion_" .. (is_end and "end" or "start"), lp, stage, bonus)
         hook.Run("Horde_SlowMotion_" .. (is_end and "end" or "start") .. "_Bonus", lp, stage, bonus)
     end)
+
     net.Receive("Horde_SlowMotion", function()
 		if end_time != 0 then 
 			start_time = 0
@@ -161,7 +103,7 @@ local timers_delay = .05
 local times_to_end = 6 / (timers_delay * 10)
 local cur_slowmotion = 1.0
 local one_time = (1 - max_slow_time) / (6 / (timers_delay * 10))
-local slow_motion_duration = 4 * max_slow_time
+local slow_motion_duration = 3.3 * max_slow_time
 local slow_motion_happened = 0
 local slow_motion_end_happened = 0
 
@@ -200,8 +142,8 @@ end
 
 local function setup_bonuses(slomo_stage)
     for _, ply in pairs(player.GetAll()) do
-        local bonus = ply:Horde_GetPerkLevelBonus("slomo_bonus")
-		if !bonus or bonus <= 0 then continue end
+        local bonus = ply:Horde_GetPerkLevelBonus("slomo_bonus") or 0
+		--if !bonus or bonus <= 0 then continue end
         SyncSlowMotionStage(bonus)
         hook.Run("Horde_SlowMotion_" .. (is_end and "end" or "start") .. "_Bonus", ply, cur_slowmotion, bonus)
     end
@@ -270,7 +212,7 @@ end
 hook.Add("Horde_OnEnemyKilled", "StartSlowMotion", function(victim, killer, inflictor)
     if IsValid(inflictor) and inflictor:IsNPC() or CurTime() == last_slowmotion_called_timing then return end
     if last_player_called_slowmotion == NULL and
-	math.random() > 0.05 or last_player_called_slowmotion != NULL and
+	math.random() > .05 or last_player_called_slowmotion != NULL and
 	(killer != last_player_called_slowmotion or last_player_called_count >= (killer:Horde_GetPerk("assault_base") and 5 or 3)) or
         hook.Run("Horde_CanSlowTime")
     then return end

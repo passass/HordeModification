@@ -61,6 +61,21 @@ SWEP.WElements = {
 	["w_sprite1"] = { type = "Sprite", sprite = "sprites/animglow02", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(15.104, 2.558, -5.288), size = { x = 10, y = 10 }, color = Color(25, 25, 255, 255), nocull = true, additive = true, vertexalpha = true, vertexcolor = true, ignorez = false}
 }
 
+SWEP.SlomoBonus = false
+
+function SWEP:SlowMotion_Hook(slow_motion_stage, slomo_bonus)
+	local ply = self:GetOwner()
+	if !ply:Horde_GetPerk("engineer_welderslomo") then return end
+
+	if slow_motion_stage == 1 then
+		self.Primary.Delay = 0.1
+		self.SlomoBonus = false
+		return
+	end
+	self.SlomoBonus = true
+	self.Primary.Delay = 0.1 * slow_motion_stage
+end
+
 function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
 	self:SetWeaponHoldType(self.HoldType)
@@ -717,10 +732,17 @@ function SWEP:Equip()
 end
 
 function SWEP:Deploy()
-	self.Weapon:SendWeaponAnim(ACT_VM_DRAW);
-	self:SetNextPrimaryFire( CurTime() + self:SequenceDuration())
-	self:SetNextSecondaryFire( CurTime() + self:SequenceDuration())
-	self:NextThink( CurTime() + self:SequenceDuration() )
+	self.Weapon:SendWeaponAnim(ACT_VM_DRAW)
+	local deploy_duration = self:SequenceDuration()
+	if self.SlomoBonus then
+		deploy_duration = deploy_duration / 3
+		local vm = self:GetOwner():GetViewModel()
+		vm:SetPlaybackRate(3)
+	end
+	
+	self:SetNextPrimaryFire( CurTime() + deploy_duration)
+	self:SetNextSecondaryFire( CurTime() + deploy_duration)
+	self:NextThink( CurTime() + deploy_duration )
 	self:EmitSound(Sound("horde/weapons/welder/blowtorch-1.ogg"))
    return true
 end
