@@ -21,7 +21,8 @@ SWEP.UseHands = true
 
 SWEP.ViewModel			= "models/weapons/kf2/tfa_c_ar15.mdl"--"models/weapons/kf2/arccw_v_ar15.mdl"
 SWEP.WorldModel			= "models/weapons/kf2/tfa_w_ar15.mdl"
-
+SWEP.Horde_MaxMags = 30
+SWEP.ClipsPerAmmoBox = 2
 SWEP.ActivePos = Vector(3,7.25,-1)
 SWEP.ActiveAng = Angle(0, 0, 0)
 SWEP.ActivePos 							= Vector(4.6, 4, -1.6)
@@ -206,19 +207,17 @@ SWEP.Attachments = {
 }
 
 SWEP.Animations = {
-    ["idle"] = false,
+    ["idle"] = {
+        Source = "idle",
+    },
     ["ready"] = {
         Source = "draw",
-        LHIK = true,
-        LHIKIn = 0.2,
-        LHIKOut = 2,
     },
     ["draw_empty"] = {
         Source = "idle_empty",
     },
     ["draw"] = {
-        Source = "draw",
-        Time = 1,
+        Source = "draw", MinProgress = 1,
     },
     ["fire"] = {
 		Source = "shoot",

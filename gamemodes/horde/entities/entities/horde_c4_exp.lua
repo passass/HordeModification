@@ -85,8 +85,19 @@ end
 
 function ENT:Explode()
 	if self:GetNW2Bool("EMP") then return end
-	local owent = self:GetOwner() and self:GetOwner() or self
-	util.BlastDamage(self, owent, self:GetPos(), 200, 150)
+
+	local dmg = DamageInfo()
+    dmg:SetAttacker(owent)
+    dmg:SetInflictor(self)
+    dmg:SetDamageType(DMG_BLAST)
+    dmg:SetDamage(450)
+    dmg:SetDamageCustom(HORDE.DMG_PLAYER_FRIENDLY)
+	util.BlastDamageInfo(dmg, self:GetPos(), 200)
+
+	if table.HasValue(ents.FindInSphere( self:GetPos(), 175 ), owent) then
+		owent:ViewPunch(Angle(-4, 5, 0))
+		HORDE:TakeDamage(owent, 25, DMG_BLAST, owent, self)
+	end
 	HORDE:MakeExplosionEffect(self:GetPos(), self)
 	self:Remove()
 end

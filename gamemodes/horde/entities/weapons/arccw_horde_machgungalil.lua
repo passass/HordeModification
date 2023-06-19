@@ -283,7 +283,7 @@ SWEP.Attachments = {
     },
 }
 
-local reloadmult = .9
+local reloadmult = .8
 
 SWEP.Animations = {
     ["ready"] = {
@@ -305,7 +305,7 @@ SWEP.Animations = {
     ["reload"] = {
         Source = "base_reload_drum",
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        LHIK = true, Mult = .9,
+        LHIK = true, Mult = reloadmult,
         LHIKIn = .6, LHIKEaseIn = .5,
         LHIKOut = .55, LHIKEaseOut = .3, 
 	SoundTable = {
@@ -321,7 +321,7 @@ SWEP.Animations = {
     ["reload_empty"] = {
         Source = "base_reloadempty_drum",
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        LHIK = true, Mult = .9,
+        LHIK = true, Mult = reloadmult,
 	--t = 3.5,
         LHIKIn = .6, LHIKEaseIn = .5,
         LHIKOut = .7, LHIKEaseOut = .5,

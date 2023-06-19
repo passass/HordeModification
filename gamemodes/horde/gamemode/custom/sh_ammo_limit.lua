@@ -54,7 +54,7 @@ function HORDE:Ammo_GetMaxAmmo(wep) -- MAX AMMO ON WEAPON
     else
         local clipsize = wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1
         if clipsize == -1 then
-            return HORDE:Ammo_GetTotalLimit(wep)
+            return 50
         end
         total = clipsize * (wep.Horde_MaxMags or HORDE.Ammo_DefaultMaxMags)
     end

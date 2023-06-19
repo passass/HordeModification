@@ -1,7 +1,31 @@
 local plymeta = FindMetaTable("Player")
 local entmeta = FindMetaTable("Entity")
 
-util.AddNetworkString("Horde_PostEnemyDebuffApply")
+util.AddNetworkString("Horde_OnEnemyDebuffRemove")
+
+function HORDE:ApplyDebuffInRadius(debuff, pos, radius, buildup, inflictor, callback)
+    for _, ent in pairs(ents.FindInSphere(pos, radius)) do
+        if ent:IsNPC() and HORDE:IsPlayerOrMinion(ent) ~= true then
+            ent:Horde_AddDebuffBuildup(debuff, buildup, inflictor)
+        end
+    end
+end
+
+function plymeta:Horde_SetApplyDebuffDuration(duration)
+    self.Horde_ApplyDebuffDuration = duration
+end
+
+function plymeta:Horde_GetApplyDebuffDuration()
+    return self.Horde_ApplyDebuffDuration or 5
+end
+
+function plymeta:Horde_SetApplyDebuffMore(more)
+    self.Horde_ApplyDebuffMore = more
+end
+
+function plymeta:Horde_GetApplyDebuffMore()
+    return self.Horde_ApplyDebuffMore or 0
+end
 
 function plymeta:Horde_ReduceDebuffBuildup(debuff, amount)
     if not self.Horde_Debuff_Buildup[debuff] or self.Horde_Debuff_Buildup[debuff] <= 0 or self.Horde_Debuff_Active[debuff] then return end
@@ -10,6 +34,29 @@ function plymeta:Horde_ReduceDebuffBuildup(debuff, amount)
         net.WriteUInt(debuff, 8)
         net.WriteUInt(self.Horde_Debuff_Buildup[debuff], 8)
     net.Send(self)
+    if debuff == HORDE.Status_Bleeding then
+        local d2 = HORDE.Status_Hemorrhage
+        if not self.Horde_Debuff_Buildup[d2] then return end
+        self.Horde_Debuff_Buildup[d2] = math.max(0, self.Horde_Debuff_Buildup[d2] - amount)
+        net.Start("Horde_SyncStatus")
+            net.WriteUInt(d2, 8)
+            net.WriteUInt(self.Horde_Debuff_Buildup[d2], 8)
+        net.Send(self)
+    end
+end
+
+function entmeta:Horde_HasDebuff(debuff)
+    if self.Horde_Debuff_Active then
+        return self.Horde_Debuff_Active[debuff]
+    end
+    return nil
+end
+
+function entmeta:Horde_GetDebuffBuildup(debuff)
+    if self.Horde_Debuff_Buildup[debuff] then
+        return self.Horde_Debuff_Buildup[debuff]
+    end
+    return 0
 end
 
 function entmeta:Horde_AddDebuffBuildup(debuff, buildup, inflictor, pos)
@@ -21,12 +68,16 @@ function entmeta:Horde_AddDebuffBuildup(debuff, buildup, inflictor, pos)
     if self.Horde_Debuff_Cooldown[debuff] then return end
     if self.Horde_Debuff_Active[debuff] then return end
     if not self.Horde_Debuff_Buildup[debuff] then self.Horde_Debuff_Buildup[debuff] = 0 end
-    if self.Horde_Debuff_Buildup[debuff] >= 100 then return end
     if self:IsPlayer() then
-        local bonus = {apply = 1, less = 1}
-        hook.Run("Horde_OnPlayerDebuffApply", self, debuff, bonus, inflictor)
+    if self.Horde_Debuff_Buildup[debuff] >= 100 then return end
+        local bonus = {apply = 1, less = 1, add = 0}
+        local d2 = debuff
+        if d2 == HORDE.Status_Hemorrhage then
+            d2 = HORDE.Status_Bleeding
+        end
+        hook.Run("Horde_OnPlayerDebuffApply", self, d2, bonus, inflictor, buildup)
         if bonus.apply == 0 then return end
-        buildup = buildup * bonus.less
+        buildup = buildup * bonus.less + bonus.add
         if buildup < 1  then return end
 
         if HORDE.Status_Buildup_Sounds[debuff] then
@@ -53,8 +104,11 @@ function entmeta:Horde_AddDebuffBuildup(debuff, buildup, inflictor, pos)
             net.WriteUInt(self.Horde_Debuff_Buildup[debuff], 8)
         net.Send(self)
 		
+        if self.Horde_Debuff_Buildup[debuff] < 100 then return end
 		hook.Run("Horde_OnPlayerDebuffApplyPost", self, debuff, bonus, inflictor)
     else
+        local threshold = self.Horde_Debuff_Threshold or 100
+        if self.Horde_Debuff_Buildup[debuff] >= threshold then return end
         if self.Horde_Immune_Status_All then return end
         if self.Horde_Immune_Status and self.Horde_Immune_Status[debuff] then return end
         local bonus = {apply = 1, more = 1, increase = 0}
@@ -64,11 +118,12 @@ function entmeta:Horde_AddDebuffBuildup(debuff, buildup, inflictor, pos)
         end
         if bonus.apply == 0 then return end
         buildup = buildup * bonus.more * (1 + bonus.increase)
+        if buildup < 1 then return end
 
         if HORDE.Status_Buildup_Sounds[debuff] then
             sound.Play(HORDE.Status_Buildup_Sounds[debuff], self:GetPos(), 100, math.random(80,110))
         end
-        self.Horde_Debuff_Buildup[debuff] = math.min(100, self.Horde_Debuff_Buildup[debuff] + buildup)
+        self.Horde_Debuff_Buildup[debuff] = math.min(threshold, self.Horde_Debuff_Buildup[debuff] + buildup)
 
         if not pos then pos = self:GetPos() + self:OBBCenter() end
         if (debuff == HORDE.Status_Frostbite) or (debuff == HORDE.Status_Freeze) then
@@ -146,6 +201,8 @@ function entmeta:Horde_AddDebuffBuildup(debuff, buildup, inflictor, pos)
                     util.Effect( "horde_status_shock", e, true, true )
                 end
             end)
+        elseif debuff == HORDE.Status_Hemorrhage then
+            self:Horde_ActivateHemorrhage()
         end
 
         if not self.Horde_Debuff_Active[debuff] then
@@ -168,7 +225,10 @@ function entmeta:Horde_AddDebuffBuildup(debuff, buildup, inflictor, pos)
         if debuff == HORDE.Status_Bleeding then
             self:Horde_AddBleedingEffect(inflictor)
         elseif debuff == HORDE.Status_Frostbite then
-            self:Horde_AddFrostbiteEffect(3)
+            local bonus = {increase = 0}
+            hook.Run("Horde_OnEnemyFrostbiteApply", inflictor, self, bonus)
+            duration = duration * (1 + bonus.increase)
+            self:Horde_AddFrostbiteEffect(duration)
         elseif debuff == HORDE.Status_Ignite then
             self:Horde_AddIgniteEffect(duration, inflictor)
         elseif debuff == HORDE.Status_Break then
@@ -201,7 +261,7 @@ function entmeta:Horde_AddDebuffBuildup(debuff, buildup, inflictor, pos)
 
         self.Horde_Debuff_Active[debuff] = true
 
-        hook.Run("Horde_PostEnemyDebuffApply", self, self.Horde_Debuff_Active)
+        hook.Run("Horde_PostEnemyDebuffApply", self, inflictor, debuff, pos)
     end 
 end
 
@@ -214,9 +274,14 @@ function entmeta:Horde_RemoveDebuff(debuff)
             net.WriteUInt(debuff, 8)
             net.WriteUInt(0, 8)
         net.Send(self)
+
+        if debuff == HORDE.Status_Hemorrhage then
+            local id = self:GetCreationID()
+            timer.Remove("Horde_HemorrhageLoop" .. id)
+        end
     else
         self.Horde_Debuff_Cooldown[debuff] = true
-        if debuff == HORDE.Status_Frostbite then
+        if debuff == HORDE.Status_Freeze then
             timer.Simple(8, function ()
                 if not self:IsValid() then return end
                 self.Horde_Debuff_Cooldown[debuff] = nil
@@ -232,8 +297,13 @@ function entmeta:Horde_RemoveDebuff(debuff)
     end
 end
 
-hook.Add("Horde_PostEnemyDebuffApply", "Horde_AddSync", function (ent, debuffs)
-    net.Start("Horde_PostEnemyDebuffApply")
+hook.Add("Horde_ResetStatus", "Horde_PlayerStatusReset", function(ply)
+    ply.Horde_Debuff_Active = {}
+    ply.Horde_Debuff_Buildup = {}
+end)
+
+hook.Add("Horde_OnEnemyDebuffRemove", "Horde_RemoveSync", function (ent, debuffs)
+    net.Start("Horde_OnEnemyDebuffRemove")
         net.WriteEntity(ent)
         net.WriteTable(debuffs)
     net.Broadcast()

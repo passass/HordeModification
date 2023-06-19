@@ -232,7 +232,7 @@ function SWEP:PostSpawnProjectile(ent)
 	end
 
 	local bombs = self:GetBombs()
-	local totalcount = self.Horde_MaxMags + 1
+	local totalcount = 5--self.Horde_MaxMags + 1
 	if #bombs > totalcount then
 		for i = 1, #bombs - totalcount do
 			bombs[1]:Remove()

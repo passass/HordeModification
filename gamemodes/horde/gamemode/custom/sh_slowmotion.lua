@@ -18,6 +18,22 @@ local bonus_hooks = {
     SlowMotion_CycleTimeMult = {"Mult_CycleTime", formulas.static_inverted},
 }
 
+hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", function(ply, bonus_walk, bonus_run)
+	local stage = HORDE:SlowMotion_GetStage()
+    if stage == 1 then return end
+
+	if !ply:Horde_CallClassHook("SlowMotion_MovementSpeedBonus_Allow", ply) then return end
+	
+	local slomo_bonus = ply:Horde_GetPerkLevelBonus("slomo_bonus")
+    if not slomo_bonus or slomo_bonus <= 0 then return end
+	
+    local bonus_speed = formulas.completeness(stage, slomo_bonus)
+    bonus_walk.more = bonus_walk.more * bonus_speed
+    bonus_run.more = bonus_run.more * bonus_speed
+end)
+
+
+
 local function call_all_bonus_hooks(ply, slow_motion_stage, slomo_bonus)
     for hookname, bonushook in pairs(bonus_hooks) do
         if !ply:Horde_CallClassHook(hookname .. "_Allow", ply) then continue end

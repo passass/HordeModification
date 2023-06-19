@@ -188,6 +188,7 @@ end
     local new_itemsdata = function()
 
         HORDE.items["arccw_horde_smg1"].name = "Colt M635"
+        HORDE.items["arccw_horde_smg1"].shop_icon = nil
         HORDE.items["arccw_horde_shotgun"].name = "TOZ-34"
         HORDE.items["arccw_horde_357"].name = "Snub Nose"
 
@@ -573,9 +574,9 @@ end
         HORDE:CreateItem("Special",    "Barricade Kit",  "horde_barricadekit", 1500,  4, "Barricade Kit.\nKit with barricade that block zombies movement",
         {Engineer=true}, -1, -1, {type=HORDE.ENTITY_PROPERTY_WPN, wep_that_place=true, limit=1}, nil, {Warden=10}, nil)--, {HORDE.DMG_LIGHTNING})
 
-        HORDE:CreateItem("Special",    "C4",  "horde_c4", 1500,  2, "C4.\nThrowable Bomb which explode on press detonator",
-        {Warden=true, Assault=true, Survivor=true, SWAT=true, Heavy=true, Ghost=true, Demolition=true}, 75, -1, nil, "entities/horde_c4.png", {Demolition=20}, nil, {HORDE.DMG_BLAST})
-        HORDE:CreateItem("Special",    "Claymore",  "horde_claymore", 1250,  1, "Claymore.\nBomb that explode on approaching enemies",
+        HORDE:CreateItem("Special",    "C4",  "horde_c4", 1500,  2, "C4.\nThrowable Bomb which explode on press detonator.",
+        {Warden=true, Assault=true, Survivor=true, SWAT=true, Heavy=true, Ghost=true, Demolition=true}, 80, -1, nil, "entities/horde_c4.png", {Demolition=20}, nil, {HORDE.DMG_BLAST})
+        HORDE:CreateItem("Special",    "Claymore",  "horde_claymore", 1250,  1, "Claymore.\nBomb that explode on approaching enemies.",
         {Warden=true, Assault=true, Survivor=true, SWAT=true, Heavy=true, Ghost=true, Demolition=true}, 60, -1, nil, "entities/horde_claymore.png", {Demolition=10}, nil, {HORDE.DMG_BLAST})
 
         

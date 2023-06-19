@@ -172,12 +172,12 @@ SWEP.Attachments = {
         },
         ExcludeFlags = {"python_snub"},
     },
-    {
+    --[[{
         PrintName = "Cylinder",
         Slot = "bo1_cylinder",
         Integral = true,
         Installed = "bo1_cylinder_speedloader",
-    },
+    },]]
     {
         PrintName = "Ammo Type",
         Slot = "go_ammo"

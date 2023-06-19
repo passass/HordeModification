@@ -62,7 +62,7 @@ SWEP.DisableChambering = true
 SWEP.SelectiveFire = false
 SWEP.FiresUnderwater = false
 SWEP.Delay = 0.15
-SWEP.Horde_MaxMags = 6
+SWEP.Horde_MaxMags = 15
 --[Range]--
 SWEP.Primary.Range = -1
 SWEP.Primary.RangeFalloff = -1

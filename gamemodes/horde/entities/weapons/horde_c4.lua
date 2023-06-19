@@ -43,7 +43,7 @@ game.AddAmmoType( {
 	name = "ammo_c4",
 	dmgtype = DMG_BLAST,
 } )
-SWEP.Horde_MaxMags = 6
+SWEP.Horde_MaxMags = 12
 --[Gun Related]--
 SWEP.Primary.Sound = "nil"
 SWEP.Primary.Ammo = "ammo_c4"
