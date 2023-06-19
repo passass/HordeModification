@@ -85,7 +85,7 @@ SWEP.BulletBones = { -- the bone that represents bullets in gun/mag
 
 SWEP.ProceduralRegularFire = false
 SWEP.ProceduralIronFire = false
-
+SWEP.ClipsPerAmmoBox = 2
 SWEP.CaseBones = {}
 if CLIENT then
     SWEP.WepSelectIcon = Material("items/hl2/weapon_pistol.png")

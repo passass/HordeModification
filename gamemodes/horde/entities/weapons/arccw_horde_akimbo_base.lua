@@ -1042,17 +1042,63 @@ function SWEP:SecondaryAttack()
 	local fm = self:GetCurrentFiremode().Mode
     self.Secondary.Automatic = fm == 2
 	self:SetInUBGL(true)
-	self:CanPrimaryAttack()
 
-	local delay = self:GetFiringDelay()
+	local owner = self:GetOwner()
 
-    local curtime = CurTime()
-    local curatt = self:GetNextPrimaryFire()
-    local diff = curtime - curatt
+    -- Should we not fire? But first.
+    if self:GetBuff_Hook("Hook_ShouldNotFireFirst") then return end
 
-    if diff > engine.TickInterval() or diff < 0 then
-        curatt = curtime
+    -- We're holstering
+    if IsValid(self:GetHolster_Entity()) then return end
+    if self:GetHolster_Time() > 0 then return end
+
+    -- Disabled (currently used only by deploy)
+    if self:GetState() == ArcCW.STATE_DISABLE then return end
+
+    -- Coostimzing
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE then
+        if CLIENT and ArcCW.Inv_Hidden then
+            ArcCW.Inv_Hidden = false
+            gui.EnableScreenClicker(true)
+        elseif game.SinglePlayer() then
+            -- Kind of ugly hack: in SP this is only called serverside so we ask client to do the same check
+            self:CallOnClient("CanPrimaryAttack")
+        end
+        return
     end
 
-    self:SetNextSecondaryFire(curatt + delay)
+    -- A priority animation is playing (reloading, cycling, firemode etc)
+    if self:GetPriorityAnim() and !self:GetReloading() then return end
+
+    -- Inoperable, but internally (burst resetting for example)
+    if self:GetWeaponOpDelay() > CurTime() then return end
+
+    -- Safety's on, dipshit
+    if self:GetCurrentFiremode().Mode == 0 then
+        self:ChangeFiremode(false)
+        self:SetNextPrimaryFire(CurTime())
+        self.Primary.Automatic = false
+        return
+    end
+
+    -- If we are an NPC, do our own little methods
+    if owner:IsNPC() then self:NPC_Shoot() return end
+
+    -- If we are in a UBGL, shoot the UBGL, not the gun
+    if self:GetInUBGL() then
+		self:ShootUBGL()
+		local delay = self:GetFiringDelay()
+
+		local curtime = CurTime()
+		local curatt = self:GetNextPrimaryFire()
+		local diff = curtime - curatt
+
+		if diff > engine.TickInterval() or diff < 0 then
+			curatt = curtime
+		end
+
+		self:SetNextSecondaryFire(curatt + delay)
+	end
+
+	
 end

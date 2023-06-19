@@ -130,7 +130,7 @@ function ENT:Use(activator, caller)
 	if CLIENT then return end
 	if IsValid(activator) and activator == self:GetOwner() then
 		activator:Give("horde_claymore", true)
-		activator:GiveAmmo(1, "ammo_claymore", false)
+		HORDE:GiveAmmo(activator, wpn, 1)
 		self:Remove()
 	end
 end

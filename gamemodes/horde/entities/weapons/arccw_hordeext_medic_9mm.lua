@@ -1,195 +1,96 @@
-if not ArcCWInstalled then return end
-if CLIENT then
-    SWEP.WepSelectIcon = Material("items/weapon_medic_9mm.png")
-    killicon.AddAlias("arccw_hordeext_medic_9mm", "weapon_9mm")
-end
-SWEP.Base = "arccw_mw2_abase"
-SWEP.Spawnable = true
-SWEP.Category = "ArcCW - Horde"
+SWEP.Base = "arccw_base"
+SWEP.Spawnable = true -- this obviously has to be set to true
+SWEP.Category = "ArcCW - Killing Floor 2" -- edit this if you like
 SWEP.AdminOnly = false
-SWEP.WeaponCamBone = tag_camera
 
-SWEP.PrintName = "Medic 9mm (Horde)"
-SWEP.Trivia_Class = "Pistol"
-SWEP.Trivia_Desc = "Standard issue pistol."
-
-SWEP.Trivia_Manufacturer = "Combine"
-SWEP.Trivia_Calibre = "9mm"
-SWEP.Trivia_Mechanism = "Semi-Auto"
-SWEP.Trivia_Country = "Combine"
-SWEP.Trivia_Year = 2007
+SWEP.PrintName = "9mm Pistol"
+--[[SWEP.Trivia_Class = "Pistol"
+SWEP.Trivia_Desc = ".40 Caliber semi automatic pistol. Commonly used among police and popular with civilians for its reliability."
+SWEP.Trivia_Manufacturer = "Auschen Waffenfabrik"
+SWEP.Trivia_Calibre = ".40 S&W"
+SWEP.Trivia_Mechanism = "Short Recoil"
+SWEP.Trivia_Country = "Austria"
+SWEP.Trivia_Year = 1993]]
 
 SWEP.Slot = 1
 
 SWEP.UseHands = true
 
-SWEP.ViewModel = "models/weapons/c_pistol.mdl"
-SWEP.MirrorVMWM = false
-SWEP.WorldModel = "models/weapons/w_pistol.mdl"
-SWEP.ViewModelFOV = 65
-
-SWEP.Damage = 7
-SWEP.DamageMin = 5
-SWEP.RangeMin = 12.5
-SWEP.Range = 31.25
-SWEP.Penetration = 2
+SWEP.Damage = 14
+SWEP.DamageMin = 10 -- damage done at maximum range
+SWEP.RangeMin = 15
+SWEP.Range = 45
+SWEP.Penetration = 3
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
+SWEP.MuzzleVelocity = 300 -- projectile or phys bullet muzzle velocity
+-- IN M/S
 
+SWEP.CanFireUnderwater = true
+SWEP.ChamberSize = 1 -- how many rounds can be chambered.
+SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
 
-SWEP.ChamberSize = 0
-SWEP.Primary.ClipSize = 18 -- DefaultClip is automatically set.
-SWEP.ExtendedClipSize = 18
-SWEP.ReducedClipSize = 18
+SWEP.Recoil = 0.8
+SWEP.RecoilSide = 0.2
+SWEP.RecoilRise = 2
 
-SWEP.Recoil = 0.400
-SWEP.RecoilSide = 0.125
-SWEP.RecoilRise = 0.1
-SWEP.RecoilPunch = 2.5
-
-SWEP.Delay = 0.08 -- 60 / RPM.
+SWEP.Delay = 60 / 600 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
     },
     {
-        Mode = 0,
+        Mode = 0
     }
 }
 
-SWEP.NPCWeaponType = {"weapon_ar2", "weapon_smg1"}
-SWEP.NPCWeight = 150
+SWEP.NPCWeaponType = "weapon_pistol"
+SWEP.NPCWeight = 100
 
-SWEP.AccuracyMOA = 0 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 150 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 150
+SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.HipDispersion = 250 -- inaccuracy added by hip firing.
+SWEP.MoveDispersion = 250
 
-SWEP.Primary.Ammo = "Pistol" -- what ammo type the gun uses
+SWEP.Primary.Ammo = "pistol" -- what ammo type the gun uses
 
-SWEP.ShootVol = 110 -- volume of shoot sound
+SWEP.ShootVol = 115 -- volume of shoot sound
 SWEP.ShootPitch = 100 -- pitch of shoot sound
 
-SWEP.ShootSound =			{"weapons/pistol/pistol_fire2.wav"}
---SWEP.DistantShootSound =	"weapons/fesiugmw2/fire_distant/anaconda.wav"
-SWEP.ShootSoundSilenced =	"weapons/fesiugmw2/fire/usp45_sil.wav"
+local snd1 = Sound("TFA_KF2_9MM.1")
+local snd2 = Sound("TFA_KF2_9MM.2")
+local snd3 = Sound("TFA_KF2_9MM.3")
+SWEP.ShootSound = {snd1, snd2, snd3}
+SWEP.ShootSoundSilenced = "weapons/arccw/usp/usp_01.wav"
+SWEP.DistantShootSound = "weapons/arccw/hkp2000/hkp2000-1-distant.wav"
 
 SWEP.MuzzleEffect = "muzzleflash_pistol"
 SWEP.ShellModel = "models/shells/shell_9mm.mdl"
-SWEP.ShellScale = 1
+SWEP.ShellScale = 1.5
 
 SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 
+SWEP.SightTime = 0.175
+
 SWEP.SpeedMult = 1
-SWEP.SightedSpeedMult = 0.8
-SWEP.SightTime = 0.125
+SWEP.SightedSpeedMult = 0.75
 
-SWEP.IronSightStruct = {
-    Pos = Vector(-5.5, -10, 3.1),
-    Ang = Angle(0, 0, 0),
-    ViewModelFOV = 65,
-    Magnification = 1,
+SWEP.BarrelLength = 8
+
+SWEP.BulletBones = { -- the bone that represents bullets in gun/mag
+    -- [0] = "bulletchamber",
+    -- [1] = "bullet1"
 }
 
-SWEP.HoldtypeHolstered = "normal"
-SWEP.HoldtypeActive = "pistol"
-SWEP.HoldtypeSights = "pistol"
-
-SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL
-
-SWEP.ActivePos = Vector(0, 0, 1)
-SWEP.ActiveAng = Angle(0, 0, 0)
-
-SWEP.CustomizePos = Vector(13.92, 1, -1.08)
-SWEP.CustomizeAng = Angle(6.8, 37.7, 10.3)
-
-SWEP.HolsterPos = Vector(3, 0, 0)
-SWEP.HolsterAng = Angle(-10, 25, 0)
-
-SWEP.SprintPos = Vector(0, 0, 1)
-SWEP.SprintAng = Angle(0, 0, 0)
-
-SWEP.BarrelOffsetSighted = Vector(0, 0, -1)
-SWEP.BarrelOffsetHip = Vector(2, 0, -2)
-
-SWEP.BarrelLength = 18
-
-SWEP.ExtraSightDist = 5
-
------[ Tactical knife sheet ]------
-SWEP.CanBash				= true -- Tac knife will save us
---SWEP.MeleeDamage			= 100
---SWEP.MeleeRange				= 16
---SWEP.MeleeDamageType		= DMG_CLUB
---SWEP.MeleeTime				= 0.8
-SWEP.MeleeGesture			= ACT_HL2MP_GESTURE_RANGE_ATTACK_KNIFE
---SWEP.MeleeAttackTime		= 0.079
-SWEP.MeleeMissSound			= ""
-SWEP.MeleeHitSound			= "MW2Common.Melee.HitWorld"
-SWEP.MeleeHitNPCSound		= "MW2Common.Melee.HitFleshy_Slice"
-
-SWEP.AttachmentElements = {
-    ["rail"] = {
-        VMElements = {
-            {
-                Model = "models/weapons/arccw_go/atts/pistol_rail.mdl",
-                Bone = "v_weapon.223_Parent",
-                Offset = {
-                    pos = Vector(-0.05, -1.6, 6),
-                    ang = Angle(90, 0, -90),
-                },
-                Scale = Vector(0.95, 0.95, 0.95)
-            }
-        },
-        AttPosMods = {
-            [2] = {
-                vpos = Vector(-0.05, -1.2, 6),
-            }
-        }
-    },
-}
-
-SWEP.Attachments = {
-    {
-        PrintName = "Ammo Type",
-        Slot = "go_ammo",
-        DefaultAttName = "Standard Ammo"
-    },
-    {
-        PrintName = "Perk",
-        Slot = {"go_perk", "go_perk_pistol"}
-    },
-}
-
-SWEP.Animations = {
-    ["idle"] = {
-        Source = "idle",
-        Time = 2/30,
-        TPAnim = ACT_HL2MP_IDLE_PISTOL,
-    },
-    ["fire"] = {
-        Source = "fire",
-        Time = 12/30,
-    },
-    ["fire_iron"] = {
-        Source = "fire",
-        Time = 12/30,
-    },
-    ["reload"] = {
-        Source = "reload",
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_REVOLVER,
-        SoundTable = {
-						{s = "weapons/pistol/pistol_reload1.wav", t = 0},
-					},
-        LHIK = true,
-        LHIKIn = 0.5,
-        LHIKOut = 0.6,
-        LastClip1OutTime = 1.5,
-    },
-}
-
-if HORDE then HORDE.Syringe:ApplyMedicSkills(SWEP, 10) end
+SWEP.ProceduralRegularFire = false
+SWEP.ProceduralIronFire = false
+SWEP.ClipsPerAmmoBox = 2
+SWEP.CaseBones = {}
+if CLIENT then
+    SWEP.WepSelectIcon = Material("items/hl2/weapon_pistol.png")
+    killicon.AddAlias("arccw_kf2_9mm", "weapon_9mm")
+end
 
 function SWEP:DrawWeaponSelection(x, y, w, h, a)
     surface.SetDrawColor(255, 255, 255, a)
@@ -197,3 +98,155 @@ function SWEP:DrawWeaponSelection(x, y, w, h, a)
 
     surface.DrawTexturedRect(x, y, w, w / 2)
 end
+
+SWEP.IronSightStruct = {
+    Pos = Vector(0,10,0),
+    Ang = Angle(0, 0, 0),
+    Magnification = 1.1,
+    SwitchToSound = "", -- sound that plays when switching to this sight
+}
+
+SWEP.HoldtypeHolstered = "normal"
+SWEP.HoldtypeActive = "pistol"
+SWEP.HoldtypeSights = "revolver"
+
+SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL
+
+SWEP.BarrelOffsetSighted = Vector(0, 0, -1)
+SWEP.BarrelOffsetHip = Vector(2, 0, -2)
+
+SWEP.ExtraSightDist = 7
+
+SWEP.WorldModelOffset = {
+    pos = Vector(3.75, 1, -3.0),
+    ang = Angle( 0, 90, 180 ),
+}
+
+SWEP.ViewModel			= "models/weapons/kf2/tfa_c_9mm.mdl"
+SWEP.WorldModel			= "models/weapons/kf2/tfa_w_9mm.mdl"
+SWEP.ViewModelFOV = 60
+
+SWEP.ActivePos = Vector(3,5,-1)
+SWEP.ActiveAng = Angle(0, 0, 0)
+
+SWEP.HolsterPos = Vector(4.8, 6, 0)
+SWEP.HolsterAng = Angle(-7.036, 30.016, 0)
+
+SWEP.MirrorVMWM = false
+
+SWEP.Attachments = {
+    {
+        PrintName = "Optic", -- print name
+        DefaultAttName = "Iron Sights",
+        Slot = "optic_lp", -- what kind of attachments can fit here, can be string or table
+        Bone = "RW_Barrel", -- relevant bone any attachments will be mostly referring to
+        Offset = {
+            vpos = Vector(1, 0, 0.5), -- offset that the attachment will be relative to the bone
+            vang = Angle(0, 0, 0),
+            wpos = Vector(6, 1, -5),
+            wang = Angle(-2.829, -4.902, 180)
+        },
+    },
+    {
+        PrintName = "Muzzle",
+        DefaultAttName = "Standard Muzzle",
+        Slot = "muzzle",
+        Bone = "RW_Bolt",
+        Offset = {
+            vpos = Vector(4.25, 0, 0),
+            vang = Angle(0, 0, 0),
+            wpos = Vector(10, 1, -4.61),
+            wang = Angle(0, 0, 0)
+        },
+    },
+    {
+        PrintName = "Underbarrel",
+        Slot = {"foregrip_pistol", "style_pistol", "tac_pistol"},
+        Bone = "RW_Flashlight_Switch",
+        Offset = {
+            vpos = Vector(0, 0, 0),
+            vang = Angle(0, 0, 0),
+            wpos = Vector(7.238, 1, -1),
+            wang = Angle(0, -4.211, 0)
+        },
+    },
+    {
+        PrintName = "Grip",
+        Slot = "grip",
+        DefaultAttName = "Standard Grip"
+    },
+    {
+        PrintName = "Fire Group",
+        Slot = "fcg",
+        DefaultAttName = "Standard FCG"
+    },
+    {
+        PrintName = "Ammo Type",
+        Slot = "go_ammo",
+        DefaultAttName = "Standard Ammo"
+    },
+    {
+        PrintName = "Perk",
+        Slot = "go_perk"
+    },
+    {
+        PrintName = "Charm",
+        Slot = "charm",
+        FreeSlot = true,
+        Bone = "RW_Flashlight_Switch", -- relevant bone any attachments will be mostly referring to
+        Offset = {
+            vpos = Vector(1.5, -.7, .3), -- offset that the attachment will be relative to the bone
+            vang = Angle(0, 0, 0),
+            wpos = Vector(8, 1.5, -3.5),
+            wang = Angle(-2.829, -4.902, 180)
+        },
+    },
+}
+
+SWEP.Animations = {
+    ["idle"] = {
+        Source = "idle",
+    },
+    ["ready"] = {
+        Source = "draw",
+        Time = 1
+    },
+    ["draw_empty"] = {
+        Source = "idle_empty",
+    },
+    ["draw"] = {
+        Source = "draw",
+        Time = 1
+    },
+    ["fire"] = {
+		Source = "shoot",
+	},
+    ["fire_iron"] = {
+        Source = {"shoot_iron", "shoot_iron2", "shoot_iron3"},
+    },
+    ["reload"] = {
+        Source = "reload", MinProgress = 2.35, ForceEnd = true,
+        TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
+        Checkpoints = {20, 26, 40},
+        LHIK = true,
+        LHIKIn = .4,
+        LHIKOut = 1.8,
+        LHIKEaseIn = 1,
+        LHIKEaseOut = .6,
+    },
+    ["reload_empty"] = {
+        Source = "reload_empty", MinProgress = 2.5, ForceEnd = true,
+        TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
+        Checkpoints = {20, 26, 40, 60, 80},
+        LHIK = true,
+        LHIKIn = .4,
+        LHIKOut = 2.1,
+        LHIKEaseIn = 1,
+        LHIKEaseOut = .4,
+    },
+    ["holster"] = {
+		Source = "holster",
+	},
+}
+
+if HORDE then HORDE.Syringe:ApplyMedicSkills(SWEP, 10) end

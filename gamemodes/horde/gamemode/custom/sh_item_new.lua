@@ -149,7 +149,7 @@ end
 
     local copy_from_to = {
         arccw_horde_9mm = "arccw_kf2_9mm",
-        arccw_horde_357 = "arccw_hordeext_357",
+        arccw_horde_357 = "arccw_hordeext_snubnose",
         arccw_horde_akimbo_deagle = "arccw_hordeext_akimbo_deagle",
         arccw_horde_akimbo_m9 = "arccw_hordeext_akimbo_m9",
         arccw_horde_akimbo_glock17 = "arccw_hordeext_akimbo_glock17",
@@ -189,6 +189,7 @@ end
 
         HORDE.items["arccw_horde_smg1"].name = "Colt M635"
         HORDE.items["arccw_horde_shotgun"].name = "TOZ-34"
+        HORDE.items["arccw_horde_357"].name = "Snub Nose"
 
         HORDE:CreateItem("Melee",      "Fireaxe",        "arccw_horde_axe",       1500,  5, "Fireaxe.\nHeavy, but can chops most enemies in half.",
         nil, 10, -1, nil, nil, {Berserker=2}, nil, {HORDE.DMG_SLASH})
