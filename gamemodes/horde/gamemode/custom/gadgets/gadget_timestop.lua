@@ -60,7 +60,7 @@ if CLIENT then
                             ["$pp_colour_addg"] = 0,
                             ["$pp_colour_addb"] = 0,
                             ["$pp_colour_brightness"] = 0,
-                            ["$pp_colour_contrast"] = 1,
+                            ["$pp_colour_contrast"] = .8,
                             ["$pp_colour_colour"] = 0,
                             ["$pp_colour_mulr"] = 0,
                             ["$pp_colour_mulg"] = 0,
@@ -73,7 +73,7 @@ if CLIENT then
                             ["$pp_colour_addg"] = stage * .1,
                             ["$pp_colour_addb"] = 0,
                             ["$pp_colour_brightness"] = 0,
-                            ["$pp_colour_contrast"] = 1,
+                            ["$pp_colour_contrast"] = 1 - .2 * (1 - stage),
                             ["$pp_colour_colour"] = stage,
                             ["$pp_colour_mulr"] = stage * .8,
                             ["$pp_colour_mulg"] = stage * .8,
@@ -147,7 +147,6 @@ function HORDE:TimeStop_freeze_npc(ent)
         phys:Sleep()
     end
     
-    ent:SetSchedule(SCHED_NPC_FREEZE)
 	ent.oldAnimationPlaybackRate = ent.AnimationPlaybackRate
 	ent.oldPlaybackRate = ent:GetPlaybackRate()
     ent.AnimationPlaybackRate = 0
@@ -183,6 +182,18 @@ function HORDE:TimeStop_freeze_npc(ent)
     ent.HasMeleeAttack = false
     ent.oldHasRangeAttack = ent.HasRangeAttack
     ent.HasRangeAttack = false
+
+    local ent_wep = ent.GetActiveWeapon and ent:GetActiveWeapon()
+
+    if ent_wep and IsValid(ent_wep) then
+        if ent_wep.NPC_SecondaryFireNextT then
+            ent_wep.NPC_SecondaryFireNextT = ent_wep.NPC_SecondaryFireNextT + HORDE.TimeStop_TimeEnough()
+        end
+    
+        if ent_wep.NPC_NextPrimaryFireT then
+            ent_wep.NPC_NextPrimaryFireT = ent_wep.NPC_NextPrimaryFireT + HORDE.TimeStop_TimeEnough()
+        end
+    end
 	
 	if ent.CustomOnThink then
 		ent.oldCustomOnThink = ent.CustomOnThink
@@ -191,15 +202,16 @@ function HORDE:TimeStop_freeze_npc(ent)
 
     local timername = "Horde_TimeStop_FreezeNPC" .. ent:EntIndex()
 
+    ent:SetSchedule(SCHED_NPC_FREEZE)
+	ent:SetMoveVelocity(Vector(0,0,0))
+
     timer.Create(timername, 0.1, 0, function()
         if !IsValid(ent) then
             timer.Remove(timername)
             return
         end
-        if ent:GetCurrentSchedule() ~= SCHED_NPC_FREEZE then
-			ent:SetSchedule(SCHED_NPC_FREEZE)
-			ent:SetMoveVelocity(Vector(0,0,0))
-		end
+        ent:SetSchedule(SCHED_NPC_FREEZE)
+		ent:SetMoveVelocity(Vector(0,0,0))
     end)
 	
     if ent.StopAttacks then ent:StopAttacks(true) end
@@ -504,7 +516,7 @@ local function start_timestop(ply)
 		
 		hook.Add("Horde_SlowHeal_NotAllow", "Horde_TimeStop", function(ply2, amount, overhealmult)
 			if ply == ply2 then return end
-			if !players_healed[ply2] then 
+			if !players_healed[ply2] then
 				players_healed[ply2] = {0, 0}
 			end
 			players_healed[ply2][1] = players_healed[ply2][1] + amount
@@ -513,21 +525,6 @@ local function start_timestop(ply)
 				players_healed[ply2][2] = maxhealth
 			end
 			return true
-		end)
-		
-        timer.Simple(0.2, function()
-			for _, ent in pairs(npc_slowed) do
-				if not ent:IsValid() then continue end
-				ent:SetSchedule(SCHED_NPC_FREEZE)
-			end
-		end)
-
-        timer.Simple(1, function()
-			for _, ent in pairs(npc_slowed) do
-				if not ent:IsValid() then continue end
-                HORDE:TimeStop_freeze_npc(ent)
-				ent:SetSchedule(SCHED_NPC_FREEZE)
-			end
 		end)
 	
 		freeze_mutations()

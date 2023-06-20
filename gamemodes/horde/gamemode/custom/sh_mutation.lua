@@ -1,4 +1,4 @@
-local prefix = "horde/gamemode/custom/post_init/mutations/"
+local prefix = "horde/gamemode/custom/mutations/"
 local function Horde_LoadMutations()
     local dev = GetConVar("developer"):GetBool()
     for _, f in ipairs(file.Find(prefix .. "*", "LUA")) do

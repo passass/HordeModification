@@ -9,6 +9,9 @@ ENT.Spawnable = false
 ENT.AdminOnly = true
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
+ENT.Damage = 300
+ENT.Radius = 256
+
 //sound.Add(CHAN_AUTO, loop1, 100, 100, 75, "blackholeloop1.wav", 1, 100)
 //sound.Add(CHAN_AUTO, loop2, 100, 100, 75, "blackholeloop2.wav", 1, 100)
 
@@ -65,13 +68,22 @@ function ENT:Think()
 	if CurTime() > (self.beginImplosion ) then
 		
 		
-		for k,v in pairs(ents.FindInSphere(self:GetPos(), 250)) do
-			if (v:IsPlayer() == true or v:IsNPC() == true) and v != self:GetOwner() then
-				v:SetLocalVelocity(((self:GetPos() - v:GetPos()) * -20) + v:GetUp()*500)
-				//Get distance from self to v but invert it so the closer they are the more damage they take
+		
+		for k,v in pairs(ents.FindInSphere(self:GetPos(), self.Radius)) do
+			if v:IsNPC() then
+				v:SetLocalVelocity(((self:GetPos() - v:GetPos()) * -20) + v:GetUp() * 500)
+				
 				local dist = (self:GetPos() - v:GetPos()):Length()
-				local dmgamt = math.max(0, 1 - (dist / 250))
-				self.dmg_struct:SetDamage( dmgamt * 250 )
+
+				local dmgamt
+				
+				if dist < 100 then
+					dmgamt = 1
+				else
+					dmgamt = math.max(0, 1 - (dist / self.Radius))
+				end
+				
+				self.dmg_struct:SetDamage( dmgamt * self.Damage )
 				self.dmg_struct:SetInflictor( self.wep )
 				v:TakeDamageInfo( self.dmg_struct )
 			end
