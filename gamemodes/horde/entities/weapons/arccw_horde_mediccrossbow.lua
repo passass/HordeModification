@@ -105,7 +105,12 @@ SWEP.ProceduralIronFire = false
 
 SWEP.CaseBones = {}
 
-SWEP.IronSightStruct = false
+SWEP.IronSightStruct = {
+    Pos = Vector(-13.7, -3.2, 2),
+    Ang = Angle(0, -6, 0),
+    Magnification = 1.1,
+    CrosshairInSights = false,
+} -- false
 
 SWEP.HoldtypeHolstered = "passive"
 SWEP.HoldtypeActive = "ar2"
@@ -124,6 +129,18 @@ SWEP.WorldModelOffset = {
 }
 
 SWEP.Attachments = {
+    --[[{
+        PrintName = "Optic", -- print name
+        DefaultAttName = "Iron Sights",
+        Slot = {"optic_lp", "optic"}, -- what kind of attachments can fit here, can be string or table
+        Bone = "weapon_bone", -- relevant bone any attachments will be mostly referring to
+        Offset = {
+            vpos = Vector(0, -15, 1), -- offset that the attachment will be relative to the bone
+            vang = Angle(90, 90, 90),
+            wpos = Vector(13.5, 1.476, -7),
+            wang = Angle(0, 0, 180)
+        },
+    },]]
     {
         PrintName = "Perk",
         Slot = "go_perk"

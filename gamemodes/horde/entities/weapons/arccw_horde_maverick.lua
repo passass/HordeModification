@@ -44,9 +44,17 @@ SWEP.Primary.ClipSize = 20 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 30
 SWEP.ReducedClipSize = 10
 
-SWEP.Recoil = .65
+SWEP.Recoil = .8
 SWEP.RecoilSide = .75
 SWEP.RecoilRise = 1.8
+
+SWEP.RecoilPunch = 1.5
+SWEP.VisualRecoilMult = 1
+SWEP.MaxRecoilBlowback = 1
+SWEP.MaxRecoilPunch = 1
+SWEP.RecoilPunchBack = 2
+
+SWEP.Sway = 0.6
 
 SWEP.Delay = 60 / 400 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
@@ -169,7 +177,7 @@ SWEP.Attachments = {
         VMScale = Vector(1.2, 1, 1),
         WMScale = Vector(1.2, 1, 1),
         Offset = {
-            vpos = Vector(6, 0, -.8), -- offset that the attachment will be relative to the bone
+            vpos = Vector(9, 0, -.8), -- offset that the attachment will be relative to the bone
             vang = Angle(0, 0, 0),
             wpos = Vector(9.5, 1.15, -3.5),
             wang = Angle(172, -181, -1.5),
@@ -213,6 +221,8 @@ SWEP.Attachments = {
     },
 }
 
+local reloadmult = 1.5
+
 SWEP.Animations = {
     ["idle"] = {
         Source = "idle",
@@ -235,24 +245,22 @@ SWEP.Animations = {
         Source = {"shoot_iron", "shoot_iron2", "shoot_iron3"},
     },
     ["reload"] = {
-        MinProgress = 2, ForceEnd = true,
+        Mult = reloadmult,
+        --MinProgress = 2.2, ForceEnd = true,
         Source = "reload",
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         LHIK = true,
-        LHIKIn = .4, LHIKEaseIn = 1,
-        LHIKOut = .75, LHIKEaseOut = .3,
-        --[[LHIKEaseIn = 1,
-        LHIKEaseOut = .5,]]
+        LHIKIn = 1, LHIKEaseIn = 1,
+        LHIKOut = 1, LHIKEaseOut = .4,
     },
     ["reload_empty"] = {
-        MinProgress = 2.75,
-        Source = "reload_empty", ForceEnd = true,
+        --MinProgress = 2.75, ForceEnd = true,
+        Mult = reloadmult,
+        Source = "reload_empty",
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         LHIK = true,
-        LHIKIn = .4, LHIKEaseIn = 1,
-        LHIKOut = .7, LHIKEaseOut = .35,
-        --[[LHIKEaseIn = 1,
-        LHIKEaseOut = .5,]]
+        LHIKIn = 1, LHIKEaseIn = 1,
+        LHIKOut = .88, LHIKEaseOut = .45,
     },
     ["holster"] = {
 		Source = "holster",

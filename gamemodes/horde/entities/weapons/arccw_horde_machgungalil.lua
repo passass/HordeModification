@@ -44,6 +44,18 @@ SWEP.TracerWidth = 3
 SWEP.ChamberSize = 1-- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 60 -- DefaultClip is automatically set.
 
+SWEP.Recoil = 0.75
+SWEP.RecoilSide = 0.3
+
+SWEP.RecoilRise = 0.6
+SWEP.RecoilPunch = 1
+SWEP.VisualRecoilMult = 1
+SWEP.MaxRecoilBlowback = 1
+SWEP.MaxRecoilPunch = 1
+SWEP.RecoilPunchBack = 2
+
+SWEP.Sway = 0.6
+
 SWEP.Recoil = 0.6
 SWEP.RecoilSide = 0.35
 SWEP.RecoilRise = .9
@@ -283,7 +295,7 @@ SWEP.Attachments = {
     },
 }
 
-local reloadmult = .8
+local reloadmult = .7
 
 SWEP.Animations = {
     ["ready"] = {
