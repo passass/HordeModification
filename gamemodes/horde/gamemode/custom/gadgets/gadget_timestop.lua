@@ -3,7 +3,7 @@ GADGET.Description =
 [[Stop Time for 5 seconds.]]
 GADGET.Icon = "items/gadgets/timestop.png"
 GADGET.Duration = 6
-GADGET.Cooldown = 60
+GADGET.Cooldown = 7
 GADGET.Active = true
 GADGET.Params = {}
 GADGET.Hooks = {}
@@ -50,61 +50,67 @@ if CLIENT then
 
         if is_start then
             Weapons_Stop_Beams()
-            timer.Simple(.6, function()
-                timestop_start_time = CurTime()
-                hook.Add("RenderScreenspaceEffects", "TimeStop_screeneffect", function()
-                    local ct = CurTime()
-                    if ct > timestop_start_time + 2.2 then
-                        DrawColorModify( {
-                            ["$pp_colour_addr"] = 0,
-                            ["$pp_colour_addg"] = 0,
-                            ["$pp_colour_addb"] = 0,
-                            ["$pp_colour_brightness"] = 0,
-                            ["$pp_colour_contrast"] = .8,
-                            ["$pp_colour_colour"] = 0,
-                            ["$pp_colour_mulr"] = 0,
-                            ["$pp_colour_mulg"] = 0,
-                            ["$pp_colour_mulb"] = 0
-                        } )
-                    elseif ct > timestop_start_time + 1 then
-                        local stage = 1 - Lerp(math.ease.InQuad((ct - timestop_start_time - 1) / 1.2), 0, 1)
-                        DrawColorModify( {
-                            ["$pp_colour_addr"] = stage * .1,
-                            ["$pp_colour_addg"] = stage * .1,
-                            ["$pp_colour_addb"] = 0,
-                            ["$pp_colour_brightness"] = 0,
-                            ["$pp_colour_contrast"] = 1 - .2 * (1 - stage),
-                            ["$pp_colour_colour"] = stage,
-                            ["$pp_colour_mulr"] = stage * .8,
-                            ["$pp_colour_mulg"] = stage * .8,
-                            ["$pp_colour_mulb"] = 0
-                        } )
-                    else
-                        local stage = Lerp(math.ease.OutCirc(ct - timestop_start_time), 0, 1)
-                        DrawColorModify( {
-                            ["$pp_colour_addr"] = stage * .1,
-                            ["$pp_colour_addg"] = stage * .1,
-                            ["$pp_colour_addb"] = 0,
-                            ["$pp_colour_brightness"] = 0,
-                            ["$pp_colour_contrast"] = 1,
-                            ["$pp_colour_colour"] = 1,
-                            ["$pp_colour_mulr"] = stage * .8,
-                            ["$pp_colour_mulg"] = stage * .8,
-                            ["$pp_colour_mulb"] = 0
-                        } )
-                    end
-                end)
+            timer.Simple(.5, function()
 
-                timer.Create("TimerStopTicking", 1, 4, function()
-                    cur_tick = cur_tick + 1
-                    if cur_tick >= 5 then cur_tick = 1 end
-                    surface.PlaySound("timestop_tick" .. cur_tick .. ".mp3")
+                timer.Stop("Horde_LocalGadgetCooldown")
+
+                timer.Simple(.1, function()
+                    timestop_start_time = CurTime()
+                    hook.Add("RenderScreenspaceEffects", "TimeStop_screeneffect", function()
+                        local ct = CurTime()
+                        if ct > timestop_start_time + 2.2 then
+                            DrawColorModify( {
+                                ["$pp_colour_addr"] = 0,
+                                ["$pp_colour_addg"] = 0,
+                                ["$pp_colour_addb"] = 0,
+                                ["$pp_colour_brightness"] = 0,
+                                ["$pp_colour_contrast"] = .8,
+                                ["$pp_colour_colour"] = 0,
+                                ["$pp_colour_mulr"] = 0,
+                                ["$pp_colour_mulg"] = 0,
+                                ["$pp_colour_mulb"] = 0
+                            } )
+                        elseif ct > timestop_start_time + 1 then
+                            local stage = 1 - Lerp(math.ease.InQuad((ct - timestop_start_time - 1) / 1.2), 0, 1)
+                            DrawColorModify( {
+                                ["$pp_colour_addr"] = stage * .1,
+                                ["$pp_colour_addg"] = stage * .1,
+                                ["$pp_colour_addb"] = 0,
+                                ["$pp_colour_brightness"] = 0,
+                                ["$pp_colour_contrast"] = 1 - .2 * (1 - stage),
+                                ["$pp_colour_colour"] = stage,
+                                ["$pp_colour_mulr"] = stage * .8,
+                                ["$pp_colour_mulg"] = stage * .8,
+                                ["$pp_colour_mulb"] = 0
+                            } )
+                        else
+                            local stage = Lerp(math.ease.OutCirc(ct - timestop_start_time), 0, 1)
+                            DrawColorModify( {
+                                ["$pp_colour_addr"] = stage * .1,
+                                ["$pp_colour_addg"] = stage * .1,
+                                ["$pp_colour_addb"] = 0,
+                                ["$pp_colour_brightness"] = 0,
+                                ["$pp_colour_contrast"] = 1,
+                                ["$pp_colour_colour"] = 1,
+                                ["$pp_colour_mulr"] = stage * .8,
+                                ["$pp_colour_mulg"] = stage * .8,
+                                ["$pp_colour_mulb"] = 0
+                            } )
+                        end
+                    end)
+    
+                    timer.Create("TimerStopTicking", 1, 4, function()
+                        cur_tick = cur_tick + 1
+                        if cur_tick >= 5 then cur_tick = 1 end
+                        surface.PlaySound("timestop_tick" .. cur_tick .. ".mp3")
+                    end)
                 end)
             end)
         else
             timer.Simple(1.2, function()
                 Weapons_Start_Beams()
                 TimeStopProceed = false
+                timer.Start("Horde_LocalGadgetCooldown")
             end)
             timer.Remove("TimerStopTicking")
             hook.Add("RenderScreenspaceEffects", "TimeStop_screeneffect", function()
@@ -466,27 +472,40 @@ local function start_timestop(ply)
 		local players_healed = {}
 
         for _, ply2 in pairs(player.GetAll()) do
-            if ply2:Alive() and ply2 != ply then
-                ply2:Freeze(true)
-                ply2:Lock()
-                if ply2.Horde_HealHPRemain then
-                    players_healed[ply2] = {ply2.Horde_HealHPRemain, ply2.Horde_HealLastMaxHealth}
-                    ply2.Horde_HealHPRemain = nil
-                    timer.Remove("Horde_" .. ply2:EntIndex() .. "SlowlyHeal")
-                end
-                local wep = ply2:GetActiveWeapon()
-                if IsValid(wep) and wep.ArcCW and wep:GetReloading() then
-                    wep:SetNextPrimaryFire(wep:GetNextPrimaryFire() + 6.2)
-                    wep:SetReloading(wep:GetReloadingREAL() + 6.2)
-                    wep.LastAnimStartTime = wep.LastAnimStartTime + 6.2
-                    wep.LastAnimFinishTime = wep.LastAnimFinishTime + 6.2
-                    wep:SetNextIdle(wep:GetNextIdle() + 6.2)
-                    wep:SetMagUpIn(wep:GetMagUpIn() + 6.2)
-                    local vm = wep:GetOwner():GetViewModel()
-                    if vm and IsValid(vm) then
-                        wep.oldPlaybackRate = vm:GetPlaybackRate()
-                        vm:SetPlaybackRate(0)
+            if ply2:Alive() then
+                if ply2 != ply then
+
+                    -- Freeze player movement
+                    ply2:Freeze(true)
+                    ply2:Lock()
+                    
+                    -- Stop Healing
+                    if ply2.Horde_HealHPRemain then
+                        players_healed[ply2] = {ply2.Horde_HealHPRemain, ply2.Horde_HealLastMaxHealth}
+                        ply2.Horde_HealHPRemain = nil
+                        timer.Remove("Horde_" .. ply2:EntIndex() .. "SlowlyHeal")
                     end
+
+                    -- Stop reloading
+                    local wep = ply2:GetActiveWeapon()
+                    if IsValid(wep) and wep.ArcCW and wep:GetReloading() then
+                        wep:SetNextPrimaryFire(wep:GetNextPrimaryFire() + 6.2)
+                        wep:SetReloading(wep:GetReloadingREAL() + 6.2)
+                        wep.LastAnimStartTime = wep.LastAnimStartTime + 6.2
+                        wep.LastAnimFinishTime = wep.LastAnimFinishTime + 6.2
+                        wep:SetNextIdle(wep:GetNextIdle() + 6.2)
+                        wep:SetMagUpIn(wep:GetMagUpIn() + 6.2)
+                        local vm = wep:GetOwner():GetViewModel()
+                        if vm and IsValid(vm) then
+                            wep.oldPlaybackRate = vm:GetPlaybackRate()
+                            vm:SetPlaybackRate(0)
+                        end
+                    end
+                end
+
+                -- Stop gadget charging
+                if ply2:Horde_GetGadget() and ply2:Horde_GetGadgetNextThink() > 0 then
+                    ply2:Horde_SetGadgetNextThink(ply2:Horde_GetGadgetNextThink() + 6.2)
                 end
             end
         end

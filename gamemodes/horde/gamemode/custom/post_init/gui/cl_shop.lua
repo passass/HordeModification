@@ -46,7 +46,11 @@ function PANEL:Init()
     playermodelselector_btn:SetTall(40)
     playermodelselector_btn.DoClick = function()
         HORDE:ToggleShop()
-        RunConsoleCommand( "playermodel_selector" )
+        if concommand.GetTable()["playermodel_selector"] then
+            RunConsoleCommand( "playermodel_selector" )
+        else
+            vgui.Create("HordePlayerModelSelector")
+        end
     end
     playermodelselector_btn.PerformLayout = function(pnl)
         pnl:SizeToContents()
