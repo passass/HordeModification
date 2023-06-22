@@ -1,45 +1,17 @@
-if !HealInfo then
-    HealInfo = {}
-    HealInfo.__index = HealInfo
-
-    function HealInfo:New(o)
-        o = o or {}
-        setmetatable(o, self)
-        self.__index = self
-        return o
-    end
-
-    function HealInfo:SetHealAmount(amount)
-        self.amount = amount
-    end
-
-    function HealInfo:GetHealAmount()
-        return self.amount or 0
-    end
-
-    function HealInfo:SetHealer(healer)
-        self.healer = healer
-    end
-
-    function HealInfo:GetHealer(healer)
-        return self.healer
-    end
-
-    function HealInfo:SetOverHealPercentage(percentage)
-        self.over_heal_percentage = percentage
-    end
-
-    function HealInfo:GetOverHealPercentage()
-        return self.over_heal_percentage or 0
-    end
-end
-
 function HealInfo:IsImmediately()
-    return self.immediately
+    return self.immediately != false
 end
 
 function HealInfo:SetImmediately(immediately)
     self.immediately = immediately
+end
+
+function HealInfo:GetDelay()
+    return self.delay or 0.11
+end
+
+function HealInfo:SetDelay(delay)
+    self.delay = delay
 end
 
 local plymeta = FindMetaTable("Player")
@@ -48,36 +20,64 @@ function plymeta:Horde_GetTotalHP()
 	return math.min(self:Health() + self.Horde_HealHPRemain, self.Horde_HealLastMaxHealth)
 end
 
-function plymeta:Horde_SlowHeal(amount, overhealmult)
+function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
+
+    overhealmult = overhealmult or 1 + healinfo:GetOverHealPercentage()
+    
 	if hook.Run("Horde_SlowHeal_NotAllow", self, amount, overhealmult) then return end
-    local maxhealth = self:GetMaxHealth() * (overhealmult or 1)
+
+    --------------------> setup vars
+    
+    local maxhealth = self:GetMaxHealth() * overhealmult
+    local lastmaxhealth = self.Horde_HealLastMaxHealth
     local health = self:Health()
     local remaintoheal = self.Horde_HealHPRemain or 0
-    if amount + remaintoheal > maxhealth - health then
-        amount = math.Round(maxhealth - health)
-    end
-    if amount == 0 then return false end
+
+    --------------------> setup vars
+
     self.Horde_HealHPRemain = remaintoheal + amount
-    local timername = "Horde_" .. self:EntIndex() .. "SlowlyHeal"
-	local lastmaxhealth = self.Horde_HealLastMaxHealth
-    if not timer.Exists(timername) or lastmaxhealth and lastmaxhealth < maxhealth then
-		self.Horde_HealLastMaxHealth = maxhealth
-		self.Horde_HealHPRemain = self.Horde_HealHPRemain - 1
-		self:SetHealth(health + 1)
-        timer.Create(timername, 0.11, 0, function()
-            if IsValid(self) then
-                if self.Horde_HealHPRemain >= 1 then
-                    health = self:Health()
-                    if health < maxhealth then
-                        self.Horde_HealHPRemain = self.Horde_HealHPRemain - 1
-                        self:SetHealth(health + 1)
-                        return
+    local timer_obj
+    if !self.Horde_HealTimer or !self.Horde_HealTimer:IsValid() then
+        timer_obj = HORDE.Timers:New({
+            linkwithent = self,
+            timername = "Horde_" .. self:EntIndex() .. "SlowlyHeal",
+            func = function(timerobj)
+                if IsValid(self) then
+                    if self.Horde_HealHPRemain >= 1 then
+                        health = self:Health()
+                        if health < self.Horde_HealLastMaxHealth then
+                            self.Horde_HealHPRemain = self.Horde_HealHPRemain - 1
+                            self:SetHealth(health + 1)
+                            return
+                        end
                     end
+                    self.Horde_HealHPRemain = nil
                 end
-                self.Horde_HealHPRemain = nil
-            end
-            timer.Remove(timername)
-        end)
+                timerobj:Stop()
+                timerobj.delay = timerobj.vars_on_init.delay
+            end,
+            callfunconstart = true,
+            delay = HealInfo:GetDelay()
+        })
+        self.Horde_HealTimer = timer_obj
+    else
+        timer_obj = self.Horde_HealTimer
+    end
+
+    local is_update_timer = false
+
+    if !lastmaxhealth or lastmaxhealth < maxhealth then
+        self.Horde_HealLastMaxHealth = maxhealth
+        is_update_timer = true
+    end
+
+    if healinfo:GetDelay() < timer_obj.delay then
+        timer_obj:SetDelay(healinfo:GetDelay())
+        is_update_timer = true
+    end
+
+    if is_update_timer or !timer_obj:TimerExists() or timer_obj:IsStopped() then
+        timer_obj:UpdateTimer()
     end
     return true
 end
@@ -104,7 +104,7 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
 			end
 		end
         if healinfo:IsImmediately() == false then
-            ply:Horde_SlowHeal(heal_bonus * healinfo:GetHealAmount(), maxhealth_mult)
+            ply:Horde_SlowHeal(heal_bonus * healinfo:GetHealAmount(), healinfo, maxhealth_mult)
         else
             ply:SetHealth(
                 math.min(
@@ -115,7 +115,7 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
         end
     else
         if healinfo:IsImmediately() == false then
-            ply:Horde_SlowHeal(healinfo:GetHealAmount(), maxhealth_mult)
+            ply:Horde_SlowHeal(healinfo:GetHealAmount(), healinfo, maxhealth_mult)
         else
             ply:SetHealth(
                 math.min(

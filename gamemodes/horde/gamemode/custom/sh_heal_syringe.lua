@@ -42,21 +42,34 @@ end
 HORDE.Syringe = {}
 
 local function start_regen_syringes(wep)
-    local timername = "Horde_Wep_" .. wep:EntIndex() .. "regen_syrg"
-    if timer.Exists(timername) then return end
-    timer.Create(timername, 0.15, 0, function()
-        if IsValid(wep) then
-            local syringes = wep.Horde_Medic_SyringeCount
-            if syringes < 100 then
-                wep.Horde_Medic_SyringeCount = syringes + 4
-                if wep.Horde_Medic_SyringeCount > 100 then
-                    wep.Horde_Medic_SyringeCount = 100
+    local timer_obj
+    if !wep.Horde_HealSyringeTimer or !wep.Horde_HealSyringeTimer:IsValid() then
+        timer_obj = HORDE.Timers:New({
+            linkwithent = wep,
+            timername = "Horde_Wep_" .. wep:EntIndex() .. "regen_syrg",
+            func = function(timerobj)
+                if IsValid(wep) then
+                    local syringes = wep.Horde_Medic_SyringeCount
+                    if syringes < 100 then
+                        wep.Horde_Medic_SyringeCount = syringes + 4
+                        if wep.Horde_Medic_SyringeCount > 100 then
+                            wep.Horde_Medic_SyringeCount = 100
+                        end
+                        return
+                    end
                 end
-                return
-            end
-        end
-        timer.Remove(timername)
-    end)
+                timerobj:Stop()
+            end,
+            delay = .15 / wep:GetBuff_Mult("Mult_SyringeSpeed")
+        }, true)
+        wep.Horde_HealSyringeTimer = timer_obj
+    else
+        timer_obj = wep.Horde_HealSyringeTimer
+    end
+
+    if timer_obj:IsStopped() then
+        timer_obj:Start()
+    end
 end
 
 local syringe_picture = Material("syringe_icon.png", "mips smooth")

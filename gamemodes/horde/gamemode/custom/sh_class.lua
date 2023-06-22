@@ -96,8 +96,8 @@ function HORDE:GetDefaultClassesData()
         GetConVar("horde_base_runspeed"):GetInt(),
         "medic_base",
         {
-            [1] = {title = "Medicine", choices = {"medic_antibiotics", "medic_painkillers"}},
-            [2] = {title = "Bio-Engineering", choices = {"medic_berserk", "medic_fortify"}},
+            [1] = {title = "Medicine", choices = {"medic_antibiotics", "medic_painkillers", "medic_speedy"}},
+            [2] = {title = "Bio-Engineering", choices = {"medic_berserk", "medic_fortify", "medic_syringefaster"}},
             [3] = {title = "Enhancement", choices = {"medic_purify", "medic_haste"}},
             [4] = {title = "Natural Selection", choices = {"medic_cellular_implosion", "medic_xcele", "engineer_rapidandreloadslomo"}},
         },

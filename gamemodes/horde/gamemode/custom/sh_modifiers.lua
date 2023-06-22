@@ -370,7 +370,7 @@ function HORDE:Modifier_AddToWeapons(ply, modifier, primarykey, mult)
     end
 end
 
-function HORDE:LoadToWeaponModifier(wep)
+function HORDE:Modifier_LoadToWeaponModifier(wep)
     local ply = SERVER and wep:GetOwner() or MySelf
     if !ply.Horde_ModifiersTable then
         ply.Horde_ModifiersTable = {}
@@ -419,9 +419,10 @@ function HORDE:LoadToWeaponModifier(wep)
 end
 
 if SERVER then
+
     hook.Add("WeaponEquip", "Horde_ModifiersLoad", function(wep)
         timer.Simple(0, function()
-            HORDE:LoadToWeaponModifier(wep)
+            HORDE:Modifier_LoadToWeaponModifier(wep)
         end)
     end)
     util.AddNetworkString("Horde_wepModifierApply")
@@ -434,7 +435,7 @@ else
                 if !IsValid(wep) then
                     return
                 end
-                HORDE:LoadToWeaponModifier(wep)
+                HORDE:Modifier_LoadToWeaponModifier(wep)
             end)
         else
             local ply = MySelf
