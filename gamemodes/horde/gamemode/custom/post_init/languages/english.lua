@@ -12,7 +12,11 @@ LANGUAGE["Perk_survivor_base"] = [[
 The Survivor class can be played into any class to fill in missing roles for the team.
 Complexity: EASY
 
-{slomo1} increased reload speed and movement speed in slow motion. ({slomo2} per level, up to {slomo3}).]]
+{damageincrease1} increased damage. ({damageincrease2} per level, up to {damageincrease3}).
+{movement1} more movement speed. ({movement2} per level, up to {movement3}).
+{slomo1} increased reload speed and movement speed in slow motion. ({slomo2} per level, up to {slomo3}).
+
+Get random starter weapon.]]
 
 LANGUAGE["Perk_assault_base"] = [[
 The Assault class is an all-purpose fighter with high mobility and a focus on Adrenaline stacks.

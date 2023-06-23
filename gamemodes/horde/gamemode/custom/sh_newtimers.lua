@@ -143,7 +143,7 @@ else
     net.Receive("Horde_Timers_SyncDelay", function()
         local timer_obj = HORDE.Timers:Find(net.ReadString())
         local delay = net.ReadFloat()
-        if timer_obj:IsValid() then
+        if IsValid(timer_obj) then
             timer_obj:SetDelay(delay)
             timer_obj:UpdateTimer(true)
         end

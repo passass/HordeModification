@@ -185,8 +185,7 @@ end
         arccw_horde_vector = "arccw_hordeext_vector",
         
         horde_welder = "hordeext_welder",
-
-        
+        arccw_horde_flaregun = "arccw_hordeext_flaregun",
 
         arccw_horde_law = "arccw_hordeext_law",
         arccw_horde_m16m203 = "arccw_hordeext_m16m203",
@@ -233,14 +232,13 @@ end
     local old_itemsdata = HORDE.GetDefaultItemsData
     local new_itemsdata = function()
         
-
-        HORDE.items["arccw_horde_smg1"].name = "Colt M635"
-        HORDE.items["arccw_horde_smg1"].shop_icon = nil
         HORDE.items["arccw_horde_shotgun"].name = "TOZ-34"
         HORDE.items["arccw_horde_357"].name = "Snub Nose"
         HORDE.items["arccw_horde_357"].starter_classes = nil
         HORDE.items["horde_welder"].starter_classes = nil
-        
+
+        table.insert(HORDE.items["arccw_horde_flaregun"].starter_classes, "Survivor")
+        table.insert(HORDE.items["arccw_horde_shotgun"].starter_classes, "Survivor")
 
         local starter_weapons_entity_properties = {type=HORDE.ENTITY_PROPERTY_WPN, sell_forbidden=true, cantdropwep=true}
 
@@ -260,18 +258,18 @@ end
         HORDE:CreateItem("Equipment",  "Medkit",         "weapon_horde_medkit",      50,   0, "Rechargeble medkit.\nRMB to self-heal, LMB to heal others.",
         nil, 10, -1, starter_weapons_entity_properties, "items/weapon_medkit.png", nil, nil, nil, nil, {"All"})
 
-        HORDE:CreateItem("SMG",        "SMG1",           "arccw_horde_smg1",   100, 3, "A compact, fully automatic firearm.",
-        {Assault=true, Heavy=true}, 5, -1, nil, "items/hl2/weapon_smg1.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Assault", "Heavy", "SpecOps"})
+        HORDE:CreateItem("SMG",        "Colt M635",           "arccw_horde_smg1",   100, 3, "A compact, shoots burst.",
+        {Assault=true, Heavy=true, Survivor=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Assault", "Heavy", "SpecOps"})
         HORDE:CreateItem("Melee",      "Crowbar",        "arccw_horde_crowbar", 300,  3, "A trusty crowbar.\nEasy to use.",
-        {Berserker=true}, 10, -1, nil, "items/hl2/weapon_crowbar.png", nil, nil, {HORDE.DMG_BLUNT}, nil, {"Berserker"})
+        {Berserker=true, Survivor=true}, 10, -1, nil, "items/hl2/weapon_crowbar.png", nil, nil, {HORDE.DMG_BLUNT}, nil, {"Berserker"})
         HORDE:CreateItem("Pistol",     "HX-25",          "arccw_horde_hx25",   300,  2, "HX-25.\n Compact explosive pistol.",
-        {Demolition=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BLAST}, nil, {"Demolition"})
+        {Demolition=true, Survivor=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BLAST}, nil, {"Demolition"})
         HORDE:CreateItem("Pistol",     "HMTech-101 Pistol",          "arccw_kf2_pistol_medic",   300,  2, "HMTech-101 Pistol.\n A modern pistol with heal module.",
-        {Medic=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON}, nil, {"Medic"})
+        {Medic=true, Survivor=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON}, nil, {"Medic"})
         HORDE:CreateItem("Pistol",     "Trespasser",          "arccw_horde_trespasser",   300,  2, "Trespasser.\n A modern pistol with electric damage.",
-        {Engineer=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_SHOCK}, nil, {"Engineer"})
+        {Engineer=true, Survivor=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_SHOCK}, nil, {"Engineer"})
         HORDE:CreateItem("Rifle",     "Kar98k",          "arccw_horde_k98k",   300,  3, "Mauser Kar98k.\n A old with bolt-action.",
-        {Ghost=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Ghost"})
+        {Ghost=true, Survivor=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Ghost"})
 
         HORDE:CreateItem("Melee",      "Fireaxe",        "arccw_horde_axe",       1500,  5, "Fireaxe.\nHeavy, but can chops most enemies in half.",
         nil, 10, -1, nil, nil, {Berserker=2}, nil, {HORDE.DMG_SLASH})

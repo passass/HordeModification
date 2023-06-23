@@ -224,16 +224,32 @@ function HORDE:GiveStarterWeapons(ply)
             end
         end
 
-        timer.Simple(0, function()
-            for _, wpn_class in pairs(weapons_gotted) do
-                local wep = ply:GetWeapon(wpn_class)
-                if IsValid(wep) then
-                    ply:SetAmmo(math.Round(HORDE:Ammo_GetMaxAmmo(wep) / 4 * 3), wep:GetPrimaryAmmoType())
+        ply:Horde_SetGivenStarterWeapons(true)
+    end
+
+    local yourclass = ply:Horde_GetClass().name
+    if yourclass == HORDE.Class_Survivor then
+        local wpns_class = table.Copy(HORDE.starter_weapons)
+        wpns_class["All"] = nil
+        wpns_class = table.ClearKeys(wpns_class)
+        local isgived = false
+
+        while !isgived and !table.IsEmpty(wpns_class) do
+            local dropped = math.random(#wpns_class)
+
+            local weps = wpns_class[dropped]
+            for _, wpn_class in pairs(weps) do
+                local item = HORDE.items[wpn_class]
+                if item and item.whitelist[yourclass] then
+                    ply:Give(wpn_class)
+                    table.insert(weapons_gotted, wpn_class)
+                    isgived = true
                 end
             end
-        end)
-
-        ply:Horde_SetGivenStarterWeapons(true)
+            if !isgived then
+                wpns_class[dropped] = nil
+            end
+        end
     end
 
     if HORDE.starter_weapons["All"] then
@@ -245,6 +261,17 @@ function HORDE:GiveStarterWeapons(ply)
     HORDE:GiveClassGrenades(ply)
 
     ply:SetAmmo(75, "ammo_starterweapon")
+
+    if !table.IsEmpty(weapons_gotted) then
+        timer.Simple(0, function()
+            for _, wpn_class in pairs(weapons_gotted) do
+                local wep = ply:GetWeapon(wpn_class)
+                if IsValid(wep) then
+                    ply:SetAmmo(math.Round(HORDE:Ammo_GetMaxAmmo(wep) / 4 * 3), wep:GetPrimaryAmmoType())
+                end
+            end
+        end)
+    end
 end
 
 hook.Add("DoPlayerDeath", "Horde_DoPlayerDeath", function(victim)
