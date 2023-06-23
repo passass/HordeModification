@@ -6,4 +6,3 @@ end
 SWEP.Base = "arccw_horde_javelin"
 SWEP.Horde_MaxMags = 50
 SWEP.ClipsPerAmmoBox = 5
-SWEP.ForceDefaultAmmo = 0

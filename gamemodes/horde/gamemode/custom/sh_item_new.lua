@@ -145,16 +145,32 @@ end
         "arccw_go_870",
         "arccw_mw2_m1911",
         "item_battery",
+        "arccw_horde_medic_9mm"
     }
 
     local copy_from_to = {
+        arccw_horde_knife = "arccw_hordeext_knife",
+        weapon_horde_medkit = "weapon_hordeext_medkit",
         arccw_horde_9mm = "arccw_kf2_9mm",
+
+        arccw_horde_crowbar = "arccw_hordeext_crowbar",
+
+        arccw_horde_nade_stun = "arccw_hordeext_nade_stun",
+        arccw_horde_nade_shrapnel = "arccw_hordeext_nade_shrapnel",
+        arccw_horde_nade_sonar = "arccw_hordeext_nade_sonar",
+        arccw_horde_m67 = "arccw_hordeext_m67",
+        arccw_nade_medic = "arccw_hordeext_nade_medic",
+        arccw_horde_nade_nanobot = "arccw_hordeext_nade_nanobot",
+        arccw_horde_nade_hemo = "arccw_hordeext_nade_hemo",
+        arccw_horde_nade_emp = "arccw_hordeext_nade_emp",
+        arccw_horde_nade_molotov = "arccw_hordeext_nade_molotov",
+
         arccw_horde_357 = "arccw_hordeext_snubnose",
         arccw_horde_akimbo_deagle = "arccw_hordeext_akimbo_deagle",
         arccw_horde_akimbo_m9 = "arccw_hordeext_akimbo_m9",
         arccw_horde_akimbo_glock17 = "arccw_hordeext_akimbo_glock17",
         arccw_horde_m79 = "arccw_hordeext_m79",
-        arccw_horde_medic_9mm = "arccw_hordeext_medic_9mm",
+        --arccw_horde_medic_9mm = "arccw_hordeext_medic_9mm",
         arccw_horde_medic_acr = "arccw_hordeext_medic_acr",
         arccw_horde_mp5 = "arccw_hordeext_mp5",
         arccw_horde_mp5k = "arccw_hordeext_mp5k",
@@ -167,14 +183,10 @@ end
         arccw_horde_tmp = "arccw_hordeext_tmp",
         arccw_horde_trenchgun = "arccw_hordeext_trenchgun",
         arccw_horde_vector = "arccw_hordeext_vector",
-        weapon_horde_medkit = "weapon_hordeext_medkit",
         
-
         horde_welder = "hordeext_welder",
 
-        --arccw_nade_medic = "arccw_hordeext_nade_medic",
-        --arccw_horde_nade_incendiary = "arccw_hordeext_nade_incendiary",
-        --arccw_horde_nade_molotov = "arccw_hordeext_nade_molotov",
+        
 
         arccw_horde_law = "arccw_hordeext_law",
         arccw_horde_m16m203 = "arccw_hordeext_m16m203",
@@ -184,13 +196,82 @@ end
         arccw_horde_heat_crossbow = "arccw_hordeext_heat_crossbow",
     }
 
+    HORDE.class_grenades = {}
+
+    local grenades_classes1 = {
+        arccw_horde_nade_stun = "arccw_hordeext_nade_stun",
+        arccw_horde_nade_shrapnel = "arccw_hordeext_nade_shrapnel",
+        arccw_horde_nade_sonar = "arccw_hordeext_nade_sonar",
+        arccw_horde_m67 = "arccw_hordeext_m67",
+        arccw_nade_medic = "arccw_hordeext_nade_medic",
+        arccw_horde_nade_nanobot = "arccw_hordeext_nade_nanobot",
+        arccw_horde_nade_hemo = "arccw_hordeext_nade_hemo",
+        arccw_horde_nade_emp = "arccw_hordeext_nade_emp",
+        arccw_horde_nade_molotov = "arccw_hordeext_nade_molotov",
+    }
+
+    function HORDE:GiveClassGrenades(ply, oldclass)
+        local yourclass = ply:Horde_GetClass().name
+        if !yourclass then return end
+        if oldclass then
+            ply:StripWeapon(HORDE.class_grenades[oldclass])
+        end
+        if HORDE.class_grenades[yourclass] then
+            ply:Give(HORDE.class_grenades[yourclass])
+        end
+    end
+
+    function HORDE:GetClassGrenades()
+        for _, wpn_class in pairs(grenades_classes1) do
+            local item = HORDE.items[wpn_class]
+            for class, _ in pairs(item.whitelist) do
+                HORDE.class_grenades[class] = wpn_class
+            end
+        end
+    end
+
     local old_itemsdata = HORDE.GetDefaultItemsData
     local new_itemsdata = function()
+        
 
         HORDE.items["arccw_horde_smg1"].name = "Colt M635"
         HORDE.items["arccw_horde_smg1"].shop_icon = nil
         HORDE.items["arccw_horde_shotgun"].name = "TOZ-34"
         HORDE.items["arccw_horde_357"].name = "Snub Nose"
+        HORDE.items["arccw_horde_357"].starter_classes = nil
+        HORDE.items["horde_welder"].starter_classes = nil
+        
+
+        local starter_weapons_entity_properties = {type=HORDE.ENTITY_PROPERTY_WPN, sell_forbidden=true, cantdropwep=true}
+
+        for class, newclass in pairs(grenades_classes1) do
+            local item = HORDE.items[class]
+            if item then
+                item.entity_properties = starter_weapons_entity_properties
+            end
+        end
+
+        HORDE.items["arccw_horde_nade_stun"].whitelist["SWAT"] = true
+        
+        HORDE:CreateItem("Pistol",     "9mm",            "arccw_horde_9mm",   50,  0, "Combine standard sidearm.",
+        nil, 4, -1, starter_weapons_entity_properties, "items/hl2/weapon_pistol.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"All"})
+        HORDE:CreateItem("Melee",      "Combat Knife",   "arccw_horde_knife",    100,  0, "A reliable bayonet.\nRMB to deal a heavy slash.",
+        nil, 10, -1, starter_weapons_entity_properties, nil, nil, nil, {HORDE.DMG_SLASH}, nil, {"All"})
+        HORDE:CreateItem("Equipment",  "Medkit",         "weapon_horde_medkit",      50,   0, "Rechargeble medkit.\nRMB to self-heal, LMB to heal others.",
+        nil, 10, -1, starter_weapons_entity_properties, "items/weapon_medkit.png", nil, nil, nil, nil, {"All"})
+
+        HORDE:CreateItem("SMG",        "SMG1",           "arccw_horde_smg1",   100, 3, "A compact, fully automatic firearm.",
+        {Assault=true, Heavy=true}, 5, -1, nil, "items/hl2/weapon_smg1.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Assault", "Heavy", "SpecOps"})
+        HORDE:CreateItem("Melee",      "Crowbar",        "arccw_horde_crowbar", 300,  3, "A trusty crowbar.\nEasy to use.",
+        {Berserker=true}, 10, -1, nil, "items/hl2/weapon_crowbar.png", nil, nil, {HORDE.DMG_BLUNT}, nil, {"Berserker"})
+        HORDE:CreateItem("Pistol",     "HX-25",          "arccw_horde_hx25",   300,  2, "HX-25.\n Compact explosive pistol.",
+        {Demolition=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BLAST}, nil, {"Demolition"})
+        HORDE:CreateItem("Pistol",     "HMTech-101 Pistol",          "arccw_kf2_pistol_medic",   300,  2, "HMTech-101 Pistol.\n A modern pistol with heal module.",
+        {Medic=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON}, nil, {"Medic"})
+        HORDE:CreateItem("Pistol",     "Trespasser",          "arccw_horde_trespasser",   300,  2, "Trespasser.\n A modern pistol with electric damage.",
+        {Engineer=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_SHOCK}, nil, {"Engineer"})
+        HORDE:CreateItem("Rifle",     "Kar98k",          "arccw_horde_k98k",   300,  3, "Mauser Kar98k.\n A old with bolt-action.",
+        {Ghost=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Ghost"})
 
         HORDE:CreateItem("Melee",      "Fireaxe",        "arccw_horde_axe",       1500,  5, "Fireaxe.\nHeavy, but can chops most enemies in half.",
         nil, 10, -1, nil, nil, {Berserker=2}, nil, {HORDE.DMG_SLASH})
@@ -253,8 +334,6 @@ end
         HORDE:CreateItem("Pistol",     "G18",          "arccw_horde_g18",   1750,  3, "G18.\nAutomatic pistol with big mag.",
         special_pistol_classes, 10, -1, nil, nil, special_pistol_requir, 1, {HORDE.DMG_BALLISTIC})
         
-        HORDE:CreateItem("Pistol",     "HMTech-101 Pistol",          "arccw_kf2_pistol_medic",   750,  2, "HMTech-101 Pistol.\n A modern pistol with heal module.",
-        {Medic=true}, 5, -1, nil, nil, {Medic=5}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
         HORDE:CreateItem("Pistol",     "CZ75",           "arccw_horde_cz75",     750,  2, "CZ 75.\nA semi-automatic pistol manufactured in Czech Republic.",
         {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "M9",             "arccw_horde_m9",       750,  2, "Beretta M9.\nSidearm used by the United States Armed Forces.",
@@ -437,7 +516,7 @@ end
             Survivor = {Assault=9, Survivor=15},
         }, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Rifle",      "AK-117",          "arccw_horde_ak117", 3000, 6, "AK-117.\nNewest weapon of series AK.",
-        {Engineer=true}, 10, -1, nil, nil, {Engineer=5, Assault=5}, nil, {HORDE.DMG_BALLISTIC})
+        {Engineer=true}, 10, -1, nil, nil, {Engineer=5, Assault=5}, nil, {HORDE.DMG_SHOCK})
         
         HORDE:CreateItem("Rifle",      "AK12",         "arccw_kf2_ak12", 3500, 8, "AK12.\nA continue of famous rifle. \n Super Power",
         {Assault=true}, 15, -1, nil, nil, {Assault=16}, nil, {HORDE.DMG_BALLISTIC})
@@ -703,6 +782,7 @@ end
             HORDE.items[v] = nil
         end
 
+        HORDE:GetClassGrenades()
         GetStarterWeapons()
 
         print("[HORDE] - Loaded default item config.")

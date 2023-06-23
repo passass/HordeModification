@@ -15,8 +15,8 @@ att.Slot = {"ammo_bullet", "go_bullet"}
 
 --att.MagReducer = true
 
-att.Mult_ShootPitch = 0.7
-att.Mult_ShootVol = 1.5
+--att.Mult_ShootPitch = 0.7
+--att.Mult_ShootVol = 1.5
 att.Mult_Penetration = 0
 --att.Mult_Damage = 0.5
 --att.Mult_Range = 0.5
@@ -32,7 +32,15 @@ end]]
 --att.Hidden = true
 att.Hook_BulletHit = function(wep, data)
     local ent = data.tr.Entity
-    util.BlastDamage(wep, wep:GetOwner(), data.tr.HitPos, 150, wep:GetDamage(data.range) / wep:GetBuff("Num"))
+
+    local dmg = DamageInfo()
+    dmg:SetAttacker(wep:GetOwner())
+    dmg:SetInflictor(wep)
+    dmg:SetDamageType(DMG_BLAST)
+    dmg:SetDamage(wep:GetDamage(data.range) / wep:GetBuff("Num"))
+    dmg:SetDamageCustom(HORDE.DMG_PLAYER_FRIENDLY)
+	util.BlastDamageInfo(dmg, data.tr.HitPos, 150)
+    
     data.damage = 0
     if ent:IsValid() and ent:GetClass() == "npc_helicopter" then
         data.dmgtype = DMG_AIRBOAT

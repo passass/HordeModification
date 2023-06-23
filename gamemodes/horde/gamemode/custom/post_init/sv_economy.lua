@@ -43,7 +43,7 @@ function plymeta:Horde_RecalcWeight()
         if not HORDE.items[wpn:GetClass()] then goto cont end
         local wpn_weight = HORDE.items[wpn:GetClass()].weight
         if weight + wpn_weight > self:Horde_GetMaxWeight() then
-            if IsValid(wpn) and wpn.CantDropWep then
+            if IsValid(wpn) and !self:CanDropWeapon(wpn) then
                 self:StripWeapon(wpn:GetClass())
             else
                 self:DropWeapon(wpn)
@@ -140,7 +140,7 @@ hook.Add("WeaponEquip", "Horde_Economy_Equip", function (wpn, ply)
         end
         if (ply:Horde_GetWeight() - item.weight < 0) or (item.whitelist and (not item.whitelist[ply:Horde_GetClass().name])) then
             timer.Simple(0, function ()
-                if IsValid(wpn) and wpn.CantDropWep then
+                if IsValid(wpn) and !ply:CanDropWeapon(wpn) then
                     ply:StripWeapon(wpn:GetClass())
                 else
                     ply:DropWeapon(wpn)
@@ -180,6 +180,7 @@ end
 net.Receive("Horde_BuyItem", function (len, ply)
     if not ply:IsValid() or not ply:Alive() then return end
     local class = net.ReadString()
+    if hook.Run("CanBuyItem", ply, class) == false then return end
 
     local price = HORDE.items[class].price
     local weight = HORDE.items[class].weight
@@ -394,8 +395,6 @@ net.Receive("Horde_BuyItem", function (len, ply)
     end
 end)
 
-
-
 net.Receive("Horde_SellItem", function (len, ply)
     if not ply:IsValid() then return end
     local class = net.ReadString()
@@ -404,12 +403,17 @@ net.Receive("Horde_SellItem", function (len, ply)
         HORDE:SendNotification(why or "You can't sell this.", 1, ply)
         return
     end
+    local item = HORDE.items[class]
+    if item and item.entity_properties and item.entity_properties.sell_forbidden then
+        HORDE:SendNotification("it is forbidden to sell this.", 1, ply)
+        return
+    end
     if ply:HasWeapon(class) then
         local wep = ply:GetWeapon(class)
         if wep.Horde_OnSell and wep:Horde_OnSell() then return end
         local item = HORDE.items[class]
         ply:Horde_AddMoney(math.floor(item.price * 0.25))
-		if wep.ArcCW and wep.Attachments then 
+		if wep.ArcCW and wep.Attachments then
             for k, v in pairs(wep.Attachments) do
                 if v.Installed and !v.FreeSlot and !v.Hidden and !v.Integral then
                     ArcCW:PlayerGiveAtt(ply, v.Installed)
@@ -420,7 +424,6 @@ net.Receive("Horde_SellItem", function (len, ply)
         ply:StripWeapon(class)
         ply:Horde_SyncEconomy()
     else
-        local item = HORDE.items[class]
         if item.entity_properties.type == HORDE.ENTITY_PROPERTY_DROP or item.entity_properties.wep_that_place then
             local drop_entities = ply:Horde_GetDropEntities()
             if drop_entities and drop_entities[class] then
@@ -523,12 +526,14 @@ net.Receive("Horde_SelectClass", function (len, ply)
                 occupied_weight = occupied_weight + HORDE.items[wpnclass].weight
                 continue
             end
-            if IsValid(wpn) and wpn.CantDropWep then
+            if IsValid(wpn) and !ply:CanDropWeapon(wpn) then
                 ply:StripWeapon(wpnclass)
             else
                 ply:DropWeapon(wpn)
             end
         end
+
+        HORDE:GiveClassGrenades(ply)
     else
 		ply:StripAmmo()
         --ply:StripWeapons()
@@ -581,6 +586,7 @@ end)
 net.Receive("Horde_BuyItemAmmoPrimary", function (len, ply)
     if not ply:IsValid() or not ply:Alive() then return end
     local class = net.ReadString()
+    if hook.Run("CanBuyAmmoPrimary", ply, class) == false then return end
     if not ply:HasWeapon(class) then
         HORDE:SendNotification("You don't have this weapon!", 0, ply)
         return
@@ -605,4 +611,108 @@ net.Receive("Horde_BuyItemAmmoPrimary", function (len, ply)
     end
 end)
 
+net.Receive("Horde_BuyItemAmmoSecondary", function (len, ply)
+    if not ply:IsValid() or not ply:Alive() then return end
+    local class = net.ReadString()
+    if hook.Run("CanBuyAmmoSecondary", ply, class) == false then return end
+    if not ply:HasWeapon(class) then
+        HORDE:SendNotification("You don't have this weapon!", 0, ply)
+        return
+    end
+    
+    local price = HORDE.items[class].secondary_ammo_price
+    if ply:Horde_GetMoney() >= price then
+        ply:Horde_AddMoney(-price)
+        local wpn = ply:GetWeapon(class)
+        local ammo_id = wpn:GetSecondaryAmmoType()
+        if ammo_id >= 0 then
+            ply:GiveAmmo(1, ammo_id, false)
+            ply:Horde_SyncEconomy()
+        end
+    end
+end)
 
+net.Receive("Horde_BuyItemUpgrade", function (len, ply)
+    if not ply:IsValid() or not ply:Alive() then return end
+    local class = net.ReadString()
+    if hook.Run("CanBuyItemUpgrade", ply, class) == false then return end
+    if not ply:HasWeapon(class) then
+        HORDE:SendNotification("You don't have this weapon!")
+        return
+    end
+
+    if ply:Horde_GetUpgrade(class) >= 10 then return end
+
+    local price = HORDE:GetUpgradePrice(class, ply)
+    if ply:Horde_GetMoney() >= price then
+        ply:Horde_AddMoney(-price)
+        ply:Horde_SetUpgrade(class, ply:Horde_GetUpgrade(class) + 1)
+        ply:Horde_SyncEconomy()
+        sound.Play("items/battery_pickup.wav", ply:GetPos())
+        if class == "horde_pheropod" then
+            ply:GetWeapon("horde_pheropod"):UpgradeReset()
+        end
+    end
+end)
+
+-------------------------> Cant buy anything before start game
+
+hook.Add("CanBuyItemUpgrade", "Horde_PrepareBuy", function(ply, class)
+    HORDE:SendNotification("You Can't upgrade before start game!", 1, ply)
+    return false
+end)
+
+hook.Add("CanBuyAmmoSecondary", "Horde_PrepareBuy", function(ply, class)
+    HORDE:SendNotification("You Can't buy ammo before start game!", 1, ply)
+    return false
+end)
+
+hook.Add("CanBuyAmmoPrimary", "Horde_PrepareBuy", function(ply, class)
+    HORDE:SendNotification("You Can't buy ammo before start game!", 1, ply)
+    return false
+end)
+
+hook.Add("CanBuyItem", "Horde_PrepareBuy", function(ply, class)
+    HORDE:SendNotification("You Can't buy before start game!", 1, ply)
+    return false
+end)
+
+hook.Add("CanSell", "Horde_PrepareBuy", function(ply, class)
+    return false, "You Can't sell before start game!"
+end)
+
+hook.Add("Horde_PlayerDropMoney", "Horde_PrepareBuy", function(ply)
+    HORDE:SendNotification("You Can't drop money before start game!", 1, ply)
+    return true
+end)
+
+
+hook.Add("HordeWaveStart", "Horde_PrepareBuy", function(wave)
+    hook.Remove("CanSell", "Horde_PrepareBuy")
+    hook.Remove("CanBuyItem", "Horde_PrepareBuy")
+    hook.Remove("CanBuyAmmoPrimary", "Horde_PrepareBuy")
+    hook.Remove("CanBuyAmmoSecondary", "Horde_PrepareBuy")
+    hook.Remove("CanBuyItemUpgrade", "Horde_PrepareBuy")
+    hook.Remove("Horde_PlayerDropMoney", "Horde_PrepareBuy")
+    hook.Remove("HordeWaveStart", "Horde_PrepareBuy")
+end)
+
+-------------------------> Cant buy anything before start game
+
+local old_dropweapon = plymeta.DropWeapon
+
+function plymeta:CanDropWeapon(wep)
+    if wep.CantDropWep then return false end
+    local wpn_class = wep:GetClass()
+    local item = HORDE.items[wpn_class]
+    if item and item.entity_properties.cantdropwep then
+        return false
+    end
+    return true
+end
+
+function plymeta:DropWeapon(wep)
+    wep = wep or self:GetActiveWeapon()
+    if !IsValid(wep) or !self:CanDropWeapon(wep) then return end
+    old_dropweapon(self, wep)
+end

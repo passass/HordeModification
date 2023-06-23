@@ -16,8 +16,8 @@ SWEP.Slot = 1
 
 SWEP.UseHands = true
 
-SWEP.Damage = 14
-SWEP.DamageMin = 10 -- damage done at maximum range
+SWEP.Damage = 18
+SWEP.DamageMin = 12 -- damage done at maximum range
 SWEP.RangeMin = 15
 SWEP.Range = 45
 SWEP.Penetration = 3
@@ -52,11 +52,17 @@ SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a deg
 SWEP.HipDispersion = 250 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 250
 
-SWEP.Primary.Ammo = "pistol" -- what ammo type the gun uses
+game.AddAmmoType( {
+	name = "ammo_starterweapon",
+} )
+
+SWEP.Horde_MaxMags = 6
+SWEP.Primary.Ammo = "ammo_starterweapon" -- what ammo type the gun uses
 
 SWEP.ShootVol = 115 -- volume of shoot sound
 SWEP.ShootPitch = 100 -- pitch of shoot sound
-
+SWEP.CantDropWep = true
+SWEP.ForceDefaultAmmo = 0
 local snd1 = Sound("TFA_KF2_9MM.1")
 local snd2 = Sound("TFA_KF2_9MM.2")
 local snd3 = Sound("TFA_KF2_9MM.3")
@@ -209,14 +215,12 @@ SWEP.Animations = {
     },
     ["ready"] = {
         Source = "draw",
-        Time = 1
     },
     ["draw_empty"] = {
         Source = "idle_empty",
     },
     ["draw"] = {
         Source = "draw",
-        Time = 1
     },
     ["fire"] = {
 		Source = "shoot",

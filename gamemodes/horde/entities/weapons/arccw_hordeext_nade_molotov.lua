@@ -1,122 +1,90 @@
 if not ArcCWInstalled then return end
 if CLIENT then
     SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_go_nade_molotov")
-    killicon.Add("arccw_hordeext_fire", "arccw/weaponicons/arccw_go_nade_molotov", Color(0, 0, 0, 255))
+    killicon.Add("arccw_horde_fire", "arccw/weaponicons/arccw_go_nade_molotov", Color(0, 0, 0, 255))
 end
-SWEP.Base = "arccw_horde_nade_molotov"
-SWEP.Horde_MaxMags = 60
-SWEP.ShootEntity = "arccw_thr_hordeext_molotov"
+SWEP.Base = "arccw_hordeext_base_nade"
+SWEP.Spawnable = true -- this obviously has to be set to true
+SWEP.Category = "ArcCW - Horde" -- edit this if you like
+SWEP.AdminOnly = false
+
+SWEP.PrintName = "Molotov Cocktail"
+SWEP.Trivia_Class = "Hand Grenade"
+SWEP.Trivia_Desc = "Improvised hand grenade created with a bottle of fuel and a rag, lit on fire and thrown. The Molotov Cocktail earned its name from Soviet foreign minister Vyacheslav Molotov, who claimed that Soviet bombing raids were humanitarian aid packages. Sarcastically, the Finns dubbed the bombs 'Molotov's Breadbaskets', and when they developed the fuel bomb to fight Soviet tanks, named them 'Molotov's Cocktails', to go with his food parcels."
+SWEP.Trivia_Manufacturer = "The People"
+SWEP.Trivia_Calibre = "N/A"
+SWEP.Trivia_Mechanism = "Gasoline + Dish Soap"
+SWEP.Trivia_Country = "Finland"
+SWEP.Trivia_Year = 1939
+SWEP.Primary.MaxAmmo = 9
 SWEP.ForceDefaultAmmo = 0
 
-SWEP.Primary.MaxAmmo = nil
-SWEP.KeepIfEmpty = true
-function SWEP:Throw()
-    if self:GetNextPrimaryFire() > CurTime() then return end
+SWEP.Slot = 4
 
-    local isCooked = self.isCooked
-    self:SetGrenadePrimed(false)
-    self.isCooked = nil
+SWEP.NotForNPCs = true
 
-    local alt = self:GetGrenadeAlt()
+SWEP.UseHands = true
 
-    local anim = alt and self:SelectAnimation("throw_alt") or self:SelectAnimation("throw")
-    self:PlayAnimation(anim, self:GetBuff_Mult("Mult_ThrowTime"), false, 0, true)
+SWEP.ViewModel = "models/weapons/arccw_go/v_eq_molotov.mdl"
+SWEP.WorldModel = "models/weapons/arccw_go/w_eq_molotov_thrown.mdl"
+SWEP.ViewModelFOV = 60
 
-    local animevent = alt and self:GetBuff_Override("Override_AnimShootAlt", self.AnimShootAlt) or self:GetBuff_Override("Override_AnimShoot", self.AnimShoot)
-    self:GetOwner():DoAnimationEvent(animevent)
+SWEP.WorldModelOffset = {
+    pos = Vector(3, 2, -1),
+    ang = Angle(-10, 0, 180)
+}
 
-    local heldtime = CurTime() - self.GrenadePrimeTime
+SWEP.ProceduralViewBobIntensity = 0
 
-    local mv = 0
+SWEP.FuseTime = false
 
-    if alt then
-        mv = self:GetBuff("MuzzleVelocityAlt", true) or self:GetBuff("MuzzleVelocity")
-    else
-        mv = self:GetBuff("MuzzleVelocity")
-        local chg = self:GetBuff("WindupTime")
-        if chg > 0 then
-            mv = Lerp(math.Clamp(heldtime / chg, 0, 1), mv * self:GetBuff("WindupMinimum"), mv)
-        end
-    end
+SWEP.FuseTime = false
 
-    local force = mv * ArcCW.HUToM
+SWEP.Throwing = true
 
-    self:SetTimer(self:GetBuff("ShootEntityDelay"), function()
+SWEP.Primary.ClipSize = 1
 
-        local ft = self:GetBuff("FuseTime", true)
-        local data = {
-            dodefault = true,
-            force = force,
-            shootentity = self:GetBuff_Override("Override_ShootEntity", self.ShootEntity),
-            fusetime = ft and (ft - (isCooked and heldtime or 0)),
+
+SWEP.MuzzleVelocity = 1000
+SWEP.ShootEntity = "arccw_thr_horde_molotov"
+
+SWEP.TTTWeaponType = "weapon_zm_molotov"
+SWEP.NPCWeaponType = "weapon_grenade"
+SWEP.NPCWeight = 50
+
+SWEP.PullPinTime = 1
+
+SWEP.Animations = {
+    ["draw"] = {
+        Source = "deploy",
+        Time = 0.25,
+    },
+    ["pre_throw"] = {
+        Source = "pullpin",
+        SoundTable = {
+            {
+                t = 0,
+                s = "arccw_go/molotov/fire_idle_loop_1.wav",
+                c = CHAN_WEAPON
+            }
         }
-        local ovr = self:GetBuff_Hook("Hook_Throw", data)
-        if !ovr or ovr.dodefault then
-            local rocket
-            if self.SecondaryThrow then
-                rocket = self:FireRocket(self:GetBuff_Override("Override_ShootEntity", self.ShootEntity), 200)
-            else
-                rocket = self:FireRocket(self:GetBuff_Override("Override_ShootEntity", self.ShootEntity), force / ArcCW.HUToM)
-            end
-            
-            if !rocket then return end
+    },
+    ["throw"] = {
+        Source = "throw",
+        TPAnim = ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE,
+        SoundTable = {
+            {
+                t = 0,
+                s = "arccw_go/molotov/grenade_throw.wav",
+                c = CHAN_WEAPON
+            }
+        }
+    }
+}
 
-            if ft then
-                if isCooked then
-                    rocket.FuseTime = ft - heldtime
-                else
-                    rocket.FuseTime = ft
-                end
-            else
-                rocket.FuseTime = math.huge
-            end
-
-            local phys = rocket:GetPhysicsObject()
-
-            local inertia = self:GetBuff_Override("Override_ThrowInertia", self.ThrowInertia)
-            if inertia == nil then inertia = GetConVar("arccw_throwinertia"):GetBool() end
-            if inertia and mv > 100 then
-                phys:AddVelocity(self:GetOwner():GetVelocity())
-            end
-
-            phys:AddAngleVelocity( Vector(0, 750, 0) )
-        end
-        if !self:HasInfiniteAmmo() then
-            local aps = self:GetBuff("AmmoPerShot")
-            local a1 = self:Ammo1()
-            if self:HasBottomlessClip() or a1 >= aps then
-                self:TakePrimaryAmmo(aps)
-            elseif a1 < aps then
-                self:SetClip1(math.min(self:GetCapacity() + self:GetChamberSize(), self:Clip1() + a1))
-                self:TakePrimaryAmmo(a1)
-            end
-
-            if (self.Singleton or self:Ammo1() == 0) then
-                local clip = self:Clip1()
-                if !self:GetBuff_Override("Override_KeepIfEmpty", self.KeepIfEmpty) then
-                    self:GetOwner():StripWeapon(self:GetClass())
-                    return
-                elseif aps >= clip then
-                    self:SetClip1(0)
-                end
-            end
-        end
-
-    end)
-    local t = self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_ThrowTime")
-    self:SetPriorityAnim(CurTime() + t)
-    self:SetTimer(t, function()
-        if !self:IsValid() then return end
-        local a = self:SelectAnimation("reload") or self:SelectAnimation("draw")
-        self:PlayAnimation(a, self:GetBuff_Mult("Mult_ReloadTime"), true, 0, nil, nil, true)
-        self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(a, true) * self:GetBuff_Mult("Mult_ReloadTime"))
-    end)
-
-    self:SetNextPrimaryFire(CurTime() + self:GetFiringDelay())
-
-    self:SetGrenadeAlt(false)
-
-    self:SetShouldHoldType()
-
-    self:GetBuff_Hook("Hook_PostThrow")
-end
+sound.Add({
+    name = "ARCCW_GO_MOLOTOV.Draw",
+    channel = 16,
+    volume = 1.0,
+    sound = "arccw_go/molotov/molotov_draw.wav"
+})

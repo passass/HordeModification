@@ -925,7 +925,11 @@ function PANEL:Paint()
                 surface.DrawRect(0, 0, self:GetWide(), 200)
             end
 
-            self.sell_btn:SetVisible(true)
+            if self.item.entity_properties then
+                self.sell_btn:SetVisible(!self.item.entity_properties.sell_forbidden)
+            else
+                self.sell_btn:SetVisible(true)
+            end
             self.sell_btn:SetTextColor(Color(255,255,255))
             self.sell_btn:SetText(translate.Get("Shop_Sell_For") .. " " .. tostring(math.floor(self.item.price * 0.25)) .. "$")
             self.sell_btn.Paint = function ()

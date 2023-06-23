@@ -391,7 +391,14 @@ function HORDE:Modifier_LoadToWeaponModifier(wep)
 
             if wep.Horde_ModifiersTable[modifier].init then
                 inits[modifier] = wep.Horde_ModifiersTable[modifier].init
-                wep:ChangeVar(modifier, inits[modifier])
+                if wep_bases["arccw"](wep) then
+                    wep:ChangeVar(modifier, inits[modifier])
+                else
+                    wep[modifier] = inits[modifier]
+                    if wep_bases["tfa"](wep) then
+                        wep:ClearStatCache()
+                    end
+                end
                 wep[modifier] = inits[modifier]
                 continue
             end
@@ -401,7 +408,14 @@ function HORDE:Modifier_LoadToWeaponModifier(wep)
                 inits[modifier] = inits[modifier] / mult
             end
             
-            wep:ChangeVar(modifier, inits[modifier])
+            if wep_bases["arccw"](wep) then
+                wep:ChangeVar(modifier, inits[modifier])
+            else
+                wep[modifier] = inits[modifier]
+                if wep_bases["tfa"](wep) then
+                    wep:ClearStatCache()
+                end
+            end
         end
     end
 

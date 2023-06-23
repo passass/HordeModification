@@ -90,7 +90,7 @@ SWEP.Primary.Ammo = "smg1" -- what ammo type the gun uses
 SWEP.MagID = "m1a1tommy" -- the magazine pool this gun draws from
 
 SWEP.ShootVol = 115 -- volume of shoot sound
-SWEP.ShootPitch = 100 -- pitch of shoot sound
+SWEP.ShootPitch = 85 -- pitch of shoot sound
 
 SWEP.ShootSound = "ArcCW_WAW.Thompson_Fire"
 SWEP.ShootSoundSilenced = "ArcCW_BO2.Pistol_Sil"

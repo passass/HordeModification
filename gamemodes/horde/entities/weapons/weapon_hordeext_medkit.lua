@@ -39,7 +39,7 @@ end
 
 if SERVER then
 	function SWEP:StartRegenPoints(time)
-		timer.Create( "medkit_ammo" .. self:EntIndex(), time, 0, function()
+		timer.Create( "medkit_ammo" .. self:EntIndex(), time / 25, 0, function()
 			if ( self:Clip1() < self.MaxAmmo ) then
 				self:SetClip1( math.min( self:Clip1() + 4, self.MaxAmmo ) )
 			end
@@ -90,7 +90,7 @@ function SWEP:PrimaryAttack()
 		-- Even though the viewmodel has looping IDLE anim at all times, we need this to make fire animation work in multiplayer
 		timer.Create( "weapon_idle" .. self:EntIndex(), self:SequenceDuration(), 1, function() if ( IsValid( self ) ) then self:SendWeaponAnim( ACT_VM_IDLE ) end end )
 
-		self:StartRegenPoints(.15)
+		self:StartRegenPoints(6)
 
 	else
 
@@ -129,7 +129,7 @@ function SWEP:SecondaryAttack()
 
 		timer.Create( "weapon_idle" .. self:EntIndex(), self:SequenceDuration(), 1, function() if ( IsValid( self ) ) then self:SendWeaponAnim( ACT_VM_IDLE ) end end )
 
-		self:StartRegenPoints(.2)
+		self:StartRegenPoints(8)
 
 	else
 
@@ -164,3 +164,5 @@ function SWEP:CustomAmmoDisplay()
 	return self.AmmoDisplay
 
 end
+
+SWEP.CantDropWep = true

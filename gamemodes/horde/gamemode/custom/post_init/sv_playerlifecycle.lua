@@ -212,11 +212,46 @@ function HORDE:PlayerInit(ply)
     HORDE:BroadcastPlayersReadyMessage(tostring(ready_count) .. "/" .. tostring(total_player))
 end
 
+function HORDE:GiveStarterWeapons(ply)
+    if GetConVar("horde_enable_starter"):GetInt() == 0 then return end
+    local weapons_gotted = {}
+    if ply:Alive() and (not ply:Horde_GetGivenStarterWeapons()) then
+
+        if HORDE.starter_weapons[ply:Horde_GetCurrentSubclass()] then
+            for _, wpn_class in pairs(HORDE.starter_weapons[ply:Horde_GetCurrentSubclass()]) do
+                ply:Give(wpn_class)
+                table.insert(weapons_gotted, wpn_class)
+            end
+        end
+
+        timer.Simple(0, function()
+            for _, wpn_class in pairs(weapons_gotted) do
+                local wep = ply:GetWeapon(wpn_class)
+                if IsValid(wep) then
+                    ply:SetAmmo(math.Round(HORDE:Ammo_GetMaxAmmo(wep) / 4 * 3), wep:GetPrimaryAmmoType())
+                end
+            end
+        end)
+
+        ply:Horde_SetGivenStarterWeapons(true)
+    end
+
+    if HORDE.starter_weapons["All"] then
+        for _, wpn_class in pairs(HORDE.starter_weapons["All"]) do
+            ply:Give(wpn_class)
+        end
+    end
+
+    HORDE:GiveClassGrenades(ply)
+
+    ply:SetAmmo(75, "ammo_starterweapon")
+end
+
 hook.Add("DoPlayerDeath", "Horde_DoPlayerDeath", function(victim)
     net.Start("Horde_ClearStatus")
     net.Send(victim)
     for _, wpn in pairs(victim:GetWeapons()) do
-        if IsValid(wpn) and wpn.CantDropWep then
+        if IsValid(wpn) and !victim:CanDropWeapon(wpn) then
             victim:StripWeapon(wpn:GetClass())
         else
             victim:DropWeapon(wpn)

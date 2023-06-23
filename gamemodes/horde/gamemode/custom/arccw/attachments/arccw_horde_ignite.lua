@@ -9,8 +9,8 @@ att.Desc_Cons = {
 att.AutoStats = true
 att.Slot = {"ammo_bullet", "go_bullet"}
 
-att.Mult_PrecisionMOA = 2
-att.Mult_ShootPitch = 0.85
+--att.Mult_PrecisionMOA = 2
+--att.Mult_ShootPitch = 0.85
 
 att.Override_DamageType = DMG_BURN
 att.Override_DamageTypeHandled = DMG_BURN

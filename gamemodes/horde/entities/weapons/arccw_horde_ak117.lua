@@ -29,7 +29,7 @@ SWEP.RangeMin = 40
 SWEP.Range = 80 -- in METRES
 
 SWEP.Penetration = 10
-SWEP.DamageType = DMG_BULLET
+SWEP.DamageType = DMG_SHOCK
 SWEP.ShootEntity = nil -- entity to fire, if any
 SWEP.MuzzleVelocity = 850 -- projectile or phys bullet muzzle velocity
 -- IN M/S

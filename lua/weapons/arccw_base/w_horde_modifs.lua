@@ -12,6 +12,361 @@ function SWEP:ChangeVar(varname, value, priority)
     end
 end
 
+function SWEP:RefreshBGs()
+    local vm
+
+    local vmm = self:GetBuff_Override("Override_VMMaterial") or self.VMMaterial or ""
+    local wmm = self:GetBuff_Override("Override_WMMaterial") or self.WMMaterial or  ""
+
+    local vmc = self:GetBuff_Override("Override_VMColor") or self.VMColor or Color(255, 255, 255)
+    local wmc = self:GetBuff_Override("Override_WMColor") or self.WMColor or Color(255, 255, 255)
+
+    local vms = self:GetBuff_Override("Override_VMSkin") or self.DefaultSkin
+    local wms = self:GetBuff_Override("Override_WMSkin") or self.DefaultWMSkin
+
+    local vmp = self.DefaultPoseParams
+    local wmp = self.DefaultWMPoseParams
+
+    if self.MirrorVMWM then
+        wmm = vmm
+        wmc = vmc
+        wms = vms
+        wmp = vmp
+    end
+
+    if self:GetOwner():IsPlayer() then
+        vm = self:GetOwner():GetViewModel()
+    end
+
+    if vm and vm:IsValid() then
+        ArcCW.SetBodyGroups(vm, self.DefaultBodygroups)
+        vm:SetMaterial(vmm)
+        vm:SetColor(vmc)
+        vm:SetSkin(vms)
+
+        vmp["BaseClass"] = nil
+
+        for i, k in pairs(vmp) do
+            vm:SetPoseParameter(i, k)
+        end
+    end
+
+    self:SetMaterial(wmm)
+    self:SetColor(wmc)
+    self:SetSkin(wms)
+
+    if self.WMModel and self.WMModel:IsValid() then
+        ArcCW.SetBodyGroups(self.WMModel, self.MirrorVMWM and self.DefaultBodygroups or self.DefaultWMBodygroups)
+
+        self.WMModel:SetMaterial(wmm)
+        self.WMModel:SetColor(wmc)
+        self.WMModel:SetSkin(wms)
+
+        wmp["BaseClass"] = nil
+
+        for i, k in pairs(wmp) do
+            self.WMModel:SetPoseParameter(i, k)
+        end
+    end
+
+    local ae = self:GetActiveElements()
+
+    for _, e in pairs(ae) do
+        local ele = self.AttachmentElements[e]
+
+        if !ele then continue end
+
+        if ele.VMPoseParams and vm and IsValid(vm) then
+            ele.VMPoseParams["BaseClass"] = nil
+            for i, k in pairs(ele.VMPoseParams) do
+                vm:SetPoseParameter(i, k)
+            end
+        end
+
+        if self.WMModel and self.WMModel:IsValid() then
+            if self.MirrorVMWM and ele.VMPoseParams then
+                ele.VMPoseParams["BaseClass"] = nil
+                for i, k in pairs(ele.VMPoseParams) do
+                    self.WMModel:SetPoseParameter(i, k)
+                end
+            end
+            if ele.WMPoseParams then
+                ele.WMPoseParams["BaseClass"] = nil
+                for i, k in pairs(ele.WMPoseParams) do
+                    self.WMModel:SetPoseParameter(i, k)
+                end
+            end
+        end
+
+        if ele.VMSkin and vm and IsValid(vm) then
+            vm:SetSkin(ele.VMSkin)
+        end
+
+        if self.WMModel and self.WMModel:IsValid() then
+            if self.MirrorVMWM and ele.VMSkin then
+                self.WMModel:SetSkin(ele.VMSkin)
+                self:SetSkin(ele.VMSkin)
+            end
+            if ele.WMSkin then
+                self.WMModel:SetSkin(ele.WMSkin)
+                self:SetSkin(ele.WMSkin)
+            end
+        end
+
+        if ele.VMColor and vm and IsValid(vm) then
+            vm:SetColor(ele.VMColor)
+        end
+
+        if self.WMModel and self.WMModel:IsValid() then
+            if self.MirrorVMWM and ele.VMSkin then
+                self.WMModel:SetColor(ele.VMColor or color_white)
+                self:SetColor(ele.VMColor or color_white)
+            end
+            if ele.WMSkin then
+                self.WMModel:SetColor(ele.WMColor or color_white)
+                self:SetColor(ele.WMColor or color_white)
+            end
+        end
+
+        if ele.VMMaterial and vm and IsValid(vm) then
+            vm:SetMaterial(ele.VMMaterial)
+        end
+
+        if self.WMModel and self.WMModel:IsValid() then
+            if self.MirrorVMWM and ele.VMMaterial then
+                self.WMModel:SetMaterial(ele.VMMaterial)
+                self:SetMaterial(ele.VMMaterial)
+            end
+            if ele.WMMaterial then
+                self.WMModel:SetMaterial(ele.WMMaterial)
+                self:SetMaterial(ele.WMMaterial)
+            end
+        end
+
+        if ele.VMBodygroups then
+            for _, i in pairs(ele.VMBodygroups) do
+                if !i.ind or !i.bg then continue end
+
+                if vm and IsValid(vm) and vm:GetBodygroup(i.ind) != i.bg then
+                    vm:SetBodygroup(i.ind, i.bg)
+                end
+            end
+
+            if self.MirrorVMWM then
+                for _, i in pairs(ele.VMBodygroups) do
+                    if !i.ind or !i.bg then continue end
+
+                    if self.WMModel and IsValid(self.WMModel) and self.WMModel:GetBodygroup(i.ind) != i.bg then
+                        self.WMModel:SetBodygroup(i.ind, i.bg)
+                    end
+
+                    if self:GetBodygroup(i.ind) != i.bg then
+                        self:SetBodygroup(i.ind, i.bg)
+                    end
+                end
+            end
+        end
+
+        if ele.WMBodygroups then
+            for _, i in pairs(ele.WMBodygroups) do
+                if !i.ind or !i.bg then continue end
+
+                if self.WMModel and IsValid(self.WMModel) and self.WMModel:GetBodygroup(i.ind) != i.bg then
+                    self.WMModel:SetBodygroup(i.ind, i.bg)
+                end
+
+                if self:GetBodygroup(i.ind) != i.bg then
+                    self:SetBodygroup(i.ind, i.bg)
+                end
+            end
+        end
+
+        if ele.VMBoneMods then
+            for bone, i in pairs(ele.VMBoneMods) do
+                local boneind = vm:LookupBone(bone)
+
+                if !boneind then continue end
+
+                vm:ManipulateBonePosition(boneind, i)
+            end
+
+            if self.MirrorVMWM then
+                for bone, i in pairs(ele.VMBoneMods) do
+                    if !(self.WMModel and self.WMModel:IsValid()) then break end
+                    local boneind = self:LookupBone(bone)
+
+                    if !boneind then continue end
+
+                    self:ManipulateBonePosition(boneind, i)
+                end
+            end
+        end
+
+        if ele.WMBoneMods then
+            for bone, i in pairs(ele.WMBoneMods) do
+                if !(self.WMModel and self.WMModel:IsValid()) then break end
+                local boneind = self:LookupBone(bone)
+
+                if !boneind then continue end
+
+                self:ManipulateBonePosition(boneind, i)
+            end
+        end
+
+
+
+        if SERVER then
+            self:SetupShields()
+        end
+    end
+
+    if IsValid(vm) then
+        for i = 0, (vm:GetNumBodyGroups()) do
+            if self.Bodygroups[i] then
+                vm:SetBodygroup(i, self.Bodygroups[i])
+            end
+        end
+
+        self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = vm, eles = ae, wm = false})
+        self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = self.WMModel or self, eles = ae, wm = true})
+
+        for slot, v in pairs(self.Attachments) do
+            if !v.Installed then continue end
+
+            local func = self:GetBuff_Stat("Hook_ModifyAttBodygroups", slot)
+            if func and v.VElement and IsValid(v.VElement.Model) then
+                func(self, {vm = vm, element = v.VElement, slottbl = v, wm = false})
+            end
+            if func and v.WElement and IsValid(v.WElement.Model)  then
+                func(self, {vm = self.WMModel, element = v.WElement, slottbl = v, wm = true})
+            end
+        end
+    end
+end
+
+
+function SWEP:AddElement(elementname, wm)
+    local e = self.AttachmentElements[elementname]
+
+    if !e then return end
+    if !wm and self:GetOwner():IsNPC() then return end
+
+    if !self:CheckFlags(e.ExcludeFlags, e.RequireFlags) then return end
+
+    if GetConVar("arccw_truenames"):GetBool() and e.TrueNameChange then
+        self.PrintName = e.TrueNameChange
+    elseif GetConVar("arccw_truenames"):GetBool() and e.NameChange then
+        self.PrintName = e.NameChange
+    end
+
+    if !GetConVar("arccw_truenames"):GetBool() and e.NameChange then
+        self.PrintName = e.NameChange
+    elseif !GetConVar("arccw_truenames"):GetBool() and e.TrueNameChange then
+        self.PrintName = e.TrueNameChange
+    end
+
+    if e.AddPrefix then
+        self.PrintName = e.AddPrefix .. self.PrintName
+    end
+
+    if e.AddSuffix then
+        self.PrintName = self.PrintName .. e.AddSuffix
+    end
+
+    local og_weapon = weapons.GetStored(self:GetClass())
+
+    local og_vm = og_weapon.ViewModel
+    local og_wm = og_weapon.WorldModel
+
+    self.ViewModel = og_vm
+    self.WorldModel = og_wm
+
+    local parent = self
+    local elements = self.WM
+
+    if !wm then
+        parent = self:GetOwner():GetViewModel()
+        elements = self.VM
+    end
+
+    local eles = e.VMElements
+
+    if wm then
+        eles = e.WMElements
+
+        if self.MirrorVMWM then
+            self.WorldModel = e.VMOverride or self.WorldModel
+            self:SetSkin(e.VMSkin or self.DefaultSkin)
+            eles = e.VMElements
+        else
+            self.WorldModel = e.WMOverride or self.WorldModel
+            self:SetSkin(e.WMSkin or self.DefaultWMSkin)
+        end
+    else
+        self.ViewModel = e.VMOverride or self.ViewModel
+        self:GetOwner():GetViewModel():SetSkin(e.VMSkin or self.DefaultSkin)
+    end
+
+    if SERVER then return end
+
+    for _, i in pairs(eles or {}) do
+        local model = ClientsideModel(i.Model)
+
+        if !model or !IsValid(model) or !IsValid(self) then continue end
+
+        if i.BoneMerge then
+            model:SetParent(parent)
+            model:AddEffects(EF_BONEMERGE)
+        else
+            model:SetParent(self)
+        end
+
+        local element = {}
+
+        local scale = Matrix()
+        scale:Scale(i.Scale or Vector(1, 1, 1))
+
+        model:SetNoDraw(ArcCW.NoDraw)
+        model:DrawShadow(false)
+        model.Weapon = self
+        model:SetSkin(i.ModelSkin or 0)
+        if i.Material then
+            model:SetMaterial(i.Material)
+        end
+        if i.Color then
+            model:SetRenderMode( RENDERMODE_TRANSCOLOR )
+            model:SetColor(i.Color)
+        end
+        --i.mdl = model
+        --model:SetBodyGroups(i.ModelBodygroups or "")
+        ArcCW.SetBodyGroups(model, i.ModelBodygroups or "")
+        model:EnableMatrix("RenderMultiply", scale)
+        model:SetupBones()
+        element.Model = model
+        element.DrawFunc = i.DrawFunc
+        element.WM = wm or false
+        element.Bone = i.Bone
+        element.NoDraw = i.NoDraw or false
+        element.BoneMerge = i.BoneMerge or false
+        element.Bodygroups = i.ModelBodygroups
+        element.DrawFunc = i.DrawFunc
+        element.OffsetAng = Angle()
+        element.OffsetAng:Set(i.Offset.ang or Angle(0, 0, 0))
+        element.OffsetPos = Vector()
+        element.OffsetPos:Set(i.Offset.pos or Vector(), 0, 0)
+        element.IsMuzzleDevice = i.IsMuzzleDevice
+
+        if self.MirrorVMWM then
+            element.WMBone = i.Bone
+        else
+            element.WMBone = i.WMBone
+        end
+
+        table.insert(elements, element)
+    end
+
+end
+
 function SWEP:InitialDefaultClip()
     if !self.Primary.Ammo then return end
 

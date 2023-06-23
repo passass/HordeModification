@@ -29,8 +29,8 @@ SWEP.ActiveAng = Angle(0, 0, 0)
 SWEP.HolsterPos = Vector(4.8, 6, 0)
 SWEP.HolsterAng = Angle(-7.036, 30.016, 0)
 
-SWEP.Damage = 26
-SWEP.DamageMin = 20 -- damage done at maximum range
+SWEP.Damage = 14
+SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.Range = 45 -- in METRES
 SWEP.Penetration = 3
 SWEP.DamageType = DMG_BULLET

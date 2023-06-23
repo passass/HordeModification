@@ -6,4 +6,3 @@ end
 SWEP.Base = "arccw_horde_rpg7"
 SWEP.Horde_MaxMags = 60
 SWEP.ClipsPerAmmoBox = 5
-SWEP.ForceDefaultAmmo = 0
