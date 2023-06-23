@@ -12,9 +12,6 @@ end
 PERK.Hooks.SlowMotion_Hook = function(ply, slow_motion_stage, slomo_bonus)
 	if slow_motion_stage == 1.0 then
 		HORDE:Modifier_AddToWeapons(ply, "Mult_Recoil", "survivor_rapidslomo")
-        for _, wep in pairs(ply:GetWeapons()) do
-            print(wep.Mult_Recoil)
-        end
 		return
 	end
 	HORDE:Modifier_AddToWeapons(ply, "Mult_Recoil", "survivor_rapidslomo", 1 / Lerp((1 - slow_motion_stage) * 1.5, 1, 10000))

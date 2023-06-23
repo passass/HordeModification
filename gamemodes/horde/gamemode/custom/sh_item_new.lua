@@ -198,6 +198,7 @@ end
     HORDE.class_grenades = {}
 
     local grenades_classes1 = {
+        weapon_frag = "weapon_frag",
         arccw_horde_nade_stun = "arccw_hordeext_nade_stun",
         arccw_horde_nade_shrapnel = "arccw_hordeext_nade_shrapnel",
         arccw_horde_nade_sonar = "arccw_hordeext_nade_sonar",
