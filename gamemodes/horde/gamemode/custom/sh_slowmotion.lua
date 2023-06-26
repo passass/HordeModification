@@ -5,15 +5,111 @@ function HORDE.SlowMotion_GetCompletenessSlomo(slow_motion_stage)
 end
 
 local formulas = {
+    static = function(slow_motion_stage, slomo_bonus) return slomo_bonus + 1 end,
     static_inverted = function(slow_motion_stage, slomo_bonus) return 1 / (slomo_bonus + 1) end,
     completeness = function(slow_motion_stage, slomo_bonus) return 1 + HORDE.SlowMotion_GetCompletenessSlomo(slow_motion_stage) * slomo_bonus end,
     completeness_inverted = function(slow_motion_stage, slomo_bonus) return 1 / (1 + HORDE.SlowMotion_GetCompletenessSlomo(slow_motion_stage) * slomo_bonus) end,
 }
 
+hook.Add("PlayerSay", "TEST", function(ply, input, public)
+    if not ply:IsValid() then return end
+    local text = {}
+	
+    for str in string.gmatch(string.lower(input), "([^".."%s".."]+)") do -- splits and lowercases the input string
+       table.insert(text, str)
+    end
+	
+    if text[1] == "!slomo" then
+        HORDE.SlowMotion_Start()
+    end
+end)
+
 local bonus_hooks = {
     SlowMotion_ZoomSpeedBonus = {"Mult_SightTime", formulas.completeness_inverted},
     SlowMotion_MeleeAttackSpeedBonus = {"Mult_MeleeTime", formulas.completeness_inverted},
-    SlowMotion_ReloadBonus = {"Mult_ReloadTime", formulas.static_inverted},
+    SlowMotion_ReloadBonus = {"Mult_ReloadTime", formulas.completeness_inverted, function(ply, slomo_stage, slomo_bonus)
+        local hookname = "Horde_SlowMotion_ReloadBonus_" .. ply:EntIndex()
+        if !hook.GetTable()["Tick"][hookname] then
+            hook.Add("Tick", hookname, function()
+                local wep = ply:GetActiveWeapon()
+                if !IsValid(wep) or !wep.ArcCW then return end
+                if wep:GetReloading() then
+            
+                    local mult = 1 / wep:GetBuff_Mult("Mult_ReloadTime") --> 0
+            
+                    if wep.LastRes != mult then
+            
+                        local shouldshotgunreload = wep:GetBuff_Override("Override_ShotgunReload")
+                    local shouldhybridreload = wep:GetBuff_Override("Override_HybridReload")
+            
+                        if shouldshotgunreload == nil then shouldshotgunreload = wep.ShotgunReload end
+                        if shouldhybridreload == nil then shouldhybridreload = wep.HybridReload end
+            
+                        if shouldhybridreload then
+                            shouldshotgunreload = wep:Clip1() != 0
+                        end
+            
+                        if shouldshotgunreload then
+                            if wep:GetShotgunReloading() > 0 then return end
+                        else
+                            local ct = CurTime()
+                            local vm = ply:GetViewModel()
+                            if !wep.LastRes then
+                                wep.LastRes = mult
+                            end
+                            if !wep.LastAnimPrcd then
+                                wep.LastAnimPrcd = wep.LastAnimStartTime
+                            end
+                            local anim = wep.LastAnimKey
+                            local dur_minprg = wep:GetAnimKeyTime(anim, true)
+                            local dur = wep:GetAnimKeyTime(anim)
+            
+                            local anim_progress = math.Clamp((wep.LastAnimPrg or 0) + (ct - wep.LastAnimPrcd) * wep.LastRes / dur, 0, 1)
+            
+                            wep.LastAnimPrg = anim_progress
+                            
+                            local vm_animdur = vm:SequenceDuration()
+            
+                            vm:SetPlaybackRate(mult * (vm_animdur / dur))
+            
+                            if CLIENT then
+                                vm:SetAnimTime(ct - dur / mult * anim_progress)
+                            end
+                                local anim_timetoend = dur / mult * (1 - anim_progress)
+            
+                                local reloadtime = dur_minprg / mult * (1 - anim_progress * (dur / dur_minprg))
+                                local reloadtime2
+                                if !wep.Animations[anim].ForceEnd then
+                                    reloadtime2 = anim_timetoend
+                                else
+                                    reloadtime2 = reloadtime
+                                end
+                                wep:SetReloadingREAL(ct + reloadtime2)
+                                wep:SetNextPrimaryFire(ct + reloadtime2)
+                                wep:SetMagUpIn(ct + reloadtime)
+                                wep:SetNextIdle(ct + anim_timetoend)
+            
+                            wep.LastRes = mult
+                            wep.LastAnimPrcd = ct
+                        end
+                    end
+                else
+                    wep.LastRes = nil
+                    wep.LastAnimPrg = nil
+                    wep.LastAnimPrcd = nil
+                end
+            end)
+        end
+
+        if slomo_stage == 1.0 then
+            hook.Remove("Tick", hookname)
+            for _, wep in pairs(ply:GetWeapons()) do
+                wep.LastRes = nil
+                wep.LastAnimPrg = nil
+                wep.LastAnimPrcd = nil
+            end
+        end
+    end},
     SlowMotion_RPMBonus = {"Mult_RPM", formulas.completeness},
     SlowMotion_CycleTimeMult = {"Mult_CycleTime", formulas.static_inverted},
 }
@@ -32,11 +128,14 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", function(ply, b
     bonus_run.more = bonus_run.more * bonus_speed
 end)
 
-
+--[[local vm = self:GetOwner():GetViewModel()
+    vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))]]
 
 local function call_all_bonus_hooks(ply, slow_motion_stage, slomo_bonus)
     for hookname, bonushook in pairs(bonus_hooks) do
         if !ply:Horde_CallClassHook(hookname .. "_Allow", ply) then continue end
+
+        if bonushook[3] and bonushook[3](ply, slow_motion_stage, slomo_bonus) then continue end
 
         if slow_motion_stage == 1.0 then
             HORDE:Modifier_AddToWeapons(ply, bonushook[1], "slomotion")
@@ -64,6 +163,15 @@ if CLIENT then
     local start_time, end_time = 0, 0
     local is_end = false
     local stage = 1.0
+
+    function HORDE:SlowMotion_GetStage()
+        return stage
+    end
+
+    function HORDE:SlowMotion_IsEnding()
+        return is_end
+    end
+    
     net.Receive("Horde_SyncSlowmotionChange", function()
         stage = net.ReadFloat()
         local bonus = net.ReadFloat()
@@ -123,11 +231,18 @@ local slow_motion_duration = 3.3 * max_slow_time
 local slow_motion_happened = 0
 local slow_motion_end_happened = 0
 
+local is_ending = false
+
 function HORDE:SlowMotion_GetStage()
     return cur_slowmotion
 end
 
+function HORDE:SlowMotion_IsEnding()
+    return is_ending
+end
+
 local function PlaySlowMotionSound(is_end)
+    is_ending = is_end
     net.Start("Horde_Slowmotion")
     net.WriteBool(is_end)
     net.Broadcast()

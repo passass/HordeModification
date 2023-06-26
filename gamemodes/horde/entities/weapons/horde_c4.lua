@@ -101,7 +101,6 @@ SWEP.IronSightsMoveSpeed = SWEP.MoveSpeed * 0.8
 SWEP.SafetyPos = Vector(0, 0, 0)
 SWEP.SafetyAng = Vector(0, 0, 0)
 SWEP.TracerCount = 0
-SWEP.Primary.MaxAmmo = 3
 
 --[DInventory2]--
 SWEP.DInv2_GridSizeX = 2
