@@ -11,6 +11,19 @@ local formulas = {
     completeness_inverted = function(slow_motion_stage, slomo_bonus) return 1 / (1 + HORDE.SlowMotion_GetCompletenessSlomo(slow_motion_stage) * slomo_bonus) end,
 }
 
+hook.Add("PlayerSay", "TEST", function(ply, input, public)
+    if not ply:IsValid() then return end
+    local text = {}
+
+    for str in string.gmatch(string.lower(input), "([^".."%s".."]+)") do -- splits and lowercases the input string
+       table.insert(text, str)
+    end
+
+    if text[1] == "!slomo" then
+        HORDE.SlowMotion_Start()
+    end
+end)
+
 local bonus_hooks = {
     SlowMotion_ZoomSpeedBonus = {"Mult_SightTime", formulas.completeness_inverted},
     SlowMotion_MeleeAttackSpeedBonus = {"Mult_MeleeTime", formulas.completeness_inverted},
@@ -27,7 +40,7 @@ local bonus_hooks = {
                     if wep.LastRes != mult then
             
                         local shouldshotgunreload = wep:GetBuff_Override("Override_ShotgunReload")
-                    local shouldhybridreload = wep:GetBuff_Override("Override_HybridReload")
+                        local shouldhybridreload = wep:GetBuff_Override("Override_HybridReload")
             
                         if shouldshotgunreload == nil then shouldshotgunreload = wep.ShotgunReload end
                         if shouldhybridreload == nil then shouldhybridreload = wep.HybridReload end
@@ -40,22 +53,25 @@ local bonus_hooks = {
                             if wep:GetShotgunReloading() > 0 then return end
                         else
                             local ct = CurTime()
+                            local start_reload = wep.LastAnimStartTime
+                            local anim = wep.LastAnimKey
                             local vm = ply:GetViewModel()
+                            local vm_animdur = vm:SequenceDuration()
+
+
                             if !wep.LastRes then
                                 wep.LastRes = mult
                             end
                             if !wep.LastAnimPrcd then
-                                wep.LastAnimPrcd = wep.LastAnimStartTime
+                                wep.LastAnimPrcd = start_reload
                             end
-                            local anim = wep.LastAnimKey
-                            local dur_minprg = wep:GetAnimKeyTime(anim, true)
+
                             local dur = wep:GetAnimKeyTime(anim)
+                            local dur_minprg = wep:GetAnimKeyTime(anim, true)
             
                             local anim_progress = math.Clamp((wep.LastAnimPrg or 0) + (ct - wep.LastAnimPrcd) * wep.LastRes / dur, 0, 1)
-            
                             wep.LastAnimPrg = anim_progress
-                            
-                            local vm_animdur = vm:SequenceDuration()
+
             
                             vm:SetPlaybackRate(mult * (vm_animdur / dur))
             
@@ -75,7 +91,24 @@ local bonus_hooks = {
                                 wep:SetNextPrimaryFire(ct + reloadtime2)
                                 wep:SetMagUpIn(ct + reloadtime)
                                 wep:SetNextIdle(ct + anim_timetoend)
+
             
+                            --[[for i, sounds in ipairs(wep.EventTable) do
+                                for time, key in pairs(sounds) do
+                                    if key.AnimKey == anim then
+                                        local sound_delay = (time - key.StartTime) / mult * (key.StartTimeLastMult or 1)
+
+                                        time2 = CurTime() + sound_delay
+                                        if !sounds[time2] then
+                                            sounds[time2] = table.Copy(key)
+                                            sounds[time] = nil
+                                            print("time,time2", CurTime(), time2, sound_delay, mult, sounds[time2].s)
+                                        end
+                                        key.StartTimeLastMult = mult
+                                    end
+                                end
+                            end]]
+
                             wep.LastRes = mult
                             wep.LastAnimPrcd = ct
                         end
