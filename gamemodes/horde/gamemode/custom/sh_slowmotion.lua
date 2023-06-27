@@ -11,7 +11,7 @@ local formulas = {
     completeness_inverted = function(slow_motion_stage, slomo_bonus) return 1 / (1 + HORDE.SlowMotion_GetCompletenessSlomo(slow_motion_stage) * slomo_bonus) end,
 }
 
-hook.Add("PlayerSay", "TEST", function(ply, input, public)
+--[[hook.Add("PlayerSay", "TEST", function(ply, input, public)
     if not ply:IsValid() then return end
     local text = {}
 
@@ -22,7 +22,7 @@ hook.Add("PlayerSay", "TEST", function(ply, input, public)
     if text[1] == "!slomo" then
         HORDE.SlowMotion_Start()
     end
-end)
+end)]]
 
 local bonus_hooks = {
     SlowMotion_ZoomSpeedBonus = {"Mult_SightTime", formulas.completeness_inverted},
