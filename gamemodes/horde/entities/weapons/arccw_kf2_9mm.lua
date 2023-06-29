@@ -231,12 +231,12 @@ SWEP.Animations = {
     ["reload"] = {
         Source = "reload", MinProgress = 2.35, ForceEnd = true,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
-        Checkpoints = {20, 26, 40},
+        Checkpoints = {20, 26, 40}, StartFrom = 1,
         LHIK = true,
         LHIKIn = .4,
         LHIKOut = 1.8,
         LHIKEaseIn = 1,
-        LHIKEaseOut = .6,
+        LHIKEaseOut = .6, 
     },
     ["reload_empty"] = {
         Source = "reload_empty", MinProgress = 2.5, ForceEnd = true,

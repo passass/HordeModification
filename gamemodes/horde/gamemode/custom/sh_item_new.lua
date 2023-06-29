@@ -1353,6 +1353,7 @@ end
         HORDE:CreateGadgetItem("gadget_armored", 3000, 2, {SWAT=true}, {SWAT=15})
         HORDE:CreateGadgetItem("gadget_smgpower", 3500, 3, {SWAT=true}, {SWAT=20})
         HORDE:CreateGadgetItem("gadget_timestop", 4000, 3, {Ghost=true}, {Ghost=30})
+        HORDE:CreateGadgetItem("gadget_timeskip", 4000, 3, {Assault=true}, {Ghost=30})
         HORDE:CreateGadgetItem("gadget_iv_injection", 2000, 1, {Assault=true, SWAT=true}, {
             VariousConditions=true,
             Assault={Assault=5},

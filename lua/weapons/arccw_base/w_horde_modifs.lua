@@ -52,7 +52,7 @@ function SWEP:AddElement(elementname, wm)
     local elements = self.WM
 
     if !wm then
-        parent = self:GetOwner():GetViewModel()
+        parent = self.REAL_VM
         elements = self.VM
     end
 
@@ -71,7 +71,8 @@ function SWEP:AddElement(elementname, wm)
         end
     else
         self.ViewModel = e.VMOverride or self.ViewModel
-        self:GetOwner():GetViewModel():SetSkin(e.VMSkin or self.DefaultSkin)
+        local vm = self.REAL_VM or self:GetOwner():GetViewModel()
+        vm:SetSkin(e.VMSkin or self.DefaultSkin)
     end
 
     if SERVER then return end
@@ -273,185 +274,6 @@ function SWEP:AdjustAtts()
     self:AdjustAmmo(old_inf)
 end
 
-
-function SWEP:Reload()
-    if IsValid(self:GetHolster_Entity()) then return end
-    if self:GetHolster_Time() > 0 then return end
-
-    if self:GetOwner():IsNPC() then
-        return
-    end
-
-    if self:GetState() == ArcCW.STATE_CUSTOMIZE then
-        return
-    end
-
-    -- Switch to UBGL
-    if self:GetBuff_Override("UBGL") and self:GetOwner():KeyDown(IN_USE) then
-        if self:GetInUBGL() then
-            --net.Start("arccw_ubgl")
-            --net.WriteBool(false)
-            --net.SendToServer()
-
-            self:DeselectUBGL()
-        else
-            --net.Start("arccw_ubgl")
-            --net.WriteBool(true)
-            --net.SendToServer()
-
-            self:SelectUBGL()
-        end
-
-        return
-    end
-
-    if self:GetInUBGL() then
-        if self:GetNextSecondaryFire() > CurTime() then return end
-            self:ReloadUBGL()
-        return
-    end
-
-    if self:GetNextPrimaryFire() >= CurTime() then return end
-    -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
-
-
-    if self.Throwing then return end
-    if self.PrimaryBash then return end
-
-    -- with the lite 3D HUD, you may want to check your ammo without reloading
-    local Lite3DHUD = self:GetOwner():GetInfo("arccw_hud_3dfun") == "1"
-    if self:GetOwner():KeyDown(IN_WALK) and Lite3DHUD then
-        return
-    end
-
-    if self:GetMalfunctionJam() then
-        local r = self:MalfunctionClear()
-        if r then return end
-    end
-
-    if !self:GetMalfunctionJam() and self:Ammo1() <= 0 and !self:HasInfiniteAmmo() then return end
-
-    if self:HasBottomlessClip() then return end
-
-    if self:GetBuff_Hook("Hook_PreReload") then return end
-
-    -- if we must dump our clip when reloading, our reserve ammo should be more than our clip
-    local dumpclip = self:GetBuff_Hook("Hook_ReloadDumpClip")
-    if dumpclip and !self:HasInfiniteAmmo() and self:Clip1() >= self:Ammo1() then
-        return
-    end
-
-    self.LastClip1 = self:Clip1()
-
-    local reserve = self:Ammo1()
-
-    reserve = reserve + self:Clip1()
-    if self:HasInfiniteAmmo() then reserve = self:GetCapacity() + self:Clip1() end
-
-    local clip = self:GetCapacity()
-
-    local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
-    if self:GetNeedCycle() then chamber = 0 end
-
-    local load = math.Clamp(clip + chamber, 0, reserve)
-
-    if !self:GetMalfunctionJam() and load <= self:Clip1() then return end
-
-    self:SetBurstCount(0)
-
-    local shouldshotgunreload = self:GetBuff_Override("Override_ShotgunReload")
-    local shouldhybridreload = self:GetBuff_Override("Override_HybridReload")
-
-    if shouldshotgunreload == nil then shouldshotgunreload = self.ShotgunReload end
-    if shouldhybridreload == nil then shouldhybridreload = self.HybridReload end
-
-    if shouldhybridreload then
-        shouldshotgunreload = self:Clip1() != 0
-    end
-
-    if shouldshotgunreload and self:GetShotgunReloading() > 0 then return end
-
-    local mult = self:GetBuff_Mult("Mult_ReloadTime")
-    if shouldshotgunreload then
-        local anim = "sgreload_start"
-        local insertcount = 0
-
-        local empty = self:Clip1() == 0 --or self:GetNeedCycle()
-
-        if self.Animations.sgreload_start_empty and empty then
-            anim = "sgreload_start_empty"
-            empty = false
-            if (self.Animations.sgreload_start_empty or {}).ForceEmpty == true then
-                empty = true
-            end
-
-            insertcount = (self.Animations.sgreload_start_empty or {}).RestoreAmmo or 1
-        else
-            insertcount = (self.Animations.sgreload_start or {}).RestoreAmmo or 0
-        end
-
-        anim = self:GetBuff_Hook("Hook_SelectReloadAnimation", anim) or anim
-
-        local time = self:GetAnimKeyTime(anim)
-        local time2 = self:GetAnimKeyTime(anim, true)
-
-        if time2 >= time then
-            time2 = 0
-        end
-
-        if insertcount > 0 then
-            self:SetMagUpCount(insertcount)
-            self:SetMagUpIn(CurTime() + time2 * mult)
-        end
-        self:PlayAnimation(anim, mult, true, 0, true, nil, true)
-
-        self:SetReloading(CurTime() + time * mult)
-
-        self:SetShotgunReloading(empty and 4 or 2)
-    else
-        local anim = self:SelectReloadAnimation()
-
-        if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
-
-        self:PlayAnimation(anim, mult, true, 0, false, nil, true)
-
-        local reloadtime = self:GetAnimKeyTime(anim, true) * mult
-        local reloadtime2
-        if !self.Animations[anim].ForceEnd then
-            reloadtime2 = self:GetAnimKeyTime(anim, false) * mult
-        else
-            reloadtime2 = reloadtime
-        end
-
-        self:SetNextPrimaryFire(CurTime() + reloadtime2)
-        self:SetReloading(CurTime() + reloadtime2)
-
-        self:SetMagUpCount(0)
-        self:SetMagUpIn(CurTime() + reloadtime)
-    end
-
-    self:SetClipInfo(load)
-    if game.SinglePlayer() then
-        self:CallOnClient("SetClipInfo", tostring(load))
-    end
-
-    for i, k in pairs(self.Attachments) do
-        if !k.Installed then continue end
-        local atttbl = ArcCW.AttachmentTable[k.Installed]
-
-        if atttbl.DamageOnReload then
-            self:DamageAttachment(i, atttbl.DamageOnReload)
-        end
-    end
-
-    if !self.ReloadInSights then
-        self:ExitSights()
-        self.Sighted = false
-    end
-
-    self:GetBuff_Hook("Hook_PostReload")
-end
-
 if CLIENT then
 
     
@@ -464,91 +286,6 @@ if CLIENT then
 		return Lerp(qdelta, a, b)
 	end
 
-	function SWEP:DoLHIKAnimation(key, time, spbitch)
-		if game.SinglePlayer() and !spbitch then
-			timer.Simple(0, function() if IsValid(self) then self:DoLHIKAnimation(key, time, true) end end)
-			return
-		end
-        local owner = self:GetOwner()
-		local vm = TFA and TFA.INS2 and IsValid(TFA.INS2.HandsEnt) and TFA.INS2.HandsEnt or owner.GetViewModel and owner:GetViewModel()
-		if !IsValid(vm) then return end
-
-		local lhik_model
-		local lhik_anim_model
-		local LHIK_GunDriver
-		local LHIK_CamDriver
-		local offsetang
-
-		local tranim = self:GetBuff_Hook("Hook_LHIK_TranslateAnimation", key)
-
-		key = tranim or key
-
-		for i, k in pairs(self.Attachments) do
-			if !k.Installed then continue end
-			if !k.VElement then continue end
-
-			if self:GetBuff_Stat("LHIK", i) then
-				lhik_model = k.VElement.Model
-				lhik_anim_model = k.GodDriver and k.GodDriver.Model or false
-				offsetang = k.VElement.OffsetAng
-
-				if self:GetBuff_Stat("LHIK_GunDriver", i) then
-					LHIK_GunDriver = self:GetBuff_Stat("LHIK_GunDriver", i)
-				end
-
-				if self:GetBuff_Stat("LHIK_CamDriver", i) then
-					LHIK_CamDriver = self:GetBuff_Stat("LHIK_CamDriver", i)
-				end
-			end
-		end
-
-		if !IsValid(lhik_model) then return false end
-
-		local seq = lhik_model:LookupSequence(key)
-
-		if !seq then return false end
-		if seq == -1 then return false end
-
-		lhik_model:ResetSequence(seq)
-		if IsValid(lhik_anim_model) then
-			lhik_anim_model:ResetSequence(seq)
-		end
-
-		if !time or time < 0 then time = lhik_model:SequenceDuration(seq) end
-
-		self.LHIKAnimation = seq
-		self.LHIKAnimationStart = UnPredictedCurTime()
-		self.LHIKAnimationTime = time
-
-		self.LHIKAnimation_IsIdle = false
-
-		if IsValid(lhik_anim_model) and LHIK_GunDriver then
-			local att = lhik_anim_model:LookupAttachment(LHIK_GunDriver)
-			local ang = lhik_anim_model:GetAttachment(att).Ang
-			local pos = lhik_anim_model:GetAttachment(att).Pos
-
-			self.LHIKGunAng = lhik_anim_model:WorldToLocalAngles(ang) - Angle(0, 90, 90)
-			self.LHIKGunPos = lhik_anim_model:WorldToLocal(pos)
-
-			self.LHIKGunAngVM = vm:WorldToLocalAngles(ang) - Angle(0, 90, 90)
-			self.LHIKGunPosVM = vm:WorldToLocal(pos)
-		end
-
-		if IsValid(lhik_anim_model) and LHIK_CamDriver then
-			local att = lhik_anim_model:LookupAttachment(LHIK_CamDriver)
-			local ang = lhik_anim_model:GetAttachment(att).Ang
-
-			self.LHIKCamOffsetAng = offsetang
-			self.LHIKCamAng = lhik_anim_model:WorldToLocalAngles(ang)
-		end
-
-		-- lhik_model:SetCycle(0)
-		-- lhik_model:SetPlaybackRate(dur / time)
-
-		return true
-	end
-
-
 	function SWEP:DoLHIK()
 		local justhide = false
 		local lhik_model = nil
@@ -556,7 +293,7 @@ if CLIENT then
 		local hide_component = false
 		local delta = 1
 
-		local vm = TFA and TFA.INS2 and IsValid(TFA.INS2.HandsEnt) and TFA.INS2.HandsEnt or self:GetOwner():GetViewModel()
+		local vm = TFA and TFA.INS2 and IsValid(TFA.INS2.HandsEnt) and TFA.INS2.HandsEnt or wep.REAL_VM or self:GetOwner():GetViewModel()
 
 		if !GetConVar("arccw_reloadincust"):GetBool() and !self.NoHideLeftHandInCustomization and !self:GetBuff_Override("Override_NoHideLeftHandInCustomization") then
 			if self:GetState() == ArcCW.STATE_CUSTOMIZE then

@@ -11,7 +11,7 @@ local formulas = {
     completeness_inverted = function(slow_motion_stage, slomo_bonus) return 1 / (1 + HORDE.SlowMotion_GetCompletenessSlomo(slow_motion_stage) * slomo_bonus) end,
 }
 
---[[hook.Add("PlayerSay", "TEST", function(ply, input, public)
+hook.Add("PlayerSay", "TEST", function(ply, input, public)
     if not ply:IsValid() then return end
     local text = {}
 
@@ -22,6 +22,14 @@ local formulas = {
     if text[1] == "!slomo" then
         HORDE.SlowMotion_Start()
     end
+end)
+
+--[[hook.Add("Think", "Test23231", function()
+    local ply = player.GetAll()[1]
+    if !IsValid(ply) then return end
+    local wep = ply:GetActiveWeapon()
+    if !IsValid(wep) then return end
+    print(ply:GetViewModel():GetCycle())
 end)]]
 
 local bonus_hooks = {
@@ -29,8 +37,8 @@ local bonus_hooks = {
     SlowMotion_MeleeAttackSpeedBonus = {"Mult_MeleeTime", formulas.completeness_inverted},
     SlowMotion_ReloadBonus = {"Mult_ReloadTime", formulas.completeness_inverted, function(ply, slomo_stage, slomo_bonus)
         local hookname = "Horde_SlowMotion_ReloadBonus_" .. ply:EntIndex()
-        if !hook.GetTable()["Tick"][hookname] then
-            hook.Add("Tick", hookname, function()
+        if !hook.GetTable()["Think"][hookname] then
+            hook.Add("Think", hookname, function()
                 local wep = ply:GetActiveWeapon()
                 if !IsValid(wep) or !wep.ArcCW then return end
                 if wep:GetReloading() then
@@ -55,7 +63,7 @@ local bonus_hooks = {
                             local ct = CurTime()
                             local start_reload = wep.LastAnimStartTime
                             local anim = wep.LastAnimKey
-                            local vm = ply:GetViewModel()
+                            local vm = wep.REAL_VM--ply:GetViewModel()
                             local vm_animdur = vm:SequenceDuration()
 
 
@@ -72,42 +80,50 @@ local bonus_hooks = {
                             local anim_progress = math.Clamp((wep.LastAnimPrg or 0) + (ct - wep.LastAnimPrcd) * wep.LastRes / dur, 0, 1)
                             wep.LastAnimPrg = anim_progress
 
-            
-                            vm:SetPlaybackRate(mult * (vm_animdur / dur))
-            
-                            if CLIENT then
-                                vm:SetAnimTime(ct - dur / mult * anim_progress)
+                            --if game.SinglePlayer() then
+                            local anim_rate = mult * (vm_animdur / dur)
+                            vm:SetPlaybackRate(anim_rate)
+                            
+
+                            --wep.LastAnimStartTime = wep.LastAnimStartTime - skip_on
+                            --wep.LastAnimFinishTime = ct + vm_animdur / anim_rate * (1 - anim_progress)
+                                
+                            --if CLIENT then
+                                --vm:SetAnimTime(ct - vm_animdur / anim_rate * anim_progress)
+                                --wep:SetAnimTime(ct - vm_animdur / anim_rate * anim_progress)
+                                --ply:SetAnimTime(ct - vm_animdur / anim_rate * anim_progress)
+                                --vm:SetAnimTime(ct)
+                            --end
+                            --end
+                            local anim_timetoend = dur / mult * (1 - anim_progress)
+        
+                            local reloadtime = dur_minprg / mult * (1 - anim_progress * (dur / dur_minprg))
+                            local reloadtime2
+                            if !wep.Animations[anim].ForceEnd then
+                                reloadtime2 = anim_timetoend
+                            else
+                                reloadtime2 = reloadtime
                             end
-                                local anim_timetoend = dur / mult * (1 - anim_progress)
-            
-                                local reloadtime = dur_minprg / mult * (1 - anim_progress * (dur / dur_minprg))
-                                local reloadtime2
-                                if !wep.Animations[anim].ForceEnd then
-                                    reloadtime2 = anim_timetoend
-                                else
-                                    reloadtime2 = reloadtime
-                                end
-                                wep:SetReloadingREAL(ct + reloadtime2)
-                                wep:SetNextPrimaryFire(ct + reloadtime2)
-                                wep:SetMagUpIn(ct + reloadtime)
-                                wep:SetNextIdle(ct + anim_timetoend)
+                            wep:SetReloadingREAL(ct + reloadtime2)
+                            wep:SetNextPrimaryFire(ct + reloadtime2)
+                            wep:SetMagUpIn(ct + reloadtime)
+                            wep:SetNextIdle(ct + anim_timetoend)
 
             
-                            --[[for i, sounds in ipairs(wep.EventTable) do
+                            for i, sounds in ipairs(wep.EventTable) do
                                 for time, key in pairs(sounds) do
                                     if key.AnimKey == anim then
-                                        local sound_delay = (time - key.StartTime) / mult * (key.StartTimeLastMult or 1)
-
-                                        time2 = CurTime() + sound_delay
-                                        if !sounds[time2] then
-                                            sounds[time2] = table.Copy(key)
-                                            sounds[time] = nil
-                                            print("time,time2", CurTime(), time2, sound_delay, mult, sounds[time2].s)
+                                        local sound_delay = (time - key.StartTime) / mult * (key.StartTimeLastMult or wep.LastRes)
+                
+                                        time2 = key.StartTime + sound_delay
+                                        if !wep.EventTable[i][time2] then
+                                            wep.EventTable[i][time2] = table.Copy(key)
+                                            wep.EventTable[i][time] = nil
                                         end
                                         key.StartTimeLastMult = mult
                                     end
                                 end
-                            end]]
+                            end
 
                             wep.LastRes = mult
                             wep.LastAnimPrcd = ct
@@ -122,11 +138,33 @@ local bonus_hooks = {
         end
 
         if slomo_stage == 1.0 then
-            hook.Remove("Tick", hookname)
+            hook.Remove("Think", hookname)
+            
+
             for _, wep in pairs(ply:GetWeapons()) do
                 wep.LastRes = nil
                 wep.LastAnimPrg = nil
                 wep.LastAnimPrcd = nil
+            end
+
+            local wep = ply:GetActiveWeapon()
+            local mult = 1 / wep:GetBuff_Mult("Mult_ReloadTime")
+
+            for i, sounds in ipairs(wep.EventTable) do
+                for time, key in pairs(sounds) do
+                    if key.AnimKey == anim then
+                        print((time - key.StartTime), mult, (key.StartTimeLastMult or wep.LastRes))
+                        local sound_delay = (time - key.StartTime) / mult * (key.StartTimeLastMult or wep.LastRes)
+
+                        time2 = key.StartTime + sound_delay
+                        if !wep.EventTable[i][time2] then
+                            wep.EventTable[i][time2] = table.Copy(key)
+                            wep.EventTable[i][time] = nil
+                            print("time", time2, wep.EventTable[i][time], math.Round(CurTime()))
+                        end
+                        key.StartTimeLastMult = mult
+                    end
+                end
             end
         end
     end},
@@ -363,7 +401,8 @@ end
 hook.Add("Horde_OnEnemyKilled", "StartSlowMotion", function(victim, killer, inflictor)
     if IsValid(inflictor) and inflictor:IsNPC() or CurTime() == last_slowmotion_called_timing then return end
     if last_player_called_slowmotion == NULL and
-	math.random() > .05 or last_player_called_slowmotion != NULL and
+	math.random() > 1 or --.05 or
+    last_player_called_slowmotion != NULL and
 	(killer != last_player_called_slowmotion or last_player_called_count >= (killer:Horde_GetPerk("assault_base") and 5 or 3)) or
         hook.Run("Horde_CanSlowTime")
     then return end

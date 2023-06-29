@@ -657,7 +657,7 @@ end)
 
 -------------------------> Cant buy anything before start game
 
-hook.Add("CanBuyItemUpgrade", "Horde_PrepareBuy", function(ply, class)
+--[[hook.Add("CanBuyItemUpgrade", "Horde_PrepareBuy", function(ply, class)
     HORDE:SendNotification("You Can't upgrade before start game!", 1, ply)
     return false
 end)
@@ -695,7 +695,7 @@ hook.Add("HordeWaveStart", "Horde_PrepareBuy", function(wave)
     hook.Remove("CanBuyItemUpgrade", "Horde_PrepareBuy")
     hook.Remove("Horde_PlayerDropMoney", "Horde_PrepareBuy")
     hook.Remove("HordeWaveStart", "Horde_PrepareBuy")
-end)
+end)]]
 
 -------------------------> Cant buy anything before start game
 
