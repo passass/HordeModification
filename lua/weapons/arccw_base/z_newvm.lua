@@ -67,8 +67,10 @@ if CLIENT then
             vm_real:SetColor( Color( wep:GetColor().r, wep:GetColor().b, wep:GetColor().g, 255 ) )
 
             local playbackrate = vm_real:GetPlaybackRate()
-            wep:SetAnimationProgress( vm_real:GetCycle() +
-                FrameTime() * playbackrate / vm_real:SequenceDuration()
+            wep:SetAnimationProgress( math.min(
+                vm_real:GetCycle() + FrameTime() * playbackrate / vm_real:SequenceDuration(),
+                1
+                )
             )
             if wep.UseHands then
                 local hands = ply:GetHands()
@@ -99,7 +101,6 @@ if CLIENT then
                 end
         
                 ply:GetHands():SetParent(HandsEnt)
-                vm_real.Hands:DrawModel()
             end
 
             ply:GetHands():DrawModel()
@@ -139,8 +140,14 @@ if CLIENT then
         local ignore = net.ReadBool()
     
         if !wep.ArcCW then return end
-    
         wep:PlayAnimation(key, mul, false, start, time, false, ignore)
+        timer.Create("p[dkfhssdfh]", .01, 5, function()
+            wep = LocalPlayer():GetActiveWeapon()
+            if !wep.LastAnimKey != key then
+                wep:PlayAnimation(key, mul, false, start, time, false, ignore)
+            end
+            
+        end)
     end)
 else
     --- SERVER
@@ -254,7 +261,7 @@ function SWEP:Deploy()
         local d_anim = self:SelectAnimation("draw")
 
         if self.Animations[r_anim] and ( dev_alwaysready:GetBool() or self.UnReady ) then
-            self:PlayAnimation(r_anim, 1, true, 0, false, nil, nil, nil, nil, {SyncWithClient = true})
+            self:PlayAnimation(r_anim, 1, true, 0, false, nil, true, nil, {SyncWithClient = true})
             prd = self.Animations[r_anim].ProcDraw
 
             self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(r_anim, true) )
@@ -753,13 +760,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
     local ct = CurTime()
 
     if self:GetPriorityAnim() and !priority then return end
-
-    if otherdata.SyncWithClient then
-        print('otherdata.SyncWithClient')
-        timer.Simple(.1,  function()
-            print(self:GetAnimationProgress())
-        end)
-    end
     
     if SERVER and (game.SinglePlayer() and pred or otherdata.SyncWithClient) then
     --if SERVER and pred then
@@ -769,8 +769,12 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
         net.WriteFloat(startfrom)
         net.WriteBool(tt)
         --net.WriteBool(skipholster) Unused
-        net.WriteBool(priority)
+        net.WriteBool(otherdata.SyncWithClient or !otherdata.SyncWithClient and priority)
         net.Send(self:GetOwner())
+    end
+
+    if CLIENT then
+        self:SetAnimationProgress(0)
     end
 
     local anim = self.Animations[key]
@@ -895,6 +899,13 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
         end
     end
 
+    if !(game.SinglePlayer() and CLIENT) then
+        -- self.EventTable = {}
+        if game.SinglePlayer() or (!game.SinglePlayer() and self.LastAnimStartTime != ct) then
+            self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom, key)
+        end
+    end
+
     if seq then
         if CLIENT then
             vm:ResetSequence( seq )
@@ -909,17 +920,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
         self.LastAnimKey = key
     end
 
-    if !(game.SinglePlayer() and CLIENT) and (game.SinglePlayer() or IsFirstTimePredicted()) then
-        local sndtable = table.Copy(anim.SoundTable or {})
-
-        --local anim_dur = vm:SequenceDuration()
-
-        --[[for _, snd in pairs(sndtable) do
-            snd.EmitOnProgress = ((snd.t * mult) - startfrom) / anim_dur
-        end]]
-
-        self:PlaySoundTable(sndtable, 1 / mult, startfrom, key)
-    end
+    
 
     local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment -- why is this here if we just... do cool stuff elsewhere?
     if att and vm:GetAttachment(att) then
@@ -932,8 +933,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
 
     if SERVER then
         self:CalculateCycle()
-    else
-        self:SetAnimationProgress(0)
     end
 
     return true
@@ -1250,7 +1249,7 @@ function SWEP:PlayEvent(v)
     end
 
     if v.pp then
-        local vm = CLIENT and self.REAL_VM or owner:GetViewModel()
+        local vm = self:GetOwner():GetViewModel()
 
         vm:SetPoseParameter(pp, ppv)
     end
@@ -2846,7 +2845,7 @@ function SWEP:Think()
                 end
                 self:PlayEvent(bz)
                 self.EventTable[i][ed] = nil
-                --print(CurTime(), "Event completed at " .. i, ed)
+                --print(CurTime(), "Event completed at " .. i, ed, bz.s)
                 if table.IsEmpty(v) and i != 1 then self.EventTable[i] = nil --[[print(CurTime(), "No more events at " .. i .. ", killing")]] end
             end
         end

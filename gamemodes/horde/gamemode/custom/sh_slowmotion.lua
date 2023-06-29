@@ -148,19 +148,19 @@ local bonus_hooks = {
             end
 
             local wep = ply:GetActiveWeapon()
-            local mult = 1 / wep:GetBuff_Mult("Mult_ReloadTime")
+            if IsValid(wep) then
+                local mult = 1 / wep:GetBuff_Mult("Mult_ReloadTime")
+            end
 
             for i, sounds in ipairs(wep.EventTable) do
                 for time, key in pairs(sounds) do
                     if key.AnimKey == anim then
-                        print((time - key.StartTime), mult, (key.StartTimeLastMult or wep.LastRes))
                         local sound_delay = (time - key.StartTime) / mult * (key.StartTimeLastMult or wep.LastRes)
 
                         time2 = key.StartTime + sound_delay
                         if !wep.EventTable[i][time2] then
                             wep.EventTable[i][time2] = table.Copy(key)
                             wep.EventTable[i][time] = nil
-                            print("time", time2, wep.EventTable[i][time], math.Round(CurTime()))
                         end
                         key.StartTimeLastMult = mult
                     end
