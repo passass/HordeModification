@@ -39,11 +39,42 @@ end
 
 if SERVER then
 	function SWEP:StartRegenPoints(time)
-		timer.Create( "medkit_ammo" .. self:EntIndex(), time / 25, 0, function()
-			if ( self:Clip1() < self.MaxAmmo ) then
-				self:SetClip1( math.min( self:Clip1() + 4, self.MaxAmmo ) )
-			end
-		end )
+
+		local timer_obj = self.Medkit_Ammo_Timer
+		if !timer_obj then
+			timer_obj = HORDE.Timers:New({
+				linkwithent = self,
+				timername = "medkit_ammo" .. self:EntIndex(),
+				func = function(timerobj)
+					if ( self:Clip1() < self.MaxAmmo ) then
+						self:SetClip1( math.min( self:Clip1() + 4, self.MaxAmmo ) )
+					else
+						timerobj:Stop()
+					end
+				end,
+				callfunconstart = true,
+				delay = time / 25
+			})
+			self.Medkit_Ammo_Timer = timer_obj
+			timer_obj:UpdateTimer()
+		else
+			timer_obj:SetDelay(time / 25)
+			timer_obj:UpdateTimer()
+		end
+	end
+
+	function SWEP:Horde_StartTimeStop()
+		local owner = self:GetOwner()
+		if self.Medkit_Ammo_Timer and owner != HORDE.TimeStop_Activator() then
+			self.Medkit_Ammo_Timer:Stop()
+		end
+	end
+
+	function SWEP:Horde_EndTimeStop()
+		local owner = self:GetOwner()
+		if self.Medkit_Ammo_Timer and owner != HORDE.TimeStop_Activator() then
+			self.Medkit_Ammo_Timer:Start()
+		end
 	end
 end
 

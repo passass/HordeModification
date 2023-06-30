@@ -246,6 +246,10 @@ function SWEP:Deploy()
     if !IsFirstTimePredicted() then
         return
     end
+    if CLIENT and IsValid(self.REAL_VM) then
+        local vm_real = self.REAL_VM
+        vm_real.EndOn = 0
+    end
 
     if self.UnReady then
         local sp = game.SinglePlayer()

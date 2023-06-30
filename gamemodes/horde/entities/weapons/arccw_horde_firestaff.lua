@@ -188,6 +188,7 @@ SWEP.Animations = {
     },
     ["reload"] = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
+        Mult = .7,
         Source = "reload",
     },
 }
@@ -245,8 +246,7 @@ if !self:CanPrimaryAttack() or self:Clip1() == 0 then return end
 			end
 		end)
 	end
-	self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
-	own:SetAnimation( PLAYER_ATTACK1 )
+	self:DoPrimaryAnim()
 	self:TakePrimaryAmmo(1)
 	self:EmitSound("weapons/originstaffs/fire/shot/firestaff_shoot.ogg", 75, 100, 1.0, CHAN_ITEM)
 	self:EmitSound("weapons/originstaffs/fire/flux/firestaff_flux.ogg", 100, 100, 0.4, CHAN_WEAPON)

@@ -507,7 +507,7 @@ end
         changeLevelRequirement("arccw_horde_scarl", {Assault=15})
 
         HORDE:CreateItem("Rifle",      "M14",           "arccw_horde_m14",     2200, 7, "M14.\nA semi-automatic rifle.",
-        {Survivor=true, Ghost=true}, 10, -1, nil, nil, {Ghost=3}, nil, {HORDE.DMG_BALLISTIC})
+        {Survivor=true, Ghost=true}, 4, -1, nil, nil, {Ghost=3}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Rifle",      "STG-44",          "arccw_horde_stg44", 3000, 8, "STG-44.\nOld but effiency weapon.",
         {Assault=true, Survivor=true}, 10, -1, nil, nil, {
             VariousConditions=true,
@@ -537,7 +537,7 @@ end
             Survivor = {Medic=20, Survivor=20},
         }, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Rifle",      "M40A3",     "arccw_horde_m40a3",    2250, 6, "M40A3.\nBolt-action weapon with big power.",
-        {Ghost=true}, 7, -1, nil, nil, {Ghost=2}, nil, {HORDE.DMG_BALLISTIC})
+        {Ghost=true}, 3, -1, nil, nil, {Ghost=2}, nil, {HORDE.DMG_BALLISTIC})
 
 
         HORDE.items["arccw_horde_awp"].whitelist["Survivor"] = true
@@ -685,7 +685,7 @@ end
         }, nil, {HORDE.DMG_SLASH})
 
         HORDE:CreateItem("Special",    "Staff of Fire", "arccw_horde_firestaff",            3500,  9, "Staff of Fire.\nA magic rod that shoot a fire balls.",
-        {Cremator=true}, 20, -1, nil, nil, {Cremator=15}, nil, {HORDE.DMG_BURN})
+        {Cremator=true}, 8, -1, nil, nil, {Cremator=15}, nil, {HORDE.DMG_BURN})
         HORDE:CreateItem("Equipment", "50 Kevlar Armor", "armor50", 1250, 0, "50 kevlar armor set.\nFills up 50 of your armor bar.",
         nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, armor=50}, "items/armor_50.png") -- 
         HORDE:CreateItem("Equipment", "100 Kevlar Armor", "armor100", 2500, 0, "Full kevlar armor set.\nFills up 100 of your armor bar and allows add armor to 100 with armor battery.\nArmor Limit Resets to 50 after death.",

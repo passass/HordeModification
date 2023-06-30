@@ -280,13 +280,18 @@ function HORDE:TimeStop_unfreeze_npc(ent)
 end
 
 local TimeStopStart = 0
+local TimeStopActivator = NULL
 
 function HORDE.TimeStop_TimeEnough()
 	return TimeStopStart + 6.2 - CurTime()
 end
 
-function HORDE.TimeStop_StartTime() 
+function HORDE.TimeStop_StartTime()
 	return TimeStopStart
+end
+
+function HORDE.TimeStop_Activator()
+	return TimeStopActivator
 end
 
 local function freeze_entity(ent)
@@ -453,7 +458,7 @@ local function unfreeze_mutations_progress(exclude_ply)
 	end
 end
 
-local function start_timestop(ply)
+local function start_timestop(activator)
     hook.Add("Horde_CanSlowTime", "Horde_TimeStop", function()
         return true
     end)
@@ -473,7 +478,7 @@ local function start_timestop(ply)
 
         for _, ply2 in pairs(player.GetAll()) do
             if ply2:Alive() then
-                if ply2 != ply then
+                if ply2 != activator then
 
                     -- Freeze player movement
                     ply2:Freeze(true)
@@ -492,17 +497,20 @@ local function start_timestop(ply)
 
                     -- Stop reloading
                     local wep = ply2:GetActiveWeapon()
-                    if IsValid(wep) and wep.ArcCW then
-                        wep:SetNextPrimaryFire(wep:GetNextPrimaryFire() + 6.2)
-                        wep:SetReloading(wep:GetReloadingREAL() + 6.2)
-                        wep.LastAnimStartTime = wep.LastAnimStartTime + 6.2
-                        wep.LastAnimFinishTime = wep.LastAnimFinishTime + 6.2
-                        wep:SetNextIdle(wep:GetNextIdle() + 6.2)
-                        wep:SetMagUpIn(wep:GetMagUpIn() + 6.2)
-                        local vm = wep.REAL_VM
-                        if vm and IsValid(vm) then
-                            wep.oldPlaybackRate = vm:GetPlaybackRate()
-                            vm:SetPlaybackRate(0)
+                    if IsValid(wep) then
+                        if wep.Horde_StartTimeStop then wep:Horde_StartTimeStop() end
+                        if wep.ArcCW then
+                            wep:SetNextPrimaryFire(wep:GetNextPrimaryFire() + 6.2)
+                            wep:SetReloading(wep:GetReloadingREAL() + 6.2)
+                            wep.LastAnimStartTime = wep.LastAnimStartTime + 6.2
+                            wep.LastAnimFinishTime = wep.LastAnimFinishTime + 6.2
+                            wep:SetNextIdle(wep:GetNextIdle() + 6.2)
+                            wep:SetMagUpIn(wep:GetMagUpIn() + 6.2)
+                            local vm = wep.REAL_VM
+                            if vm and IsValid(vm) then
+                                wep.oldPlaybackRate = vm:GetPlaybackRate()
+                                vm:SetPlaybackRate(0)
+                            end
                         end
                     end
                 end
@@ -538,7 +546,7 @@ local function start_timestop(ply)
         end )
 		
 		hook.Add("Horde_SlowHeal_Post", "Horde_TimeStop", function(ply2, amount, overhealmult)
-			if ply == ply2 then return end
+			if activator == ply2 then return end
 			local timer_obj = ply2.Horde_HealTimer
             if timer_obj then
                 timer_obj:Stop()
@@ -546,7 +554,7 @@ local function start_timestop(ply)
 		end)
 	
 		freeze_mutations()
-		freeze_mutations_progress(ply)
+		freeze_mutations_progress(activator)
         Weapons_Stop_Beams()
 		
         timer.Simple(5, function()
@@ -555,18 +563,15 @@ local function start_timestop(ply)
             net.Broadcast()
 
             timer.Simple(1.2, function()
-
-				TimeStopStart = 0
-				TimeStopProceed = false
                 hook.Remove("Horde_CanSlowTime", "Horde_TimeStop")
 				hook.Remove("WeaponEquip", "Horde_TimeStop")
 				hook.Remove( "OnEntityCreated", "Horde_TimeStop")
                 hook.Remove("Horde_SlowHeal_NotAllow", "Horde_TimeStop")
 				unfreeze_mutations()
-				unfreeze_mutations_progress(ply)
+				unfreeze_mutations_progress(activator)
 
-                if IsValid(ply) then
-                    for _, wep in pairs(ply:GetWeapons()) do
+                if IsValid(activator) then
+                    for _, wep in pairs(activator:GetWeapons()) do
                         if wep.oldDoPrimaryFire then
                             wep.DoPrimaryFire = wep.oldDoPrimaryFire
                             wep.oldDoPrimaryFire = nil
@@ -585,7 +590,7 @@ local function start_timestop(ply)
                     unfreeze_entity(ent)
                 end
                 for _, ply2 in pairs(player.GetAll()) do
-                    if ply2:Alive() and ply2 != ply then
+                    if ply2:Alive() and ply2 != activator then
                         ply2:Freeze(false)
                         ply2:UnLock()
                         ply2:StopSound("player/pl_drown1.wav")
@@ -597,16 +602,23 @@ local function start_timestop(ply)
                                 timer_obj:Start()
                             end
 						end
-                        local wep = ply:GetActiveWeapon()
-                        if IsValid(wep) and wep.oldPlaybackRate then
-                            local vm = wep:GetOwner():GetViewModel()
-                            if vm and IsValid(vm) then
-                                vm:SetPlaybackRate(wep.oldPlaybackRate)
+                        local wep = activator:GetActiveWeapon()
+                        if IsValid(wep) then
+                            if wep.Horde_EndTimeStop then wep:Horde_EndTimeStop() end
+                            if wep.oldPlaybackRate then
+                                local vm = activator:GetViewModel()
+                                if vm and IsValid(vm) then
+                                    vm:SetPlaybackRate(wep.oldPlaybackRate)
+                                end
+                                wep.oldPlaybackRate = nil
                             end
-                            wep.oldPlaybackRate = nil
                         end
                     end
                 end
+
+                TimeStopActivator = NULL
+				TimeStopStart = 0
+				TimeStopProceed = false
             end)
         end)
     end)
@@ -620,4 +632,5 @@ GADGET.Hooks.Horde_UseActiveGadget = function (ply)
     ply:EmitSound("timestop_start.mp3")
 
     start_timestop(ply)
+    TimeStopActivator = ply
 end
