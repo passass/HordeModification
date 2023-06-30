@@ -230,6 +230,57 @@ end
         end
     end
 
+    -------------------- UPGRADES
+
+    function HORDE:ItemCanUpgrade(ply, item, ...)
+        local new_args = false
+
+        for _, arg in pairs(... or {}) do
+            if arg == true then new_args = true end
+        end
+
+        return ply:HasWeapon(item.class) and
+        ((ply:Horde_GetCurrentSubclass() == "Gunslinger" and item.category == "Pistol")
+        or item.entity_properties.is_upgradable or new_args)
+    end
+
+    function HORDE:ItemIsUpgraded(ply, itemname)
+        local upgrade = ply:Horde_GetUpgrade(itemname)
+        return upgrade and upgrade > 0
+    end
+    
+    function HORDE:ItemIsUpgradable(ply, itemname, ...)
+        local item = HORDE.items[itemname]
+
+        if !item then return false end
+        
+        if HORDE:ItemCanUpgrade(ply, item, ...) then
+            local upgrade = ply:Horde_GetUpgrade(itemname)
+            return upgrade < (item.entity_properties.upgrade_count or 10)
+        end
+        return false
+    end
+
+    function HORDE:GetUpgradePrice(class, ply)
+        local level
+        if CLIENT then
+            level = MySelf:Horde_GetUpgrade(class)
+        else
+            level = ply:Horde_GetUpgrade(class)
+        end
+        if class == "horde_void_projector" or class == "horde_solar_seal" or class == "horde_astral_relic" or class == "horde_carcass" or class == "horde_pheropod" then
+            local price = 800 + 25 * level
+            return price
+        else
+            local item = HORDE.items[class]
+            local base_price = item.price
+            local price = item.entity_properties.upgrade_price_incby and (item.entity_properties.upgrade_price_base or 0) + item.entity_properties.upgrade_price_incby * level or HORDE:Round2(math.max(100, base_price / 2) + math.max(10, base_price / 64) * level)
+            return price
+        end
+    end
+
+    -------------------- UPGRADES
+
     local old_itemsdata = HORDE.GetDefaultItemsData
     local new_itemsdata = function()
         
@@ -251,9 +302,9 @@ end
         end
 
         HORDE.items["arccw_horde_nade_stun"].whitelist["SWAT"] = true
-        
+
         HORDE:CreateItem("Pistol",     "9mm",            "arccw_horde_9mm",   50,  0, "Combine standard sidearm.",
-        nil, 4, -1, starter_weapons_entity_properties, "items/hl2/weapon_pistol.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"All"})
+        nil, 4, -1, table.Merge(starter_weapons_entity_properties, {upgrade_price_base = 500, is_upgradable = true, upgrade_damage_mult_incby = .25,  upgrade_count = 2, upgrade_price_incby = 750}), "items/hl2/weapon_pistol.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"All"})
         HORDE:CreateItem("Melee",      "Combat Knife",   "arccw_horde_knife",    100,  0, "A reliable bayonet.\nRMB to deal a heavy slash.",
         nil, 10, -1, starter_weapons_entity_properties, nil, nil, nil, {HORDE.DMG_SLASH}, nil, {"All"})
         HORDE:CreateItem("Equipment",  "Medkit",         "weapon_horde_medkit",      50,   0, "Rechargeble medkit.\nRMB to self-heal, LMB to heal others.",

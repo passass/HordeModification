@@ -28,6 +28,12 @@ function PANEL:OnCursorExited()
     self.bg_color = Color(50,50,50, 200)
 end
 
+function PANEL:IsUpgraded()
+    return MySelf:HasWeapon(self.item.class) and
+    ((MySelf:Horde_GetCurrentSubclass() == "Gunslinger" and self.item.category == "Pistol")
+    or (self.item.class == "horde_void_projector" or self.item.class == "horde_solar_seal" or self.item.class == "horde_astral_relic" or self.item.class == "horde_carcass" or self.item.class == "horde_pheropod"))
+end
+
 function PANEL:SetData(item, description_panel, infusion_panel)
     self.item = item
     self.name = item.name
@@ -43,6 +49,10 @@ function PANEL:SetData(item, description_panel, infusion_panel)
         else
             self.loc_name = self.name
         end
+    end
+
+    if self:IsUpgraded() then
+        self.loc_name = self.loc_name .. " +" .. tostring(MySelf:Horde_GetUpgrade(self.item.class))
     end
     
     self.description = item.description

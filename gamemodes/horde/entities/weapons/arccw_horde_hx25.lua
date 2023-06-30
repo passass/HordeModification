@@ -34,7 +34,7 @@ SWEP.Range = 15 -- in METRES
 SWEP.Penetration = 0
 SWEP.DamageType = DMG_BULLET
 -- IN M/S
-
+SWEP.ClipsPerAmmoBox = 5
 SWEP.CanFireUnderwater = false
 
 SWEP.TracerNum = 1 -- tracer every X
@@ -253,6 +253,6 @@ SWEP.Animations = {
 
         Mult = .9,
 
-        MinProgress = 2.2, ForceEnd = true
+        MinProgress = 1.9, ForceEnd = true
     },
 }

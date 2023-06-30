@@ -131,7 +131,6 @@ if CLIENT then
         return self.REAL_VM:SetCycle(cycle)
     end
 
-    local checksfor_valid = {reload = true, reload_empty = true}
     net.Receive("arccw_sync_anim", function(len, ply)
         local wep    = LocalPlayer():GetActiveWeapon()
         local key    = net.ReadString()

@@ -974,7 +974,8 @@ function PANEL:Paint()
                     self.ammo_secondary_btn:SetVisible(false)
                 end
 
-                 if self:IsUpgradable() then
+                --print("self:IsUpgradable()", self:IsUpgradable(), HORDE:ItemCanUpgrade(MySelf, self.item, self.is_special_weapon_item))
+                if self:IsUpgradable() then
                     self.upgrade_btn:SetVisible(true)
                     self.upgrade_btn:SetTextColor(Color(255,255,255))
                     local price = HORDE:GetUpgradePrice(self.item.class)
@@ -1123,15 +1124,11 @@ function PANEL:Paint()
 end
 
 function PANEL:IsUpgraded()
-    return MySelf:HasWeapon(self.item.class) and
-    ((MySelf:Horde_GetCurrentSubclass() == "Gunslinger" and self.item.category == "Pistol")
-    or self.is_special_weapon_item)
+    return HORDE:ItemCanUpgrade(MySelf, self.item, self.is_special_weapon_item)
 end
 
 function PANEL:IsUpgradable()
-    return MySelf:HasWeapon(self.item.class) and MySelf:Horde_GetUpgrade(self.item.class) < 10 and
-    ((MySelf:Horde_GetCurrentSubclass() == "Gunslinger" and self.item.category == "Pistol")
-    or self.is_special_weapon_item)
+    return HORDE:ItemIsUpgradable(MySelf, self.item.class, self.is_special_weapon_item)
 end
 
 vgui.Register("HordeDescription", PANEL, "DPanel")
