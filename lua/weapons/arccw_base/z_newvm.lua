@@ -72,6 +72,7 @@ if CLIENT then
                 1
                 )
             )
+            --print(math.Round(wep:GetAnimationProgress(), 5), math.Round(vm_real:SequenceDuration(), 5), vm_real:GetPlaybackRate(), wep.LastAnimKey)
             if wep.UseHands then
                 local hands = ply:GetHands()
                 
@@ -141,12 +142,11 @@ if CLIENT then
     
         if !wep.ArcCW then return end
         wep:PlayAnimation(key, mul, false, start, time, false, ignore)
-        timer.Create("p[dkfhssdfh]", .01, 5, function()
+        timer.Create("arccw_sync_anim" .. wep:EntIndex(), .01, 5, function()
             wep = LocalPlayer():GetActiveWeapon()
-            if !wep.LastAnimKey != key then
+            if wep.LastAnimKey != key then
                 wep:PlayAnimation(key, mul, false, start, time, false, ignore)
             end
-            
         end)
     end)
 else
@@ -411,42 +411,6 @@ function SWEP:createCustomVM(mdl)
         
         self.REAL_VM:EnableMatrix("RenderMultiply", mtr)
     end
-    --[[timer.Simple(.5, function()
-        print(self.REAL_VM:LookupBone("R ForeTwist"), self.REAL_VM:LookupBone("ValveBiped.Bip01_R_Hand"))
-    end)
-    print("ppppp", self.REAL_VM:LookupBone("R ForeTwist"), self.REAL_VM:LookupBone("ValveBiped.Bip01_R_Hand"))]]
-
-    --[[hands = ClientsideModel(ply:GetHands():GetModel(), RENDERGROUP_VIEWMODEL)
-    hands:SetNoDraw(true)
-
-    hands:AddEffects(EF_BONEMERGE)
-    hands:AddEffects(EF_BONEMERGE_FASTCULL)
-
-    hands:SetParent(self.REAL_VM)
-    hands:SetPos(self.REAL_VM:GetPos())
-    hands:SetAngles(self.REAL_VM:GetAngles())
-
-    --ply:GetHands():SetParent(hands)
-
-    self.REAL_HANDS = hands]]
-
-    --[[local hookname = "ArcCW_ModelFix_" .. self:EntIndex()
-    timer.Create(hookname, .1, 20, function()
-        ply = self:GetOwner()
-        if !IsValid(self) then
-            hook.Remove(hookname)
-            return
-        end
-        local pos1, ang1 = self:GetViewModelPosition(ply:EyePos(), ply:EyeAngles())
-        print("m1", ang, ang1)
-        if pos1 and ang1 then
-            --self.REAL_VM:SetParent(self:GetOwner():GetViewModel())
-            --self.REAL_VM:SetPos(pos1)
-            self.REAL_VM:SetAngles( ang1 )
-            --self.REAL_HANDS:SetPos(pos)
-            --self.REAL_HANDS:SetAngles(ang)
-        end
-    end)]]
 end
 
 function SWEP:DrawCustomModel(wm, origin, angle)
@@ -901,7 +865,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
 
     if !(game.SinglePlayer() and CLIENT) then
         -- self.EventTable = {}
-        if game.SinglePlayer() or (!game.SinglePlayer() and self.LastAnimStartTime != ct) then
+        if game.SinglePlayer() or (!game.SinglePlayer() and (self.LastAnimStartTime != ct or self.LastAnimKey != key)) then
             self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom, key)
         end
     end
@@ -2005,6 +1969,91 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
     -- lhik_model:SetPlaybackRate(dur / time)
 
     return true
+end
+
+function SWEP:Bash(melee2)
+    melee2 = melee2 or false
+    if self:GetState() == ArcCW.STATE_SIGHTS
+            or (self:GetState() == ArcCW.STATE_SPRINT and !self:CanShootWhileSprint())
+            or self:GetState() == ArcCW.STATE_CUSTOMIZE then
+        return
+    end
+    if self:GetNextPrimaryFire() > CurTime() or self:GetGrenadePrimed() or self:GetPriorityAnim() then return end
+
+    if !self.CanBash and !self:GetBuff_Override("Override_CanBash") then return end
+
+    self:GetBuff_Hook("Hook_PreBash")
+
+    self.Primary.Automatic = true
+
+    local mult = self:GetBuff_Mult("Mult_MeleeTime")
+    local mt = self.MeleeTime * mult
+
+    if melee2 then
+        mt = self.Melee2Time * mult
+    end
+
+    mt = mt * self:GetBuff_Mult("Mult_MeleeWaitTime")
+
+    local bashanim = "bash"
+    local canbackstab = self:CanBackstab(melee2)
+
+    if melee2 then
+        bashanim = canbackstab and self:SelectAnimation("bash2_backstab") or self:SelectAnimation("bash2") or bashanim
+    else
+        bashanim = canbackstab and self:SelectAnimation("bash_backstab") or self:SelectAnimation("bash") or bashanim
+    end
+
+    bashanim = self:GetBuff_Hook("Hook_SelectBashAnim", bashanim) or bashanim
+
+    if bashanim and self.Animations[bashanim] then
+        if SERVER then self:PlayAnimation(bashanim, mult, true, 0, true, nil, nil, nil, {SyncWithClient = true}) end
+    else
+        self:ProceduralBash()
+
+        self:MyEmitSound(self.MeleeSwingSound, 75, 100, 1, CHAN_USER_BASE + 1)
+    end
+
+    if CLIENT then
+        self:OurViewPunch(-self.BashPrepareAng * 0.05)
+    end
+    self:SetNextPrimaryFire(CurTime() + mt )
+
+    if melee2 then
+        if self.HoldtypeActive == "pistol" or self.HoldtypeActive == "revolver" then
+            self:GetOwner():DoAnimationEvent(self.Melee2Gesture or ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE)
+        else
+            self:GetOwner():DoAnimationEvent(self.Melee2Gesture or ACT_GMOD_GESTURE_MELEE_SHOVE_2HAND)
+        end
+    else
+        if self.HoldtypeActive == "pistol" or self.HoldtypeActive == "revolver" then
+            self:GetOwner():DoAnimationEvent(self.MeleeGesture or ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE)
+        else
+            self:GetOwner():DoAnimationEvent(self.MeleeGesture or ACT_GMOD_GESTURE_MELEE_SHOVE_2HAND)
+        end
+    end
+
+    local mat = self.MeleeAttackTime
+
+    if melee2 then
+        mat = self.Melee2AttackTime
+    end
+
+    mat = mat * self:GetBuff_Mult("Mult_MeleeAttackTime") * math.pow(mult, 1.5)
+
+    self:SetTimer(mat or (0.125 * mt), function()
+        if !IsValid(self) then return end
+        if !IsValid(self:GetOwner()) then return end
+        if self:GetOwner():GetActiveWeapon() != self then return end
+
+        if CLIENT then
+            self:OurViewPunch(-self.BashAng * 0.05)
+        end
+
+        self:MeleeAttack(melee2)
+    end)
+
+    self:DoLunge()
 end
 
 function SWEP:BlurWeapon()

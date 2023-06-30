@@ -79,6 +79,8 @@ function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
     if is_update_timer or !timer_obj:TimerExists() or timer_obj:IsStopped() then
         timer_obj:UpdateTimer()
     end
+
+    hook.Run("Horde_SlowHeal_Post", self, amount, overhealmult)
     return true
 end
 

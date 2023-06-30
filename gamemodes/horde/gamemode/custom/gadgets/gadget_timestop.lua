@@ -483,19 +483,23 @@ local function start_timestop(ply)
                     if ply2.Horde_HealHPRemain then
                         players_healed[ply2] = {ply2.Horde_HealHPRemain, ply2.Horde_HealLastMaxHealth}
                         ply2.Horde_HealHPRemain = nil
-                        timer.Remove("Horde_" .. ply2:EntIndex() .. "SlowlyHeal")
+
+                        local timer_obj = ply2.Horde_HealTimer
+                        if timer_obj then
+                            timer_obj:Stop()
+                        end
                     end
 
                     -- Stop reloading
                     local wep = ply2:GetActiveWeapon()
-                    if IsValid(wep) and wep.ArcCW and wep:GetReloading() then
+                    if IsValid(wep) and wep.ArcCW then
                         wep:SetNextPrimaryFire(wep:GetNextPrimaryFire() + 6.2)
                         wep:SetReloading(wep:GetReloadingREAL() + 6.2)
                         wep.LastAnimStartTime = wep.LastAnimStartTime + 6.2
                         wep.LastAnimFinishTime = wep.LastAnimFinishTime + 6.2
                         wep:SetNextIdle(wep:GetNextIdle() + 6.2)
                         wep:SetMagUpIn(wep:GetMagUpIn() + 6.2)
-                        local vm = wep:GetOwner():GetViewModel()
+                        local vm = wep.REAL_VM
                         if vm and IsValid(vm) then
                             wep.oldPlaybackRate = vm:GetPlaybackRate()
                             vm:SetPlaybackRate(0)
@@ -533,17 +537,12 @@ local function start_timestop(ply)
             end
         end )
 		
-		hook.Add("Horde_SlowHeal_NotAllow", "Horde_TimeStop", function(ply2, amount, overhealmult)
+		hook.Add("Horde_SlowHeal_Post", "Horde_TimeStop", function(ply2, amount, overhealmult)
 			if ply == ply2 then return end
-			if !players_healed[ply2] then
-				players_healed[ply2] = {0, 0}
-			end
-			players_healed[ply2][1] = players_healed[ply2][1] + amount
-			local maxhealth = ply2:GetMaxHealth() * (overhealmult or 1)
-			if maxhealth > players_healed[ply2][2] then
-				players_healed[ply2][2] = maxhealth
-			end
-			return true
+			local timer_obj = ply2.Horde_HealTimer
+            if timer_obj then
+                timer_obj:Stop()
+            end
 		end)
 	
 		freeze_mutations()
@@ -593,7 +592,10 @@ local function start_timestop(ply)
                         ply2:StopSound("player/pl_drown2.wav")
                         ply2:StopSound("player/pl_drown3.wav")
 						if players_healed[ply2] then
-							ply2:Horde_SlowHeal(players_healed[ply2][1], math.max(players_healed[ply2][2] / ply2:GetMaxHealth(), 1))
+							local timer_obj = ply2.Horde_HealTimer
+                            if timer_obj then
+                                timer_obj:Start()
+                            end
 						end
                         local wep = ply:GetActiveWeapon()
                         if IsValid(wep) and wep.oldPlaybackRate then

@@ -1,11 +1,11 @@
 GADGET.PrintName = "TimeSkip"
 local skip_on = 1.5
 GADGET.Description =
-[[Skip healing and reloading for ]] .. skip_on .. [[seconds.]]
+[[Skip healing, gadget cooldown and reloading for ]] .. skip_on .. [[seconds.]]
 GADGET.Icon = "items/gadgets/timestop.png"
 
 GADGET.Duration = skip_on
-GADGET.Cooldown = 5
+GADGET.Cooldown = 10
 GADGET.Active = true
 GADGET.Params = {}
 GADGET.Hooks = {}
@@ -55,14 +55,9 @@ local function SkipReload(wep)
                             sounds[time2] = table.Copy(key)
                             sounds[time] = nil
                         end
-                        print(sounds[time2], sounds[time2].AnimKey)
-                    else print(key.AnimKey, anim, key.AnimKey == anim) end
-                    
+                    end
                 end
             end
-        
-        else
-            
         end
     end
 
@@ -102,6 +97,10 @@ if CLIENT then
         end)
         
         SkipReload(MySelf:GetActiveWeapon())
+        local cd = MySelf:Horde_GetGadgetInternalCooldown()
+        if MySelf:Horde_GetGadget() != "gadget_timeskip" and cd > 0 then
+            MySelf:Horde_SetGadgetInternalCooldown(math.max(0, cd - math.Round(skip_on)))
+        end
     end)
 	return
 end
@@ -125,5 +124,20 @@ GADGET.Hooks.Horde_UseActiveGadget = function (activator)
         net.Send(ply)
         
         SkipReload(wep)
+        local cd = ply:Horde_GetGadgetInternalCooldown()
+        if ply:Horde_GetGadget() != "gadget_timeskip" and cd > 0 then
+            ply:Horde_SetGadgetInternalCooldown(math.max(0, cd - math.Round(skip_on)))
+        end
+
+
+        if ply.Horde_HealTimer and ply.Horde_HealHPRemain then
+            local healdelay = ply.Horde_HealTimer.delay
+           
+            local totalhp = math.min(ply.Horde_HealHPRemain, math.Round(skip_on / healdelay))
+            ply:SetHealth(ply:Health() + totalhp)
+            ply.Horde_HealHPRemain = ply.Horde_HealHPRemain - totalhp
+        end
     end
+    
+    
 end

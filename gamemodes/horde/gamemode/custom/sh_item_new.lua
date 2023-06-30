@@ -298,15 +298,15 @@ end
         {Berserker=true}, 10, -1, nil, nil, {Berserker=30}, 1, {HORDE.DMG_SLASH})
         HORDE:CreateItem("Melee",      "StormGiant",       "arccw_horde_stormgiant",  6000, 10, "A big hammer which hit very slow but strong",
         {Berserker=true}, 10, -1, nil, nil, {Berserker=30}, 1, {HORDE.DMG_BLUNT})
-
+        local common_pistols_reqs = {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true, SWAT=true}
         HORDE:CreateItem("Pistol",     "Glock",          "arccw_horde_glock",    750,  2, "Glock 18.\nSemi-automatic pistols manufactured in Austrian.",
-        {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true, SWAT=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
+        common_pistols_reqs, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "USP",            "arccw_horde_usp",      750,  2, "Universelle Selbstladepistole.\nA semi-automatic pistol developed in Germany by H&K.",
-        {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true, SWAT=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
+        common_pistols_reqs, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "P2000",          "arccw_horde_p2000",    750,  2, "Heckler & Koch P2000.\nA serviceable first-round pistol made by H&K.",
-        {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true, SWAT=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
+        common_pistols_reqs, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "P250",           "arccw_horde_p250",     750,  2, "SIG Sauer P250.\nA low-recoil sidearm with a high rate of fire.",
-        {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true, SWAT=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
+        common_pistols_reqs, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "R8",             "arccw_horde_r8",       750,  2, "R8 Revolver.\nDelivers a highly accurate and powerful round,\nbut at the expense of a lengthy trigger-pull.",
         {Survivor=true, Ghost=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "Deagle",         "arccw_horde_deagle",   750,  2, "Night Hawk .50C.\nAn iconic pistol that is diffcult to master.",
@@ -334,13 +334,13 @@ end
         special_pistol_classes, 10, -1, nil, nil, special_pistol_requir, 1, {HORDE.DMG_BALLISTIC})
         
         HORDE:CreateItem("Pistol",     "CZ75",           "arccw_horde_cz75",     750,  2, "CZ 75.\nA semi-automatic pistol manufactured in Czech Republic.",
-        {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
+        common_pistols_reqs, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "M9",             "arccw_horde_m9",       750,  2, "Beretta M9.\nSidearm used by the United States Armed Forces.",
         {Survivor=true, Ghost=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "FiveSeven",      "arccw_horde_fiveseven",750,  3, "ES Five-seven.\nA Belgian semi-automatic pistol made by FN Herstal.",
-        {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true}, 5, -1, nil, nil, {Medic=1, Assault=1, Heavy=1, Demolition=1, Survivor=1, Engineer=1, Warden=1, Cremator=1}, nil, {HORDE.DMG_BALLISTIC})
+        common_pistols_reqs, 5, -1, nil, nil, {Medic=1, Assault=1, Heavy=1, Demolition=1, Survivor=1, Engineer=1, Warden=1, Cremator=1}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "Tec-9",          "arccw_go_tec9",     1000,  3, "A Swedish-made semi-automatic pistol.\nLethal in close quarters.",
-        {Medic=true, Assault=true, Heavy=true, Survivor=true, Engineer=true, Warden=true}, 8, -1, nil, nil, {Survivor=2}, nil, {HORDE.DMG_BALLISTIC})
+        {Medic=true, Assault=true, Heavy=true, Survivor=true, Engineer=true, Warden=true, SWAT=true}, 8, -1, nil, nil, {Survivor=2}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "Dual Glock17",   "arccw_horde_akimbo_glock17",  1750,  5, "Dual Glock 17.\nWidely used by law enforcements.",
         {Ghost=true}, 5, -1, nil, nil, {Ghost=5}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "Dual M9",        "arccw_horde_akimbo_m9",       1750,  5, "Dual Beretta M9.\nSidearm used by the United States Armed Forces.",
