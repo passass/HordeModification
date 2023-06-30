@@ -1954,7 +1954,7 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
         return
     end
     local owner = self:GetOwner()
-    local vm =  wep.REAL_VM or self:GetOwner():GetViewModel()
+    local vm =  self.REAL_VM or self:GetOwner():GetViewModel()
     if !IsValid(vm) then return end
 
     local lhik_model

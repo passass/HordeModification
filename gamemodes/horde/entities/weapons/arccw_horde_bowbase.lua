@@ -119,7 +119,9 @@ function SWEP:Hook_Think()
 
             self:TakePrimaryAmmo(self:GetBuff("AmmoPerShot"))
 
-            if SERVER then self:DoShootSound() end
+            if !game.SinglePlayer() or SERVER then
+                self:DoShootSound()
+            end
             self:DoPrimaryAnim()
             self:Charge_ReloadAfter_Start()
 

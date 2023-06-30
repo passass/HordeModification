@@ -80,21 +80,9 @@ local bonus_hooks = {
                             local anim_progress = math.Clamp((wep.LastAnimPrg or 0) + (ct - wep.LastAnimPrcd) * wep.LastRes / dur, 0, 1)
                             wep.LastAnimPrg = anim_progress
 
-                            --if game.SinglePlayer() then
                             local anim_rate = mult * (vm_animdur / dur)
                             vm:SetPlaybackRate(anim_rate)
-                            
 
-                            --wep.LastAnimStartTime = wep.LastAnimStartTime - skip_on
-                            --wep.LastAnimFinishTime = ct + vm_animdur / anim_rate * (1 - anim_progress)
-                                
-                            --if CLIENT then
-                                --vm:SetAnimTime(ct - vm_animdur / anim_rate * anim_progress)
-                                --wep:SetAnimTime(ct - vm_animdur / anim_rate * anim_progress)
-                                --ply:SetAnimTime(ct - vm_animdur / anim_rate * anim_progress)
-                                --vm:SetAnimTime(ct)
-                            --end
-                            --end
                             local anim_timetoend = dur / mult * (1 - anim_progress)
         
                             local reloadtime = dur_minprg / mult * (1 - anim_progress * (dur / dur_minprg))
@@ -109,11 +97,10 @@ local bonus_hooks = {
                             wep:SetMagUpIn(ct + reloadtime)
                             wep:SetNextIdle(ct + anim_timetoend)
 
-            
                             for i, sounds in ipairs(wep.EventTable) do
                                 for time, key in pairs(sounds) do
                                     if key.AnimKey == anim then
-                                        local sound_delay = (time - key.StartTime) / mult * (key.StartTimeLastMult or wep.LastRes)
+                                        local sound_delay = (time - key.StartTime) / mult * (key.StartTimeLastMult or wep.LastRes or 1)
                 
                                         time2 = key.StartTime + sound_delay
                                         if !wep.EventTable[i][time2] then
@@ -154,7 +141,7 @@ local bonus_hooks = {
                 for i, sounds in ipairs(wep.EventTable) do
                     for time, key in pairs(sounds) do
                         if key.AnimKey == anim then
-                            local sound_delay = (time - key.StartTime) / mult * (key.StartTimeLastMult or wep.LastRes)
+                            local sound_delay = (time - key.StartTime) / mult * (key.StartTimeLastMult or wep.LastRes or 1)
     
                             time2 = key.StartTime + sound_delay
                             if !wep.EventTable[i][time2] then
@@ -166,8 +153,6 @@ local bonus_hooks = {
                     end
                 end
             end
-
-            
         end
     end},
     SlowMotion_RPMBonus = {"Mult_RPM", formulas.completeness},

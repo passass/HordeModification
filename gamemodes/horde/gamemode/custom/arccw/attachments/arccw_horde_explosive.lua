@@ -33,13 +33,15 @@ end]]
 att.Hook_BulletHit = function(wep, data)
     local ent = data.tr.Entity
 
-    local dmg = DamageInfo()
-    dmg:SetAttacker(wep:GetOwner())
-    dmg:SetInflictor(wep)
-    dmg:SetDamageType(DMG_BLAST)
-    dmg:SetDamage(wep:GetDamage(data.range) / wep:GetBuff("Num"))
-    dmg:SetDamageCustom(HORDE.DMG_PLAYER_FRIENDLY)
-	util.BlastDamageInfo(dmg, data.tr.HitPos, 150)
+    if SERVER then
+        local dmg = DamageInfo()
+        dmg:SetAttacker(wep:GetOwner())
+        dmg:SetInflictor(wep)
+        dmg:SetDamageType(DMG_BLAST)
+        dmg:SetDamage(wep:GetDamage(data.range) / wep:GetBuff("Num"))
+        dmg:SetDamageCustom(HORDE.DMG_PLAYER_FRIENDLY)
+        util.BlastDamageInfo(dmg, data.tr.HitPos, 150)
+    end
     
     data.damage = 0
     if ent:IsValid() and ent:GetClass() == "npc_helicopter" then
