@@ -260,17 +260,17 @@ end
         nil, 10, -1, starter_weapons_entity_properties, "items/weapon_medkit.png", nil, nil, nil, nil, {"All"})
 
         HORDE:CreateItem("SMG",        "Colt M635",           "arccw_horde_smg1",   100, 3, "A compact, shoots burst.",
-        {Assault=true, Heavy=true, Survivor=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Assault", "Heavy", "SpecOps"})
+        {Assault=true, Heavy=true, Survivor=true}, 3, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Assault", "Heavy", "SpecOps"})
         HORDE:CreateItem("Melee",      "Crowbar",        "arccw_horde_crowbar", 300,  3, "A trusty crowbar.\nEasy to use.",
         {Berserker=true, Survivor=true}, 10, -1, nil, "items/hl2/weapon_crowbar.png", nil, nil, {HORDE.DMG_BLUNT}, nil, {"Berserker"})
         HORDE:CreateItem("Pistol",     "HX-25",          "arccw_horde_hx25",   300,  2, "HX-25.\n Compact explosive pistol.",
-        {Demolition=true, Survivor=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BLAST}, nil, {"Demolition"})
+        {Demolition=true, Survivor=true}, 2, -1, nil, nil, nil, nil, {HORDE.DMG_BLAST}, nil, {"Demolition"})
         HORDE:CreateItem("Pistol",     "HMTech-101 Pistol",          "arccw_kf2_pistol_medic",   300,  2, "HMTech-101 Pistol.\n A modern pistol with heal module.",
-        {Medic=true, Survivor=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON}, nil, {"Medic"})
+        {Medic=true, Survivor=true}, 4, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON}, nil, {"Medic"})
         HORDE:CreateItem("Pistol",     "Trespasser",          "arccw_horde_trespasser",   300,  2, "Trespasser.\n A modern pistol with electric damage.",
-        {Engineer=true, Survivor=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_SHOCK}, nil, {"Engineer"})
+        {Engineer=true, Survivor=true}, 4, -1, nil, nil, nil, nil, {HORDE.DMG_SHOCK}, nil, {"Engineer"})
         HORDE:CreateItem("Rifle",     "Kar98k",          "arccw_horde_k98k",   300,  3, "Mauser Kar98k.\n A old with bolt-action.",
-        {Ghost=true, Survivor=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Ghost"})
+        {Ghost=true, Survivor=true}, 3, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Ghost"})
 
         HORDE:CreateItem("Melee",      "Fireaxe",        "arccw_horde_axe",       1500,  5, "Fireaxe.\nHeavy, but can chops most enemies in half.",
         nil, 10, -1, nil, nil, {Berserker=2}, nil, {HORDE.DMG_SLASH})
@@ -347,8 +347,6 @@ end
         {Ghost=true}, 5, -1, nil, nil, {Ghost=5}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "Dual Deagle",    "arccw_horde_akimbo_deagle",   1900,  5, "Dual Night Hawk .50C.\nAn iconic pistol that is diffcult to master.",
         {Ghost=true}, 5, -1, nil, nil, {Ghost=5}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("SMG",        "SMG1",           "arccw_horde_smg1",   100, 3, "A compact, fully automatic firearm.",
-        {Assault=true, Heavy=true, Survivor=true, SWAT=true}, 10, -1, nil, "items/hl2/weapon_smg1.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Assault", "Heavy", "SpecOps", "SWAT"})
         HORDE:CreateItem("SMG",        "TMP",            "arccw_horde_tmp",   1000, 3, "Steyr TMP.\nA select-fire 9×19mm Parabellum caliber machine pistol.",
         {Medic=true, Assault=true, Heavy=true, Survivor=true, Cremator=true, SWAT=true}, 8, -1, nil, nil, {Survivor=2}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("SMG",        "UZI",            "arccw_horde_uzi",   1250, 3, "UZI Submachine Gun.\nDesigned by Captain (later Major) Uziel Gal of the IDF following the 1948 Arab–Israeli War.",
@@ -527,7 +525,7 @@ end
         HORDE:CreateItem("Rifle",      "AN94",         "arccw_horde_an94", 6000, 9, "AN94.\nAn assault rifle with big damage and extended mag.",
         {Assault=true}, 20, -1, nil, nil, {Assault=30}, 1, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Rifle",      "Galil with extended mag",         "arccw_horde_machgungalil", 6000, 9, "Galil with extended mag.\nAn assault rifle with extended mag.",
-        {Assault=true}, 20, -1, nil, nil, {Assault=30}, 1, {HORDE.DMG_BALLISTIC})
+        {Assault=true}, 30, -1, nil, nil, {Assault=30}, 1, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Rifle",      "AK47 SUP Mod",         "arccw_horde_ak47supmod", 6000, 9, "AK47 SUP Mod.\nAn AK47 with SUP Mod.",
         {Assault=true}, 20, -1, nil, nil, {Assault=30}, 1, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Rifle",    "ACR Medic AR",     "arccw_horde_medic_acr",    3000, 8, "Remington Adaptive Combat Rifle.\nEquipped with healing dart and medic grenade launcher.\n\nPress USE+RELOAD to equip medic grenade launcher.\nPress B or ZOOM to fire healing dart.\nHealing dart heals 15 health and has a 1.5 second cooldown.",

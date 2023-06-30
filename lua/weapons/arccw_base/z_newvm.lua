@@ -142,9 +142,9 @@ if CLIENT then
         local ignore = net.ReadBool()
     
         if !wep.ArcCW then return end
-        if !checksfor_valid[key] or wep.LastAnimKey != key then
-            wep:PlayAnimation(key, mul, false, start, time, false, ignore)
-        end
+
+        wep:PlayAnimation(key, mul, false, start, time, false, ignore)
+
         timer.Create("arccw_sync_anim" .. wep:EntIndex(), 0, 8, function()
             wep = LocalPlayer():GetActiveWeapon()
             if wep.LastAnimKey != key then
