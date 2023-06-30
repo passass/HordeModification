@@ -7,7 +7,7 @@ local function qerp(delta, a, b)
 end
 
 if CLIENT then
-
+    local lastanim = ""
     hook.Add("PreDrawViewModel", "ArcCW_NewVM", function(vm, ply,wep)
         --if true then return end
         if IsValid(wep.REAL_VM) then
@@ -68,7 +68,7 @@ if CLIENT then
 
             local playbackrate = vm_real:GetPlaybackRate()
             wep:SetAnimationProgress( math.min(
-                vm_real:GetCycle() + FrameTime() * playbackrate / vm_real:SequenceDuration(),
+                wep:GetAnimationProgress() + FrameTime() * playbackrate / vm_real:SequenceDuration(),
                 1
                 )
             )
@@ -141,14 +141,26 @@ if CLIENT then
         local ignore = net.ReadBool()
     
         if !wep.ArcCW then return end
-        wep:PlayAnimation(key, mul, false, start, time, false, ignore)
-        timer.Create("arccw_sync_anim" .. wep:EntIndex(), .01, 5, function()
-            wep = LocalPlayer():GetActiveWeapon()
-            if wep.LastAnimKey != key then
-                wep:PlayAnimation(key, mul, false, start, time, false, ignore)
-            end
-        end)
+        if wep.LastAnimKey != key then
+            wep:PlayAnimation(key, mul, false, start, time, false, ignore)
+            timer.Create("arccw_sync_anim" .. wep:EntIndex(), 0, 8, function()
+                wep = LocalPlayer():GetActiveWeapon()
+                if wep.LastAnimKey != key then
+                    wep:PlayAnimation(key, mul, false, start, time, false, ignore)
+                end
+            end)
+        end
     end)
+
+    --[[local old = SWEP.DrawHUD
+    function SWEP:DrawHUD()
+        surface.SetTextPos(300, 500)
+        surface.SetFont("ArcCW_26")
+        surface.SetTextColor(255, 255, 255, 255)
+        surface.SetDrawColor(0, 0, 0, 63)
+        surface.DrawText( tostring(wep:GetAnimationProgress()) )
+        return old(self)
+    end]]
 else
     --- SERVER
     util.AddNetworkString("arccw_sync_anim")
@@ -737,10 +749,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
         net.Send(self:GetOwner())
     end
 
-    if CLIENT then
-        self:SetAnimationProgress(0)
-    end
-
     local anim = self.Animations[key]
     if !anim then return end
     local tranim = self:GetBuff_Hook("Hook_TranslateAnimation", key)
@@ -863,11 +871,15 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
         end
     end
 
-    if !(game.SinglePlayer() and CLIENT) then
+    if anim.SoundTable and !(game.SinglePlayer() and CLIENT) then
         -- self.EventTable = {}
-        if game.SinglePlayer() or (!game.SinglePlayer() and (self.LastAnimStartTime != ct or self.LastAnimKey != key)) then
+        if game.SinglePlayer() or (!game.SinglePlayer() and (ct != self.LastAnimStartTime or self.LastAnimKey != key)) then
             self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom, key)
         end
+    end
+
+    if CLIENT then
+        self:SetAnimationProgress(0)
     end
 
     if seq then
@@ -2404,6 +2416,8 @@ function SWEP:Reload()
     if IsValid(self:GetHolster_Entity()) then return end
     if self:GetHolster_Time() > 0 then return end
 
+    if !IsFirstTimePredicted() then return end
+
     if self:GetOwner():IsNPC() then
         return
     end
@@ -2529,7 +2543,7 @@ function SWEP:Reload()
             self:SetMagUpCount(insertcount)
             self:SetMagUpIn(CurTime() + time2 * mult)
         end
-        self:PlayAnimation(anim, mult, true, 0, true, nil, true)
+        self:PlayAnimation(anim, mult, true, 0, true, nil, true, nil, {SyncWithClient = true})
 
         self:SetReloading(CurTime() + time * mult)
 
@@ -2539,7 +2553,7 @@ function SWEP:Reload()
 
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
 
-        self:PlayAnimation(anim, mult, true, self.Animations[anim].StartFrom, false, nil, true)
+        self:PlayAnimation(anim, mult, true, self.Animations[anim].StartFrom, false, nil, true, nil, {SyncWithClient = true })
 
         local reloadtime = self:GetAnimKeyTime(anim, true) * mult
         local reloadtime2
