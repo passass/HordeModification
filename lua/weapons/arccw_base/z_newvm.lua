@@ -10,7 +10,7 @@ if CLIENT then
     local lastanim = ""
     hook.Add("PreDrawViewModel", "ArcCW_NewVM", function(vm, ply,wep)
         --if true then return end
-        if IsValid(wep.REAL_VM) then
+        if IsValid(wep.REAL_VM) and !wep.REAL_VM.Not_Stated then
 
             if wep:GetState() == ArcCW.STATE_CUSTOMIZE then
                 wep:BlurNotWeapon()
@@ -131,6 +131,7 @@ if CLIENT then
         return self.REAL_VM:SetCycle(cycle)
     end
 
+    local checksfor_valid = {reload = true, reload_empty = true}
     net.Receive("arccw_sync_anim", function(len, ply)
         local wep    = LocalPlayer():GetActiveWeapon()
         local key    = net.ReadString()
@@ -141,15 +142,15 @@ if CLIENT then
         local ignore = net.ReadBool()
     
         if !wep.ArcCW then return end
-        if wep.LastAnimKey != key then
+        if !checksfor_valid[key] or wep.LastAnimKey != key then
             wep:PlayAnimation(key, mul, false, start, time, false, ignore)
-            timer.Create("arccw_sync_anim" .. wep:EntIndex(), 0, 8, function()
-                wep = LocalPlayer():GetActiveWeapon()
-                if wep.LastAnimKey != key then
-                    wep:PlayAnimation(key, mul, false, start, time, false, ignore)
-                end
-            end)
         end
+        timer.Create("arccw_sync_anim" .. wep:EntIndex(), 0, 8, function()
+            wep = LocalPlayer():GetActiveWeapon()
+            if wep.LastAnimKey != key then
+                wep:PlayAnimation(key, mul, false, start, time, false, ignore)
+            end
+        end)
     end)
 
     --[[local old = SWEP.DrawHUD
@@ -209,6 +210,30 @@ else
         vm:SetPlaybackRate(speed)
         self:CalculateCycle()
     end
+end
+
+--local idleon = 0
+function SWEP:PlayIdleAnimation(pred)
+    local ianim = self:SelectAnimation("idle")
+    if self:GetGrenadePrimed() then
+        ianim = self:GetGrenadeAlt() and self:SelectAnimation("pre_throw_hold_alt") or self:SelectAnimation("pre_throw_hold")
+    end
+
+    -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
+    if self:GetBuff_Override("UBGL_BaseAnims") and self:GetInUBGL()
+            and self.Animations.idle_ubgl_empty and self:Clip2() <= 0 then
+        ianim = "idle_ubgl_empty"
+    elseif self:GetBuff_Override("UBGL_BaseAnims") and self:GetInUBGL() and self.Animations.idle_ubgl then
+        ianim = "idle_ubgl"
+    end
+
+    if self.LastAnimKey != ianim then
+        ianim = self:GetBuff_Hook("Hook_IdleReset", ianim) or ianim
+    end
+    
+    --if CLIENT and CurTime() > idleon then print("idle", CurTime(), self:GetNextIdle(), self.LastAnimKey) idleon = CurTime() + .1 end
+
+    self:PlayAnimation(ianim, 1, pred, nil, nil, nil, true)
 end
 
 local ang0 = Angle(0, 0, 0)
@@ -394,11 +419,9 @@ function SWEP:createCustomVM(mdl)
         return
     end
     local vm = ply:GetViewModel()
-    
-    if (vm:LookupBone("R ForeTwist") and not vm:LookupBone("ValveBiped.Bip01_R_Hand")) then
-        self.REAL_VM = vm
-        return
-    end
+    --self.REAL_VM = vm
+    --self.REAL_VM.Not_Stated = true
+
     if self.REAL_VM then
         return
     end
@@ -883,11 +906,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
     end
 
     if seq then
-        if CLIENT then
-            vm:ResetSequence( seq )
-        else
-            vm:SendViewModelMatchingSequence(seq)
-        end
+        vm:ResetSequence( seq )
         local dur = vm:SequenceDuration()
         local rate = math.Clamp(dur / (ttime + startfrom), -4, 12)
         vm:SetPlaybackRate(rate)
@@ -912,6 +931,36 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
     end
 
     return true
+end
+
+
+function SWEP:EnterSprint()
+    if engine.ActiveGamemode() == "terrortown" and !(TTT2 and self:GetOwner().isSprinting) then return end
+    if self:GetState() == ArcCW.STATE_SPRINT then return end
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
+    if self:GetTriggerDelta() > 0 then return end
+    if self:GetGrenadePrimed() and !self:CanShootWhileSprint() then return end
+    self:SetState(ArcCW.STATE_SPRINT)
+    self.Sighted = false
+    self.Sprinted = true
+
+    local ct = CurTime()
+
+    -- self.SwayScale = 1
+    -- self.BobScale = 5
+
+    self:SetShouldHoldType()
+
+    local s = self:CanShootWhileSprint()
+
+    if !s and self:GetNextPrimaryFire() <= ct then
+        self:SetNextPrimaryFire(ct)
+    end
+
+    local anim = self:SelectAnimation("enter_sprint")
+    if anim and !s and self:GetNextSecondaryFire() <= ct then
+        self:PlayAnimation(anim, self:GetBuff("SightTime") / self:GetAnimKeyTime(anim, true), true, nil, false, nil, false, false, {SyncWithClient = true})
+    end
 end
 
 function SWEP:GetAnimKeyTime(key, min)
@@ -2412,6 +2461,52 @@ function SWEP:GetMuzzleDevice(wm)
     return muzz
 end
 
+function SWEP:SetupDataTables()
+    self:NetworkVar("Int", 0, "NWState")
+    self:NetworkVar("Int", 1, "FireMode")
+    self:NetworkVar("Int", 2, "BurstCountUM")
+    self:NetworkVar("Int", 3, "LastLoad")
+    self:NetworkVar("Int", 4, "NthReload")
+    self:NetworkVar("Int", 5, "NthShot")
+
+    -- 2 = insert
+    -- 3 = cancelling
+    -- 4 = insert empty
+    -- 5 = cancelling empty
+    self:NetworkVar("Int", 6, "ShotgunReloading")
+    self:NetworkVar("Int", 7, "MagUpCount")
+
+    self:NetworkVar("Bool", 0, "HeatLocked")
+    self:NetworkVar("Bool", 1, "NeedCycle")
+    self:NetworkVar("Bool", 2, "InBipod")
+    self:NetworkVar("Bool", 3, "InUBGL")
+    self:NetworkVar("Bool", 4, "InCustomize")
+    self:NetworkVar("Bool", 5, "GrenadePrimed")
+    self:NetworkVar("Bool", 6, "NWMalfunctionJam")
+    self:NetworkVar("Bool", 7, "UBGLDebounce")
+
+    self:NetworkVar("Float", 0, "Heat")
+    self:NetworkVar("Float", 1, "WeaponOpDelay")
+    self:NetworkVar("Float", 2, "ReloadingREAL")
+    self:NetworkVar("Float", 3, "MagUpIn")
+    self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
+    self:NetworkVar("Float", 5, "NextIdle")
+    self:NetworkVar("Float", 6, "Holster_Time")
+    self:NetworkVar("Float", 7, "NWSightDelta")
+    self:NetworkVar("Float", 8, "NWSprintDelta")
+    self:NetworkVar("Float", 9, "NWPriorityAnim")
+
+    self:NetworkVar("Vector", 0, "BipodPos")
+
+    self:NetworkVar("Angle", 0, "BipodAngle")
+    self:NetworkVar("Angle", 1, "FreeAimAngle")
+    self:NetworkVar("Angle", 2, "LastAimAngle")
+
+    self:NetworkVar("Entity", 0, "Holster_Entity")
+
+    self:SetNWSightDelta(1)
+end
+
 function SWEP:Reload()
     if IsValid(self:GetHolster_Entity()) then return end
     if self:GetHolster_Time() > 0 then return end
@@ -2552,9 +2647,8 @@ function SWEP:Reload()
         local anim = self:SelectReloadAnimation()
 
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
-
         self:PlayAnimation(anim, mult, true, self.Animations[anim].StartFrom, false, nil, true, nil, {SyncWithClient = true })
-
+        --print("reload", self:GetAnimationProgress(), CurTime(), self:GetNextIdle(), !!self:PlayAnimation(anim, mult, true, self.Animations[anim].StartFrom, false, nil, true, nil, {SyncWithClient = true }), self.LastAnimKey)
         local reloadtime = self:GetAnimKeyTime(anim, true) * mult
         local reloadtime2
         if !self.Animations[anim].ForceEnd then
@@ -2592,6 +2686,27 @@ function SWEP:Reload()
     self:GetBuff_Hook("Hook_PostReload")
 end
 
+function SWEP:DoPrimaryAnim()
+    local anim = "fire"
+
+    local inbipod = self:InBipod()
+    local iron    = self:GetState() == ArcCW.STATE_SIGHTS
+
+    -- Needs testing
+    if inbipod then
+        anim = self:SelectAnimation("fire_bipod") or self:SelectAnimation("fire") or anim
+    else
+        anim = self:SelectAnimation("fire") or anim
+    end
+
+    if (self.ProceduralIronFire and iron) or (self.ProceduralRegularFire and !iron) then anim = nil end
+
+    anim = self:GetBuff_Hook("Hook_SelectFireAnimation", anim) or anim
+
+    local time = self:GetBuff_Mult("Mult_FireAnimTime", anim) or 1
+
+    if anim then self:PlayAnimation(anim, time, true, 0, false) end
+end
 
 local vec1 = Vector(1, 1, 1)
 local vec0 = vec1 * 0
@@ -2861,6 +2976,8 @@ function SWEP:PrimaryAttack()
     if shouldsupp then SuppressHostEvents(nil) end
 end
 
+local think_ct = 0
+local count = 0
 function SWEP:Think()
     if IsValid(self:GetOwner()) and self:GetClass() == "arccw_base" then
         self:Remove()
@@ -2870,6 +2987,15 @@ function SWEP:Think()
     local owner = self:GetOwner()
 
     if !IsValid(owner) or owner:IsNPC() then return end
+
+    if CurTime() == think_ct then
+        count = count + 1
+        return
+    else
+        --if count > 1 then print(count) end
+        count = 1
+    end
+    think_ct = CurTime()
 
     if self:GetState() == ArcCW.STATE_DISABLE and !self:GetPriorityAnim() then
         self:SetState(ArcCW.STATE_IDLE)
@@ -3187,7 +3313,7 @@ function SWEP:Think()
     --end
 
     -- Only reset to idle if we don't need cycle. empty idle animation usually doesn't play nice
-    if self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() and !self:GetNeedCycle()
+    if !self:GetPriorityAnim() and self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() and !self:GetNeedCycle()
             and self:GetHolster_Time() == 0 and self:GetShotgunReloading() == 0 then
         self:SetNextIdle(0)
         self:PlayIdleAnimation(true)
