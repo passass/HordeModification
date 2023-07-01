@@ -303,11 +303,8 @@ end
 
         HORDE.items["arccw_horde_nade_stun"].whitelist["SWAT"] = true
 
-        
-
-
         HORDE:CreateItem("Pistol",     "9mm",            "arccw_kf2_9mm",   50,  0, "Combine standard sidearm.",
-        nil, 4, -1, table.Merge(starter_weapons_entity_properties,
+        nil, 4, -1, table.Merge(table.Copy(starter_weapons_entity_properties),
         {upgrade_price_base = 500, is_upgradable = true, upgrade_damage_mult_incby = .25,  upgrade_count = 2, upgrade_price_incby = 750,
         --[[upgrade_func = function(ply, level) -- SERVER ONLY
             HORDE:Modifier_AddToWeapons(ply, "arccw_kf2_9mm", "Horde_MaxMags", "ItemUpgrade", 1 + level)

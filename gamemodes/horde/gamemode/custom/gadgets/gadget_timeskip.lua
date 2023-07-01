@@ -1,10 +1,10 @@
 GADGET.PrintName = "TimeSkip"
-local skip_on = 1.5
+local skip_on = 2
 GADGET.Description =
-[[Skip healing, gadget cooldown and reloading for ]] .. skip_on .. [[seconds.]]
+[[Skip healing, gadget cooldown and reloading for ]] .. skip_on .. [[ seconds.]]
 GADGET.Icon = "items/gadgets/timestop.png"
 
-GADGET.Duration = skip_on
+--GADGET.Duration = skip_on
 GADGET.Cooldown = 10
 GADGET.Active = true
 GADGET.Params = {}
@@ -41,7 +41,7 @@ local function SkipReload(wep)
                 wep:SetMagUpIn(wep:GetMagUpIn() - skip_on)
                 wep:SetNextIdle(wep:GetNextIdle() - skip_on)
             else
-                wep.REAL_VM:SetCycle(wep:GetAnimationProgress() + 1.5 / wep:GetAnimKeyTime(wep.LastAnimKey))
+                wep.REAL_VM:SetCycle(wep:GetAnimationProgress() + skip_on / wep:GetAnimKeyTime(wep.LastAnimKey))
             end
 
             --print(wep:GetReloadingREAL(), wep:GetNextPrimaryFire(), wep:GetMagUpIn(), wep:GetNextIdle())
