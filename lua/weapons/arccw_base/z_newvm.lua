@@ -60,17 +60,16 @@ if CLIENT then
                 vm_real = wep.REAL_VM
             end
             local frmtime = FrameTime()
-            if ct - lastproceed > frmtime * 2 then
+            --[[if  then
                 vm_real.EndOn = 0
-            end
-            if (vm_real.EndOn or 0) <= 35 then
-                local pos, ang = wep:GetViewModelPosition(ply:EyePos(), ply:EyeAngles())
+            end]]
+            if ct - lastproceed > frmtime * 2 or (vm_real.EndOn or 0) <= 35 then -- problem with ladders
+                local pos, ang = wep:GetViewModelPosition(EyePos(), EyeAngles())
                 vm_real:SetPos(pos)
                 vm_real:SetAngles( ang )
                 vm_real:SetParent( ply:GetViewModel() )
                 vm_real.EndOn = (vm_real.EndOn or 0) + 1
             end
-            
             vm_real:SetRenderMode( RENDERMODE_TRANSALPHA )
             vm_real:SetColor( Color( wep:GetColor().r, wep:GetColor().b, wep:GetColor().g, 255 ) )
 
@@ -444,19 +443,19 @@ function SWEP:createCustomVM(mdl)
         return
     end
     
-    self.REAL_VM = ClientsideModel(mdl, RENDERGROUP_BOTH)
+    self.REAL_VM = ClientsideModel(mdl, RENDERGROUP_VIEWMODEL)
     self.REAL_VM:SetNoDraw(true)
     self.REAL_VM:SetupBones()
     self.REAL_VM:SetParent(vm)
     self.REAL_VM.CreateTime = CurTime()
     self.REAL_VM.EndOn = 0
     self.REAL_VM:SetCycle(0)
-
-    local pos, ang = self:GetViewModelPosition(ply:EyePos(), ply:EyeAngles())
+    
+    --[[local pos, ang = self:GetViewModelPosition(ply:EyePos(), ply:EyeAngles())
     if pos and ang then
         self.REAL_VM:SetPos(pos)
         self.REAL_VM:SetAngles( ang )
-    end
+    end]]
     
     if self.ViewModelFlip then
         local mtr = Matrix()
