@@ -7,7 +7,7 @@ local function qerp(delta, a, b)
 end
 
 if CLIENT then
-    local lastanim = ""
+    local lastproceed = 0
     hook.Add("PreDrawViewModel", "ArcCW_NewVM", function(vm, ply,wep)
         --if true then return end
         if IsValid(wep.REAL_VM) and !wep.REAL_VM.Not_Stated then
@@ -33,7 +33,9 @@ if CLIENT then
                 ArcCW:DrawPhysBullets(true)
                 wep:FormCheapScope()
             end
-        
+
+            local ct = CurTime()
+
             local coolFOV = --120 or 
             wep.CurrentViewModelFOV or wep.ViewModelFOV
         
@@ -57,18 +59,24 @@ if CLIENT then
                 wep:createCustomVM(wep.ViewModel)
                 vm_real = wep.REAL_VM
             end
+            local frmtime = FrameTime()
+            if ct - lastproceed > frmtime * 2 then
+                vm_real.EndOn = 0
+            end
             if (vm_real.EndOn or 0) <= 35 then
                 local pos, ang = wep:GetViewModelPosition(ply:EyePos(), ply:EyeAngles())
                 vm_real:SetPos(pos)
                 vm_real:SetAngles( ang )
+                vm_real:SetParent( ply:GetViewModel() )
                 vm_real.EndOn = (vm_real.EndOn or 0) + 1
             end
+            
             vm_real:SetRenderMode( RENDERMODE_TRANSALPHA )
             vm_real:SetColor( Color( wep:GetColor().r, wep:GetColor().b, wep:GetColor().g, 255 ) )
 
             local playbackrate = vm_real:GetPlaybackRate()
             wep:SetAnimationProgress( math.min(
-                wep:GetAnimationProgress() + FrameTime() * playbackrate / vm_real:SequenceDuration(),
+                wep:GetAnimationProgress() + frmtime * playbackrate / vm_real:SequenceDuration(),
                 1
                 )
             )
@@ -119,6 +127,7 @@ if CLIENT then
             end
 
             cam.End3D()
+            lastproceed = ct
             return true
         end
     end)
@@ -140,13 +149,19 @@ if CLIENT then
         --local skip   = net.ReadBool() Unused
         local ignore = net.ReadBool()
     
-        if !wep.ArcCW then return end
+        if !IsValid(wep) or !wep.ArcCW then return end
+
+        --[[local vm_real = wep.REAL_VM
+
+        if vm_real.EndOn >= 35 then
+            vm_real.EndOn = 0
+        end]]
 
         wep:PlayAnimation(key, mul, false, start, time, false, ignore)
 
         timer.Create("arccw_sync_anim" .. wep:EntIndex(), 0, 8, function()
             wep = LocalPlayer():GetActiveWeapon()
-            if wep.LastAnimKey != key then
+            if IsValid(wep) and wep.LastAnimKey != key then
                 wep:PlayAnimation(key, mul, false, start, time, false, ignore)
             end
         end)
@@ -1683,7 +1698,7 @@ function SWEP:DoLHIK()
     local hide_component = false
     local delta = 1
 
-    local vm = wep.REAL_VM or self:GetOwner():GetViewModel()
+    local vm = wep.REAL_VM and (wep.REAL_VM.Hands or wep.REAL_VM) or self:GetOwner():GetViewModel()
 
     if !GetConVar("arccw_reloadincust"):GetBool() and !self.NoHideLeftHandInCustomization and !self:GetBuff_Override("Override_NoHideLeftHandInCustomization") then
         if self:GetState() == ArcCW.STATE_CUSTOMIZE then
@@ -1957,7 +1972,7 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
         return
     end
     local owner = self:GetOwner()
-    local vm =  self.REAL_VM or self:GetOwner():GetViewModel()
+    local vm =  self.REAL_VM and (self.REAL_VM.Hands or self.REAL_VM) or self:GetOwner():GetViewModel()
     if !IsValid(vm) then return end
 
     local lhik_model
