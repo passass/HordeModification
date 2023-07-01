@@ -44,8 +44,8 @@ if CLIENT then
                 coolFOV = wep.ViewModelFOV - mag * 4 - (GetConVar("arccw_vm_add_ads"):GetFloat() * 3 or 0)
                 ArcCW.VMInRT = false
             end
-        
-            cam.Start3D(EyePos(), EyeAngles(), wep:QuickFOVix(coolFOV), nil, nil, nil, nil, 0.5, 1000)
+            local ply_eyepos, ply_eyeangles = EyePos(), EyeAngles()
+            cam.Start3D(ply_eyepos, ply_eyeangles, wep:QuickFOVix(coolFOV), nil, nil, nil, nil, 0.5, 1000)
             cam.IgnoreZ(true)
             wep:DrawCustomModel(false)
             wep:DoLHIK()
@@ -64,7 +64,7 @@ if CLIENT then
                 vm_real.EndOn = 0
             end]]
             if ct - lastproceed > frmtime * 2 or (vm_real.EndOn or 0) <= 35 then -- problem with ladders
-                local pos, ang = wep:GetViewModelPosition(EyePos(), EyeAngles())
+                local pos, ang = wep:GetViewModelPosition(ply_eyepos, ply_eyeangles)
                 vm_real:SetPos(pos)
                 vm_real:SetAngles( ang )
                 vm_real:SetParent( ply:GetViewModel() )

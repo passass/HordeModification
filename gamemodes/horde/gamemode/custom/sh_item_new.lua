@@ -1429,7 +1429,7 @@ end
         new_gadgets()
     end
 
-if GetConVarNumber("horde_default_item_config") != 0 then
+if GetConVarNumber("horde_default_item_config") == 0 then
     local function GetItemsData()
         if SERVER then
             if not file.IsDir("horde", "DATA") then
