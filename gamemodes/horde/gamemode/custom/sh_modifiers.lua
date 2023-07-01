@@ -6,7 +6,41 @@ function HORDE.IsMeleeWeapon(wep)
     return arccw_melees_bases[wep.Base] or tfa_melees_base[wep.Base]
 end
 
+local plymeta = FindMetaTable("Player")
+
+function plymeta:GetModifiers()
+    if !self.Horde_ModifiersTable then self.Horde_ModifiersTable = {} end
+    if !self.Horde_ModifiersTable.AllWeps then self.Horde_ModifiersTable.AllWeps = {} end
+
+    return self.Horde_ModifiersTable.AllWeps
+end
+
+function plymeta:AddModifier(modifier, primarykey, mult)
+    if !self.Horde_ModifiersTable then self.Horde_ModifiersTable = {} end
+    if !self.Horde_ModifiersTable.AllWeps then self.Horde_ModifiersTable.AllWeps = {} end
+    if !self.Horde_ModifiersTable.AllWeps[modifier] then self.Horde_ModifiersTable.AllWeps[modifier] = {} end
+
+    self.Horde_ModifiersTable.AllWeps[modifier][primarykey] = mult
+end
+
+function plymeta:AddWeaponModifier(wepclass, modifier, primarykey, mult)
+    if !self.Horde_ModifiersTable then self.Horde_ModifiersTable = {} end
+    if !self.Horde_ModifiersTable.Weapons then self.Horde_ModifiersTable.Weapons = {} end
+    if !self.Horde_ModifiersTable.Weapons[wepclass] then self.Horde_ModifiersTable.Weapons[wepclass] = {} end
+    if !self.Horde_ModifiersTable.Weapons[wepclass][modifier] then self.Horde_ModifiersTable.Weapons[wepclass][modifier] = {} end
+
+    self.Horde_ModifiersTable.Weapons[wepclass][modifier][primarykey] = mult
+end
+
+function plymeta:GetWeaponModifiers(wepclass)
+    if !self.Horde_ModifiersTable then self.Horde_ModifiersTable = {} end
+    if !self.Horde_ModifiersTable.Weapons then self.Horde_ModifiersTable.Weapons = {} end
+
+    return self.Horde_ModifiersTable.Weapons[wepclass] or {}
+end
+
 -- weapon bases
+
 
 local wep_bases = {
     ["arccw"] = function(wep) return wep.ArcCW end,
@@ -333,16 +367,10 @@ function HORDE:Modifier_AddToWeapons(ply, modifier, primarykey, mult)
         mult = math.Round( mult, 4 )
     end
 
-    if !ply.Horde_ModifiersTable then
-        ply.Horde_ModifiersTable = {}
-    end
-    if !ply.Horde_ModifiersTable[modifier] then
-        ply.Horde_ModifiersTable[modifier] = {}
-    end
-    ply.Horde_ModifiersTable[modifier][primarykey] = mult
+    ply:AddModifier(modifier, primarykey, mult)
 
-    if table.IsEmpty(ply.Horde_ModifiersTable[modifier]) then
-        ply.Horde_ModifiersTable[modifier] = nil
+    if table.IsEmpty(ply.Horde_ModifiersTable.AllWeps[modifier]) then
+        ply.Horde_ModifiersTable.AllWeps[modifier] = nil
     end
 
     for _, wep in pairs(ply:GetWeapons()) do
@@ -355,8 +383,49 @@ function HORDE:Modifier_AddToWeapons(ply, modifier, primarykey, mult)
         CalculateTotalMult(wep, modifier)
     end
     if SERVER then
+        net.Start("Horde_plyModifierApply")
+        net.WriteString(modifier)
+        net.WriteString(primarykey)
+        if mult then
+            net.WriteBool(false)
+            net.WriteFloat(mult)
+        else
+            net.WriteBool(true)
+        end
+        
+        net.Send(ply)
+    end
+end
+
+function HORDE:Modifier_AddToWeapon(ply, wep, modifier, primarykey, mult)
+    if mult then
+        mult = math.Round( mult, 4 )
+    end
+
+    local wpnclass
+
+    if isentity(wep) then
+        wpnclass = wep:GetClass()
+    else
+        wpnclass = wep
+        
+        wep = ply:GetWeapon(wpnclass)
+    end
+
+    ply:AddWeaponModifier(wpnclass, modifier, primarykey, mult)
+
+    if isentity(wep) and CanAddModifier(wep, modifier) then
+        if !wep.Horde_ModifiersTable or !wep.Horde_ModifiersTable[modifier] then
+            InitModifierTable(wep, modifier)
+        end
+        wep.Horde_ModifiersTable[modifier][primarykey] = mult
+
+        CalculateTotalMult(wep, modifier)
+    end
+    if SERVER then
         net.Start("Horde_wepModifierApply")
         net.WriteBool(false)
+        net.WriteString(wpnclass)
         net.WriteString(modifier)
         net.WriteString(primarykey)
         if mult then
@@ -376,6 +445,11 @@ function HORDE:Modifier_LoadToWeaponModifier(wep)
         ply.Horde_ModifiersTable = {}
         return
     end
+    if !ply.Horde_ModifiersTable.AllWeps then
+        ply.Horde_ModifiersTable.AllWeps = {}
+        return
+    end
+
     if SERVER then
         net.Start("Horde_wepModifierApply")
         net.WriteBool(true)
@@ -419,13 +493,25 @@ function HORDE:Modifier_LoadToWeaponModifier(wep)
         end
     end
 
-    for modifier, multtable in pairs(ply.Horde_ModifiersTable) do
+    for modifier, multtable in pairs(ply.Horde_ModifiersTable.AllWeps) do
         if !CanAddModifier(wep, modifier) then continue end
         if !wep.Horde_ModifiersTable or !wep.Horde_ModifiersTable[modifier] then
             InitModifierTable(wep, modifier)
         end
 
         wep.Horde_ModifiersTable[modifier] = table.Copy(multtable) or {}
+        wep.Horde_ModifiersTable[modifier]["init"] = inits[modifier]
+
+        CalculateTotalMult(wep, modifier)
+    end
+
+    for modifier, multtable in pairs(ply:GetWeaponModifiers(wep:GetClass())) do
+        if !CanAddModifier(wep, modifier) then continue end
+        if !wep.Horde_ModifiersTable or !wep.Horde_ModifiersTable[modifier] then
+            InitModifierTable(wep, modifier)
+        end
+
+        wep.Horde_ModifiersTable[modifier] = table.Merge(wep.Horde_ModifiersTable[modifier] or {}, multtable)
         wep.Horde_ModifiersTable[modifier]["init"] = inits[modifier]
 
         CalculateTotalMult(wep, modifier)
@@ -440,6 +526,7 @@ if SERVER then
         end)
     end)
     util.AddNetworkString("Horde_wepModifierApply")
+    util.AddNetworkString("Horde_plyModifierApply")
 else
     net.Receive("Horde_wepModifierApply", function()
         local loadtowep = net.ReadBool()
@@ -453,6 +540,7 @@ else
             end)
         else
             local ply = MySelf
+            local wep = net.ReadString()
             local modifier = net.ReadString()
             local primarykey = net.ReadString()
             local need_to_delete = net.ReadBool()
@@ -460,7 +548,19 @@ else
             if !need_to_delete then
                 mult = net.ReadFloat()
             end
-            HORDE:Modifier_AddToWeapons(ply, modifier, primarykey, mult)
+            HORDE:Modifier_AddToWeapon(ply, wep, modifier, primarykey, mult)
         end
+    end)
+
+    net.Receive("Horde_plyModifierApply", function()
+        local ply = MySelf
+        local modifier = net.ReadString()
+        local primarykey = net.ReadString()
+        local need_to_delete = net.ReadBool()
+        local mult
+        if !need_to_delete then
+            mult = net.ReadFloat()
+        end
+        HORDE:Modifier_AddToWeapons(ply, modifier, primarykey, mult)
     end)
 end

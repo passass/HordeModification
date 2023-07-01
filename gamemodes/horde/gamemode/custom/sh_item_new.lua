@@ -145,7 +145,7 @@ end
         "arccw_go_870",
         "arccw_mw2_m1911",
         "item_battery",
-        "arccw_horde_medic_9mm"
+        "arccw_horde_medic_9mm", "arccw_horde_9mm"
     }
 
     local copy_from_to = {
@@ -303,8 +303,20 @@ end
 
         HORDE.items["arccw_horde_nade_stun"].whitelist["SWAT"] = true
 
-        HORDE:CreateItem("Pistol",     "9mm",            "arccw_horde_9mm",   50,  0, "Combine standard sidearm.",
-        nil, 4, -1, table.Merge(starter_weapons_entity_properties, {upgrade_price_base = 500, is_upgradable = true, upgrade_damage_mult_incby = .25,  upgrade_count = 2, upgrade_price_incby = 750}), "items/hl2/weapon_pistol.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"All"})
+        
+
+
+        HORDE:CreateItem("Pistol",     "9mm",            "arccw_kf2_9mm",   50,  0, "Combine standard sidearm.",
+        nil, 4, -1, table.Merge(starter_weapons_entity_properties,
+        {upgrade_price_base = 500, is_upgradable = true, upgrade_damage_mult_incby = .25,  upgrade_count = 2, upgrade_price_incby = 750,
+        --[[upgrade_func = function(ply, level) -- SERVER ONLY
+            HORDE:Modifier_AddToWeapons(ply, "arccw_kf2_9mm", "Horde_MaxMags", "ItemUpgrade", 1 + level)
+            HORDE:Modifier_AddToWeapons(ply, "arccw_kf2_9mm", "Horde_TotalMaxAmmoMult", "ItemUpgrade", 1 + level)
+        end, ]]
+        upgrade_modifiers = {
+            Horde_MaxMags = {base = 1, mult = 1},
+            Horde_TotalMaxAmmoMult = {base = 1, mult = 1}
+        }}), "items/hl2/weapon_pistol.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"All"})
         HORDE:CreateItem("Melee",      "Combat Knife",   "arccw_horde_knife",    100,  0, "A reliable bayonet.\nRMB to deal a heavy slash.",
         nil, 10, -1, starter_weapons_entity_properties, nil, nil, nil, {HORDE.DMG_SLASH}, nil, {"All"})
         HORDE:CreateItem("Equipment",  "Medkit",         "weapon_horde_medkit",      50,   0, "Rechargeble medkit.\nRMB to self-heal, LMB to heal others.",
@@ -805,6 +817,10 @@ end
             HORDE.GetArcCWAttachments()
         end
 
+        for k, v in pairs(delete_items) do 
+            HORDE.items[v] = nil
+        end
+
         local atts = {}
 
         for class, data in pairs(HORDE.items) do
@@ -821,13 +837,9 @@ end
         for from, to in pairs(copy_from_to) do 
             if !HORDE.items[from] then continue end
 
-            HORDE.items[to] = HORDE.items[from]
+            HORDE.items[to] = table.Copy(HORDE.items[from])
             HORDE.items[to].class = to
             HORDE.items[from] = nil
-        end
-
-        for k, v in pairs(delete_items) do 
-            HORDE.items[v] = nil
         end
 
         HORDE:GetClassGrenades()

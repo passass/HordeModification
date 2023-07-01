@@ -646,18 +646,25 @@ net.Receive("Horde_BuyItemUpgrade", function (len, ply)
     local price = HORDE:GetUpgradePrice(class, ply)
     if ply:Horde_GetMoney() >= price then
         ply:Horde_AddMoney(-price)
-        ply:Horde_SetUpgrade(class, ply:Horde_GetUpgrade(class) + 1)
+        local level = ply:Horde_GetUpgrade(class) + 1
+        ply:Horde_SetUpgrade(class, level)
         ply:Horde_SyncEconomy()
         sound.Play("items/battery_pickup.wav", ply:GetPos())
         if class == "horde_pheropod" then
             ply:GetWeapon("horde_pheropod"):UpgradeReset()
+        end
+        local item = HORDE.items[class]
+        if item and item.entity_properties.upgrade_modifiers then
+            for modifier, mult in pairs(item.entity_properties.upgrade_modifiers) do
+                HORDE:Modifier_AddToWeapon(ply, class, modifier, "ItemUpgrade", mult.base + mult.mult * level)
+            end
         end
     end
 end)
 
 -------------------------> Cant buy anything before start game
 
-hook.Add("CanBuyItemUpgrade", "Horde_PrepareBuy", function(ply, class)
+--[[hook.Add("CanBuyItemUpgrade", "Horde_PrepareBuy", function(ply, class)
     HORDE:SendNotification("You Can't upgrade before start game!", 1, ply)
     return false
 end)
@@ -695,7 +702,7 @@ hook.Add("HordeWaveStart", "Horde_PrepareBuy", function(wave)
     hook.Remove("CanBuyItemUpgrade", "Horde_PrepareBuy")
     hook.Remove("Horde_PlayerDropMoney", "Horde_PrepareBuy")
     hook.Remove("HordeWaveStart", "Horde_PrepareBuy")
-end)
+end)]]
 
 -------------------------> Cant buy anything before start game
 
