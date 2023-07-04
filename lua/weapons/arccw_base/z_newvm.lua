@@ -80,38 +80,39 @@ if CLIENT then
                 )
             )
             --print(math.Round(wep:GetAnimationProgress(), 5), math.Round(vm_real:SequenceDuration(), 5), vm_real:GetPlaybackRate(), wep.LastAnimKey)
+            hook.Run("PreDrawPlayerHands", ply:GetHands(), wep.REAL_VM, ply, wep)
             if wep.UseHands then
                 local hands = ply:GetHands()
                 
                 if IsValid(hands) then
                     hands:AddEffects(EF_BONEMERGE)
                     hands:SetParent(vm_real)
-                end
-            end
-            hook.Run("PreDrawPlayerHands", ply:GetHands(), wep.REAL_VM, ply, wep)
 
-            if vm_real:LookupBone("R ForeTwist") and not vm_real:LookupBone("ValveBiped.Bip01_R_Hand") then
-                local HandsEnt = vm_real.Hands
-                if not IsValid(HandsEnt) then
-                    vm_real.Hands = ClientsideModel("models/weapons/tfa_ins2/c_ins2_pmhands.mdl")
-                    vm_real.Hands:SetNoDraw(true)
-        
-                    HandsEnt = vm_real.Hands
+                    if vm_real:LookupBone("R ForeTwist") and not vm_real:LookupBone("ValveBiped.Bip01_R_Hand") then
+                        local HandsEnt = vm_real.Hands
+                        if not IsValid(HandsEnt) then
+                            vm_real.Hands = ClientsideModel("models/weapons/tfa_ins2/c_ins2_pmhands.mdl")
+                            vm_real.Hands:SetNoDraw(true)
+                
+                            HandsEnt = vm_real.Hands
+                        end
+                
+                        HandsEnt:SetParent(vm_real)
+                        HandsEnt:SetPos(vm_real:GetPos())
+                        HandsEnt:SetAngles(vm_real:GetAngles())
+                
+                        if not HandsEnt:IsEffectActive(EF_BONEMERGE) then
+                            HandsEnt:AddEffects(EF_BONEMERGE)
+                            HandsEnt:AddEffects(EF_BONEMERGE_FASTCULL)
+                        end
+                
+                        hands:SetParent(HandsEnt)
+                    end
                 end
-        
-                HandsEnt:SetParent(vm_real)
-                HandsEnt:SetPos(vm_real:GetPos())
-                HandsEnt:SetAngles(vm_real:GetAngles())
-        
-                if not HandsEnt:IsEffectActive(EF_BONEMERGE) then
-                    HandsEnt:AddEffects(EF_BONEMERGE)
-                    HandsEnt:AddEffects(EF_BONEMERGE_FASTCULL)
-                end
-        
-                ply:GetHands():SetParent(HandsEnt)
+
+                ply:GetHands():DrawModel()
             end
 
-            ply:GetHands():DrawModel()
             vm_real:DrawModel()
             render.SetBlend(1)
             cam.End3D()
