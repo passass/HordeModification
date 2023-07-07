@@ -1,3 +1,5 @@
+if engine.ActiveGamemode() != "horde" then return end
+
 local function qerp(delta, a, b)
     local qdelta = -(delta ^ 2) + (delta * 2)
 
@@ -7,71 +9,29 @@ local function qerp(delta, a, b)
 end
 
 if CLIENT then
-    local lastproceed = 0
     hook.Add("PreDrawViewModel", "ArcCW_NewVM", function(vm, ply,wep)
         --if true then return end
-        if IsValid(wep.REAL_VM) and !wep.REAL_VM.Not_Stated then
+        local vm_real = wep.REAL_VM
+        if IsValid(vm_real) and !vm_real.Not_Stated then
 
-            if wep:GetState() == ArcCW.STATE_CUSTOMIZE then
-                wep:BlurNotWeapon()
-            end
-        
-            if GetConVar("arccw_cheapscopesautoconfig"):GetBool() then
-                local fps = 1 / (SysTime() - lst2)
-                lst2 = SysTime()
-                local lowfps = fps <= 45
-                GetConVar("arccw_cheapscopes"):SetBool(lowfps)
-                GetConVar("arccw_cheapscopesautoconfig"):SetBool(false)
-            end
-        
-            local asight = wep:GetActiveSights()
-        
-            if asight and ((GetConVar("arccw_cheapscopes"):GetBool() and wep:GetSightDelta() < 1 and asight.MagnifiedOptic)
-                    or (wep:GetSightDelta() < 1 and asight.ScopeTexture)) then
-                -- Necessary to call here since physbullets are not drawn until PreDrawEffects; cheap scope implementation will not allow them to be visible
-                -- Introduces a bug when we try to call GetAttachment on the viewmodel in DrawPhysBullets here, so set a workaround variable to not call it
-                ArcCW:DrawPhysBullets(true)
-                wep:FormCheapScope()
-            end
-
+            wep:PreDrawViewModel(vm_real)
             local ct = CurTime()
-
-            local coolFOV = --120 or 
-            wep.CurrentViewModelFOV or wep.ViewModelFOV
-        
-            if ArcCW.VMInRT then
-                local mag = asight.ScopeMagnification
-                coolFOV = wep.ViewModelFOV - mag * 4 - (GetConVar("arccw_vm_add_ads"):GetFloat() * 3 or 0)
-                ArcCW.VMInRT = false
-            end
             local ply_eyepos, ply_eyeangles = EyePos(), EyeAngles()
-            cam.Start3D(ply_eyepos, ply_eyeangles, wep:QuickFOVix(coolFOV), nil, nil, nil, nil, 0.5, 1000)
-            cam.IgnoreZ(true)
-            wep:DrawCustomModel(false)
-            wep:DoLHIK()
-        
-            if !ArcCW.Overdraw then
-                wep:DoLaser(false, true)
-            end
-
-            local vm_real = wep.REAL_VM
-            if !IsValid(vm_real) then
-                wep:createCustomVM(wep.ViewModel)
-                vm_real = wep.REAL_VM
-            end
             local frmtime = FrameTime()
-            --[[if  then
-                vm_real.EndOn = 0
-            end]]
-            if ct - lastproceed > frmtime * 2 or (vm_real.EndOn or 0) <= 35 then -- problem with ladders
-                local pos, ang = wep:GetViewModelPosition(ply_eyepos, ply_eyeangles)
+
+            local pos, ang = wep:GetViewModelPosition(ply_eyepos, ply_eyeangles)
+            if pos and ang then
+                ang = ang - wep:GetOurViewPunchAngles()
+
                 vm_real:SetPos(pos)
                 vm_real:SetAngles( ang )
                 vm_real:SetParent( ply:GetViewModel() )
-                vm_real.EndOn = (vm_real.EndOn or 0) + 1
             end
+            
             vm_real:SetRenderMode( RENDERMODE_TRANSALPHA )
-            vm_real:SetColor( Color( wep:GetColor().r, wep:GetColor().b, wep:GetColor().g, 255 ) )
+            local wep_color = wep:GetColor()
+
+            vm_real:SetColor( Color( wep_color.r, wep_color.b, wep_color.g, 255 ) )
 
             local playbackrate = vm_real:GetPlaybackRate()
             wep:SetAnimationProgress( math.min(
@@ -79,10 +39,11 @@ if CLIENT then
                 1
                 )
             )
-            --print(math.Round(wep:GetAnimationProgress(), 5), math.Round(vm_real:SequenceDuration(), 5), vm_real:GetPlaybackRate(), wep.LastAnimKey)
-            hook.Run("PreDrawPlayerHands", ply:GetHands(), wep.REAL_VM, ply, wep)
+
             if wep.UseHands then
                 local hands = ply:GetHands()
+                hook.Run("PreDrawPlayerHands", hands, wep.REAL_VM, ply, wep)
+                
                 
                 if IsValid(hands) then
                     hands:AddEffects(EF_BONEMERGE)
@@ -114,20 +75,7 @@ if CLIENT then
             end
 
             vm_real:DrawModel()
-            render.SetBlend(1)
-            cam.End3D()
-            cam.Start3D(EyePos(), EyeAngles(), wep:QuickFOVix(wep.CurrentViewModelFOV or wep.ViewModelFOV), nil, nil, nil, nil, 0.5, 1000)
-            cam.IgnoreZ(true)
-
-            if ArcCW.Overdraw then
-                ArcCW.Overdraw = false
-            else
-                --self:DoLaser()
-                wep:DoHolosight()
-            end
-
-            cam.End3D()
-            lastproceed = ct
+            wep:PostDrawViewModel()
             return true
         end
     end)
@@ -160,8 +108,8 @@ if CLIENT then
         wep:PlayAnimation(key, mul, false, start, time, false, ignore)
 
         timer.Create("arccw_sync_anim" .. wep:EntIndex(), 0, 8, function()
-            wep = LocalPlayer():GetActiveWeapon()
-            if IsValid(wep) and wep.LastAnimKey != key then
+            local wep2 = LocalPlayer():GetActiveWeapon()
+            if IsValid(wep2) and wep2.LastAnimKey != key and wep2 == wep then
                 wep:PlayAnimation(key, mul, false, start, time, false, ignore)
             end
         end)
@@ -260,10 +208,6 @@ function SWEP:Deploy()
     if !IsFirstTimePredicted() then
         return
     end
-    if CLIENT and IsValid(self.REAL_VM) then
-        local vm_real = self.REAL_VM
-        vm_real.EndOn = 0
-    end
 
     if self.UnReady then
         local sp = game.SinglePlayer()
@@ -315,17 +259,20 @@ function SWEP:Deploy()
         local r_anim = self:SelectAnimation("ready")
         local d_anim = self:SelectAnimation("draw")
 
+        local time = 0
+
         if self.Animations[r_anim] and ( dev_alwaysready:GetBool() or self.UnReady ) then
             self:PlayAnimation(r_anim, 1, true, 0, false, nil, true, nil, {SyncWithClient = true})
             prd = self.Animations[r_anim].ProcDraw
 
-            self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(r_anim, true) )
+            time = self:GetAnimKeyTime(r_anim, true)
         elseif self.Animations[d_anim] then
             self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, false, nil, nil, nil, {SyncWithClient = true})
             prd = self.Animations[d_anim].ProcDraw
 
-            self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(d_anim, true) * self:GetBuff_Mult("Mult_DrawTime"))
+            time = self:GetAnimKeyTime(d_anim, true) * self:GetBuff_Mult("Mult_DrawTime")
         end
+        self:SetPriorityAnim(CurTime() + time)
 
         if prd or (!self.Animations[r_anim] and !self.Animations[d_anim]) then
             self:ProceduralDraw()
@@ -449,7 +396,7 @@ function SWEP:createCustomVM(mdl)
     self.REAL_VM:SetupBones()
     self.REAL_VM:SetParent(vm)
     self.REAL_VM.CreateTime = CurTime()
-    self.REAL_VM.EndOn = 0
+    --self.REAL_VM.EndOn = 0
     self.REAL_VM:SetCycle(0)
     
     --[[local pos, ang = self:GetViewModelPosition(ply:EyePos(), ply:EyeAngles())
@@ -1698,7 +1645,7 @@ function SWEP:DoLHIK()
     local hide_component = false
     local delta = 1
 
-    local vm = wep.REAL_VM and (wep.REAL_VM.Hands or wep.REAL_VM) or self:GetOwner():GetViewModel()
+    local vm = self.REAL_VM and (self.REAL_VM.Hands or self.REAL_VM) or self:GetOwner():GetViewModel()
 
     if !GetConVar("arccw_reloadincust"):GetBool() and !self.NoHideLeftHandInCustomization and !self:GetBuff_Override("Override_NoHideLeftHandInCustomization") then
         if self:GetState() == ArcCW.STATE_CUSTOMIZE then

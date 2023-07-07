@@ -31,22 +31,20 @@ GADGET.Hooks.Horde_UseActiveGadget = function (ply)
 
     if tr.Hit and IsValid(tr.Entity) and (tr.Entity:IsNPC() || tr.Entity:IsPlayer() || tr.Entity:GetClass() == "npc_vj_horde_antlion") and tr.Entity:Health() > 0 then
         if SERVER then
-            if ply.Horde_Healing_Target and ply.Horde_Healing_Target ~= tr.Entity then
-                if ply.Horde_Healing_Beam and ply.Horde_Healing_BeamTarget and ply.Horde_Healing_Beam:IsValid() and ply.Horde_Healing_BeamTarget:IsValid() then
-                    ply.Horde_Healing_Beam:Remove()
-                    ply.Horde_Healing_BeamTarget:Remove()
-                end
+            if ply.Horde_Healing_Beam  and ply.Horde_Healing_Beam:IsValid() then
+                ply.Horde_Healing_Beam:Remove()
+            end
+
+            if ply.Horde_Healing_BeamTarget and ply.Horde_Healing_BeamTarget:IsValid() then
+                ply.Horde_Healing_BeamTarget:Remove()
             end
             local beam = ents.Create("info_particle_system")
             beam:SetOwner(ply)
-
-            local eyeangle = ply:EyeAngles()
-
-            local Forward = eyeangle:Forward()
-            local Right = eyeangle:Right()
-            local Up = eyeangle:Up()
-            beam:SetPos(ply:GetShootPos() + Forward * 24 + Right * 8 + Up * -25)
-            beam:SetAngles( (tr.Entity:GetPos() - ply:GetPos()):Angle() )
+            local Forward = ply:EyeAngles():Forward()
+            local Right = ply:EyeAngles():Right()
+            local Up = ply:EyeAngles():Up()
+            beam:SetPos(ply:GetShootPos() + Forward * 24 + Right * 8 + Up * -20)
+            beam:SetAngles(ply:EyeAngles())
             local beamtarget = ents.Create("tf_target_medigun")
             beamtarget:SetOwner(ply)
             beamtarget:SetPos(tr.Entity:GetPos() + Vector(0, 0, 33))
@@ -67,6 +65,8 @@ GADGET.Hooks.Horde_UseActiveGadget = function (ply)
             beam:Fire("start", "", 0)
         end
         ply:EmitSound("horde/gadgets/heal_beam.ogg", 125, 100, 0.8, CHAN_AUTO)
+    else
+        return true
     end
 end
 
@@ -75,30 +75,23 @@ GADGET.Hooks.Horde_OnSetGadget = function (ply, gadget)
     if gadget ~= "gadget_healing_beam" then return end
     local id = ply:SteamID()
     timer.Create("Horde_Healing_Beam_Effect" .. id, 0.01, 0, function ()
-        if not ply.Horde_Healing_Beam or not ply.Horde_Healing_Beam:IsValid() then
-            ply.Horde_Healing_Beam:Remove()
-            ply.Horde_Healing_BeamTarget:Remove()
-            return
-        end
-        if not ply.Horde_Healing_BeamTarget or not ply.Horde_Healing_BeamTarget:IsValid() then
-            ply.Horde_Healing_Beam:Remove()
-            ply.Horde_Healing_BeamTarget:Remove()
-            return
-        end
-        if not ply.Horde_Healing_Target or not ply.Horde_Healing_Target:IsValid() then
-            ply.Horde_Healing_Beam:Remove()
-            ply.Horde_Healing_BeamTarget:Remove()
-            return
-        end
+        if ply.Horde_Healing_Beam and ply.Horde_Healing_BeamTarget and ply.Horde_Healing_Target
+        and IsValid(ply.Horde_Healing_Beam) and IsValid(ply.Horde_Healing_BeamTarget) and IsValid(ply.Horde_Healing_Target) then
+            local Forward = ply:EyeAngles():Forward()
+            local Right = ply:EyeAngles():Right()
+            local Up = ply:EyeAngles():Up()
+            ply.Horde_Healing_Beam:SetPos(ply:GetShootPos() + Forward * 24 + Right * 8 + Up * -20)
+            ply.Horde_Healing_Beam:SetAngles( ply:EyeAngles() )
+            ply.Horde_Healing_BeamTarget:SetPos(ply.Horde_Healing_Target:GetPos() + ply.Horde_Healing_Target:OBBCenter())
+        else
+            if ply.Horde_Healing_Beam and IsValid(ply.Horde_Healing_Beam) then
+                ply.Horde_Healing_Beam:Remove()
+            end
 
-        local eyeangle = ply:EyeAngles()
-
-        local Forward = eyeangle:Forward()
-        local Right = eyeangle:Right()
-        local Up = eyeangle:Up()
-        ply.Horde_Healing_Beam:SetPos(ply:GetShootPos() + Forward * 24 + Right * 8 + Up * -25)
-        ply.Horde_Healing_Beam:SetAngles( (ply.Horde_Healing_Target:GetPos() - ply:GetPos()):Angle() )
-        ply.Horde_Healing_BeamTarget:SetPos(ply.Horde_Healing_Target:GetPos() + Vector(0, 0, 33))
+            if ply.Horde_Healing_BeamTarget and IsValid(ply.Horde_Healing_BeamTarget) then
+                ply.Horde_Healing_BeamTarget:Remove()
+            end
+        end
     end)
 
     timer.Create("Horde_Healing_Beam_Damage" .. id, 0.5, 0, function ()
