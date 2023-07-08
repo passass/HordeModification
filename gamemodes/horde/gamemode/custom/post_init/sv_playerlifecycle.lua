@@ -238,16 +238,19 @@ function HORDE:GiveStarterWeapons(ply)
             local dropped = math.random(#wpns_class)
 
             local weps = wpns_class[dropped]
-            for _, wpn_class in pairs(weps) do
-                local item = HORDE.items[wpn_class]
-                if item and item.whitelist[yourclass] then
-                    ply:Give(wpn_class)
-                    table.insert(weapons_gotted, wpn_class)
-                    isgived = true
+            if weps then
+                for _, wpn_class in pairs(weps) do
+                    local item = HORDE.items[wpn_class]
+                    if item and item.whitelist[yourclass] then
+                        ply:Give(wpn_class)
+                        table.insert(weapons_gotted, wpn_class)
+                        isgived = true
+                    end
                 end
-            end
-            if !isgived then
-                wpns_class[dropped] = nil
+
+                if !isgived then
+                    wpns_class[dropped] = nil
+                end
             end
         end
     end

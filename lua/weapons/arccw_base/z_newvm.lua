@@ -1999,6 +1999,72 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
     return true
 end
 
+function SWEP:AddHeat(a)
+    local single = game.SinglePlayer()
+    a = tonumber(a)
+
+    if !(self.Jamming or self:GetBuff_Override("Override_Jamming")) then return end
+
+    if single and self:GetOwner():IsValid() and SERVER then self:CallOnClient("AddHeat", a) end
+    -- if !single and !IsFirstTimePredicted() then return end
+
+    local max = self:GetBuff("HeatCapacity")
+    local mult = 1 * self:GetBuff_Mult("Mult_FixTime")
+    local heat = self:GetHeat()
+    local anim = self:SelectAnimation("fix")
+    anim = self:GetBuff_Hook("Hook_SelectFixAnim", anim) or anim
+    local amount = a or 1
+    local t = CurTime() + self:GetAnimKeyTime(anim) * mult
+    self.Heat = math.max(0, heat + amount * GetConVar("arccw_mult_heat"):GetFloat())
+
+    self.NextHeatDissipateTime = CurTime() + (self:GetBuff("HeatDelayTime"))
+    local overheat = self.Heat >= max
+    if overheat then
+        local h = self:GetBuff_Hook("Hook_Overheat", self.Heat)
+        if h == true then overheat = false end
+    end
+    if overheat then
+        self.Heat = math.min(self.Heat, max)
+        if self:GetBuff_Override("Override_HeatFix", self.HeatFix) then
+            self.NextHeatDissipateTime = t
+        elseif self:GetBuff_Override("Override_HeatLockout", self.HeatLockout) then
+            self.NextHeatDissipateTime = t
+        end
+    elseif !self:GetBuff_Override("Override_HeatOverflow", self.HeatOverflow) then
+        self.Heat = math.min(self.Heat, max)
+    end
+
+    if single and CLIENT then return end
+
+    self:SetHeat(self.Heat)
+
+    if overheat then
+
+        local ret = self:GetBuff_Hook("Hook_OnOverheat")
+        if ret then return end
+
+        if anim then
+            self:PlayAnimation(anim, mult, true, 0, true, nil, nil, nil, {SyncWithClient = true})
+            self:SetPriorityAnim(t)
+            self:SetNextPrimaryFire(t)
+
+            if self:GetBuff_Override("Override_HeatFix", self.HeatFix) then
+                self:SetTimer(t - CurTime(),
+                function()
+                    self:SetHeat(0)
+                end)
+            end
+        end
+
+        if self.HeatLockout or self:GetBuff_Override("Override_HeatLockout") then
+            self:SetHeatLocked(true)
+        end
+
+        self:GetBuff_Hook("Hook_PostOverheat")
+    end
+end
+
+
 function SWEP:Bash(melee2)
     melee2 = melee2 or false
     if self:GetState() == ArcCW.STATE_SIGHTS
