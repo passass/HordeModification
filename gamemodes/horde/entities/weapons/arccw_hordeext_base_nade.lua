@@ -11,7 +11,7 @@ function SWEP:Throw()
     local alt = self:GetGrenadeAlt()
 
     local anim = alt and self:SelectAnimation("throw_alt") or self:SelectAnimation("throw")
-    self:PlayAnimation(anim, self:GetBuff_Mult("Mult_ThrowTime"), false, 0, true)
+    self:PlayAnimation(anim, self:GetBuff_Mult("Mult_ThrowTime"), false, 0, true, nil, nil, nil, {SyncWithClient = true})
 
     local animevent = alt and self:GetBuff_Override("Override_AnimShootAlt", self.AnimShootAlt) or self:GetBuff_Override("Override_AnimShoot", self.AnimShoot)
     self:GetOwner():DoAnimationEvent(animevent)

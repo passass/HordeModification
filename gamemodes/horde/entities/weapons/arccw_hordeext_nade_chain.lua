@@ -49,10 +49,22 @@ SWEP.PullPinTime = .9
 SWEP.Animations = {
     ["draw"] = {
         Source = "deploy",
+        SoundTable = {
+            {
+                s = "weapons/tfa_cso/chaingrenade/draw.wav",
+                t = 0
+            }
+        }
     },
     ["pre_throw"] = {
         Source = "pullpin",
         Time = 1,
+        SoundTable = {
+            {
+                s = "weapons/tfa_cso/chaingrenade/pullpin.wav",
+                t = .5
+            }
+        }
     },
     ["throw"] = {
         Source = "throw",

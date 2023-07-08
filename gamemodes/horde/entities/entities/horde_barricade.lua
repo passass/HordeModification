@@ -33,7 +33,7 @@ if CLIENT then
 		local barheight = 30
 		local barwidth = maxbarwidth
 		local startx = barwidth * -0.5
-		cam.Start3D2D(self:LocalToWorld(Vector(self:OBBMaxs().x - 5, 0, 25)), Angle(angl[1] - 180, angl[2] - 90, angl[3] - 90), 0.05)
+		cam.Start3D2D(self:LocalToWorld(Vector(self:OBBMaxs().x - 45, 0, 25)), Angle(angl[1] - 180, angl[2] - 90, angl[3] - 90), 0.05)
 			
 			surface.SetDrawColor(0, 0, 0, 220)
 			surface.DrawRect(startx, y, barwidth, barheight)
@@ -41,7 +41,7 @@ if CLIENT then
 			surface.DrawRect(startx + 4, y + 4, barwidth * percentage - 8, barheight - 8)
 			surface.DrawOutlinedRect(startx, y, barwidth, barheight)
 		cam.End3D2D()
-		cam.Start3D2D(self:LocalToWorld(Vector(-self:OBBMaxs().x + 5, 0, 25)), Angle(angl[1] - 180, angl[2] - 90, angl[3] - 90), 0.05)
+		cam.Start3D2D(self:LocalToWorld(Vector(-self:OBBMaxs().x + 45, 0, 25)), Angle(angl[1] - 180, angl[2] - 90, angl[3] - 90), 0.05)
 			
 			surface.SetDrawColor(0, 0, 0, 220)
 			surface.DrawRect(startx, y, barwidth, barheight)
