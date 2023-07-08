@@ -414,7 +414,7 @@ function HORDE:Modifier_AddToWeapon(ply, wep, modifier, primarykey, mult)
 
     ply:AddWeaponModifier(wpnclass, modifier, primarykey, mult)
 
-    if isentity(wep) and CanAddModifier(wep, modifier) then
+    if IsValid(wep) and CanAddModifier(wep, modifier) then
         if !wep.Horde_ModifiersTable or !wep.Horde_ModifiersTable[modifier] then
             InitModifierTable(wep, modifier)
         end
