@@ -15,6 +15,7 @@ LANGUAGE["Item_200 Kevlar Armor"] = "200 Кевларовой брони"
 LANGUAGE["Pros"] = "Плюсы"
 LANGUAGE["Cons"] = "Минусы"
 LANGUAGE["Shop_Buy_Ammo_All"] = "Пополнить полностью"
+LANGUAGE["Shop_UpgradeTo"] = "Улучшить"
 
 LANGUAGE["Perk_survivor_base"] = [[
 Класс "Выживший" может быть включен в любой класс, чтобы занять недостающие роли для команды.

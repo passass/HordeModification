@@ -114,7 +114,10 @@ function HORDE:WeaponLevelLessThanYour(ply, levels)
     if levels.VariousConditions then
         local levels2 = levels[ply:Horde_GetClass().name]
         if !levels2 then
-            return true
+            levels2 = levels["__Default__"]
+            if !levels2 then
+                return true
+            end
         end
         if isstring(levels2) then
             levels = levels[levels2]
@@ -305,15 +308,17 @@ end
 
         HORDE:CreateItem("Pistol",     "9mm",            "arccw_kf2_9mm",   50,  0, "Combine standard sidearm.",
         nil, 4, -1, table.Merge(table.Copy(starter_weapons_entity_properties),
-        {upgrade_price_base = 500, is_upgradable = true, upgrade_damage_mult_incby = .25,  upgrade_count = 2, upgrade_price_incby = 750,
-        --[[upgrade_func = function(ply, level) -- SERVER ONLY
-            HORDE:Modifier_AddToWeapons(ply, "arccw_kf2_9mm", "Horde_MaxMags", "ItemUpgrade", 1 + level)
-            HORDE:Modifier_AddToWeapons(ply, "arccw_kf2_9mm", "Horde_TotalMaxAmmoMult", "ItemUpgrade", 1 + level)
-        end, ]]
-        upgrade_modifiers = {
-            Horde_MaxMags = {base = 1, mult = 1},
-            Horde_TotalMaxAmmoMult = {base = 1, mult = 1}
-        }}), "items/hl2/weapon_pistol.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"All"})
+        {
+            upgrade_price_base = 500, 
+            is_upgradable = true, 
+            upgrade_damage_mult_incby = .25,  
+            upgrade_count = 2,
+            upgrade_price_incby = 750,
+            upgrade_modifiers = {
+                Horde_MaxMags = {base = 1, mult = 1},
+                Horde_TotalMaxAmmoMult = {base = 1, mult = 1}
+            }
+        }), "items/hl2/weapon_pistol.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"All"})
         HORDE:CreateItem("Melee",      "Combat Knife",   "arccw_horde_knife",    100,  0, "A reliable bayonet.\nRMB to deal a heavy slash.",
         nil, 10, -1, starter_weapons_entity_properties, nil, nil, nil, {HORDE.DMG_SLASH}, nil, {"All"})
         HORDE:CreateItem("Equipment",  "Medkit",         "weapon_horde_medkit",      50,   0, "Rechargeble medkit.\nRMB to self-heal, LMB to heal others.",
@@ -708,7 +713,11 @@ end
         HORDE:CreateItem("Special",    "Watchtower MKIII.I",  "horde_watchtower_mk3_1",1750,  3, "A watchtower that deters enemies.\nShocks 1 nearby enemy every 1 second.\nDoes 325 Lightning damage.",
         {Warden=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=2}, "items/horde_watchtower.png", {Warden=5}, nil, {HORDE.DMG_LIGHTNING})
         HORDE:CreateItem("Special",    "Barricade Kit",  "horde_barricadekit", 1500,  4, "Barricade Kit.\nKit with barricade that block zombies movement",
-        {Engineer=true}, -1, -1, {type=HORDE.ENTITY_PROPERTY_WPN, wep_that_place=true, limit=1}, nil, {Warden=10}, nil)--, {HORDE.DMG_LIGHTNING})
+        {Engineer=true, Survivor=true}, -1, -1, {type=HORDE.ENTITY_PROPERTY_WPN, wep_that_place=true, limit=1}, nil, {
+            VariousConditions=true,
+            Engineer = {Engineer=10},
+            Survivor = {Survivor=10},
+        }, nil)--, {HORDE.DMG_LIGHTNING})
 
         HORDE:CreateItem("Special",    "C4",  "horde_c4", 1500,  2, "C4.\nThrowable Bomb which explode on press detonator.",
         {Warden=true, Assault=true, Survivor=true, SWAT=true, Heavy=true, Ghost=true, Demolition=true}, 80, -1, nil, "entities/horde_c4.png", {Demolition=20}, nil, {HORDE.DMG_BLAST})

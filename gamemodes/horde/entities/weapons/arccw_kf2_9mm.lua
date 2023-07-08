@@ -63,10 +63,10 @@ SWEP.ShootVol = 115 -- volume of shoot sound
 SWEP.ShootPitch = 100 -- pitch of shoot sound
 SWEP.CantDropWep = true
 SWEP.ForceDefaultAmmo = 0
-local snd1 = Sound("TFA_KF2_9MM.1")
-local snd2 = Sound("TFA_KF2_9MM.2")
-local snd3 = Sound("TFA_KF2_9MM.3")
-SWEP.ShootSound = {snd1, snd2, snd3}
+local snd1 = Sound("weapons/9mm_shotsound.wav")
+--[[local snd2 = Sound("TFA_KF2_9MM.2")
+local snd3 = Sound("TFA_KF2_9MM.3")]]
+SWEP.ShootSound = snd1
 SWEP.ShootSoundSilenced = "weapons/arccw/usp/usp_01.wav"
 SWEP.DistantShootSound = "weapons/arccw/hkp2000/hkp2000-1-distant.wav"
 

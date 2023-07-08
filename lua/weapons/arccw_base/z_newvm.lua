@@ -28,10 +28,10 @@ if CLIENT then
                 vm_real:SetParent( ply:GetViewModel() )
             end
             
-            vm_real:SetRenderMode( RENDERMODE_TRANSALPHA )
-            local wep_color = wep:GetColor()
-
-            vm_real:SetColor( Color( wep_color.r, wep_color.b, wep_color.g, 255 ) )
+            --vm_real:SetRenderMode( RENDERMODE_TRANSALPHA )
+            --[[local wep_color = wep:GetColor()
+            print(wep:GetColor())
+            vm_real:SetColor( Color( wep_color.r, wep_color.b, wep_color.g, 255 ) )]]
 
             local playbackrate = vm_real:GetPlaybackRate()
             wep:SetAnimationProgress( math.min(
@@ -1248,10 +1248,12 @@ function SWEP:PlayEvent(v)
 end
 
 function SWEP:Initialize()
-    if (!IsValid(self:GetOwner()) or self:GetOwner():IsNPC()) and self:IsValid() and self.NPC_Initialize and SERVER then
+
+    local owner = self:GetOwner()
+    if (!IsValid(owner) or owner:IsNPC()) and self:IsValid() and self.NPC_Initialize and SERVER then
         self:NPC_Initialize()
     end
-    if self:GetOwner():IsValid() then
+    if owner:IsValid() then
         self:createCustomVM(self.ViewModel)
         if game.SinglePlayer() and SERVER then
             self:CallOnClient("Initialize")
