@@ -1,19 +1,19 @@
 local path = "/weapons/ak117/"
 local pref = "AK117"
 
-TFA.AddFireSound(pref .. ".Fire", {path .. "ak47_01.wav"}, true, ")")
-TFA.AddFireSound(pref .. ".FireS", {path .. "aksupp.ogg"}, true, ")")
+HORDE:Sound_AddFireSound(pref .. ".Fire", {path .. "ak47_01.wav"}, true, ")")
+HORDE:Sound_AddFireSound(pref .. ".FireS", {path .. "aksupp.ogg"}, true, ")")
 
-TFA.AddWeaponSound(pref .. ".Empty", path .. "empty.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Empty", path .. "empty.wav")
 
-TFA.AddWeaponSound(pref .. ".Magout", path .. "magout.wav")
-TFA.AddWeaponSound(pref .. ".MagoutRattle", path .. "MagoutRattle.wav")
-TFA.AddWeaponSound(pref .. ".Magrelease", path .. "magrelease.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Magout", path .. "magout.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".MagoutRattle", path .. "MagoutRattle.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Magrelease", path .. "magrelease.wav")
 
-TFA.AddWeaponSound(pref .. ".Magin", path .. "magin.wav")
-TFA.AddWeaponSound(pref .. ".Rattle", path .. "Rattle.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Magin", path .. "magin.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Rattle", path .. "Rattle.wav")
 
-TFA.AddWeaponSound(pref .. ".Boltback", path .. "boltback.wav")
-TFA.AddWeaponSound(pref .. ".Boltrelease", path .. "boltrelease.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Boltback", path .. "boltback.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Boltrelease", path .. "boltrelease.wav")
 
-TFA.AddWeaponSound(pref .. ".ROF", path .. "rof.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".ROF", path .. "rof.wav")

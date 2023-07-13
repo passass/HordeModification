@@ -71,6 +71,9 @@ function ENT:PhysicsCollide(data, phys)
 	phys:Sleep()
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self.Impacted = true
+
+	local angl = self:GetAngles()
+	self:SetAngles(Angle(0, angl[2], 0))
 end
 
 function ENT:Initialize(...)
@@ -129,7 +132,11 @@ end
 function ENT:Use(activator, caller)
 	if CLIENT then return end
 	if IsValid(activator) and activator == self:GetOwner() then
-		activator:Give("horde_claymore", true)
+		local wpn = self:GetOwner():GetWeapon("arccw_hordeext_claymore")
+		if !IsValid(wpn) then
+			activator:Give("arccw_hordeext_claymore", true)
+			wpn = self:GetOwner():GetWeapon("arccw_hordeext_claymore")
+		end
 		HORDE:GiveAmmo(activator, wpn, 1)
 		self:Remove()
 	end

@@ -5,12 +5,18 @@ if CLIENT then
 local path = "weapons/tfa_at_as_val/"
 local pref = "TFA_AT_AS_VAL"
 
-TFA.AddFireSound(pref .. ".1", path .. "fpval.wav", false, ")")
 
-TFA.AddWeaponSound(pref .. ".Empty", path .. "emptyval.wav")
-TFA.AddWeaponSound(pref .. ".Boltback", path .. "boltbackval.wav")
-TFA.AddWeaponSound(pref .. ".Boltrelease", path .. "boltreleaseval.wav")
-TFA.AddWeaponSound(pref .. ".Magout", path .. "clipoutval.wav")
-TFA.AddWeaponSound(pref .. ".Magin", path .. "clipinval.wav")
-TFA.AddWeaponSound(pref .. ".Firemode", path .. "fireval.wav")
-TFA.AddWeaponSound(pref .. ".Slideforward", path .. "slideforwardval.wav")
+
+local addfiresound = function()
+
+end
+
+HORDE:Sound_AddFireSound(pref .. ".1", path .. "fpval.wav", false, ")")
+
+HORDE:Sound_AddWeaponSound(pref .. ".Empty", path .. "emptyval.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Boltback", path .. "boltbackval.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Boltrelease", path .. "boltreleaseval.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Magout", path .. "clipoutval.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Magin", path .. "clipinval.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Firemode", path .. "fireval.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Slideforward", path .. "slideforwardval.wav")

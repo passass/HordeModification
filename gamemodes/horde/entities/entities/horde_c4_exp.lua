@@ -24,7 +24,7 @@ AddCSLuaFile()
 --[Info]--
 ENT.Base = "tfa_exp_base"
 ENT.PrintName = "Player Triggered Explosive"
-
+ENT.Model = "models/weapons/tfa_mw2cr/c4/c4_projectile.mdl"
 --[Sounds]--
 ENT.BounceSound = Sound("TFA_MW2R_C4.Plant")
 
@@ -41,7 +41,7 @@ function ENT:Draw()
 	render.DrawSprite(self:GetAttachment(1).Pos, 1.75, 1.75, Color(255,0,0,0))
 end
 
-function ENT:Horde_EndTimeStop() 
+function ENT:Horde_EndTimeStop()
 	return self.Armed
 end
 
@@ -68,6 +68,8 @@ end
 function ENT:Initialize(...)
 	BaseClass.Initialize(self, ...)
 
+	self:SetModel(self.Model)
+
 	local phys = self:GetPhysicsObject()
 	if (phys:IsValid()) then
 		phys:AddGameFlag(FVPHYSICS_NO_IMPACT_DMG)
@@ -85,7 +87,7 @@ end
 
 function ENT:Explode()
 	if self:GetNW2Bool("EMP") then return end
-
+	local owent = self:GetOwner()
 	local dmg = DamageInfo()
     dmg:SetAttacker(owent)
     dmg:SetInflictor(self)

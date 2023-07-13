@@ -535,7 +535,7 @@ end
         {Warden=true}, 50, -1, nil, nil, {Warden=18}, nil, {HORDE.DMG_BALLISTIC})
 
 
-        HORDE:CreateItem("Shotgun",    "BooMer",           "arccw_horde_bymich",  2000, 6, "BooMer.\nA longer version of Sawn-Off that shoots explosive bullets.",
+        HORDE:CreateItem("Shotgun",    "BooMer",           "arccw_horde_bymich",  2500, 6, "BooMer.\nA longer version of Sawn-Off that shoots explosive bullets.",
         {Demolition=true}, 8, -1, nil, nil, {Demolition=10, Warden=5}, nil, {HORDE.DMG_BLAST})
 
         HORDE.items["arccw_horde_ar15"].whitelist["SWAT"] = true
@@ -671,7 +671,7 @@ end
         changeLevelRequirement("arccw_horde_law", {Demolition=13})
         changeLevelRequirement("arccw_horde_javelin", {Demolition=15})
     
-        HORDE:CreateItem("Explosive",  "Gjallarhorn",        "horde_gjallarhorn",   3500,  12, "Gjallarhorn the wonder weapon.\nIt fire rocket which breaks into many pieces of rockets.",
+        HORDE:CreateItem("Explosive",  "Gjallarhorn",        "arccw_horde_gjallarhorn",   3500,  12, "Gjallarhorn the wonder weapon.\nIt fire rocket which breaks into many pieces of rockets.",
         {Demolition=true}, 25, -1, nil, nil, {Demolition=20}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
         
         HORDE:CreateItem("Explosive",  "Chain Grenade",        "arccw_hordeext_nade_chain",   3500,  4, "A grenade which explode 3 times.",
@@ -719,9 +719,9 @@ end
             Survivor = {Survivor=10},
         }, nil)--, {HORDE.DMG_LIGHTNING})
 
-        HORDE:CreateItem("Special",    "C4",  "horde_c4", 1500,  2, "C4.\nThrowable Bomb which explode on press detonator.",
+        HORDE:CreateItem("Special",    "C4",  "arccw_hordeext_c4", 1500,  2, "C4.\nThrowable Bomb which explode on press detonator.",
         {Warden=true, Assault=true, Survivor=true, SWAT=true, Heavy=true, Ghost=true, Demolition=true}, 80, -1, nil, "entities/horde_c4.png", {Demolition=20}, nil, {HORDE.DMG_BLAST})
-        HORDE:CreateItem("Special",    "Claymore",  "horde_claymore", 1250,  1, "Claymore.\nBomb that explode on approaching enemies.",
+        HORDE:CreateItem("Special",    "Claymore",  "arccw_hordeext_claymore", 1250,  1, "Claymore.\nBomb that explode on approaching enemies.",
         {Warden=true, Assault=true, Survivor=true, SWAT=true, Heavy=true, Ghost=true, Demolition=true}, 60, -1, nil, "entities/horde_claymore.png", {Demolition=10}, nil, {HORDE.DMG_BLAST})
 
         
@@ -744,7 +744,7 @@ end
             Survivor = {Berserker=10, Survivor=10},
         }, nil, {HORDE.DMG_SLASH})
 
-        HORDE:CreateItem("Special",    "RiotShield", "horde_riotshield",            3000,  7, "RiotShield.\nJust a shield.",
+        HORDE:CreateItem("Special",    "RiotShield", "arccw_horde_riotshield",            2000,  7, "RiotShield.\nJust a shield.",
         {Berserker=true, Survivor=true}, -1, -1, nil, "entities/horde_riotshield.png", {
             VariousConditions=true,
             Berserker = {Berserker=20},
@@ -1407,7 +1407,7 @@ end
         HORDE.items["arccw_horde_svu"].infusions = ballistic_infusions_sniper_rifles
         HORDE.items["arccw_horde_stormgiant"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
         HORDE.items["arccw_horde_dualsword"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
-        HORDE.items["horde_riotshield"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
+        HORDE.items["arccw_horde_riotshield"].infusions = {HORDE.Infusion_Chrono, HORDE.Infusion_Hemo, HORDE.Infusion_Galvanizing, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Rejuvenating}
         HORDE.items["arccw_horde_ballistic_knife"].infusions = melee_slash_infusions
     end
     function HORDE:GetDefaultItemInfusions() 

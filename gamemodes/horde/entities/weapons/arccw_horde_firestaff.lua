@@ -11,8 +11,8 @@ SWEP.Slot = 1
 
 SWEP.UseHands = true
 
-SWEP.ViewModel          = "models/weapons/originstaffs/c_staffoffire.mdl"
-SWEP.WorldModel         = "models/weapons/originstaffs/w_staffoffire.mdl"
+SWEP.ViewModel          = "models/weapons/black_ops_2/staffs/c_staff_fire.mdl"
+SWEP.WorldModel         = "models/weapons/black_ops_2/staffs/w_staff_fire.mdl"
 SWEP.MirrorVMWM = false
 --[[SWEP.WorldModelOffset = {
     pos        =    Vector(0, 0, 0),
@@ -163,22 +163,22 @@ SWEP.Animations = {
     ["exit_sight"] = {
         Source = "idle",
     },
-    ["holster"] = {
-        Source = "putaway",
-        --[[Time = 0.75,
-        LHIK = true,
-        LHIKIn = 0.2,
-        LHIKOut = 0.25,]]
-    },
     ["ready"] = {
-        Source = "first raise",
+        Source = "draw_first",
+        SoundTable = {
+            { t = 2 / 30, s = Sound("Weapon_OriginStaff_Fire.Raise") },
+        }
         --[[Time = 1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.25,]]
+        
     },
     ["draw"] = {
-        Source = "pullout",
+        Source = "draw",
+    },
+    ["holster"] = {
+        Source = "holster",
     },
     ["fire"] = {
         Source = "fire",
@@ -190,8 +190,176 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Mult = .7,
         Source = "reload",
+        SoundTable = {
+            { t = 15 / 30 * .7, s = Sound("Weapon_OriginStaff.Startreload") },
+            { t = 30 / 30 * .7, s = Sound("Weapon_OriginStaff.Reloading") },
+            { t = 45 / 30 * .7, s = Sound("Weapon_OriginStaff.Finishreload") }
+        }
+    },
+
+    ["enter_sprint"] = {
+        Source = "sprint_in",
+        --Time = 10 / 30
+    },
+    ["idle_sprint"] = {
+        Source = "sprint_loop",
+        --Time = 30 / 40
+    },
+    ["exit_sprint"] = {
+        Source = "sprint_out",
+        --Time = 10 / 30
     },
 }
+
+--AddCSLuaFile("autorun/particle_additions.lua")
+
+-- -tools -nop4
+sound.Add(
+{
+    name = "Weapon_OriginStaff_Fire.Raise",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/originstaffs/1straise_fire.ogg"
+})
+sound.Add(
+{
+    name = "Weapon_OriginStaff_Fire.ChargedLoop",
+    channel = CHAN_ITEM,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/originstaffs/fire/charge/loop.wav"
+})
+sound.Add(
+{
+    name = "Weapon_OriginStaff_Lightning.Raise",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/originstaffs/1straise_lightning.ogg"
+})
+sound.Add(
+{
+    name = "Weapon_OriginStaff_Lightning.ChargedLoop",
+    channel = CHAN_ITEM,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/originstaffs/lightning/charge/lghtng_charge_loop.wav"
+})
+sound.Add(
+{
+    name = "Weapon_OriginStaff_Water.Raise",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/originstaffs/1straise_water.ogg"
+})
+sound.Add(
+{
+    name = "Weapon_OriginStaff_Water.ChargedLoop",
+    channel = CHAN_ITEM,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/originstaffs/ice/charge/icestaff_charge_lp_01.wav"
+})
+sound.Add(
+{
+    name = "Weapon_OriginStaff_Air.Raise",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/originstaffs/1straise_air.ogg"
+})
+sound.Add(
+{
+    name = "Weapon_OriginStaff_Air.ChargedLoop",
+    channel = CHAN_ITEM,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/originstaffs/air/charge/airstaff_charge_loop.wav"
+})
+sound.Add(
+{
+    name = "Weapon_OriginStaff.UpgradedRaise",
+    channel = CHAN_ITEM,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/originstaffs/1straise/upgraded_shing.ogg"
+})
+sound.Add(
+{
+    name = "Weapon_OriginStaff.Startreload",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/originstaffs/reload_clipout.ogg"
+})
+sound.Add(
+{
+    name = "Weapon_OriginStaff.Reloading",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/originstaffs/reload_clipin.ogg"
+})
+sound.Add(
+{
+    name = "Weapon_OriginStaff.Finishreload",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/originstaffs/reload_ready.ogg"
+})
+sound.Add(
+{
+    name = "Weapon_OriginStaff.Melee",
+    channel = CHAN_ITEM,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = {"weapons/originstaffs/melee/upgraded/staff_melee_upgrd_00.ogg", "weapons/originstaffs/melee/upgraded/staff_melee_upgrd_01.ogg"}
+})
+
+game.AddParticles("particles/origins_staves.pcf")
+PrecacheParticleSystem("originstaff_lightning_muzzle")
+PrecacheParticleSystem("originstaff_lightning_proj")
+PrecacheParticleSystem("originstaff_lightning_impact")
+PrecacheParticleSystem("originstaff_lightning_ultimate")
+PrecacheParticleSystem("originstaff_lightning_ultimate_arc")
+
+PrecacheParticleSystem("originstaff_wind_muzzle")
+PrecacheParticleSystem("originstaff_wind_impact")
+PrecacheParticleSystem("originstaff_wind_ultimate")
+
+PrecacheParticleSystem("originstaff_fire_muzzle")
+PrecacheParticleSystem("originstaff_fire_proj")
+PrecacheParticleSystem("originstaff_fire_impact")
+PrecacheParticleSystem("originstaff_fire_ultimate")
+
+PrecacheParticleSystem("originstaff_ice_muzzle")
+PrecacheParticleSystem("originstaff_ice_proj")
+PrecacheParticleSystem("originstaff_ice_impact")
+PrecacheParticleSystem("originstaff_ice_ultimate")
+
+PrecacheParticleSystem("originstaff_revive_muzzle")
+PrecacheParticleSystem("originstaff_revive_proj")
+
+hook.Add("EntityTakeDamage", "IceStaffBreak", function(target, dmginfo)
+	if target:GetNW2Bool("icestaffed") and dmginfo:GetDamage() > target:Health() then
+		dmginfo:SetDamageType(bit.bor(DMG_REMOVENORAGDOLL, DMG_VEHICLE))
+		target:StopParticles()
+		target:SetNW2Bool("icestaffed", false)
+		ParticleEffectAttach( "frost_break_cloud", PATTACH_ABSORIGIN_FOLLOW, target, 0 )
+		target:EmitSound("weapons/wintershowl/zombie/shatter/shatter_0"..math.random(0,2)..".ogg")
+		--if IsValid(target.IceChunk) then target.IceChunk:Remove() end
+		if target:IsNPC() then
+			target:SetSchedule(SCHED_NONE)
+		elseif target:IsPlayer() then
+			target:Freeze(false)
+			target:SetMaterial("")
+			target:ConCommand("pp_mat_overlay ()")
+		end
+	end
+end)
 
 DEFINE_BASECLASS( SWEP.Base )
 

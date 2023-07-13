@@ -7,12 +7,100 @@ SWEP.PrintName = "Wunderwaffe DG-2"
 SWEP.Trivia_Country = "GER"
 SWEP.Trivia_Year = 1945
 
+--AddCSLuaFile("autorun/particle_additions.lua")
+
+game.AddParticles("particles/wunderwaffe_fx.pcf")
+PrecacheParticleSystem("tesla_vm_glow")
+PrecacheParticleSystem("tesla_vm_glow_pap")
+PrecacheParticleSystem("tesla_vm_excited")
+PrecacheParticleSystem("tesla_vm_excited_pap")
+PrecacheParticleSystem("tesla_mflash")
+PrecacheParticleSystem("tesla_mflash_pap")
+PrecacheParticleSystem("tesla_beam")
+PrecacheParticleSystem("tesla_beam_pap")
+PrecacheParticleSystem("tesla_jump")
+PrecacheParticleSystem("tesla_impact")
+
+PrecacheParticleSystem("tesla_electrocute")
+PrecacheParticleSystem("tesla_electrocute1")
+PrecacheParticleSystem("tesla_electrocute_pap")
+PrecacheParticleSystem("tesla_electrocute1_pap")
+
+--game.AddParticles("particles/lightning_trail.pcf")
+--PrecacheParticleSystem("lightning_trail")
+
+-- -tools -nop4
+sound.Add(
+{
+    name = "Weapon_WunderWaffe.Raise",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/tesla_gun/reload/gr_tesla_start.mp3"
+})
+sound.Add(
+{
+    name = "Weapon_WunderWaffe.Loop",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/tesla_gun/wpn_tesla_idle_d.wav"
+})
+sound.Add(
+{
+    name = "Weapon_WunderWaffe.FlipOff",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/tesla_gun/reload/tesla_switch_flip_off.mp3"
+})
+sound.Add(
+{
+    name = "Weapon_WunderWaffe.HandlePull",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/tesla_gun/reload/tesla_handle_pullback.mp3"
+})
+sound.Add(
+{
+    name = "Weapon_WunderWaffe.ClipIn",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/tesla_gun/reload/tesla_clip_in.mp3"
+})
+sound.Add(
+{
+    name = "Weapon_WunderWaffe.HandleRelease",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/tesla_gun/reload/tesla_handle_release.mp3"
+})
+sound.Add(
+{
+    name = "Weapon_WunderWaffe.FlipOn",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 80,
+    sound = "weapons/tesla_gun/reload/tesla_switch_flip_on.mp3"
+})
+--[[
+hook.Add("CreateClientsideRagdoll", "WunderwaffeRagdollParticles", function(owner, ragdoll)
+	if owner:GetNWBool("waffeshocked") then
+		ParticleEffectAttach( "tesla_electrocute", PATTACH_POINT_FOLLOW, ragdoll, 2)
+	elseif owner:GetNWBool("waffeshockedpap") then
+		ParticleEffectAttach( "tesla_electrocute_pap", PATTACH_POINT_FOLLOW, ragdoll, 2)
+	end
+end)]]
+
 SWEP.Slot = 1
 
 SWEP.UseHands = true
 
-SWEP.ViewModel =  "models/weapons/wunderwaffe/v_wunderwaffe.mdl"
-SWEP.WorldModel = "models/weapons/wunderwaffe/w_wunderwaffe.mdl"
+SWEP.ViewModel =  "models/weapons/world_at_war/wunderwaffe/v_wunderwaffe.mdl"
+SWEP.WorldModel = "models/weapons/world_at_war/wunderwaffe/w_wunderwaffe.mdl"
 SWEP.MirrorVMWM = false
 --[[SWEP.WorldModelOffset = {
     pos        =    Vector(0, 0, 0),

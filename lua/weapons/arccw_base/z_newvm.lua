@@ -34,11 +34,23 @@ if CLIENT then
             vm_real:SetColor( Color( wep_color.r, wep_color.b, wep_color.g, 255 ) )]]
 
             local playbackrate = vm_real:GetPlaybackRate()
-            wep:SetAnimationProgress( math.min(
-                wep:GetAnimationProgress() + frmtime * playbackrate / vm_real:SequenceDuration(),
-                1
+
+            local idle_exists = vm_real.IdleExists
+            
+            if idle_exists == nil then
+                idle_exists = vm_real:LookupSequence("idle") != -1
+                vm_real.IdleExists = idle_exists
+            end
+
+            if wep.LastAnimKey == "idle" and !idle_exists then
+                wep:SetAnimationProgress(0)
+            else
+                wep:SetAnimationProgress( math.min(
+                    wep:GetAnimationProgress() + frmtime * playbackrate / vm_real:SequenceDuration(),
+                    1
+                    )
                 )
-            )
+            end
 
             if wep.UseHands then
                 local hands = ply:GetHands()
@@ -313,6 +325,7 @@ function SWEP:Deploy()
 
     return true
 end
+
 
 function SWEP:Holster(wep)
     if !IsFirstTimePredicted() then return end
@@ -707,6 +720,10 @@ function SWEP:DrawCustomModel(wm, origin, angle)
     -- self:RefreshBGs()
 end
 
+function SWEP:PlayAnimationWithSync(key, mult, pred, startfrom, tt, skipholster, priority, absolute, otherdata)
+    self:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priority, absolute, table.Merge(otherdata and table.Copy(otherdata) or {}, {SyncWithClient = true}))
+end
+
 function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priority, absolute, otherdata)
     mult = mult or 1
     pred = pred or false
@@ -871,6 +888,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
     end
 
     if seq then
+        print(key)
         vm:ResetSequence( seq )
         local dur = vm:SequenceDuration()
         local rate = math.Clamp(dur / (ttime + startfrom), -4, 12)
@@ -896,36 +914,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
     end
 
     return true
-end
-
-
-function SWEP:EnterSprint()
-    if engine.ActiveGamemode() == "terrortown" and !(TTT2 and self:GetOwner().isSprinting) then return end
-    if self:GetState() == ArcCW.STATE_SPRINT then return end
-    if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
-    if self:GetTriggerDelta() > 0 then return end
-    if self:GetGrenadePrimed() and !self:CanShootWhileSprint() then return end
-    self:SetState(ArcCW.STATE_SPRINT)
-    self.Sighted = false
-    self.Sprinted = true
-
-    local ct = CurTime()
-
-    -- self.SwayScale = 1
-    -- self.BobScale = 5
-
-    self:SetShouldHoldType()
-
-    local s = self:CanShootWhileSprint()
-
-    if !s and self:GetNextPrimaryFire() <= ct then
-        self:SetNextPrimaryFire(ct)
-    end
-
-    local anim = self:SelectAnimation("enter_sprint")
-    if anim and !s and self:GetNextSecondaryFire() <= ct then
-        self:PlayAnimation(anim, self:GetBuff("SightTime") / self:GetAnimKeyTime(anim, true), true, nil, false, nil, false, false, {SyncWithClient = true})
-    end
 end
 
 function SWEP:GetAnimKeyTime(key, min)
@@ -2680,7 +2668,7 @@ function SWEP:Reload()
         local anim = self:SelectReloadAnimation()
 
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
-        self:PlayAnimation(anim, mult, true, self.Animations[anim].StartFrom, false, nil, true, nil, {SyncWithClient = true })
+        self:PlayAnimationWithSync(anim, mult, true, self.Animations[anim].StartFrom, false, nil, true, nil)
         --print("reload", self:GetAnimationProgress(), CurTime(), self:GetNextIdle(), !!self:PlayAnimation(anim, mult, true, self.Animations[anim].StartFrom, false, nil, true, nil, {SyncWithClient = true }), self.LastAnimKey)
         local reloadtime = self:GetAnimKeyTime(anim, true) * mult
         local reloadtime2

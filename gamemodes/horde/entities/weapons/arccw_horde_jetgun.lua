@@ -12,8 +12,8 @@ if CLIENT then
     SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_horde_jetgun.vtf")
     killicon.Add("arccw_horde_jetgun", "arccw/weaponicons/arccw_horde_jetgun", Color(255, 255, 255, 255))
 end
-SWEP.ViewModel =  "models/weapons/jetgun/v_jetgun.mdl"
-SWEP.WorldModel = "models/weapons/jetgun/w_jetgun.mdl"
+SWEP.ViewModel =  "models/weapons/black_ops_2/jetgun/v_jetgun.mdl"
+SWEP.WorldModel = "models/weapons/black_ops_2/jetgun/w_jetgun.mdl"
 SWEP.MirrorVMWM = false
 --[[SWEP.WorldModelOffset = {
     pos        =    Vector(0, 0, 0),
@@ -152,7 +152,6 @@ SWEP.Attachments = {
 SWEP.Animations = {
     ["idle"] = {
     Source = "idle",
-    Time = 10,
     },
     ["holster"] = {
         Source = "holster",
@@ -178,7 +177,40 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Source = "reload",
     },
+
+	["windup"] = {
+		Source = "windup",
+	},
+	["winddown"] = {
+		Source = "winddown",
+	},
+	["loop"] = {
+		Source = "loop",
+	},
 }
+
+game.AddParticles("particles/jet_muzzle.pcf")
+PrecacheParticleSystem("jetgun_muzzle")
+PrecacheParticleSystem("jetgun_mistfloor")
+PrecacheParticleSystem("jetgun_exaust")
+
+sound.Add(
+{
+    name = "Weapon_Jetgun.draw",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 60,
+    sound = "weapons/fly_minigun_on.ogg"
+})
+
+sound.Add(
+{
+    name = "Weapon_Jetgun.FullLoop",
+    channel = CHAN_WEAPON,
+    volume = 1.0,
+    soundlevel = 100,
+    sound = "weapons/jetgun/jetgun_loop_full.wav"
+})
 
 --[[function SWEP:Hook_PostFireRocket(ent)
     local ply = self:GetOwner()
@@ -250,7 +282,7 @@ function SWEP:PrimaryAttack()
 		
 		local bullet = {
 			Attacker = own,
-			Damage = 50,
+			Damage = 60,
 			Force = Vector(0,0,0),
 			Distance = 8,
 			Num = 8,
@@ -271,31 +303,15 @@ function SWEP:Think()
 	BaseClass.Think(self)
 	local own = self:GetOwner()
 	local index = own:EntIndex()
-	
-	if own:KeyPressed(IN_ATTACK) then
-	
-		self:SendWeaponAnim(ACT_VM_PULLBACK)
-		self:EmitSound("weapons/jetgun/rattle/jetgun_rattle_start.mp3", 75, 100, 1, CHAN_WEAPON)
-		timer.Simple(1, function()
-			if IsValid(self) and own:KeyDown(IN_ATTACK) and own:GetActiveWeapon() == self then
-				self:EmitSound("weapons/jetgun/jetgun_on.mp3", 75, 100, 1, CHAN_ITEM)
-				--self:LoopingSoundStart()
-				own:EmitSound("Weapon_Jetgun.FullLoop")
-				self:SendWeaponAnim(ACT_VM_PULLBACK_HIGH)
-				self:CallOnClient("RenderExaustParticles")
-			end
-		end)
-		
-	end
-	
+
 	if own:KeyReleased(IN_ATTACK) then
 		if SERVER then
-			if timer.Exists(index.."jetgun_reload") then
-				timer.UnPause(index.."jetgun_reload")
+			if timer.Exists(index .. "jetgun_reload") then
+				timer.UnPause(index .. "jetgun_reload")
 			else
-				timer.Create(index.."jetgun_reload", 0.15, 0, function()
+				timer.Create(index .. "jetgun_reload", 0.1, 0, function()
 					if self:Ammo1() == 150 and self.TotalRPM == 0 then -- We're done here, pause the timer
-						timer.Pause(index.."jetgun_reload")
+						timer.Pause(index .. "jetgun_reload")
 					end
 					self.TotalRPM = self.TotalRPM - 8
 					if self.TotalRPM < 0 then
@@ -308,33 +324,44 @@ function SWEP:Think()
 		end
 		
 		own:StopSound("Weapon_Jetgun.FullLoop")
-		self:SendWeaponAnim(ACT_VM_PULLBACK_LOW)
+
+		self:PlayAnimationWithSync("winddown", nil, nil, nil, nil, nil, true)
+		self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime("winddown"))
+
 		self:StopParticles()
 		self:EmitSound("weapons/jetgun/jetgun_off.mp3", 75, 100, 1, CHAN_WEAPON) -- Stop rattling
 		self:EmitSound("weapons/jetgun/rattle/jetgun_rattle_stop.mp3", 75, 100, 1, CHAN_ITEM) -- Stop rattling
+	elseif own:KeyPressed(IN_ATTACK) then
+	
+		self:PlayAnimationWithSync("windup", nil, nil, nil, nil, nil, true)
+		self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime("windup"))
+
+		self:EmitSound("weapons/jetgun/rattle/jetgun_rattle_start.mp3", 75, 100, 1, CHAN_WEAPON)
+		timer.Simple(1, function()
+			if IsValid(self) and own:KeyDown(IN_ATTACK) and own:GetActiveWeapon() == self then
+				self:EmitSound("weapons/jetgun/jetgun_on.mp3", 75, 100, 1, CHAN_ITEM)
+				--self:LoopingSoundStart()
+				own:EmitSound("Weapon_Jetgun.FullLoop")
+
+				self:CallOnClient("RenderExaustParticles")
+			end
+		end)
+	elseif own:KeyDown(IN_ATTACK) then
+		if !self:GetPriorityAnim() then
+			self:PlayAnimationWithSync("loop", nil, nil, nil, nil, nil, true)
+			self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime("loop"))
+		end
 	end
-	
-	
 end
 
 function SWEP:RenderIntakeParticles()
 	local own = self:GetOwner()
 	if IsValid(own) then
-		if own == LocalPlayer() then
-			if own:ShouldDrawLocalPlayer() then
-				ParticleEffectAttach( "jetgun_muzzle", PATTACH_POINT_FOLLOW, self, 1 )
-				ParticleEffectAttach( "jetgun_mist2", PATTACH_POINT_FOLLOW, self, 1 )
-			else
-				ParticleEffectAttach( "jetgun_muzzle", PATTACH_POINT_FOLLOW, own:GetViewModel(), 1 )
-				--ParticleEffect("jetgun_muzzle", own:GetPos() + Vector(0,0,16), Angle(0, own:GetAngles().y, 0), own)
-				ParticleEffect("jetgun_mist2", own:GetPos() + Vector(0,0,16), Angle(0, own:GetAngles().y, 0), own)
-			end
-		else
-			ParticleEffectAttach( "jetgun_muzzle", PATTACH_POINT_FOLLOW, self, 1 )
-			ParticleEffectAttach( "jetgun_mist2", PATTACH_POINT_FOLLOW, self, 1 )
-		end
+		ParticleEffectAttach( "jetgun_muzzle", PATTACH_POINT_FOLLOW, CLIENT and self.REAL_VM or self, 1 )
+		ParticleEffect("jetgun_mistfloor", own:WorldSpaceCenter(), Angle(0, own:GetAngles().y, 0), own)
 	end
 end
+
 
 function SWEP:RenderExaustParticles()
 	local own = self:GetOwner()

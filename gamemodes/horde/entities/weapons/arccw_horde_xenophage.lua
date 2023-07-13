@@ -9,7 +9,7 @@ game.AddParticles( "particles/xenophage_muzzle.pcf" )
 PrecacheParticleSystem( "Xenophage_muzzle" )
 PrecacheParticleSystem( "Xenophage_muzzle_Glow" )
 
-SWEP.Slot = 5
+SWEP.Slot = 3
 
 SWEP.UseHands = true
 if CLIENT then
