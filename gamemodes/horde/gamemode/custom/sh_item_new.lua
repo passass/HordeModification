@@ -1,3 +1,5 @@
+if !HORDE.items then HORDE.items = {} end
+
 local function calcTotalLevels(item)
     local levels = item.levels
     if levels.VariousConditions then
@@ -88,7 +90,7 @@ function HORDE:CreateItem(category, name, class, price, weight, description, whi
     item.dmgtype = dmgtype or nil
     item.infusions = infusions or nil
     HORDE.items[item.class] = item
-    HORDE:SetItemsData()
+    --HORDE:SetItemsData()
 end
 
 local function GetStarterWeapons()
@@ -98,6 +100,15 @@ local function GetStarterWeapons()
                 if not HORDE.starter_weapons[starter_subclass] then HORDE.starter_weapons[starter_subclass] = {} end
                 table.insert(HORDE.starter_weapons[starter_subclass], class)
             end
+
+        end
+
+        if item.entity_properties.start_grenade then
+
+            for ply_class, _ in pairs(item.whitelist) do
+                HORDE.class_grenades[ply_class] = class
+            end
+
         end
     end
 end
@@ -224,15 +235,6 @@ end
         end
     end
 
-    function HORDE:GetClassGrenades()
-        for _, wpn_class in pairs(grenades_classes1) do
-            local item = HORDE.items[wpn_class]
-            for class, _ in pairs(item.whitelist) do
-                HORDE.class_grenades[class] = wpn_class
-            end
-        end
-    end
-
     -------------------- UPGRADES
 
     function HORDE:ItemCanUpgrade(ply, item, ...)
@@ -297,10 +299,12 @@ end
 
         local starter_weapons_entity_properties = {type=HORDE.ENTITY_PROPERTY_WPN, sell_forbidden=true, cantdropwep=true}
 
+        local starter_grenades_entity_properties = table.Merge(table.Copy(starter_weapons_entity_properties), {start_grenade = true})
+
         for class, newclass in pairs(grenades_classes1) do
             local item = HORDE.items[class]
             if item then
-                item.entity_properties = starter_weapons_entity_properties
+                item.entity_properties = starter_grenades_entity_properties
             end
         end
 
@@ -847,9 +851,6 @@ end
             HORDE.items[to].class = to
             HORDE.items[from] = nil
         end
-
-        HORDE:GetClassGrenades()
-        GetStarterWeapons()
 
         print("[HORDE] - Loaded default item config.")
     end
@@ -1438,9 +1439,9 @@ end
         new_gadgets()
     end
 
-if GetConVarNumber("horde_default_item_config") == 0 then
-    local function GetItemsData()
-        if SERVER then
+if SERVER then
+    if GetConVarNumber("horde_default_item_config") == 0 then
+        local function GetItemsData()
             if not file.IsDir("horde", "DATA") then
                 file.CreateDir("horde")
                 return
@@ -1461,9 +1462,18 @@ if GetConVarNumber("horde_default_item_config") == 0 then
                 return t
             end
         end
+
+        HORDE.items = GetItemsData() or {}
+        GetStarterWeapons()
+
+        HORDE:SyncItems()
+    else
+        HORDE:GetDefaultItemsData()
+        GetStarterWeapons()
+        HORDE:SyncItems()
     end
 
-    CONFIG.items = GetItemsData()
+    CONFIG.items = HORDE.items
 end
 
 --[[if SERVER and not (GetConVar("horde_external_lua_config"):GetString() and GetConVar("horde_external_lua_config"):GetString() ~= "") and GetConVarNumber("horde_default_item_config") != 0 then

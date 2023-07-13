@@ -788,7 +788,6 @@ function PANEL:Init()
         local shop_icon = shop_icon_editor:GetValue()
 
         local levels = {}
-        PrintTable(level_editors)
         local varconds = level_editors.checkbox:GetChecked()
         if varconds then
             levels = {
@@ -811,7 +810,6 @@ function PANEL:Init()
                 end
             end
         end
-        PrintTable(levels)
 
         local dmgtypes = {}
         for _, editor in pairs(dmgtype_editors) do
