@@ -888,7 +888,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
     end
 
     if seq then
-        print(key)
         vm:ResetSequence( seq )
         local dur = vm:SequenceDuration()
         local rate = math.Clamp(dur / (ttime + startfrom), -4, 12)
