@@ -170,7 +170,9 @@ SWEP.Firemodes = {
 SWEP.NPCWeaponType = "weapon_pistol"
 SWEP.NPCWeight = 75
 SWEP.Horde_MaxMags = 25
-
+game.AddAmmoType( {
+	name = "tesla_bulbs",
+} )
 SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 150 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 250

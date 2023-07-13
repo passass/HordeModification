@@ -80,7 +80,7 @@ function EFFECT:Init(data)
 		sparticle:SetLighting(false)
 		sparticle.FollowEnt = self.WeaponEnt
 		sparticle.Att = self.Attachment
-		TFA.Particles.RegisterParticleThink(sparticle, TFA.Particles.FollowMuzzle)
+		--TFA.Particles.RegisterParticleThink(sparticle, TFA.Particles.FollowMuzzle)
 		sparticle:SetPos(vector_origin)
 	end
 
@@ -103,7 +103,7 @@ function EFFECT:Init(data)
 			particle:SetLighting(false)
 			particle.FollowEnt = self.WeaponEnt
 			particle.Att = self.Attachment
-			TFA.Particles.RegisterParticleThink(particle, TFA.Particles.FollowMuzzle)
+			--TFA.Particles.RegisterParticleThink(particle, TFA.Particles.FollowMuzzle)
 		end
 	end
 
@@ -126,7 +126,7 @@ function EFFECT:Init(data)
 			particle:SetLighting(false)
 			particle.FollowEnt = self.WeaponEnt
 			particle.Att = self.Attachment
-			TFA.Particles.RegisterParticleThink(particle, TFA.Particles.FollowMuzzle)
+			--TFA.Particles.RegisterParticleThink(particle, TFA.Particles.FollowMuzzle)
 			particle:SetPos(vector_origin)
 		end
 	end
@@ -216,7 +216,7 @@ function EFFECT:Init(data)
 		end
 	end
 	
-	if TFA.GetGasEnabled() then
+	--if TFA.GetGasEnabled() then
 		for i = 0, 3 do
 			local particle = emitter:Add("sprites/heatwave", self.vOffset + (dir * i))
 
@@ -235,7 +235,7 @@ function EFFECT:Init(data)
 				particle:SetColor(255, 255, 255)
 			end
 		end
-	end
+	--end
 
 	emitter:Finish()
 end
