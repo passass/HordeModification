@@ -5,7 +5,7 @@ SWEP.AdminOnly = false
 
 SWEP.PrintName = "Thrustodyne Aeronautics Model 23"
 
-SWEP.Slot = 1
+SWEP.Slot = 3
 
 SWEP.UseHands = true
 if CLIENT then

@@ -76,7 +76,7 @@ local bonus_hooks = {
                             wep:SetMagUpIn(ct + reloadtime)
                             wep:SetNextIdle(ct + anim_timetoend)
 
-                            for i, sounds in ipairs(wep.EventTable) do
+                            --[[for i, sounds in ipairs(wep.EventTable) do
                                 for time, key in pairs(sounds) do
                                     if key.AnimKey == anim then
                                         local sound_delay = (time - key.StartTime) / mult * (key.StartTimeLastMult or wep.LastRes or 1)
@@ -89,7 +89,7 @@ local bonus_hooks = {
                                         key.StartTimeLastMult = mult
                                     end
                                 end
-                            end
+                            end]]
 
                             wep.LastRes = mult
                             wep.LastAnimPrcd = ct
@@ -113,7 +113,7 @@ local bonus_hooks = {
                 wep.LastAnimPrcd = nil
             end
 
-            local wep = ply:GetActiveWeapon()
+            --[[local wep = ply:GetActiveWeapon()
             if IsValid(wep) and wep.ArcCW  then
                 local mult = 1 / wep:GetBuff_Mult("Mult_ReloadTime")
 
@@ -131,7 +131,7 @@ local bonus_hooks = {
                         end
                     end
                 end
-            end
+            end]]
         end
     end},
     SlowMotion_RPMBonus = {"Mult_RPM", formulas.completeness},
@@ -165,7 +165,7 @@ local function call_all_bonus_hooks(ply, slow_motion_stage, slomo_bonus)
             HORDE:Modifier_AddToWeapons(ply, bonushook[1], "slomotion")
             continue
         end
-        HORDE:Modifier_AddToWeapons(ply, bonushook[1], "slomotion", bonushook[2](slow_motion_stage, slomo_bonus))
+        HORDE:Modifier_AddToWeapons(ply, bonushook[1], "slomotion", bonushook[2](slow_motion_stage, ply:Horde_CallClassHook(hookname .. "_Bonus", ply) or slomo_bonus))
     end
 
     ply:Horde_CallClassHook("SlowMotion_Hook", ply, slow_motion_stage, slomo_bonus)

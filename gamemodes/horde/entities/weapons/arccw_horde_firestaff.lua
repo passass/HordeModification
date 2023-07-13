@@ -7,7 +7,7 @@ SWEP.PrintName = "Staff of Fire"
 SWEP.Trivia_Country = "GER"
 SWEP.Trivia_Year = 1945
 
-SWEP.Slot = 1
+SWEP.Slot = 3
 
 SWEP.UseHands = true
 

@@ -4,7 +4,7 @@ SWEP.Category = "ArcCW - Horde" -- edit this if you like
 SWEP.AdminOnly = false
 SWEP.PrintName = "Leviathan's Breath"
 
-SWEP.Slot = 2
+SWEP.Slot = 3
 
 SWEP.UseHands = true
 if CLIENT then

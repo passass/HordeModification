@@ -95,7 +95,7 @@ hook.Add("CreateClientsideRagdoll", "WunderwaffeRagdollParticles", function(owne
 	end
 end)]]
 
-SWEP.Slot = 1
+SWEP.Slot = 3
 
 SWEP.UseHands = true
 
