@@ -741,18 +741,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
     local ct = CurTime()
 
     if self:GetPriorityAnim() and !priority then return end
-    
-    if SERVER and (game.SinglePlayer() and pred or otherdata.SyncWithClient) then
-    --if SERVER and pred then
-        net.Start("arccw_sync_anim")
-        net.WriteString(key)
-        net.WriteFloat(mult)
-        net.WriteFloat(startfrom)
-        net.WriteBool(tt)
-        --net.WriteBool(skipholster) Unused
-        net.WriteBool(otherdata.SyncWithClient or !otherdata.SyncWithClient and priority)
-        net.Send(self:GetOwner())
-    end
 
     local anim = self.Animations[key]
     if !anim then return end
@@ -764,6 +752,18 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
         anim = self.Animations[key]
     else
         return]]
+    end
+
+    if SERVER and (game.SinglePlayer() and pred or otherdata.SyncWithClient) then
+    --if SERVER and pred then
+        net.Start("arccw_sync_anim")
+        net.WriteString(key)
+        net.WriteFloat(mult)
+        net.WriteFloat(startfrom)
+        net.WriteBool(tt)
+        --net.WriteBool(skipholster) Unused
+        net.WriteBool(otherdata.SyncWithClient or !otherdata.SyncWithClient and priority)
+        net.Send(self:GetOwner())
     end
 
     if anim.ViewPunchTable and CLIENT then

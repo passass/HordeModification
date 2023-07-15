@@ -46,9 +46,9 @@ SWEP.TracerWidth = 3
 SWEP.ChamberSize = 0-- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 13 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 0.4
-SWEP.RecoilSide = 0.3
-SWEP.RecoilRise = 0.55
+SWEP.Recoil = 0.6
+SWEP.RecoilSide = 0.5
+SWEP.RecoilRise = 0.65
 SWEP.VisualRecoilMult = 1
 
 SWEP.Delay = 60 / 120 -- 60 / RPM.
@@ -72,8 +72,8 @@ SWEP.NPCWeaponType = {
 SWEP.NPCWeight = 100
 
 SWEP.AccuracyMOA = 2 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 80 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 25
+SWEP.HipDispersion = 750 -- inaccuracy added by hip firing.
+SWEP.MoveDispersion = 300
 
 game.AddAmmoType( {
 	name = "ammo_xenophage",
@@ -88,14 +88,14 @@ SWEP.MuzzleEffect = "muzzleflash_4"
 SWEP.ShellModel = "models/shells/shell_556.mdl"
 SWEP.ShellPitch = 90
 SWEP.ShellScale = 1.5
-SWEP.Horde_MaxMags = 21
+SWEP.Horde_MaxMags = 11
 
 SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 --[[SWEP.ProceduralViewBobAttachment = 1
 SWEP.CamAttachment = 3]]
 
-SWEP.SpeedMult = 1
+SWEP.SpeedMult = .875
 SWEP.SightedSpeedMult = 0.5
 SWEP.SightTime = 0.33
 
@@ -142,9 +142,11 @@ SWEP.BarrelLength = 27
 
 SWEP.ExtraSightDist = 5
 
-SWEP.ClipsPerAmmoBox = 2
-
 SWEP.Attachments = {
+    {
+        PrintName = "Perk",
+        Slot = "perk",
+    },
 }
 
 function SWEP:DoEffects(att)
@@ -218,5 +220,6 @@ SWEP.Animations = {
         Source = "shoot"
     },
     ["fire_iron"] = {
+        Source = "shoot"
     },
 }

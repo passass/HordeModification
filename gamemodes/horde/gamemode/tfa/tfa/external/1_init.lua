@@ -97,26 +97,17 @@ function HORDE:Ammo_Add( id, name )
 		name = id
 	})
 	return id
+end
 
-	--[[
-	if not AmmoTypesAdded[id] then
-		AmmoTypesAdded[id] = true
+local particles = {}
 
-		game.AddAmmoType({
-			name = id
-		})
-	end
+particles["tfa_muzzle_rifle"] = "tfa_muzzleflashes"
+particles["tfa_muzzle_sniper"] = "tfa_muzzleflashes"
+particles["tfa_muzzle_energy"] = "tfa_muzzleflashes"
+particles["tfa_muzzle_energy"] = "tfa_muzzleflashes"
+particles["tfa_muzzle_gauss"] = "tfa_muzzleflashes"
 
-	if name and language then
-		language.Add(id .. "_ammo", name)
-	end
-
-	if name then
-		AmmoTypesByName[name] = AmmoTypesByName[name] or id
-
-		return AmmoTypesByName[name]
-	end
-
-	return id
-	]]
+for k, v in pairs(particles) do
+	game.AddParticles("particles/" .. v .. ".pcf")
+	PrecacheParticleSystem(k)
 end
