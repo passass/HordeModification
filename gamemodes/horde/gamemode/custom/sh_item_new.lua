@@ -678,7 +678,7 @@ end
         HORDE:CreateItem("Explosive",  "Gjallarhorn",        "arccw_horde_gjallarhorn",   3500,  12, "Gjallarhorn the wonder weapon.\nIt fire rocket which breaks into many pieces of rockets.",
         {Demolition=true}, 25, -1, nil, nil, {Demolition=20}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
         
-        HORDE:CreateItem("Explosive",  "Chain Grenade",        "arccw_hordeext_nade_chain",   3500,  4, "A grenade which explode 3 times.",
+        HORDE:CreateItem("Explosive",  "Chain Grenade",        "arccw_hordeext_nade_chain",   3000,  3, "A grenade which explode 3 times.",
         {Demolition=true}, 20, -1, nil, nil, {Demolition=20}, nil, {HORDE.DMG_BLAST}, {HORDE.Infusion_Quality})
         
         HORDE:CreateItem("Explosive",  "Deathbringer",        "arccw_horde_deathbringer",   6000,  10, "Deathbringer.\nIt fire circle of energy which breaks into many circles.",
