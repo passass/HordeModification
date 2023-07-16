@@ -14,7 +14,8 @@ local formulas = {
 local bonus_hooks = {
     SlowMotion_ZoomSpeedBonus = {"Mult_SightTime", formulas.completeness_inverted},
     SlowMotion_MeleeAttackSpeedBonus = {"Mult_MeleeTime", formulas.completeness_inverted},
-    SlowMotion_ReloadBonus = {"Mult_ReloadTime", formulas.completeness_inverted, function(ply, slomo_stage, slomo_bonus)
+    SlowMotion_ReloadBonus = {"Mult_ReloadTime", formulas.completeness_inverted,
+    post_hook = function(ply, slomo_stage, slomo_bonus)
         local hookname = "Horde_SlowMotion_ReloadBonus_" .. ply:EntIndex()
         if !hook.GetTable()["Think"][hookname] then
             hook.Add("Think", hookname, function()
@@ -134,7 +135,12 @@ local bonus_hooks = {
             end]]
         end
     end},
-    SlowMotion_RPMBonus = {"Mult_RPM", formulas.completeness},
+    SlowMotion_RPMBonus = {
+        "Mult_RPM", formulas.completeness,
+        post_hook = function(ply, slomo_stage, slomo_bonus)
+            HORDE:Modifier_AddToWeapons(ply, "Mult_PostBurstDelay", "slomotion", formulas.completeness(slomo_stage, slomo_bonus))
+        end
+    },
     SlowMotion_CycleTimeMult = {"Mult_CycleTime", formulas.static_inverted},
 }
 
@@ -159,13 +165,18 @@ local function call_all_bonus_hooks(ply, slow_motion_stage, slomo_bonus)
     for hookname, bonushook in pairs(bonus_hooks) do
         if !ply:Horde_CallClassHook(hookname .. "_Allow", ply) then continue end
 
-        if bonushook[3] and bonushook[3](ply, slow_motion_stage, slomo_bonus) then continue end
+        if bonushook.pre_hook and bonushook.pre_hook(ply, slow_motion_stage, slomo_bonus) then continue end
 
         if slow_motion_stage == 1.0 then
             HORDE:Modifier_AddToWeapons(ply, bonushook[1], "slomotion")
             continue
         end
-        HORDE:Modifier_AddToWeapons(ply, bonushook[1], "slomotion", bonushook[2](slow_motion_stage, ply:Horde_CallClassHook(hookname .. "_Bonus", ply) or slomo_bonus))
+
+        local bonus = ply:Horde_CallClassHook(hookname .. "_Bonus", ply) or slomo_bonus
+
+        HORDE:Modifier_AddToWeapons(ply, bonushook[1], "slomotion", bonushook[2](slow_motion_stage, bonus))
+    
+        if bonushook.post_hook then bonushook.post_hook(ply, slow_motion_stage, bonus) end
     end
 
     ply:Horde_CallClassHook("SlowMotion_Hook", ply, slow_motion_stage, slomo_bonus)

@@ -34,7 +34,16 @@ if CLIENT then
             vm_real:SetColor( Color( wep_color.r, wep_color.b, wep_color.g, 255 ) )]]
 
             local playbackrate = vm_real:GetPlaybackRate()
+            --[[local cur_anim = wep.LastAnimKey
 
+            local anim_is_exists = wep.REAL_VM.AnimThatExists[cur_anim]
+            
+            if anim_is_exists == nil then
+                anim_is_exists = vm_real:LookupSequence(cur_anim) != -1
+                wep.REAL_VM.AnimThatExists[cur_anim] = anim_is_exists
+            end
+
+            if !anim_is_exists then]]
             local idle_exists = vm_real.IdleExists
             
             if idle_exists == nil then
@@ -110,13 +119,6 @@ if CLIENT then
         local ignore = net.ReadBool()
     
         if !IsValid(wep) or !wep.ArcCW then return end
-
-        --[[local vm_real = wep.REAL_VM
-
-        if vm_real.EndOn >= 35 then
-            vm_real.EndOn = 0
-        end]]
-
         wep:PlayAnimation(key, mul, false, start, time, false, ignore)
 
         timer.Create("arccw_sync_anim" .. wep:EntIndex(), 0, 8, function()
@@ -126,16 +128,6 @@ if CLIENT then
             end
         end)
     end)
-
-    --[[local old = SWEP.DrawHUD
-    function SWEP:DrawHUD()
-        surface.SetTextPos(300, 500)
-        surface.SetFont("ArcCW_26")
-        surface.SetTextColor(255, 255, 255, 255)
-        surface.SetDrawColor(0, 0, 0, 63)
-        surface.DrawText( tostring(wep:GetAnimationProgress()) )
-        return old(self)
-    end]]
 else
     --- SERVER
     util.AddNetworkString("arccw_sync_anim")
@@ -186,14 +178,16 @@ else
     end
 end
 
---local idleon = 0
+function SWEP:GetViewModel()
+    return self.REAL_VM or self:GetOwner():GetViewModel()
+end
+
 function SWEP:PlayIdleAnimation(pred)
     local ianim = self:SelectAnimation("idle")
     if self:GetGrenadePrimed() then
         ianim = self:GetGrenadeAlt() and self:SelectAnimation("pre_throw_hold_alt") or self:SelectAnimation("pre_throw_hold")
     end
 
-    -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
     if self:GetBuff_Override("UBGL_BaseAnims") and self:GetInUBGL()
             and self.Animations.idle_ubgl_empty and self:Clip2() <= 0 then
         ianim = "idle_ubgl_empty"
@@ -204,9 +198,6 @@ function SWEP:PlayIdleAnimation(pred)
     if self.LastAnimKey != ianim then
         ianim = self:GetBuff_Hook("Hook_IdleReset", ianim) or ianim
     end
-    
-    --if CLIENT and CurTime() > idleon then print("idle", CurTime(), self:GetNextIdle(), self.LastAnimKey) idleon = CurTime() + .1 end
-
     self:PlayAnimation(ianim, 1, pred, nil, nil, nil, true)
 end
 
@@ -397,8 +388,6 @@ function SWEP:createCustomVM(mdl)
         return
     end
     local vm = ply:GetViewModel()
-    --self.REAL_VM = vm
-    --self.REAL_VM.Not_Stated = true
 
     if self.REAL_VM then
         return
@@ -409,14 +398,8 @@ function SWEP:createCustomVM(mdl)
     self.REAL_VM:SetupBones()
     self.REAL_VM:SetParent(vm)
     self.REAL_VM.CreateTime = CurTime()
-    --self.REAL_VM.EndOn = 0
     self.REAL_VM:SetCycle(0)
-    
-    --[[local pos, ang = self:GetViewModelPosition(ply:EyePos(), ply:EyeAngles())
-    if pos and ang then
-        self.REAL_VM:SetPos(pos)
-        self.REAL_VM:SetAngles( ang )
-    end]]
+    self.REAL_VM.AnimThatExists = {}
     
     if self.ViewModelFlip then
         local mtr = Matrix()
@@ -2725,7 +2708,9 @@ function SWEP:DoPrimaryAnim()
 
     local time = self:GetBuff_Mult("Mult_FireAnimTime", anim) or 1
 
-    if anim then self:PlayAnimation(anim, time, true, 0, false) end
+    if anim then
+        self:PlayAnimation(anim, time, true, 0, false)
+    end
 end
 
 local vec1 = Vector(1, 1, 1)

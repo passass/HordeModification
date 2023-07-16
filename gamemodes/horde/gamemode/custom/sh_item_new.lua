@@ -200,6 +200,11 @@ end
         
         horde_welder = "hordeext_welder",
         arccw_horde_flaregun = "arccw_hordeext_flaregun",
+        arccw_horde_inferno_blade = "arccw_hordeext_inferno_blade",
+
+        horde_m2 = "arccw_hordeext_m2",
+        horde_gluon = "arccw_hordeext_gluon",
+        horde_tau = "arccw_hordeext_tau",
 
         arccw_horde_law = "arccw_hordeext_law",
         arccw_horde_m16m203 = "arccw_hordeext_m16m203",
