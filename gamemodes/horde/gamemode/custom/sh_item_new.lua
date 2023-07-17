@@ -658,10 +658,14 @@ end
         }, 40, -1, nil, nil, {Heavy=10}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("MG",         "AUG HBAR",       "arccw_horde_aug_hbar",3000, 9, "Steyr AUG HBAR.\nA light-support machine gun variant of the AUG assault rifle.",
         {Heavy=true}, 25, -1, nil, nil, {Heavy=11}, nil, {HORDE.DMG_BALLISTIC})
+
         HORDE:CreateItem("MG",         "Stoner LMG A1",         "arccw_horde_stonera1",     3500, 10, "Stoner LMG A1 - very strong LMG.\nFires a bit slowly but a strong bullets.",
         {Heavy=true}, 50, -1, nil, nil, {Heavy=15}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("MG",         "GAU-19",         "arccw_horde_gau",     3500, 15, "GAU-19 rotary heavy machine gun.\nFires .50 BMG catridge at 1,300 rounds per minute.\n\nHold RMB to rev.",
+        HORDE:CreateItem("MG",         "M91",         "arccw_horde_m91",     4000, 10, "M91 - very strong LMG.\nFires a bit slowly but a strong bullets.",
         {Heavy=true}, 50, -1, nil, nil, {Heavy=20}, nil, {HORDE.DMG_BALLISTIC})
+
+        HORDE:CreateItem("MG",         "GAU-19",         "arccw_horde_gau",     6000, 15, "GAU-19 rotary heavy machine gun.\nFires .50 BMG catridge at 1,300 rounds per minute.\n\nHold RMB to rev.",
+        {Heavy=true}, 50, -1, nil, nil, {Heavy=30}, nil, {HORDE.DMG_BALLISTIC})
     
         changeLevelRequirement("arccw_horde_m79", {Demolition=3})
         changeLevelRequirement("horde_sticky_launcher", {Demolition=7})
@@ -1403,6 +1407,7 @@ end
         HORDE.items["arccw_horde_deagle"].infusions = ballistic_infusions_light
         HORDE.items["arccw_horde_m1911"].infusions = ballistic_infusions_light
         HORDE.items["arccw_horde_stonera1"].infusions = ballistic_infusions_mg_rifles
+        HORDE.items["arccw_horde_m91"].infusions = ballistic_infusions_mg_rifles
         HORDE.items["arccw_horde_stoner"].infusions = ballistic_infusions_mg_rifles
 
         HORDE.items["arccw_kf2_ak12"].infusions = ballistic_infusions_rifles

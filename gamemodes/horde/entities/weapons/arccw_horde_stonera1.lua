@@ -41,7 +41,7 @@ SWEP.TracerCol = Color(34, 88, 250)
 SWEP.TracerWidth = 3
 SWEP.Tracer = "cel_muzzleflash"]]
 SWEP.ChamberSize = 0 -- how many rounds can be chambered.
-SWEP.Primary.ClipSize = 160 -- DefaultClip is automatically set.
+SWEP.Primary.ClipSize = 150 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 200
 SWEP.ReducedClipSize = 80
 

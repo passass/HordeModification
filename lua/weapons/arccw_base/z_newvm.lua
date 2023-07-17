@@ -44,13 +44,14 @@ if CLIENT then
             end
 
             if !anim_is_exists then]]
+
             local idle_exists = vm_real.IdleExists
             
             if idle_exists == nil then
                 idle_exists = vm_real:LookupSequence("idle") != -1
                 vm_real.IdleExists = idle_exists
             end
-
+            
             if wep.LastAnimKey == "idle" and !idle_exists then
                 wep:SetAnimationProgress(0)
             else
@@ -60,6 +61,7 @@ if CLIENT then
                     )
                 )
             end
+            --print(ply:ChatPrint(wep:GetAnimationProgress() .. "  /  " .. playbackrate))
 
             if wep.UseHands then
                 local hands = ply:GetHands()
@@ -96,6 +98,7 @@ if CLIENT then
             end
 
             vm_real:DrawModel()
+            if wep.PrePostDrawViewModel then wep:PrePostDrawViewModel() end
             wep:PostDrawViewModel()
             return true
         end
