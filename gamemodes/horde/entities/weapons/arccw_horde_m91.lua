@@ -78,7 +78,7 @@ SWEP.ShootPitch = 100 -- pitch of shoot sound
 
 sound.Add({
     name =            "Reflection_Shotgun.Inside",
-    channel =        CHAN_REFLECTION,
+    channel =        CHAN_WEAPON,
 volume =      1.0,
     sound = {"viper/shared/reflection/shotgun/weap_refl_shotgun_urb/weap_refl_shotgun_urb_int_close_rear_01.ogg",
             "viper/shared/reflection/shotgun/weap_refl_shotgun_urb/weap_refl_shotgun_urb_int_close_rear_02.ogg",
@@ -90,14 +90,16 @@ volume =      1.0,
             "viper/shared/reflection/shotgun/weap_refl_shotgun_urb/weap_refl_shotgun_urb_int_close_rear_08.ogg"}
 })
 
-SWEP.ShootSound = Sound("weap_kilo121_fire_plr")
-SWEP.ShootSound2 = Sound("Reflection_Shotgun.Inside")--Reflection_Shotgun.Inside")
-SWEP.ShootSoundSilenced = "arccw_go/m4a1/m4a1_silencer_01.wav"
+SWEP.ShootSound = Sound("Reflection_Shotgun.Inside")
+SWEP.ShootSound2 = Sound("weap_kilo121_fire_plr")--Reflection_Shotgun.Inside")
+SWEP.ShootSoundSilenced = Sound("weap_kilo121_sup_plr")
+
+SWEP.ProceduralIronFire = true
 
 function SWEP:Hook_AddShootSound(data)
-    if data.sound == self.ShootSound then
+    --if data.sound == self.ShootSound then
         self:MyEmitSound(self.ShootSound2, data.volume, data.pitch, 1, CHAN_WEAPON)
-    end
+    --end
 end
 
 SWEP.MuzzleEffect = "muzzleflash_ak47"
@@ -1008,7 +1010,6 @@ sound.Add({
 })
 
 SWEP.ProceduralRegularFire = false
-SWEP.ProceduralIronFire = false
 
 SWEP.CaseBones = {}
 
@@ -1025,16 +1026,23 @@ SWEP.CaseEffectAttachment = 3 -- which attachment to put the case effect on
 SWEP.CamAttachment = 3
 
 if CLIENT then
+	local cd = 0
+
     function SWEP:PrePostDrawViewModel()
-        local cur_anim = wep.LastAnimKey
-
-        if cur_anim == "idle" or cur_anim == "fire_iron" then
-            local vm = self.REAL_VM
-            vm:ResetSequence("ads_in")
-            vm:SetPlaybackRate(0)
-            self:SetAnimationProgress(0)
+		local ct = CurTime()
+        if cd < ct then
+			cd = ct + .12
+			local cur_anim = wep.LastAnimKey
+			if cur_anim == "idle" then
+				local iron    = self:GetState() == ArcCW.STATE_SIGHTS
+				if iron then
+					local vm = self.REAL_VM
+					vm:ResetSequence("reload")
+					vm:SetPlaybackRate(0)
+					self:SetAnimationProgress(0)
+				end
+			end
         end
-
     end
 end
 
@@ -1188,7 +1196,6 @@ SWEP.Attachments = {
 SWEP.Animations = {
     ["idle"] = {
         Source = "idle",
-        Time=60,
     },
     ["ready"] = {
         Source = "draw_first",
@@ -1198,9 +1205,6 @@ SWEP.Animations = {
     },
     ["fire"] = {
 		Source = "fire",
-	},
-    ["fire_iron"] = {
-		Source = "",
 	},
     ["reload"] = {
         --MinProgress = 2.2, ForceEnd = true,

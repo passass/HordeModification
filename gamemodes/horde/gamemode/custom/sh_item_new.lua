@@ -208,6 +208,8 @@ end
 
         horde_spore_launcher = "arccw_hordeext_spore_launcher",
 
+        arccw_horde_gau = "arccw_hordeext_gau",
+
         arccw_horde_law = "arccw_hordeext_law",
         arccw_horde_m16m203 = "arccw_hordeext_m16m203",
         arccw_horde_javelin = "arccw_hordeext_javelin",
