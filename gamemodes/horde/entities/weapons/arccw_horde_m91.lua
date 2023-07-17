@@ -1058,7 +1058,7 @@ SWEP.BarrelOffsetHip = Vector(2, 0, -2)
 SWEP.ExtraSightDist = 7
 
 SWEP.WorldModelOffset = {
-    pos = Vector(9.5, 1, -4),
+    pos = Vector(9.5, 1, -6),
     ang = Angle(0, 10, 180),
 }
 
@@ -1069,7 +1069,15 @@ SWEP.AttachmentElements = {
                 Model = "models/viper/mw/attachments/kilo121/attachment_vm_lm_kilo121_mag.mdl",
                 Bone = "j_mag1",
                 Offset = {
-                    pos = Vector(0, 0, 3.5),
+                    pos = Vector(0, .9, 3.5),
+                    ang = Angle(0, 0, 0),
+                },
+            },
+			{
+                Model = "models/viper/mw/attachments/kilo121/attachment_vm_lm_kilo121_stock.mdl",
+                Bone = "tag_stock_attach",
+                Offset = {
+                    pos = Vector(0, 0, 0),
                     ang = Angle(0, 0, 0),
                 },
             },
@@ -1080,19 +1088,27 @@ SWEP.AttachmentElements = {
                 Model = "models/viper/mw/attachments/kilo121/attachment_vm_lm_kilo121_mag.mdl",
                 Bone = "tag_mag_attach",
                 Offset = {
-                    pos = Vector(10, 2, -4),
+                    pos = Vector(10, 2, -6),
                     ang = Angle(0, 180, 180),
                 },
             },
+			{
+                Model = "models/viper/mw/attachments/kilo121/attachment_vm_lm_kilo121_stock.mdl",
+                Bone = "tag_stock_attach",
+                Offset = {
+                    pos = Vector(-2, 3, -5.5),
+                    ang = Angle(0, 10, 0),
+                },
+            },
         },
-
-        
     },
     ["mount"] = {
         VMBodygroups = {
             {ind = 1, bg = 1},
         },
     },
+
+	
 }
 
 SWEP.ActivePos = Vector(0, 1, 1.25)
@@ -1114,18 +1130,18 @@ SWEP.Attachments = {
         Offset = {
             vpos = Vector(0, 0, 0), -- offset that the attachment will be relative to the bone
             vang = Angle(0, 0, 0),
-            wpos = Vector(7, 1.476, -6.75),
+            wpos = Vector(7, 1.476, -8.75),
             wang = Angle(0, 10, 180)
         },
     },
     {
         PrintName = "Tactical",
         Slot = "tac",
-        Bone = "tag_weapon",
+        Bone = "tag_grip_attach",
         Offset = {
-            vpos = Vector(13, 0, -.8),
+            vpos = Vector(5, 0, .8),
             vang = Angle(0, 0, 0),
-            wpos = Vector(17, 1, -3.5),
+            wpos = Vector(20, 0, -3.6),
             wang = Angle(0, 10, 0)
         },
         InstalledEles = {"sidemount"},
@@ -1134,11 +1150,11 @@ SWEP.Attachments = {
         PrintName = "Muzzle",
         DefaultAttName = "Standard Muzzle",
         Slot = "muzzle",
-        Bone = "tag_barrel_attach",
+        Bone = "tag_grip_attach",
         Offset = {
-            vpos = Vector(13.5, 0, -.6),
+            vpos = Vector(10, 0, 2),
             vang = Angle(0, 0, 0),
-            wpos = Vector(30, 0, -4),
+            wpos = Vector(25, -1.7, -6.5),
             wang = Angle(0, 10,  0)
         },
     },
@@ -1151,7 +1167,7 @@ SWEP.Attachments = {
         Offset = {
             vpos = Vector(0, 0, .8), -- offset that the attachment will be relative to the bone
             vang = Angle(0, 0, 0),
-            wpos = Vector(9.5, 1.15, -3.5),
+            wpos = Vector(14, 1.15, -3.5),
             wang = Angle(172, -181, -1.5),
         },
     },
