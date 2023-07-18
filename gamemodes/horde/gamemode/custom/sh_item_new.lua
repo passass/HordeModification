@@ -300,7 +300,8 @@ end
         
         HORDE.items["arccw_horde_shotgun"].name = "TOZ-34"
         HORDE.items["arccw_horde_357"].name = "Snub Nose"
-        HORDE.items["arccw_horde_357"].starter_classes = nil
+        HORDE.items["arccw_horde_357"].starter_classes = {"Gunslinger"}
+        HORDE.items["arccw_horde_357"].whitelist["Gunslinger"] = true
         HORDE.items["horde_welder"].starter_classes = nil
 
         table.insert(HORDE.items["arccw_horde_flaregun"].starter_classes, "Survivor")
@@ -338,7 +339,7 @@ end
         nil, 10, -1, starter_weapons_entity_properties, "items/weapon_medkit.png", nil, nil, nil, nil, {"All"})
 
         HORDE:CreateItem("SMG",        "Colt M635",           "arccw_horde_smg1",   100, 3, "A compact, shoots burst.",
-        {Assault=true, Heavy=true, Survivor=true}, 3, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Assault", "Heavy", "SpecOps"})
+        {Assault=true, Heavy=true, Survivor=true, SWAT=true}, 3, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Assault", "Heavy", "SpecOps", "SWAT"})
         HORDE:CreateItem("Melee",      "Crowbar",        "arccw_horde_crowbar", 300,  3, "A trusty crowbar.\nEasy to use.",
         {Berserker=true, Survivor=true}, 10, -1, nil, "items/hl2/weapon_crowbar.png", nil, nil, {HORDE.DMG_BLUNT}, nil, {"Berserker"})
         HORDE:CreateItem("Pistol",     "HX-25",          "arccw_horde_hx25",   300,  2, "HX-25.\n Compact explosive pistol.",
