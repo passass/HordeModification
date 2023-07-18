@@ -15,7 +15,7 @@ SWEP.Trivia_Mechanism = "Short Recoil"
 SWEP.Trivia_Country = "Austria"
 SWEP.Trivia_Year = 1993]]
 
-SWEP.Slot = 1
+SWEP.Slot = 2
 
 SWEP.UseHands = true
 

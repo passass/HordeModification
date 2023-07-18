@@ -704,6 +704,8 @@ hook.Add("HordeWaveStart", "Horde_PrepareBuy", function(wave)
     hook.Remove("HordeWaveStart", "Horde_PrepareBuy")
 end)
 
+HORDE.start_money = 0
+
 -------------------------> Cant buy anything before start game
 
 local old_dropweapon = plymeta.DropWeapon

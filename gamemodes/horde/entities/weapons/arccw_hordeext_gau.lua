@@ -7,6 +7,10 @@ if CLIENT then
 end
 SWEP.Base = "arccw_horde_gau"
 
+SWEP.Damage = 45
+SWEP.DamageMin = 38
+SWEP.Horde_TotalMaxAmmoMult = 1.5
+
 SWEP.Animations = {
     ["draw"] = {
         Source = "draw",

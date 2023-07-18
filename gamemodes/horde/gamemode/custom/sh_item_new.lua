@@ -663,7 +663,7 @@ end
 
         HORDE:CreateItem("MG",         "Stoner LMG A1",         "arccw_horde_stonera1",     3500, 10, "Stoner LMG A1 - very strong LMG.\nFires a bit slowly but a strong bullets.",
         {Heavy=true}, 50, -1, nil, nil, {Heavy=15}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("MG",         "M91",         "arccw_horde_m91",     4000, 10, "M91 - very strong LMG.\nFires a bit slowly but a strong bullets.",
+        HORDE:CreateItem("MG",         "M91",         "arccw_horde_m91",     4500, 10, "M91 - very strong LMG.\nFires a bit slowly but a strong bullets.",
         {Heavy=true}, 50, -1, nil, nil, {Heavy=20}, nil, {HORDE.DMG_BALLISTIC})
 
         HORDE:CreateItem("MG",         "GAU-19",         "arccw_horde_gau",     6000, 15, "GAU-19 rotary heavy machine gun.\nFires .50 BMG catridge at 1,300 rounds per minute.\n\nHold RMB to rev.",

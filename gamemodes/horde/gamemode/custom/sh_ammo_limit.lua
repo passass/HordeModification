@@ -62,7 +62,7 @@ function HORDE:Ammo_GetMaxAmmo(wep) -- MAX AMMO ON WEAPON
 end
 
 function HORDE:Ammo_GetTotalLimit(wep) -- TOTAL LIMIT
-    return HORDE.Ammo_Max * (wep.Horde_TotalMaxAmmoMult or 1)
+    return HORDE.Ammo_Max * (wep.ArcCW and wep:GetBuff_Mult("Horde_TotalMaxAmmoMult") or wep.Horde_TotalMaxAmmoMult or 1)
 end
 
 --[[function HORDE:Ammo_CanAfford(ply, item)

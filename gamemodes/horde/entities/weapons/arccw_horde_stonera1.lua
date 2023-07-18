@@ -45,10 +45,10 @@ SWEP.Primary.ClipSize = 150 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 200
 SWEP.ReducedClipSize = 80
 
-SWEP.Recoil = .45
+SWEP.Recoil = .57
 SWEP.RecoilSide = .2
 SWEP.RecoilRise = .5
-SWEP.VisualRecoilMult = 0.11
+SWEP.VisualRecoilMult = 0.2
 
 SWEP.Delay = 60 / 630 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
@@ -68,7 +68,7 @@ SWEP.NPCWeaponType = {"weapon_ar2"}
 SWEP.NPCWeight = 100
 
 SWEP.AccuracyMOA = 1.5 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 400 -- inaccuracy added by hip firing.
+SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "ar2" -- what ammo type the gun uses

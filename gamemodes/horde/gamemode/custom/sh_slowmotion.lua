@@ -138,7 +138,7 @@ local bonus_hooks = {
     SlowMotion_RPMBonus = {
         "Mult_RPM", formulas.completeness,
         post_hook = function(ply, slomo_stage, slomo_bonus)
-            HORDE:Modifier_AddToWeapons(ply, "Mult_PostBurstDelay", "slomotion", formulas.completeness(slomo_stage, slomo_bonus))
+            HORDE:Modifier_AddToWeapons(ply, "Mult_PostBurstDelay", "slomotion", formulas.completeness_inverted(slomo_stage, slomo_bonus))
         end
     },
     SlowMotion_CycleTimeMult = {"Mult_CycleTime", formulas.static_inverted},
