@@ -20,7 +20,7 @@ SWEP.Trivia_Year = 1955
 SWEP.Slot = 1
 
 SWEP.UseHands = true
-
+SWEP.StartAmmo = 150
 SWEP.ViewModel = "models/weapons/arccw/c_bo1_python.mdl"
 SWEP.WorldModel = "models/weapons/arccw/w_bo1_python.mdl"
 SWEP.MirrorWorldModel = "models/weapons/arccw/w_bo1_python.mdl"
@@ -33,7 +33,7 @@ SWEP.WorldModelOffset = {
 }
 SWEP.ViewModelFOV = 60
 
-SWEP.Damage = 25
+SWEP.Damage = 35
 SWEP.DamageMin = 20
 SWEP.RangeMin = 500 * 0.025  -- GAME UNITS * 0.025 = METRES
 SWEP.Range = 1250 * 0.025  -- GAME UNITS * 0.025 = METRES
