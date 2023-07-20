@@ -708,6 +708,40 @@ HORDE.start_money = 0
 
 -------------------------> Cant buy anything before start game
 
+hook.Add("PlayerCanPickupWeapon", "Horde_Economy_Pickup", function (ply, wpn)
+    if not ply:IsValid() then return false end
+    if ply:IsNPC() then return true end
+    if HORDE.items[wpn:GetClass()] then
+        local item = HORDE.items[wpn:GetClass()]
+        if (ply:Horde_GetWeight() - item.weight < 0) then
+            return false
+        end
+        if ply:Horde_GetCurrentSubclass() == "Gunslinger" and item.category == "Pistol" then return true end
+        if (item.whitelist and (not item.whitelist[ply:Horde_GetClass().name])) then
+            return false
+        end
+        
+        if item.starter_classes then
+            if (item.class == "horde_void_projector" and ply:Horde_GetCurrentSubclass() ~= "Necromancer") or
+               (item.class == "horde_solar_seal" and ply:Horde_GetCurrentSubclass() ~= "Artificer") or
+               (item.class == "horde_astral_relic" and ply:Horde_GetCurrentSubclass() ~= "Warlock") or
+               (item.class == "horde_carcass" and ply:Horde_GetCurrentSubclass() ~= "Carcass") or
+               (item.class == "horde_pheropod" and ply:Horde_GetCurrentSubclass() ~= "Hatcher") then
+                return false
+            end
+        end
+        if ply:Horde_GetCurrentSubclass() == "Carcass"
+        and (item.class ~= "horde_carcass" and item.class ~= "weapon_hordeext_medkit") then
+            return false
+        end
+        if ply:Horde_GetSpellWeapon() and (item.class ~= "weapon_hordeext_medkit") then
+            return false
+        end
+    end
+
+    return true
+end)
+
 local old_dropweapon = plymeta.DropWeapon
 
 function plymeta:CanDropWeapon(wep)
