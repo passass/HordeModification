@@ -1,3 +1,4 @@
+if !HORDE.Syringe then return end
 SWEP.Base = "arccw_base"
 SWEP.Spawnable = true -- this obviously has to be set to true
 SWEP.Category = "ArcCW - Killing Floor 2" -- edit this if you like
@@ -18,7 +19,7 @@ SWEP.Trivia_Year = 1993]]
 SWEP.Slot = 1
 
 SWEP.UseHands = true
-if HORDE then HORDE.Syringe:ApplyMedicSkills(SWEP, 15) end
+HORDE.Syringe:ApplyMedicSkills(SWEP, 15)
 SWEP.ViewModel						= "models/weapons/kf2/tfa_c_medicshotgun.mdl"
 SWEP.WorldModel						= "models/weapons/kf2/tfa_w_medicshotgun.mdl"
 SWEP.ViewModelFOV = 60

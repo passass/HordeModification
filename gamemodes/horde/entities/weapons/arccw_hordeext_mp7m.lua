@@ -1,3 +1,4 @@
+if !HORDE.Syringe then return end
 if not ArcCWInstalled then return end
 if CLIENT then
     SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_go_mp7")

@@ -1,4 +1,4 @@
-if engine.ActiveGamemode() != "horde" then return end
+if engine.ActiveGamemode() != "horde"  or GetConVar("horde_external_lua_config"):GetString() != "horde_ext" then return end
 
 local function qerp(delta, a, b)
     local qdelta = -(delta ^ 2) + (delta * 2)

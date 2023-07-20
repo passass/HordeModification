@@ -17,7 +17,7 @@ if SERVER then
 	end
 end
 
-local blacklist = {["horde_ext.lua"] = true}
+local blacklist = {["horde_ext.lua"] = true, ["horde_fix.lua"] = true}
 local blacklist_folders = {
 	["post_init"] = true, ["arccw"] = true, ["subclasses"] = true, ["perks"] = true, ["gadgets"] = true, ["mutations"] = true,
 	--["gui"] = true, ["status"] = true

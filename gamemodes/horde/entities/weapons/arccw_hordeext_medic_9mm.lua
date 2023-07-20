@@ -1,3 +1,4 @@
+if !HORDE.Syringe then return end
 SWEP.Base = "arccw_base"
 SWEP.Spawnable = true -- this obviously has to be set to true
 SWEP.Category = "ArcCW - Killing Floor 2" -- edit this if you like

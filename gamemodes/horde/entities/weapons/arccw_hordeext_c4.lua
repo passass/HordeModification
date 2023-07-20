@@ -1,3 +1,4 @@
+if !HORDE.Syringe then return end
 if not ArcCWInstalled then return end
 
 HORDE:Sound_AddWeaponSound("TFA_MW2R_C4.Plant", {"weapons/tfa_mw2r/c4/wpn_h1_c4_bounce_01.wav", "weapons/tfa_mw2r/c4/wpn_h1_c4_bounce_02.wav"})

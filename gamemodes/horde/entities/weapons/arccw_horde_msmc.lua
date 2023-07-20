@@ -1,3 +1,4 @@
+if GetConVar("horde_external_lua_config"):GetString() ~= "horde_ext" then return end
 SWEP.Base = "arccw_base"
 SWEP.Spawnable = true -- this obviously has to be set to true
 SWEP.Category = "ArcCW - Black Ops II" -- edit this if you like

@@ -1,4 +1,5 @@
 if not ArcCWInstalled then return end
+if !HORDE.Syringe then return end
 if CLIENT then
     SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_mw2_acr")
     killicon.Add("arccw_hordeext_medic_acr", "arccw/weaponicons/arccw_mw2_acr", Color(0, 0, 0, 255))
