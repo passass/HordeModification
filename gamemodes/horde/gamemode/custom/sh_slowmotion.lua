@@ -150,7 +150,7 @@ hook.Add("Horde_PlayerMoveBonus", "Horde_SlowMotion_SpeedBonus", function(ply, b
 
 	if !ply:Horde_CallClassHook("SlowMotion_MovementSpeedBonus_Allow", ply) then return end
 	
-	local slomo_bonus = ply:Horde_GetPerkLevelBonus("slomo_bonus")
+	local slomo_bonus = ply:Horde_CallClassHook("SlowMotion_MovementSpeedBonus_Bonus", ply) or ply:Horde_GetPerkLevelBonus("slomo_bonus")
     if not slomo_bonus or slomo_bonus <= 0 then return end
 	
     local bonus_speed = formulas.completeness(stage, slomo_bonus)
