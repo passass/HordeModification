@@ -424,7 +424,7 @@ end
         {Ghost=true}, 5, -1, nil, nil, {Ghost=5}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "Dual M9",        "arccw_horde_akimbo_m9",       1750,  5, "Dual Beretta M9.\nSidearm used by the United States Armed Forces.",
         {Ghost=true}, 5, -1, nil, nil, {Ghost=5}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Pistol",     "Dual Deagle",    "arccw_horde_akimbo_deagle",   1900,  5, "Dual Night Hawk .50C.\nAn iconic pistol that is diffcult to master.",
+        HORDE:CreateItem("Pistol",     "Dual Deagle",    "arccw_horde_akimbo_deagle",   2000,  5, "Dual Night Hawk .50C.\nAn iconic pistol that is diffcult to master.",
         {Ghost=true}, 5, -1, nil, nil, {Ghost=5}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("SMG",        "TMP",            "arccw_horde_tmp",   1000, 3, "Steyr TMP.\nA select-fire 9×19mm Parabellum caliber machine pistol.",
         {Medic=true, Assault=true, Heavy=true, Survivor=true, Cremator=true, SWAT=true}, 8, -1, nil, nil, {Survivor=2}, nil, {HORDE.DMG_BALLISTIC})
@@ -647,20 +647,19 @@ end
         {Heavy=true, Survivor=true}, 20, -1, nil, nil, {Heavy=3}, nil, {HORDE.DMG_BALLISTIC})
         --HORDE:CreateItem("MG",         "RPK",           "arccw_mw2_rpk",   2750, 9, "M249 light machine gun.\nA gas operated and air-cooled weapon of destruction.",
         --{Heavy=true}, 25, -1)
-        HORDE:CreateItem("MG",         "L86 LSW",        "arccw_horde_l86",    2500, 9, "SA80 L86 LSW.\nBullpup light machine gun.",
-        {Heavy=true, Survivor=true}, 25, -1, nil, nil, {
-            VariousConditions=true,
-            Heavy = {Heavy=5},
-            Survivor = {Heavy=5, Survivor=20},
-        }, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("MG",         "MG4",            "arccw_mw2_mg4",      3000, 10, "Heckler & Koch MG4.\nA belt-fed 5.56 mm light machine gun that replaced MG3.",
-        {
+
+        changeLevelRequirement("arccw_horde_mg4", {
             VariousConditions=true,
             Heavy = {Heavy=10},
             Survivor = {Heavy=10, Survivor=20},
-        }, 40, -1, nil, nil, {Heavy=10}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("MG",         "AUG HBAR",       "arccw_horde_aug_hbar",3000, 9, "Steyr AUG HBAR.\nA light-support machine gun variant of the AUG assault rifle.",
-        {Heavy=true}, 25, -1, nil, nil, {Heavy=11}, nil, {HORDE.DMG_BALLISTIC})
+        })
+        HORDE.items["arccw_horde_mg4"].whitelist = {Heavy=true, Survivor=true}
+        HORDE.items["arccw_horde_l86"].whitelist = HORDE.items["arccw_horde_mg4"].whitelist
+        changeLevelRequirement("arccw_horde_l86", {
+            VariousConditions=true,
+            Heavy = {Heavy=5},
+            Survivor = {Heavy=5, Survivor=20},
+        })
 
         HORDE:CreateItem("MG",         "Stoner LMG A1",         "arccw_horde_stonera1",     3500, 10, "Stoner LMG A1 - very strong LMG.\nFires a bit slowly but a strong bullets.",
         {Heavy=true}, 50, -1, nil, nil, {Heavy=15}, nil, {HORDE.DMG_BALLISTIC})

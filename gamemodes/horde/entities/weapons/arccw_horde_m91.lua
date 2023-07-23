@@ -15,7 +15,7 @@ SWEP.Trivia_Mechanism = "Short Recoil"
 SWEP.Trivia_Country = "Austria"
 SWEP.Trivia_Year = 1993]]
 
-SWEP.Slot = 1
+SWEP.Slot = 2
 
 SWEP.UseHands = true
 
@@ -37,7 +37,7 @@ SWEP.CanFireUnderwater = true
 SWEP.ChamberSize = 1 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 175
 
-SWEP.Recoil = .6
+SWEP.Recoil = .565
 SWEP.RecoilSide = .45
 SWEP.RecoilRise = .8
 
