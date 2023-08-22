@@ -296,7 +296,6 @@ function PANEL:SetData(item)
         self.item.price = self.item.Price
     end
     self.level_satisfy = true
-    local ply = MySelf
 
     if not self.item then return end
 
@@ -309,7 +308,7 @@ function PANEL:SetData(item)
         return
     end
 
-    if self.item.levels then self.level_satisfy = HORDE:WeaponLevelLessThanYour(ply, self.item.levels) end
+    if self.item.levels then self.level_satisfy = HORDE:WeaponLevelLessThanYour(MySelf, self.item.levels) end
     
     if self.item.class then
         self.is_special_weapon_item = self.item.class == "horde_carcass" or self.item.class == "horde_pheropod"
@@ -540,6 +539,7 @@ local mind_icon = Material("status/mind.png", "mips smooth")
 function PANEL:Paint()
     surface.SetDrawColor(HORDE.color_hollow)
     surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
+
     self.class_progress:SetVisible(false)
     if self.item then
         self.buy_btn:SetVisible(true)
@@ -1022,7 +1022,7 @@ function PANEL:Paint()
             local start_pos = x + 15
             --local classes = {"Survivor", "Assault", "Heavy", "Medic", "Demolition", "Ghost", "Engineer", "Berserker", "Warden", "Cremator", "SWAT"}
             for class, _  in pairs(HORDE.classes) do
-                local level = HORDE:WeaponLevelGetRequiredLevelClass(ply, self.item.levels, class)--self.item.levels[class]
+                local level = HORDE:WeaponLevelGetRequiredLevelClass(MySelf, self.item.levels, class)--self.item.levels[class]
                 if level and level > 0 then
                     local rank, rank_level = HORDE:LevelToRank(level)
                     local mat = Material(HORDE.classes[class].icon, "mips smooth")
@@ -1068,7 +1068,7 @@ function PANEL:Paint()
             self.upgrade_btn:SetVisible(false)
             self.current_ammo_panel.Paint = function () end
             if HORDE:IsItemPlacable(self.item) then
-                local drop_entities = ply:Horde_GetDropEntities()
+                local drop_entities = MySelf:Horde_GetDropEntities()
                 if drop_entities[self.item.class] then
                     self.sell_btn:SetVisible(true)
                     self.sell_btn:SetTextColor(Color(255,255,255))
@@ -1086,7 +1086,7 @@ function PANEL:Paint()
         else
             self.buy_btn:SetText(translate.Get("Shop_Buy_Item"))
             if self.item.entity_properties and (HORDE:IsItemPlacable(self.item)) then
-                local drop_entities = ply:Horde_GetDropEntities()
+                local drop_entities = MySelf:Horde_GetDropEntities()
                 if drop_entities[self.item.class] then
                     self.buy_btn:SetText(translate.Get("Shop_Buy_Item") .. " " .. drop_entities[self.item.class] .. "/" .. self.item.entity_properties.limit)
                     self.sell_btn:SetVisible(true)

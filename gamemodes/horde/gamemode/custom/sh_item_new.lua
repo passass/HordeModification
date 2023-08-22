@@ -729,7 +729,7 @@ end
         {Warden=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=2}, "items/horde_watchtower.png", {Warden=5}, nil, {HORDE.DMG_LIGHTNING})
         HORDE:CreateItem("Special",    "Watchtower MKIII.I",  "horde_watchtower_mk3_1",1750,  3, "A watchtower that deters enemies.\nShocks 1 nearby enemy every 1 second.\nDoes 325 Lightning damage.",
         {Warden=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_DROP, x=50, z=15, yaw=0, limit=2}, "items/horde_watchtower.png", {Warden=5}, nil, {HORDE.DMG_LIGHTNING})
-        HORDE:CreateItem("Special",    "Barricade Kit",  "horde_barricadekit", 1500,  4, "Barricade Kit.\nKit with barricade that block zombies movement",
+        HORDE:CreateItem("Special",    "Barricade Kit",  "horde_barricadekit", 1500,  3, "Barricade Kit.\nKit with barricade that block zombies movement",
         {Engineer=true, Survivor=true}, -1, -1, {type=HORDE.ENTITY_PROPERTY_WPN, wep_that_place=true, limit=1}, nil, {
             VariousConditions=true,
             Engineer = {Engineer=10},

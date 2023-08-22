@@ -52,11 +52,12 @@ function HORDE:LoadRank(ply)
 
 	if not file.Exists(path, "DATA") then
 		path = "horde/ranks/" .. steamid .. ".txt"
-	end
-    if not file.Exists(path, "DATA") then
-		print("Path", path, "does not exist!")
-		ply.Horde_Rank_Loaded = true
-		return
+
+		if not file.Exists(path, "DATA") then
+			print("Path", path, "does not exist!")
+			ply.Horde_Rank_Loaded = true
+			return
+		end
 	end
 
 	strm = file.Open(path, "rb", "DATA")

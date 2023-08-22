@@ -16,7 +16,7 @@ ENT.AdminSpawnable		= false
 	self:NetworkVar( "Int", 0, "HP" )
 
 end]]
-local default_hp = 300
+local default_hp = 600
 ENT.VJ_AddEntityToSNPCAttackList = true
 ENT.Horde_Immune_Status = {
 	[HORDE.Status_Bleeding] = true
@@ -33,7 +33,7 @@ if CLIENT then
 		local barheight = 30
 		local barwidth = maxbarwidth
 		local startx = barwidth * -0.5
-		cam.Start3D2D(self:LocalToWorld(Vector(self:OBBMaxs().x - 45, 0, 25)), Angle(angl[1] - 180, angl[2] - 90, angl[3] - 90), 0.05)
+		cam.Start3D2D(self:LocalToWorld(Vector(self:OBBMaxs().x, 0, 25)), Angle(angl[1] - 180, angl[2] - 90, angl[3] - 90), 0.05)
 			
 			surface.SetDrawColor(0, 0, 0, 220)
 			surface.DrawRect(startx, y, barwidth, barheight)
@@ -41,7 +41,7 @@ if CLIENT then
 			surface.DrawRect(startx + 4, y + 4, barwidth * percentage - 8, barheight - 8)
 			surface.DrawOutlinedRect(startx, y, barwidth, barheight)
 		cam.End3D2D()
-		cam.Start3D2D(self:LocalToWorld(Vector(-self:OBBMaxs().x + 45, 0, 25)), Angle(angl[1] - 180, angl[2] - 90, angl[3] - 90), 0.05)
+		cam.Start3D2D(self:LocalToWorld(Vector(-self:OBBMaxs().x, 0, 25)), Angle(angl[1] - 180, angl[2] - 90, angl[3] - 90), 0.05)
 			
 			surface.SetDrawColor(0, 0, 0, 220)
 			surface.DrawRect(startx, y, barwidth, barheight)
@@ -65,7 +65,7 @@ else
 	end
 
 	function ENT:Heal(points)
-		self:SetHealth(math.Clamp(self:Health() + points, 0, default_hp))
+		self:SetHealth(points)
 	end
 
 	function ENT:Horde_OnTakeDamage(dmginfo)
@@ -76,7 +76,7 @@ else
 	end
 
 	function ENT:Horde_OnWelderUse()
-		self:Heal(1)
+		self:Heal(5)
 		return true
 	end
 
@@ -100,7 +100,7 @@ function ENT:Initialize()
 		phys:AddGameFlag(FVPHYSICS_NO_IMPACT_DMG)
 		phys:Wake()
 	end
-	self:SetCollisionBounds( Vector(-51, -51, -51), Vector(51, 51, 51) )
+	--self:SetCollisionBounds( Vector(-51, -51, -51), Vector(51, 51, 51) )
 	--self:SetCollisionGroup(COLLISION_GROUP_NONE)
 	self:SetHealth(default_hp)
 	if SERVER then
