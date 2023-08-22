@@ -1,7 +1,7 @@
 if not ArcCWInstalled then return end
 if CLIENT then
-    SWEP.WepSelectIcon = Material("items/hl2/weapon_shotgun.png")
-    killicon.AddAlias("arccw_horde_shotgun", "weapon_shotgun")
+    SWEP.WepSelectIcon = surface.GetTextureID( "vgui/hud/horde_spore_launcher" )
+    killicon.Add( "arccw_hordeext_spore_launcher", "vgui/hud/horde_spore_launcher", Color( 255, 255, 255, 255 ) )
 end
 SWEP.Base = "arccw_base"
 SWEP.Spawnable = true -- this obviously has to be set to true

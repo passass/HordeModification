@@ -1031,7 +1031,7 @@ if CLIENT then
 		local ct = CurTime()
         if cd < ct then
 			cd = ct + .12
-			local cur_anim = wep.LastAnimKey
+			local cur_anim = self.LastAnimKey
 			if cur_anim == "idle" then
 				local iron    = self:GetState() == ArcCW.STATE_SIGHTS
 				if iron then
