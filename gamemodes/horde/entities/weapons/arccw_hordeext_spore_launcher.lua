@@ -120,6 +120,7 @@ function SWEP:Hook_GetShootSound(fsound)
 end
 
 function SWEP:FireRocket(ent, vel, ang, dontinheritvel)
+    if CLIENT then return end
     local rocket = ents.Create(self.Is_Alt_Attack and self.ShootEntityAlt or ent)
 
     ang = ang or (self:GetOwner():EyeAngles() + self:GetFreeAimOffset())
