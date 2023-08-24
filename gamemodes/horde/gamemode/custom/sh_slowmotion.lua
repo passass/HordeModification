@@ -19,6 +19,7 @@ local bonus_hooks = {
         local hookname = "Horde_SlowMotion_ReloadBonus_" .. ply:EntIndex()
         if !hook.GetTable()["Think"][hookname] then
             hook.Add("Think", hookname, function()
+				if !IsValid(ply) then hook.Remove("Think", hookname) return end
                 local wep = ply:GetActiveWeapon()
                 if !IsValid(wep) or !wep.ArcCW then return end
                 if wep:GetReloading() then
