@@ -75,7 +75,7 @@ SWEP.MagID = "br99" -- the magazine pool this gun draws from
 
 SWEP.ShootVol = 100 -- volume of shoot sound
 SWEP.ShootPitch = 100 -- pitch of shoot sound
-
+SWEP.ClipsPerAmmoBox = 2
 --SWEP.FirstShootSound = "ArcCW_BO1.M14_Fire"
 SWEP.ShootSound		= Sound("weapons/tfa_ins2_br99/br99_alt_2.wav")
 SWEP.ShootSoundSilenced			= Sound("weapons/tfa_ins2_g28/g28_sil-1.wav")

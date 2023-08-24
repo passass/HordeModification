@@ -106,7 +106,7 @@ SWEP.BarrelLength = 24
 
 SWEP.TracerNum = 1 -- tracer every X
 SWEP.Tracer = "D2ArcTracer"
-
+SWEP.ClipsPerAmmoBox = 3
 SWEP.AttachmentElements = {
     ["rail1"] = {
         VMElements = {

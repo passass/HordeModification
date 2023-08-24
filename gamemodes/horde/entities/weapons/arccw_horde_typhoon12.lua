@@ -27,7 +27,7 @@ SWEP.ViewModelFOV = 60
 
 SWEP.Damage = 46
 SWEP.DamageMin = 30 -- damage done at maximum range
-SWEP.Range = 400 * 0.025 -- in METRES
+SWEP.Range = 35 -- in METRES
 
 SWEP.Penetration = 10
 SWEP.DamageType = DMG_BULLET
@@ -46,12 +46,12 @@ SWEP.ReducedClipSize = 10
 
 SWEP.Horde_MaxMags = 10
 
-SWEP.Recoil = 2.75
-SWEP.RecoilSide = 3.7
-SWEP.RecoilRise = 1
+SWEP.Recoil = 2.15
+SWEP.RecoilSide = 2
+SWEP.RecoilRise = .9
 SWEP.VisualRecoilMult = 0.14
 
-SWEP.Delay = 60 / 200
+SWEP.Delay = 60 / 220
 SWEP.Num = 8 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
@@ -68,8 +68,8 @@ SWEP.Firemodes = {
 SWEP.NPCWeaponType = "weapon_shotgun"
 SWEP.NPCWeight = 100
 
-SWEP.AccuracyMOA = 150 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 350 -- inaccuracy added by hip firing.
+SWEP.AccuracyMOA = 125 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.HipDispersion = 300 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 275
 
 SWEP.Primary.Ammo = "buckshot" -- what ammo type the gun uses
@@ -174,10 +174,10 @@ SWEP.Attachments = {
     {
         PrintName = "Tactical",
         Slot = "tac",
-        Bone = "A_Foregrip",
+        Bone = "A_Suppressor",
         Offset = {
-            vpos = Vector(0, 7, 0),
-            vang = Angle(0, -90, 0),
+            vpos = Vector(0, 8, -1.35), -- offset that the attachment will be relative to the bone
+            vang = Angle(0, 90, 0),
             wpos = Vector(25, 1, -3.25),
             wang = Angle(0, 0, 0)
         },
@@ -198,12 +198,12 @@ SWEP.Attachments = {
     {
         PrintName = "Underbarrel",
         Slot = {"foregrip"},
-        Bone = "A_Foregrip",
+        Bone = "A_Suppressor",
         VMScale = Vector(1.2, 1, 1),
         WMScale = Vector(1.2, 1, 1),
         Offset = {
-            vpos = Vector(0, -3, -.1), -- offset that the attachment will be relative to the bone
-            vang = Angle(0, -90, 0),
+            vpos = Vector(0, 12, -1.35), -- offset that the attachment will be relative to the bone
+            vang = Angle(0, 90, 0),
             wpos = Vector(9.5, 1.15, -4.2),
             wang = Angle(180, -180, 0),
         },
@@ -273,20 +273,20 @@ SWEP.Animations = {
     ["reload"] = {
         Source = "base_reload",
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        LHIK = true, Mult = .75,
+        LHIK = true, Mult = .7,
         LHIKIn = .7, LHIKEaseIn = .5,
         LHIKOut = .8, LHIKEaseOut = .5,
         SoundTable = {
-            {t = 9 * .75 / 30, s = Sound("TFA_INS2.LeanIn")},
-            {t = 38 * .75 / 30, s = Sound("TFA_INS2.WF_SHG53.WpnUp")},
-            {t = 40 * .75 / 30, s = Sound("TFA_INS2.LeanIn")},
-            {t = 41 * .75 / 30, s = Sound("TFA_INS2.WF_SHG53.ClipOut")},
-            {t = 66 * .75 / 30, s = Sound("TFA_INS2.Holster")},
-            {t = 81 * .75 / 30, s = Sound("TFA_INS2.LeanIn")},
-            {t = 114 * .75 / 30, s = Sound("TFA_INS2.WF_SHG53.ClipMove")},
-            {t = 118 * .75 / 30, s = Sound("TFA_INS2.WF_SHG53.ClipIn")},
-            {t = 119 * .75 / 30, s = Sound("TFA_INS2.LeanIn")},
-            {t = 141 * .75 / 30, s = Sound("TFA_INS2.LeanIn")},
+            {t = 9 * .7 / 30, s = Sound("TFA_INS2.LeanIn")},
+            {t = 38 * .7 / 30, s = Sound("TFA_INS2.WF_SHG53.WpnUp")},
+            {t = 40 * .7 / 30, s = Sound("TFA_INS2.LeanIn")},
+            {t = 41 * .7 / 30, s = Sound("TFA_INS2.WF_SHG53.ClipOut")},
+            {t = 66 * .7 / 30, s = Sound("TFA_INS2.Holster")},
+            {t = 81 * .7 / 30, s = Sound("TFA_INS2.LeanIn")},
+            {t = 114 * .7 / 30, s = Sound("TFA_INS2.WF_SHG53.ClipMove")},
+            {t = 118 * .7 / 30, s = Sound("TFA_INS2.WF_SHG53.ClipIn")},
+            {t = 119 * .7 / 30, s = Sound("TFA_INS2.LeanIn")},
+            {t = 141 * .7 / 30, s = Sound("TFA_INS2.LeanIn")},
         }
     },
     ["reload_empty"] = {
@@ -296,21 +296,21 @@ SWEP.Animations = {
         LHIKIn = .7, LHIKEaseIn = .5,
         LHIKOut = .65, LHIKEaseOut = .5,
         SoundTable = {
-            {t = 7 * .75 / 30, s = Sound("TFA_INS2.LeanIn")},
-            {t = 37 * .75 / 30, s = Sound("TFA_INS2.WF_SHG53.WpnUp2")},
-            {t = 51 * .75 / 30, s = Sound("TFA_INS2.WF_SHG53.ClipOut2")},
-            {t = 52 * .75 / 30, s = Sound("TFA_INS2.LeanIn")},
-            {t = 64 * .75 / 30, s = Sound("TFA_INS2.Holster")},
-            {t = 98 * .75 / 30, s = Sound("TFA_INS2.LeanIn")},
-            {t = 110 * .75 / 30, s = Sound("TFA_INS2.WF_SHG53.ClipMove")},
-            {t = 114 * .75 / 30, s = Sound("TFA_INS2.LeanIn")},
-            {t = 115 * .75 / 30, s = Sound("TFA_INS2.WF_SHG53.ClipIn2")},
-            {t = 128 * .75 / 30, s = Sound("TFA_INS2.LeanIn")},
-            {t = 144 * .75 / 30, s = Sound("TFA_INS2.LeanIn")},
-            {t = 145 * .75 / 30, s = Sound("TFA_INS2.WF_SHG53.BoltBack2")},
-            {t = 154 * .75 / 30, s = Sound("TFA_INS2.WF_SHG53.BoltForward2")},
-            {t = 155 * .75 / 30, s = Sound("TFA_INS2.LeanIn")},
-            {t = 175 * .75 / 30, s = Sound("TFA_INS2.LeanIn")},
+            {t = 7 * .7 / 30, s = Sound("TFA_INS2.LeanIn")},
+            {t = 37 * .7 / 30, s = Sound("TFA_INS2.WF_SHG53.WpnUp2")},
+            {t = 51 * .7 / 30, s = Sound("TFA_INS2.WF_SHG53.ClipOut2")},
+            {t = 52 * .7 / 30, s = Sound("TFA_INS2.LeanIn")},
+            {t = 64 * .7 / 30, s = Sound("TFA_INS2.Holster")},
+            {t = 98 * .7 / 30, s = Sound("TFA_INS2.LeanIn")},
+            {t = 110 * .7 / 30, s = Sound("TFA_INS2.WF_SHG53.ClipMove")},
+            {t = 114 * .7 / 30, s = Sound("TFA_INS2.LeanIn")},
+            {t = 115 * .7 / 30, s = Sound("TFA_INS2.WF_SHG53.ClipIn2")},
+            {t = 128 * .7 / 30, s = Sound("TFA_INS2.LeanIn")},
+            {t = 144 * .7 / 30, s = Sound("TFA_INS2.LeanIn")},
+            {t = 145 * .7 / 30, s = Sound("TFA_INS2.WF_SHG53.BoltBack2")},
+            {t = 154 * .7 / 30, s = Sound("TFA_INS2.WF_SHG53.BoltForward2")},
+            {t = 155 * .7 / 30, s = Sound("TFA_INS2.LeanIn")},
+            {t = 175 * .7 / 30, s = Sound("TFA_INS2.LeanIn")},
         }
     },
     ["holster"] = {

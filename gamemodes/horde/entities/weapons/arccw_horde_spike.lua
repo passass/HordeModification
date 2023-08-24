@@ -51,8 +51,8 @@ SWEP.TracerWidth = 3
 
 SWEP.ChamberSize = 1-- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 7 -- DefaultClip is automatically set.
-
-SWEP.Recoil = 4
+SWEP.ClipsPerAmmoBox = 2
+SWEP.Recoil = 2
 SWEP.RecoilSide = 1
 SWEP.RecoilRise = 0.75
 SWEP.VisualRecoilMult = 1
@@ -201,12 +201,6 @@ SWEP.Attachments = {
             wpos = Vector(13, 1.42, -2),
             wang = Angle(0, 0, 90)
         },
-    },
-    { --8
-        PrintName = "Stock",
-        Slot = {"bo1_stock", "bo1_mp5stock"},
-        DefaultAttName = "No Stock",
-        Installed = "bo1_stock_heavy",
     },
     { --11
         PrintName = "Ammo Type",
