@@ -25,7 +25,7 @@ SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
 SWEP.MuzzleVelocity = 690 -- projectile or phys bullet muzzle velocity
 -- IN M/S
-SWEP.ClipsPerAmmoBox = 3
+SWEP.ClipsPerAmmoBox = 5
 SWEP.TracerNum = 1 -- tracer every X
 SWEP.TracerCol = Color(255, 25, 25)
 SWEP.TracerWidth = 3
