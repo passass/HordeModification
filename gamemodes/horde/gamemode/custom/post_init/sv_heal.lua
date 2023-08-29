@@ -33,7 +33,9 @@ function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
     local health = self:Health()
 
     --------------------> setup vars
-    if self.Horde_HealHPRemain < 0 then self.Horde_HealHPRemain = 0 end
+    if !self.Horde_HealHPRemain or self.Horde_HealHPRemain < 0 then
+        self.Horde_HealHPRemain = 0
+    end
     self.Horde_HealHPRemain = self.Horde_HealHPRemain + amount
     local timer_obj
     if !self.Horde_HealTimer or !self.Horde_HealTimer:IsValid() then
