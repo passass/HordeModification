@@ -88,7 +88,7 @@ SWEP.MuzzleEffect = "muzzleflash_4"
 SWEP.ShellModel = "models/shells/shell_556.mdl"
 SWEP.ShellPitch = 90
 SWEP.ShellScale = 1.5
-SWEP.Horde_MaxMags = 11
+SWEP.Horde_MaxMags = 12
 
 SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
@@ -105,7 +105,7 @@ SWEP.BulletBones = { -- the bone that represents bullets in gun/mag
 }
 
 SWEP.ProceduralRegularFire = false
-SWEP.ProceduralIronFire = false
+SWEP.ProceduralIronFire = true
 
 SWEP.CaseBones = {}
 
@@ -219,7 +219,5 @@ SWEP.Animations = {
     ["fire"] = {
         Source = "shoot"
     },
-    ["fire_iron"] = {
-        Source = "shoot"
-    },
+    
 }

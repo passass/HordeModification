@@ -61,7 +61,7 @@ PERK.Hooks.Horde_PrecomputePerkLevelBonus = function (ply)
         ply:Horde_SetPerkLevelBonus("demolition_base", math.min(0.5, 0.25 + 0.01 * ply:Horde_GetLevel(HORDE.Class_Demolition)))
         ply:Horde_SetPerkLevelBonus("demolition_base2", math.min(0.10, 0.004 * ply:Horde_GetLevel(HORDE.Class_Demolition)))
 
-        ply:Horde_SetPerkLevelBonus("slomo_bonus", math.min(2, 0.08 * ply:Horde_GetLevel("SpecOps")))
+        ply:Horde_SetPerkLevelBonus("slomo_bonus", math.min(2, 0.08 * ply:Horde_GetLevel(HORDE.Class_Demolition)))
     end
 end
 

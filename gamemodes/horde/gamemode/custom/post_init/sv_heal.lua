@@ -31,11 +31,10 @@ function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
     local maxhealth = self:GetMaxHealth() * overhealmult
     local lastmaxhealth = self.Horde_HealLastMaxHealth
     local health = self:Health()
-    local remaintoheal = self.Horde_HealHPRemain or 0
 
     --------------------> setup vars
-
-    self.Horde_HealHPRemain = remaintoheal + amount
+    if self.Horde_HealHPRemain < 0 then self.Horde_HealHPRemain = 0 end
+    self.Horde_HealHPRemain = self.Horde_HealHPRemain + amount
     local timer_obj
     if !self.Horde_HealTimer or !self.Horde_HealTimer:IsValid() then
         timer_obj = HORDE.Timers:New({
