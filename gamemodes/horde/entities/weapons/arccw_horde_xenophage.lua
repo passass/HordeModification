@@ -29,10 +29,9 @@ SWEP.WorldModelOffset = {
 }
 SWEP.ViewModelFOV = 60
 
-SWEP.Damage = 120
-SWEP.DamageMin = 100 -- damage done at maximum range
-SWEP.RangeMin = 150
-SWEP.Range = 250 -- in METRES
+SWEP.Damage = 70
+SWEP.DamageMin = 20 -- damage done at maximum range
+SWEP.Range = 10 -- in METRES
 SWEP.Penetration = 10
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
@@ -183,7 +182,7 @@ function SWEP:Hook_PostBulletHit(bul)
 	end
 end
 
-SWEP.ExplosiveDamage = 160
+SWEP.ExplosiveDamage = 140
 
 function SWEP:DoXENEffect( tr )
 

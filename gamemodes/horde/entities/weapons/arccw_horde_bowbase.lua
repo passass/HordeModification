@@ -122,7 +122,7 @@ function SWEP:Hook_Think()
             if !game.SinglePlayer() or SERVER then
                 self:DoShootSound()
             end
-            self:DoPrimaryAnim()
+            self:DoPrimaryAnim(true)
             self:Charge_ReloadAfter_Start()
 
             local delay = self:GetFiringDelay()

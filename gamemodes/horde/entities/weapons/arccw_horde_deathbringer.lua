@@ -159,6 +159,10 @@ SWEP.Horde_MaxMags = 60
 SWEP.ClipsPerAmmoBox = 4
 
 SWEP.Attachments = {
+    {
+        PrintName = "Perk",
+        Slot = "go_perk"
+    },
 }
 
 --SWEP.ShootEntity = "horde_deathbringer_projectile"

@@ -235,6 +235,7 @@ SWEP.Animations = {
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.25,
+        MinProgress = .8,
     },
     ["fire"] = {
         Source = "fire",

@@ -2608,7 +2608,7 @@ function SWEP:Reload()
     self:GetBuff_Hook("Hook_PostReload")
 end
 
-function SWEP:DoPrimaryAnim()
+function SWEP:DoPrimaryAnim(syncwithclient)
     local anim = "fire"
 
     local inbipod = self:InBipod()
@@ -2628,7 +2628,11 @@ function SWEP:DoPrimaryAnim()
     local time = self:GetBuff_Mult("Mult_FireAnimTime", anim) or 1
 
     if anim then
-        self:PlayAnimation(anim, time, true, 0, false)
+        if syncwithclient then
+            self:PlayAnimationWithSync(anim, time, true, 0, false)
+        else
+            self:PlayAnimation(anim, time, true, 0, false)
+        end
     end
 end
 

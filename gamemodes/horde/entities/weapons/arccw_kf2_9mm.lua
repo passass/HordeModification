@@ -215,12 +215,15 @@ SWEP.Animations = {
     },
     ["ready"] = {
         Source = "draw",
+        MinProgress = .8,
     },
     ["draw_empty"] = {
         Source = "idle_empty",
+        MinProgress = .8,
     },
     ["draw"] = {
         Source = "draw",
+        MinProgress = .8,
     },
     ["fire"] = {
 		Source = "shoot",
