@@ -119,8 +119,8 @@ end
 
 function HORDE.Timers:Remove()
     timer.Remove(self.timername)
-    if IsValid(o.linkwithent) then
-        o.linkwithent:RemoveCallOnRemove( "Horde_timer_" .. o.timername )
+    if IsValid(self.linkwithent) then
+        self.linkwithent:RemoveCallOnRemove( "Horde_timer_" .. o.timername )
     end
     HORDE.Timers.alltimers[self.timername] = nil
     self.removed = true

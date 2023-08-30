@@ -17,7 +17,7 @@ end
 local plymeta = FindMetaTable("Player")
 
 function plymeta:Horde_GetTotalHP()
-	return math.min(self:Health() + self.Horde_HealHPRemain, self.Horde_HealLastMaxHealth)
+	return math.min(self:Health() + (self.Horde_HealHPRemain or 0), self.Horde_HealLastMaxHealth)
 end
 
 function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
@@ -33,26 +33,25 @@ function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
     local health = self:Health()
 
     --------------------> setup vars
-    if !self.Horde_HealHPRemain or self.Horde_HealHPRemain < 0 then
-        self.Horde_HealHPRemain = 0
+    local remainhp = self.Horde_HealHPRemain
+    if !remainhp or remainhp < 0 then
+        remainhp = 0
     end
-    self.Horde_HealHPRemain = self.Horde_HealHPRemain + amount
+    self.Horde_HealHPRemain = remainhp + amount
     local timer_obj
     if !self.Horde_HealTimer or !self.Horde_HealTimer:IsValid() then
         timer_obj = HORDE.Timers:New({
             linkwithent = self,
             timername = "Horde_" .. self:EntIndex() .. "SlowlyHeal",
             func = function(timerobj)
-                if IsValid(self) then
-                    if self.Horde_HealHPRemain >= 1 then
-                        health = self:Health()
-                        if health < self.Horde_HealLastMaxHealth then
-                            self.Horde_HealHPRemain = self.Horde_HealHPRemain - 1
-                            self:SetHealth(health + 1)
-                            return
-                        end
+                remainhp = self.Horde_HealHPRemain
+                if IsValid(self) and remainhp and remainhp >= 1 then
+                    health = self:Health()
+                    if health < self.Horde_HealLastMaxHealth then
+                        self.Horde_HealHPRemain = remainhp - 1
+                        self:SetHealth(health + 1)
+                        return
                     end
-                    self.Horde_HealHPRemain = nil
                 end
                 timerobj:Stop()
                 timerobj.delay = timerobj.vars_on_init.delay
