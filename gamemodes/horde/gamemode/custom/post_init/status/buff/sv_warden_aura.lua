@@ -1,3 +1,5 @@
+local plymeta = FindMetaTable("Player")
+
 function plymeta:Horde_AddWardenAuraEffects(provider)
     if not IsValid(provider) or not provider:Alive() then return end
     if HORDE:IsWatchTower(provider) then
