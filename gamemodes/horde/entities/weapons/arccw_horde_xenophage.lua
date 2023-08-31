@@ -28,10 +28,10 @@ SWEP.WorldModelOffset = {
     bodygroup = { [1] = 0 }
 }
 SWEP.ViewModelFOV = 60
-
-SWEP.Damage = 70
-SWEP.DamageMin = 20 -- damage done at maximum range
-SWEP.Range = 10 -- in METRES
+SWEP.BodyDamageMults = {[HITGROUP_HEAD] = 1,}
+SWEP.Damage = 90
+SWEP.DamageMin = 30 -- damage done at maximum range
+SWEP.Range = 13 -- in METRES
 SWEP.Penetration = 10
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
@@ -45,7 +45,7 @@ SWEP.TracerWidth = 3
 SWEP.ChamberSize = 0-- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 13 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 0.6
+SWEP.Recoil = 0.9
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.65
 SWEP.VisualRecoilMult = 1
@@ -182,7 +182,7 @@ function SWEP:Hook_PostBulletHit(bul)
 	end
 end
 
-SWEP.ExplosiveDamage = 140
+SWEP.ExplosiveDamage = 145
 
 function SWEP:DoXENEffect( tr )
 

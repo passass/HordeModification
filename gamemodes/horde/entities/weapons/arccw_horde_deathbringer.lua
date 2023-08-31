@@ -155,8 +155,8 @@ SWEP.BarrelLength = 27
 
 SWEP.ExtraSightDist = 5
 
-SWEP.Horde_MaxMags = 60
-SWEP.ClipsPerAmmoBox = 4
+SWEP.Horde_MaxMags = 70
+SWEP.ClipsPerAmmoBox = 5
 
 SWEP.Attachments = {
     {

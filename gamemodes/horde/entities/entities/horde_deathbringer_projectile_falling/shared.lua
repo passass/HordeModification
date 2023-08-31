@@ -14,7 +14,7 @@ ENT.LightColor		= "200 200 255 255"
 ENT.LightSpotRadius	= 80
 ENT.LightDistance	= 210
 ENT.LightBrightness	= 1
-ENT.Damage = 100
+ENT.Damage = 110
 ENT.Prime = 0.05
 ENT.Delay = 0
 ENT.HideDelay = 0.0
@@ -169,7 +169,7 @@ function ENT:Explode()
 	end
 
 	self:EmitSound("TFA_DEATHBRINGER_EXPLODE.1", 75, 100, 1)
-	util.BlastDamage(self.Owner, self.Owner, self:GetPos(), 200, 80)
+	util.BlastDamage(self.Owner, self.Owner, self:GetPos(), 200, self.Damage)
 	ParticleEffect("deathbringer_impact", self:GetPos(), Angle(-90, 0, 0), self)
 	--self:EmitSound("TFA_INS2_RPG7.2")
 	timer.Simple(0.1, function() if IsValid(self) then self:Remove() end end)

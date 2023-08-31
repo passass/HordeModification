@@ -9,7 +9,7 @@ ENT.Spawnable = false
 ENT.AdminOnly = true
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
-ENT.Damage = 300
+ENT.Damage = 450
 ENT.Radius = 256
 
 //sound.Add(CHAN_AUTO, loop1, 100, 100, 75, "blackholeloop1.wav", 1, 100)
@@ -80,7 +80,7 @@ function ENT:Think()
 				if dist < 100 then
 					dmgamt = 1
 				else
-					dmgamt = math.max(0, 1 - (dist / self.Radius))
+					dmgamt = math.max(0, 1 - ((dist - 100) / self.Radius))
 				end
 				
 				self.dmg_struct:SetDamage( dmgamt * self.Damage )

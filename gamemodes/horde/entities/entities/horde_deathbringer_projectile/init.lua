@@ -2,7 +2,7 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
-ENT.Damage = 100
+ENT.Damage = 450
 ENT.Prime = 0
 ENT.Delay = 300
 ENT.HideDelay = 0.0
@@ -67,7 +67,7 @@ function ENT:Explode()
 
 	self:EmitSound("TFA_DEATHBRINGER_EXPLODE.1", 140)
 	holding = 0
-	util.BlastDamage(self.Owner, self.Owner, self:GetPos(), 200, 450)
+	util.BlastDamage(self.Owner, self.Owner, self:GetPos(), 200, self.Damage)
 	ParticleEffect("deathbringer_impact", self:GetPos(), Angle(-90, 0, 0), self)
 	--self:EmitSound("TFA_INS2_RPG7.2")
 	for i=1,6 do 
@@ -84,8 +84,6 @@ function ENT:SpawnFalling()
 		ent:SetPos(self:GetPos())
 		ent.Owner = self.Owner
 		ent:SetAngles(self.Owner:EyeAngles())
-		ent.damage = 150
-		ent.mydamage = 150
 		local trail = util.SpriteTrail(ent, 0, Color(162,0,255,200), true, 13, 2, .5, 1/(15+1)*0.5, "trails/smoke.vmt")
 
 		ent:Spawn()
