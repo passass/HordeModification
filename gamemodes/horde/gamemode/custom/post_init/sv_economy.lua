@@ -351,7 +351,11 @@ net.Receive("Horde_BuyItem", function (len, ply)
             elseif item.entity_properties.type == HORDE.ENTITY_PROPERTY_ARMOR then
                 local armorcount = item.entity_properties.armor
                 local maxarmor = ply:GetMaxArmor()
-                if string.sub(item.class, 1, 6) ~= "armor_" then
+                if item.class == "armorrefill" then
+                    local curarmor = ply:Armor()
+                    price = (maxarmor - curarmor) * 10
+                    ply:SetArmor(maxarmor)
+                elseif string.sub(item.class, 1, 6) ~= "armor_" then
                     if item.entity_properties.override_maxarmor then
                         if armorcount > maxarmor then
                             ply:SetMaxArmor(armorcount)
@@ -376,6 +380,8 @@ net.Receive("Horde_BuyItem", function (len, ply)
                         net.WriteUInt(1, 3)
                     net.Send(ply)
                 end
+                ply:EmitSound("items/battery_pickup.wav")
+
                 ply:Horde_AddMoney(-price)
                 ply:Horde_AddSkullTokens(-skull_tokens)
                 ply:Horde_SyncEconomy()

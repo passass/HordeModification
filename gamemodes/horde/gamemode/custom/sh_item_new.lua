@@ -770,13 +770,15 @@ end
 
         HORDE:CreateItem("Special",    "Staff of Fire", "arccw_horde_firestaff",            3500,  9, "Staff of Fire.\nA magic rod that shoot a fire balls.",
         {Cremator=true}, 8, -1, nil, nil, {Cremator=15}, nil, {HORDE.DMG_BURN})
-        HORDE:CreateItem("Equipment", "50 Kevlar Armor", "armor50", 1250, 0, "50 kevlar armor set.\nFills up 50 of your armor bar.",
-        nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, armor=50}, "items/armor_50.png") -- 
-        HORDE:CreateItem("Equipment", "100 Kevlar Armor", "armor100", 2500, 0, "Full kevlar armor set.\nFills up 100 of your armor bar and allows add armor to 100 with armor battery.\nArmor Limit Resets to 50 after death.",
+        HORDE:CreateItem("Equipment", "Refill Armor", "armorrefill", 10, 0, "Refill Armor.\nFills up max armor of your armor bar.\n10$ Every armor point.",
+        nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, armor=0}, "items/armor_refill.png")
+        --HORDE:CreateItem("Equipment", "50 Kevlar Armor", "armor50", 500, 0, "50 kevlar armor set.\nFills up 50 of your armor bar.",
+        --nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, armor=50}, "items/armor_50.png")
+        HORDE:CreateItem("Equipment", "100 Kevlar Armor", "armor100", 1500, 0, "Full kevlar armor set.\nFills up 100 of your armor bar and allows add armor to 100 with armor battery.\nArmor Limit Resets to 50 after death.",
         nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, override_maxarmor=true, armor=100}, "items/armor_100.png", {Survivor=5, Berserker=10, Assault=5, Heavy=5})
-        HORDE:CreateItem("Equipment", "150 Kevlar Armor", "armor150", 3750, 0, "Full kevlar armor set.\nFills up 150 of your armor bar and allows add armor to 150 with armor battery.\nArmor Limit Resets to 50 after death.",
+        HORDE:CreateItem("Equipment", "150 Kevlar Armor", "armor150", 2000, 0, "Full kevlar armor set.\nFills up 150 of your armor bar and allows add armor to 150 with armor battery.\nArmor Limit Resets to 50 after death.",
         nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, override_maxarmor=true, armor=150}, "items/armor_150.png", {Survivor=5, Berserker=15, Assault=10, Heavy=10})
-        HORDE:CreateItem("Equipment", "200 Kevlar Armor", "armor200", 5000, 0, "Full kevlar armor set.\nFills up 200 of your armor bar and allows add armor to 200 with armor battery.\nArmor Limit Resets to 50 after death.",
+        HORDE:CreateItem("Equipment", "200 Kevlar Armor", "armor200", 2500, 0, "Full kevlar armor set.\nFills up 200 of your armor bar and allows add armor to 200 with armor battery.\nArmor Limit Resets to 50 after death.",
         {Berserker=true, Heavy=true, Survivor=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, override_maxarmor=true, armor=200}, "items/armor_200.png", {Survivor=5, Berserker=25, Assault=15, Heavy=20})
         
         HORDE:CreateItem("Equipment", "Advanced Kevlar Armor", "armor_survivor", 1000, 0, "Distinguished Survivor armor.\n\nFills up 100 of your armor bar and override if your limit is lower.\nProvides 5% increased damage resistance.",
