@@ -485,14 +485,9 @@ local function start_timestop(activator)
                     ply2:Lock()
                     
                     -- Stop Healing
-                    if ply2.Horde_HealHPRemain then
-                        players_healed[ply2] = {ply2.Horde_HealHPRemain, ply2.Horde_HealLastMaxHealth}
-                        ply2.Horde_HealHPRemain = nil
-
-                        local timer_obj = ply2.Horde_HealTimer
-                        if timer_obj then
-                            timer_obj:Stop()
-                        end
+                    local timer_obj = ply2.Horde_HealTimer
+                    if timer_obj then
+                        timer_obj:Stop()
                     end
 
                     -- Stop reloading
@@ -564,6 +559,7 @@ local function start_timestop(activator)
 
             timer.Simple(1.2, function()
                 hook.Remove("Horde_CanSlowTime", "Horde_TimeStop")
+                hook.Remove("Horde_SlowHeal_Post", "Horde_TimeStop")
 				hook.Remove("WeaponEquip", "Horde_TimeStop")
 				hook.Remove( "OnEntityCreated", "Horde_TimeStop")
                 hook.Remove("Horde_SlowHeal_NotAllow", "Horde_TimeStop")
@@ -596,12 +592,10 @@ local function start_timestop(activator)
                         ply2:StopSound("player/pl_drown1.wav")
                         ply2:StopSound("player/pl_drown2.wav")
                         ply2:StopSound("player/pl_drown3.wav")
-						if players_healed[ply2] then
-							local timer_obj = ply2.Horde_HealTimer
-                            if timer_obj then
-                                timer_obj:Start()
-                            end
-						end
+						local timer_obj = ply2.Horde_HealTimer
+                        if timer_obj then
+                            timer_obj:Start()
+                        end
                         local wep = activator:GetActiveWeapon()
                         if IsValid(wep) then
                             if wep.Horde_EndTimeStop then wep:Horde_EndTimeStop() end

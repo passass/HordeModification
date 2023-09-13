@@ -36,176 +36,31 @@ local function GetClassData()
 end
 
 
+local GetDefaultClassesData_old = HORDE.GetDefaultClassesData
+
 function HORDE:GetDefaultClassesData()
-    HORDE:CreateClass(
-        HORDE.Class_Survivor,
-        "Has access to all weapons except for exclusive and special weapons.\n\nLimited access to attachments.",
-        100,
-        GetConVar("horde_base_walkspeed"):GetInt(),
-        GetConVar("horde_base_runspeed"):GetInt(),
-        "survivor_base",
-        {
-            [1] = {title = "Survival", choices = {"berserker_breathing_technique", "medic_antibiotics", "swat_berserker"}},
-            [2] = {title = "Imprinting", choices = {"survivor_damagemaster", "swat_rapidfire", "assault_speedreload"}},
-            [3] = {title = "Improvise", choices = {"heavy_liquid_armor", "heavy_floating_carrier", "swat_bandolier"}}, -- {"heavy_liquid_armor", "heavy_floating_carrier"}},
-            [4] = {title = "Inspired Learning", choices = {"ghost_headhunter", "specops_flare", "survivor_rapidslomo"}},
-        },
-        0,nil,nil,nil,
-        {HORDE.Class_Survivor}
-    )
+    GetDefaultClassesData_old(HORDE)
+    HORDE.classes[HORDE.Class_Survivor].perks = {
+        [1] = {title = "Survival", choices = {"berserker_breathing_technique", "medic_antibiotics", "swat_berserker"}},
+        [2] = {title = "Imprinting", choices = {"survivor_damagemaster", "swat_rapidfire", "assault_speedreload"}},
+        [3] = {title = "Improvise", choices = {"heavy_liquid_armor", "heavy_floating_carrier", "swat_bandolier"}}, -- {"heavy_liquid_armor", "heavy_floating_carrier"}},
+        [4] = {title = "Inspired Learning", choices = {"ghost_headhunter", "specops_flare", "survivor_rapidslomo"}},
+    }
 
-    HORDE:CreateClass(
-        HORDE.Class_Assault,
-        "Has full access to assault rifles.",
-        100,
-        GetConVar("horde_base_walkspeed"):GetInt(),
-        GetConVar("horde_base_runspeed"):GetInt(),
-        "assault_base",
-        {
-            [1] = {title = "Maneuverability", choices = {"assault_ambush", "assault_charge", "assault_speedreload"}},--"assault_charge"}},
-            [2] = {title = "Adaptability", choices = {"assault_drain", "assault_overclock"}},
-            [3] = {title = "Aggression", choices = {"assault_cardiac_resonance", "assault_cardiac_overload"}},
-            [4] = {title = "Conditioning", choices = {"assault_heightened_reflex", "assault_merciless_assault"}},
-        },
-        1,nil,nil,nil,
-        {HORDE.Class_Assault}
-    )
+    HORDE.classes[HORDE.Class_Assault].perks[1].choices = {"assault_ambush", "assault_charge", "assault_speedreload"}
 
-    HORDE:CreateClass(
-        HORDE.Class_Heavy,
-        "Has full access to machine guns and high weight weapons.",
-        100,
-        GetConVar("horde_base_walkspeed"):GetInt(),
-        GetConVar("horde_base_runspeed"):GetInt(),
-        "heavy_base",
-        {
-            [1] = {title = "Suppression", choices = {"heavy_sticky_compound", "heavy_crude_casing"}},
-            [2] = {title = "Backup", choices = {"heavy_repair_catalyst", "heavy_floating_carrier"}},
-            [3] = {title = "Armor Protection", choices = {"heavy_liquid_armor", "heavy_reactive_armor"}},
-            [4] = {title = "Technology", choices = {"heavy_nanomachine", "heavy_ballistic_shock"}},
-        },
-        2,nil,nil,nil,
-        {HORDE.Class_Heavy}
-    )
+    HORDE.classes[HORDE.Class_Medic].perks[1].choices = {"medic_antibiotics", "medic_painkillers", "medic_speedy"}
+    HORDE.classes[HORDE.Class_Medic].perks[2].choices = {"medic_berserk", "medic_fortify", "medic_syringefaster"}
+    HORDE.classes[HORDE.Class_Medic].perks[4].choices = {"medic_cellular_implosion", "medic_xcele", "engineer_rapidandreloadslomo"}
 
-    HORDE:CreateClass(
-        HORDE.Class_Medic,
-        "Has acesss to most light weapons and medical tools.",
-        100,
-        GetConVar("horde_base_walkspeed"):GetInt(),
-        GetConVar("horde_base_runspeed"):GetInt(),
-        "medic_base",
-        {
-            [1] = {title = "Medicine", choices = {"medic_antibiotics", "medic_painkillers", "medic_speedy"}},
-            [2] = {title = "Bio-Engineering", choices = {"medic_berserk", "medic_fortify", "medic_syringefaster"}},
-            [3] = {title = "Enhancement", choices = {"medic_purify", "medic_haste"}},
-            [4] = {title = "Natural Selection", choices = {"medic_cellular_implosion", "medic_xcele", "engineer_rapidandreloadslomo"}},
-        },
-        3,nil,nil,nil,
-        {HORDE.Class_Medic}
-    )
+    HORDE.classes[HORDE.Class_Demolition].perks[2].choices = {"demolition_direct_hit", "demolition_seismic_wave", "assault_speedreload"}
+    HORDE.classes[HORDE.Class_Engineer].perks[3].choices = {"engineer_antimatter_shield", "engineer_displacer", "engineer_rapidandreloadslomo"}
+    HORDE.classes[HORDE.Class_Engineer].perks[4].choices = {"engineer_symbiosis", "engineer_kamikaze", "engineer_welderslomo"}
 
-    HORDE:CreateClass(
-        HORDE.Class_Demolition,
-        "Has full access to explosive weapons.",
-        100,
-        GetConVar("horde_base_walkspeed"):GetInt(),
-        GetConVar("horde_base_runspeed"):GetInt(),
-        "demolition_base",
-        {
-            [1] = {title = "Grenade", choices = {"demolition_frag_impact", "demolition_frag_cluster"}},
-            [2] = {title = "Weaponry", choices = {"demolition_direct_hit", "demolition_seismic_wave", "assault_speedreload"}},
-            [3] = {title = "Approach", choices = {"demolition_fragmentation", "demolition_knockout"}},
-            [4] = {title = "Destruction", choices = {"demolition_chain_reaction", "demolition_pressurized_warhead"}},
-        },
-        4,nil,nil,nil,
-        {HORDE.Class_Demolition}
-    )
+    HORDE.classes[HORDE.Class_Warden].perks[4].choices = {"warden_ex_machina", "warden_resonance_cascade", "engineer_rapidandreloadslomo"}
 
-    HORDE:CreateClass(
-        HORDE.Class_Ghost,
-        "Has access to sniper rifles and selected light weapons.\n\nHave access to suppressors and sniper scopes.",
-        100,
-        GetConVar("horde_base_walkspeed"):GetInt(),
-        GetConVar("horde_base_runspeed"):GetInt(),
-        "ghost_base",
-        {
-            [1] = {title = "Tactics", choices = {"ghost_headhunter", "ghost_sniper"}},
-            [2] = {title = "Reposition", choices = {"ghost_phase_walk", "ghost_ghost_veil"}},
-            [3] = {title = "Trajectory", choices = {"ghost_brain_snap", "ghost_kinetic_impact"}},
-            [4] = {title = "Disposal", choices = {"ghost_coup", "ghost_decapitate"}},
-        },
-        5,nil,nil,nil,
-        {HORDE.Class_Ghost}
-    )
+    HORDE.classes[HORDE.Class_Cremator].perks[4].choices = {"cremator_firestorm", "cremator_incineration", "engineer_rapidandreloadslomo"}
 
-    HORDE:CreateClass(
-        HORDE.Class_Engineer,
-        "Has access to special weapons and equipment.",
-        100,
-        GetConVar("horde_base_walkspeed"):GetInt(),
-        GetConVar("horde_base_runspeed"):GetInt(),
-        "engineer_base",
-        {
-            [1] = {title = "Craftsmanship", choices = {"engineer_tinkerer", "engineer_pioneer"}},
-            [2] = {title = "Core", choices = {"engineer_fusion", "engineer_metabolism"}},
-            [3] = {title = "Manipulation", choices = {"engineer_antimatter_shield", "engineer_displacer", "engineer_rapidandreloadslomo"}},
-            [4] = {title = "Experimental", choices = {"engineer_symbiosis", "engineer_kamikaze", "engineer_welderslomo"}},
-        },
-        6,nil,nil,nil,
-        {HORDE.Class_Engineer}
-    )
-
-    HORDE:CreateClass(
-        HORDE.Class_Berserker,
-        "Only has access to melee weapons.",
-        100,
-        GetConVar("horde_base_walkspeed"):GetInt(),
-        GetConVar("horde_base_runspeed"):GetInt(),
-        "berserker_base",
-        {
-            [1] = {title = "Fundamentals", choices = {"berserker_breathing_technique", "berserker_bloodlust"}},
-            [2] = {title = "Technique", choices = {"berserker_bushido", "berserker_savagery"}},
-            [3] = {title = "Parry", choices = {"berserker_graceful_guard", "berserker_unwavering_guard"}},
-            [4] = {title = "Combat Arts", choices = {"berserker_phalanx", "berserker_rip_and_tear"}},
-        },
-        7,nil,nil,nil,
-        {HORDE.Class_Berserker}
-    )
-
-    HORDE:CreateClass(
-        HORDE.Class_Warden,
-        "Has full access to shotguns and watchtowers (horde_watchtower).",
-        100,
-        GetConVar("horde_base_walkspeed"):GetInt(),
-        GetConVar("horde_base_runspeed"):GetInt(),
-        "warden_base",
-        {
-            [1] = {title = "Sustain", choices = {"warden_bulwark", "warden_vitality"}},
-            [2] = {title = "Resource Utilization", choices = {"warden_restock", "warden_inoculation"}},
-            [3] = {title = "Escort", choices = {"warden_rejection_pulse", "warden_energize"}},
-            [4] = {title = "Coverage", choices = {"warden_ex_machina", "warden_resonance_cascade", "engineer_rapidandreloadslomo"}},
-        },
-        8,nil,nil,nil,
-        {HORDE.Class_Warden}
-    )
-
-    HORDE:CreateClass(
-        HORDE.Class_Cremator,
-        "Has access to heat-based weaponry.",
-        100,
-        GetConVar("horde_base_walkspeed"):GetInt(),
-        GetConVar("horde_base_runspeed"):GetInt(),
-        "cremator_base",
-        {
-            [1] = {title = "Chemicals", choices = {"cremator_methane", "cremator_napalm"}},
-            [2] = {title = "Energy Absorption", choices = {"cremator_positron_array", "cremator_entropy_shield"}},
-            [3] = {title = "Heat Manipulation", choices = {"cremator_hyperthermia", "cremator_ionization"}},
-            [4] = {title = "Energy Discharge", choices = {"cremator_firestorm", "cremator_incineration", "engineer_rapidandreloadslomo"}},
-        },
-        9,nil,nil,nil,
-        {HORDE.Class_Cremator}
-    )
 
     HORDE:CreateClass(
         HORDE.Class_SWAT,
