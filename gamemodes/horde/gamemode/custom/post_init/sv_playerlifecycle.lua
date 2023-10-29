@@ -283,8 +283,8 @@ hook.Add("Move", "Horde_PlayerMove", function (ply, mv)
         local bonus_walk = {more = 1, increase = 0}
         local bonus_run = {more = 1, increase = 0}
         hook.Run("Horde_PlayerMoveBonus", ply, bonus_walk, bonus_run)
-        ply:SetWalkSpeed(140 * bonus_walk.more * (1 + bonus_walk.increase))
-        ply:SetRunSpeed(175 * bonus_run.more * (1 + bonus_run.increase))
+        ply:SetWalkSpeed(140 * bonus_walk.more * (1 + bonus_walk.increase)) -- default - 140
+        ply:SetRunSpeed(175 * bonus_run.more * (1 + bonus_run.increase)) -- default - 220
     end
 end)
 

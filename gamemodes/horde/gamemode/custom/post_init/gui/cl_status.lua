@@ -15,6 +15,7 @@ local fontplayername = "PlayerName_EXT"
 local display_money = 0
 
 local health_color = Color(201,13,13,222)
+local extra_health_color = Color(223,202,14,222)
 local armor_color = Color(28,4,240,222)
 local death_color = Color(145, 0, 0, 255)
 local vanish = Color(0, 0, 0, 0)
@@ -122,7 +123,9 @@ function PANEL:Paint()
     local bars_size_x = airgap + ScreenScale(90)
     local bars_pos_x = size_x - bars_size_x - ScreenScale(40)
 
-    local hp_perc = math.min(1, ply:Health() / ply:GetMaxHealth())
+    local vhp = ply:Health()
+    local vmaxhp = ply:GetMaxHealth()
+    
     
     local armor_color_real
     local varmor
@@ -140,9 +143,40 @@ function PANEL:Paint()
     local armor_perc = math.min(1, varmor / vmaxarmor)
     local armor_bars_count = math.Clamp(math.floor(vmaxarmor / 50), 1, 4)
 
-    draw_rect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(13) - airgap, bars_size_x, airgap + ScreenScale(3), Color(0,0,0,150))
-    draw_rect(bars_pos_x, size_y - ScreenScale(9) - airgap, (bars_size_x - ScreenScale(2)) * hp_perc, airgap - ScreenScale(2), health_color)
+    -- background
+    draw_rect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(13) - airgap, bars_size_x, airgap + ScreenScale(3), Color(30,30,30,150))
+    -- HP
+    if vmaxhp > 100 then
+        local hp_bar_size_y = airgap - ScreenScale(2)
+        local hp_bar_pos_y = size_y - ScreenScale(9) - airgap
 
+        local hp_bar_size_x = (bars_size_x - ScreenScale(2)) / (vmaxhp / 100)
+        draw_rect(bars_pos_x,
+            hp_bar_pos_y,
+            hp_bar_size_x * math.min(1, vhp / 100),
+            hp_bar_size_y,
+            health_color)
+        if vhp > 100 then
+            draw_rect(bars_pos_x + hp_bar_size_x + ScreenScale(1), -- x
+                hp_bar_pos_y, -- y
+                ((bars_size_x - ScreenScale(2)) - hp_bar_size_x - ScreenScale(1)) * math.min((vhp - 100) / (vmaxhp - 100), 1), -- size_x
+                hp_bar_size_y, -- size_y
+                health_color) -- color
+        end
+        
+        draw_rect(bars_pos_x + hp_bar_size_x, -- x
+            hp_bar_pos_y, -- y
+            ScreenScale(1), -- size_x
+            hp_bar_size_y, -- size_y
+            Color(0,0,0,255)) -- color
+    else
+        local hp_perc = math.min(1, vhp / vmaxhp)
+        draw_rect(bars_pos_x, size_y - ScreenScale(9) - airgap, (bars_size_x - ScreenScale(2)) * hp_perc, airgap - ScreenScale(2), health_color)
+    end
+    if vhp / vmaxhp > 1 then
+        draw_rect(bars_pos_x, size_y - ScreenScale(9) - airgap, (bars_size_x - ScreenScale(2)) * math.min(vhp / vmaxhp - 1, 1), airgap - ScreenScale(2), extra_health_color)
+    end
+    -- Black
     surface.SetDrawColor(Color(0,0,0,255))
 
     surface.DrawRect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(9) - airgap, bars_size_x, ScreenScale(1))
@@ -151,6 +185,7 @@ function PANEL:Paint()
 
     surface.DrawRect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(13) - airgap, ScreenScale(1), airgap + ScreenScale(3))
     surface.DrawRect(bars_pos_x + bars_size_x - ScreenScale(2), size_y - ScreenScale(13) - airgap, ScreenScale(1), airgap + ScreenScale(3))
+    -- ARMOR
     local armor_bar_x_rel = 0
 
     if armor_bars_count != 1 then
@@ -199,8 +234,6 @@ function PANEL:Paint()
             end
         end
     end
-    local x,y = self:GetPos()
-    -- ScreenScale(29), 
 
     draw.SimpleTextOutlined(ply:LongName(), fontplayername, class_icon_x + class_icon_s + ScreenScale(6), icon_y + ScreenScale(1), color_white, nil, nil, 1, Color( 68, 68, 68))
     draw.SimpleTextOutlined(ply:Horde_GetMoney() .. "$", fontweight, ScreenScale(32), icon_y + ScreenScale(12), color_white, nil, nil, 1, Color( 68, 68, 68))
@@ -211,7 +244,8 @@ function PANEL:Paint()
         local has_ammo = ammo_type > 0
         local curwep_x = ScreenScale(69)
         local clip1 = wpn:Clip1()
-        local has_clip = clip1 >= 0
+        local maxclip1 = wpn:GetMaxClip1()
+        local has_clip = maxclip1 > 0
         if has_ammo or has_clip then
             local curammo = ply:GetAmmoCount(ammo_type)
             if has_clip then
