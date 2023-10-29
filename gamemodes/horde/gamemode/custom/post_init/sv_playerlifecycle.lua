@@ -277,6 +277,17 @@ function HORDE:GiveStarterWeapons(ply)
     end
 end
 
+hook.Add("Move", "Horde_PlayerMove", function (ply, mv)
+    if ply:Horde_GetClass() then
+        ply:SetJumpPower(135)
+        local bonus_walk = {more = 1, increase = 0}
+        local bonus_run = {more = 1, increase = 0}
+        hook.Run("Horde_PlayerMoveBonus", ply, bonus_walk, bonus_run)
+        ply:SetWalkSpeed(140 * bonus_walk.more * (1 + bonus_walk.increase))
+        ply:SetRunSpeed(175 * bonus_run.more * (1 + bonus_run.increase))
+    end
+end)
+
 hook.Add("DoPlayerDeath", "Horde_DoPlayerDeath", function(victim)
     net.Start("Horde_ClearStatus")
     net.Send(victim)

@@ -126,13 +126,21 @@ Horde_LoadSubclasses()
 
 function HORDE:LoadSubclassChoices()
     MySelf.Horde_subclass_choices = {}
-    if not file.Exists("horde/subclass_choices.txt", "DATA") then
+
+    local f1_exists, f2_exists = file.Exists("horde/subclass_choices.txt", "DATA"), file.Exists("horde/horde_ext/subclass_choices.txt", "DATA")
+
+    if not f1_exists and not f2_exists then
         for class_name, _ in pairs(HORDE.classes_to_subclasses) do
             MySelf.Horde_subclass_choices[class_name] = class_name
         end
         HORDE:SaveSubclassChoices()
     else
-        local f = file.Open("horde/subclass_choices.txt", "rb", "DATA")
+        local f
+        if f2_exists then
+            f = file.Open("horde/horde_ext/subclass_choices.txt", "rb", "DATA")
+        else
+            f = file.Open("horde/subclass_choices.txt", "rb", "DATA")
+        end
         if not MySelf.Horde_subclasses then MySelf.Horde_subclasses = {} end
         while not f:EndOfFile() do
             local class_order = f:ReadULong()
@@ -152,4 +160,44 @@ function HORDE:LoadSubclassChoices()
             end
         end
     end
+end
+
+function HORDE:SaveSubclassChoices()
+    local f = file.Open("horde/horde_ext/subclass_choices.txt", "wb", "DATA")
+    for class, subclass in pairs(MySelf.Horde_subclass_choices) do
+        f:WriteULong(HORDE.classes_to_order[class])
+        f:WriteULong(HORDE.subclass_name_to_crc[subclass])
+    end
+    f:Close()
+end
+
+if CLIENT then
+    hook.Add("InitPostEntity", "Horde_PlayerInit", function()
+        timer.Simple(0, function ()
+            HORDE:LoadSubclassChoices()
+            local f = file.Read("horde/horde_ext/class_choices.txt", "DATA")
+            if !f then
+                f = file.Read("horde/class_choices.txt", "DATA")
+            end
+            if f then
+                local class = f
+                if not HORDE.subclasses[class] then
+                    class = HORDE.Class_Survivor
+                end
+            -- I Seriously don't understand what it's supposed to do.
+                --[[if HORDE.subclasses_to_classes[f2] then
+                    f2 = HORDE.subclasses_to_classes[f2]
+                end]]--
+    
+                HORDE:SendSavedPerkChoices(f)
+    
+                net.Start("Horde_InitClass")
+                net.WriteString(class)
+                net.SendToServer()
+            end
+
+            net.Start("Horde_PlayerInit")
+            net.SendToServer()
+        end)
+    end)
 end

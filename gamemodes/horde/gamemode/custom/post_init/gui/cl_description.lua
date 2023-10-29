@@ -163,7 +163,7 @@ function PANEL:DoClick()
                 net.WriteString(MySelf.Horde_subclass_choices[self.item.name])
                 net.SendToServer()
 
-                file.Write("horde/class_choices.txt", self.item.subclass.PrintName)
+                file.Write("horde/horde_ext/class_choices.txt", self.item.subclass.PrintName)
             end,
             "No", function() end
         )
