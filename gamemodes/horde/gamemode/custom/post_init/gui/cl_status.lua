@@ -4,7 +4,7 @@ local mind = Material("status/mind.png", "mips smooth")
 local weight = Material("weight.png")
 local dead = Material("status/necrosis.png", "mips smooth")
 
-
+local count_of_GUIs = 0
 
 surface.CreateFont("PlayerName_EXT", { font = "arial", size = ScreenScale(9), extended = true})
 local font = "HealthInfo"
@@ -23,17 +23,23 @@ local PANEL = {}
 
 function PANEL:Init()
 
+    count_of_GUIs = count_of_GUIs + 1
+
 end
 
 function PANEL:Think()
+    if GetConVarNumber("horde_enable_health_gui") != 1 then self:Remove() return end
+
     local ply = self.ply
     if !IsValid(ply) then
         self:Remove()
     else
 
         if GetConVarNumber("horde_enable_health_gui") != 1 then
-            self.ply_Avatar:SetImageColor(vanish)
-            self.ply_Avatar.Dead_Pic:SetImageColor( vanish )
+            if IsValid(self.ply_Avatar) then
+                self.ply_Avatar:SetImageColor(vanish)
+                self.ply_Avatar.Dead_Pic:SetImageColor( vanish )
+            end
             return
         end
 
@@ -89,7 +95,7 @@ end
 function PANEL:OnRemove()
     self.ply_Avatar:Remove()
     self.ply_Avatar.Dead_Pic:Remove()
-
+    count_of_GUIs = count_of_GUIs - 1
     for _, ply in pairs(player.GetAll()) do
         if ply.Horde_HealthGUI == self then continue end
         ply.Horde_HealthGUI:Calculate_Data()
@@ -102,8 +108,6 @@ local function draw_rect(x, y, width, height, color)
 end
 
 function PANEL:Paint()
-
-    if GetConVarNumber("horde_enable_health_gui") != 1 then return end
 
     local ply = self.ply
     
@@ -197,7 +201,7 @@ function PANEL:Paint()
     end
     local x,y = self:GetPos()
     -- ScreenScale(29), 
-    print(x + class_icon_x + class_icon_s + ScreenScale(6), y + icon_y + ScreenScale(1))
+
     draw.SimpleTextOutlined(ply:LongName(), fontplayername, class_icon_x + class_icon_s + ScreenScale(6), icon_y + ScreenScale(1), color_white, nil, nil, 1, Color( 68, 68, 68))
     draw.SimpleTextOutlined(ply:Horde_GetMoney() .. "$", fontweight, ScreenScale(32), icon_y + ScreenScale(12), color_white, nil, nil, 1, Color( 68, 68, 68))
 
@@ -272,8 +276,9 @@ end
 vgui.Register("HealthGUI_PlayerStats", PANEL, "Panel")
 
 hook.Add("Think", "Horde_ProceedHealthGUI", function ()
+    if GetConVarNumber("horde_enable_health_gui") != 1 then return end
     for _, ply in pairs(player.GetAll()) do
-        if !ply.Horde_HealthGUI then
+        if !ply.Horde_HealthGUI and (count_of_GUIs < (MySelf.Horde_HealthGUI and 6 or 5) or MySelf == ply ) then
             local HpGUI = vgui.Create("HealthGUI_PlayerStats")
             HpGUI.ply = ply
             HpGUI:Calculate_Data()
