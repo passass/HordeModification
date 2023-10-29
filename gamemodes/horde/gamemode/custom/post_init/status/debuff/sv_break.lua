@@ -9,12 +9,7 @@ function entmeta:Horde_AddBreakEffect(duration, inflictor)
         local str = "Horde_BreakRecovery" .. self:SteamID()
         timer.Create(str, 1, 0, function ()
             if not self:IsValid() or self:Health() >= old_health then timer.Remove(str) return end
-            if old_health > self:Health() + recover then
-                --self:SetHealth(math.min(old_health, ))
-                HORDE:Horde_HealBy(ply, recover)
-            else
-                HORDE:Horde_HealBy(ply, old_health - self:Health())
-            end
+            HORDE:Horde_SetHealth(self, math.min(old_health, self:Health() + recover))
         end)
     else
         if not self:IsValid() then return end

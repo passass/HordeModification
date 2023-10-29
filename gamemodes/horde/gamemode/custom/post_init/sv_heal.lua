@@ -38,6 +38,7 @@ function HORDE:Horde_SendStopSlowHeal(ply)
 end
 
 function HORDE:Horde_HealBy(ply, hp, maxhealth_limit)
+    if !IsValid(ply) or !hp then return end
     if maxhealth_limit then
         ply:SetHealth(math.min(ply:GetMaxHealth(), ply:Health() + hp))
     else

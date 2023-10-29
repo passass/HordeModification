@@ -8,7 +8,7 @@ function entmeta:Horde_AddBleedingEffect(inflictor)
         timer.Create(id, 0.5, 0, function ()
             if not self:IsValid() or not self.Horde_Debuff_Active[HORDE.Status_Bleeding] then timer.Remove(id) return end
             if self:IsPlayer() then
-                HORDE:Horde_HealBy(ply, - d)
+                HORDE:Horde_HealBy(self, - d)
             else
                 self:SetHealth(self:Health() - d)
             end
