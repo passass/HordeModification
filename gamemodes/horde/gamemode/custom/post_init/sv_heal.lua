@@ -20,6 +20,43 @@ function plymeta:Horde_GetTotalHP()
 	return math.min(self:Health() + (self.Horde_HealHPRemain or 0), self.Horde_HealLastMaxHealth)
 end
 
+util.AddNetworkString("Horde_SlowHeal_Proceed")
+
+function HORDE:Horde_SendSlowHealData(ply, hp)
+    if !ply.Horde_HealHPRemain or ply.Horde_HealHPRemain < 1 then return end
+    net.Start("Horde_SlowHeal_Proceed")
+    net.WriteEntity(ply)
+    net.WriteInt(math.floor(ply.Horde_HealHPRemain + (hp or ply:Health())), 10)
+    net.Broadcast()
+end
+
+function HORDE:Horde_SendStopSlowHeal(ply)
+    net.Start("Horde_SlowHeal_Proceed")
+    net.WriteEntity(ply)
+    net.WriteInt(0, 8)
+    net.Broadcast()
+end
+
+function HORDE:Horde_HealBy(ply, hp, maxhealth_limit)
+    if maxhealth_limit then
+        ply:SetHealth(math.min(ply:GetMaxHealth(), ply:Health() + hp))
+    else
+        ply:SetHealth(ply:Health() + hp)
+    end
+    HORDE:Horde_SendSlowHealData(ply)
+end
+
+function HORDE:Horde_SetHealth(ply, hp)
+    ply:SetHealth(hp)
+    HORDE:Horde_SendSlowHealData(ply)
+end
+
+hook.Add("Horde_OnPlayerDamageTakenPost", "Horde_SlowHeal_Proceed", function(ply, dmg, bonus)
+    if ply.Horde_HealHPRemain and ply.Horde_HealHPRemain >= 1 then
+        HORDE:Horde_SendSlowHealData(ply, ply:Health() - dmg:GetDamage())
+    end
+end)
+
 function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
 
     overhealmult = overhealmult or 1 + healinfo:GetOverHealPercentage()
@@ -30,7 +67,7 @@ function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
     
     local maxhealth = self:GetMaxHealth() * overhealmult
     local lastmaxhealth = self.Horde_HealLastMaxHealth
-    local health = self:Health()
+    local health
 
     --------------------> setup vars
     local remainhp = self.Horde_HealHPRemain
@@ -38,11 +75,21 @@ function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
         remainhp = 0
     end
     self.Horde_HealHPRemain = remainhp + amount
+    
     local timer_obj
     if !self.Horde_HealTimer or !self.Horde_HealTimer:IsValid() then
         timer_obj = HORDE.Timers:New({
             linkwithent = self,
             timername = "Horde_" .. self:EntIndex() .. "SlowlyHeal",
+            ResetStats = function()
+                timer_obj.delay = timer_obj.vars_on_init.delay
+                self.Horde_HealLastMaxHealth = nil
+                self.Horde_HealHPRemain = 0
+                HORDE:Horde_SendStopSlowHeal(self)
+            end,
+            --OnStop = function()
+            --    HORDE:Horde_SendStopSlowHeal(self)
+            --end,
             func = function(timerobj)
                 remainhp = self.Horde_HealHPRemain
                 if IsValid(self) and remainhp and remainhp >= 1 then
@@ -54,7 +101,7 @@ function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
                     end
                 end
                 timerobj:Stop()
-                timerobj.delay = timerobj.vars_on_init.delay
+                timerobj.ResetStats()
             end,
             callfunconstart = true,
             delay = HealInfo:GetDelay()
@@ -79,6 +126,8 @@ function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
     if is_update_timer or !timer_obj:TimerExists() or timer_obj:IsStopped() then
         timer_obj:UpdateTimer()
     end
+
+    HORDE:Horde_SendSlowHealData(self)
 
     hook.Run("Horde_SlowHeal_Post", self, amount, overhealmult)
     return true
@@ -108,23 +157,19 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
         if healinfo:IsImmediately() == false then
             ply:Horde_SlowHeal(heal_bonus * healinfo:GetHealAmount(), healinfo, maxhealth_mult)
         else
-            ply:SetHealth(
-                math.min(
-                    ply:GetMaxHealth() * maxhealth_mult,
-                    ply:Health() + heal_bonus * healinfo:GetHealAmount()
-                )
-            )
+            HORDE:Horde_SetHealth(ply, math.min(
+                ply:GetMaxHealth() * maxhealth_mult,
+                ply:Health() + heal_bonus * healinfo:GetHealAmount()
+            ))
         end
     else
         if healinfo:IsImmediately() == false then
             ply:Horde_SlowHeal(healinfo:GetHealAmount(), healinfo, maxhealth_mult)
         else
-            ply:SetHealth(
-                math.min(
-                    ply:GetMaxHealth() * maxhealth_mult,
-                    ply:Health() + healinfo:GetHealAmount()
-                )
-            )
+            HORDE:Horde_SetHealth(ply, math.min(
+                ply:GetMaxHealth() * maxhealth_mult,
+                ply:Health() + healinfo:GetHealAmount()
+            ))
         end
         return
     end

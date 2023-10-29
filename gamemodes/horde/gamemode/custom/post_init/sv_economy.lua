@@ -353,8 +353,9 @@ net.Receive("Horde_BuyItem", function (len, ply)
                 local maxarmor = ply:GetMaxArmor()
                 if item.class == "armorrefill" then
                     local curarmor = ply:Armor()
-                    price = (maxarmor - curarmor) * 10
-                    ply:SetArmor(maxarmor)
+                    local recovered_armor = math.min(math.floor(ply:Horde_GetMoney() / 10), maxarmor - curarmor)
+                    price = recovered_armor * 10
+                    ply:SetArmor(recovered_armor + curarmor)
                 elseif string.sub(item.class, 1, 6) ~= "armor_" then
                     if item.entity_properties.override_maxarmor then
                         if armorcount > maxarmor then

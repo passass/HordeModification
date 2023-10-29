@@ -96,6 +96,9 @@ end
 ------------------------->
 
 function HORDE.Timers:Stop()
+    if self.OnStop then
+        self.OnStop()
+    end
     timer.Stop(self.timername)
     self.stopped = true
 end

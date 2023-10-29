@@ -146,36 +146,87 @@ function PANEL:Paint()
     -- background
     draw_rect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(13) - airgap, bars_size_x, airgap + ScreenScale(3), Color(30,30,30,150))
     -- HP
-    if vmaxhp > 100 then
-        local hp_bar_size_y = airgap - ScreenScale(2)
+    -- СДЕЛАТЬ ПОЛЕ ХИЛА
+    local hp_bar_size_y = airgap - ScreenScale(2)
+    --[[if vmaxhp > 100 then
         local hp_bar_pos_y = size_y - ScreenScale(9) - airgap
 
-        local hp_bar_size_x = (bars_size_x - ScreenScale(2)) / (vmaxhp / 100)
+        local hp_bar1_size_x = (bars_size_x - ScreenScale(2)) / (vmaxhp / 100)
+        
         draw_rect(bars_pos_x,
             hp_bar_pos_y,
-            hp_bar_size_x * math.min(1, vhp / 100),
+            hp_bar1_size_x * math.min(1, vhp / 100),
             hp_bar_size_y,
             health_color)
-        if vhp > 100 then
-            draw_rect(bars_pos_x + hp_bar_size_x + ScreenScale(1), -- x
-                hp_bar_pos_y, -- y
-                ((bars_size_x - ScreenScale(2)) - hp_bar_size_x - ScreenScale(1)) * math.min((vhp - 100) / (vmaxhp - 100), 1), -- size_x
-                hp_bar_size_y, -- size_y
-                health_color) -- color
+        local Horde_SlowHealHP = ply.Horde_HealHPRemain_Max --ply:GetNWInt("Horde_SlowHealHP")
+
+        if Horde_SlowHealHP and Horde_SlowHealHP >= 1 then
+            Horde_SlowHealHP = Horde_SlowHealHP - vhp
+        else 
+            Horde_SlowHealHP = nil
         end
         
-        draw_rect(bars_pos_x + hp_bar_size_x, -- x
+        if vhp > 100 then
+            draw_rect(bars_pos_x + hp_bar1_size_x + ScreenScale(1), -- x
+                hp_bar_pos_y, -- y
+                ((bars_size_x - ScreenScale(2)) - hp_bar1_size_x - ScreenScale(1)) * math.min((vhp - 100) / (vmaxhp - 100), 1), -- size_x
+                hp_bar_size_y, -- size_y
+                health_color) -- color
+        else
+            if Horde_SlowHealHP then
+                draw_rect(bars_pos_x + hp_bar1_size_x * math.min(1, vhp / 100),
+                    hp_bar_pos_y,
+                    math.ceil((hp_bar1_size_x - hp_bar1_size_x * math.min(1, vhp / 100)) * math.min(1, Horde_SlowHealHP / (100 - vhp))),
+                    hp_bar_size_y,
+                    Color(199, 199, 199, 204))
+            end
+        end
+
+        if Horde_SlowHealHP and (vhp + Horde_SlowHealHP) > 100 then
+            print(math.min(1, Horde_SlowHealHP / (vmaxhp - vhp)), vmaxhp - vhp)
+            draw_rect(bars_pos_x + hp_bar1_size_x + ScreenScale(1) + ((bars_size_x - ScreenScale(2)) - hp_bar1_size_x - ScreenScale(1)) * math.min((vhp - 100) / (vmaxhp - 100), 1),
+                hp_bar_pos_y,
+                ((bars_size_x - ScreenScale(2)) - hp_bar1_size_x - ScreenScale(1)) * math.min(1, Horde_SlowHealHP / (vmaxhp - vhp)),
+                hp_bar_size_y,
+                Color(199, 199, 199, 204))
+        end
+        
+        draw_rect(bars_pos_x + hp_bar1_size_x, -- x
             hp_bar_pos_y, -- y
             ScreenScale(1), -- size_x
             hp_bar_size_y, -- size_y
             Color(0,0,0,255)) -- color
     else
-        local hp_perc = math.min(1, vhp / vmaxhp)
-        draw_rect(bars_pos_x, size_y - ScreenScale(9) - airgap, (bars_size_x - ScreenScale(2)) * hp_perc, airgap - ScreenScale(2), health_color)
+        ]]
+    local Horde_SlowHealHP = ply.Horde_HealHPRemain_Max
+    local hp_perc = math.min(1, vhp / vmaxhp)
+    local hpbars_size_x = math.floor((bars_size_x - ScreenScale(2)) * hp_perc)
+    if Horde_SlowHealHP and Horde_SlowHealHP >= 1 then
+        draw_rect(bars_pos_x + hpbars_size_x,
+        size_y - ScreenScale(9) - airgap,
+        math.ceil((bars_size_x - ScreenScale(2)) * math.min(1, ply.Horde_HealHPRemain_Max / vmaxhp)) - hpbars_size_x,
+        hp_bar_size_y,
+        Color(199, 199, 199, 204))
     end
+    draw_rect(bars_pos_x,
+    size_y - ScreenScale(9) - airgap,
+    hpbars_size_x,
+    hp_bar_size_y,
+    health_color)
+
     if vhp / vmaxhp > 1 then
-        draw_rect(bars_pos_x, size_y - ScreenScale(9) - airgap, (bars_size_x - ScreenScale(2)) * math.min(vhp / vmaxhp - 1, 1), airgap - ScreenScale(2), extra_health_color)
+        draw_rect(bars_pos_x,
+        size_y - ScreenScale(9) - airgap,
+        hpbars_size_x * math.min(1, (vhp / vmaxhp) - 1),
+        hp_bar_size_y,
+        extra_health_color)
     end
+
+    local separator_count = math.Clamp(math.ceil(vmaxhp / 50), 1, 4)
+    for i = 1, (separator_count - 1) do
+        draw_rect(bars_pos_x + (bars_size_x - ScreenScale(2)) / separator_count * i - ScreenScale(1), size_y - ScreenScale(9) - airgap, ScreenScale(1), hp_bar_size_y, Color(0,0,0,255))
+    end
+
     -- Black
     surface.SetDrawColor(Color(0,0,0,255))
 
