@@ -3,6 +3,8 @@ PERK.Description = [[
 The Assault class is an all-purpose fighter with high mobility and a focus on Adrenaline stacks.
 Complexity: EASY
 
+Can see invisible zombies.
+
 {1} more movement speed. ({2} per level, up to {3}).
 {4} increased Ballistic damage. ({5} per level, up to {6}).
 {slomo1} increased reload speed and firerate in slow motion. ({slomo2} per level, up to {slomo3}).

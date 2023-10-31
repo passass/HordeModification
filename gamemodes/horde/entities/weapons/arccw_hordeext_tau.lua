@@ -184,6 +184,7 @@ end
 function SWEP:PrimaryAttack()
     if (not self:CanPrimaryAttack()) then return end
     if self.Spin == 1 then return end
+    if self.Weapon:Clip1() <= 0 then return end
     if self.Weapon:Ammo1() <= 0 then
         self.Weapon:EmitSound( "Weapon_Horde_Tau_Cannon.DryFire" )
         self:SetNextPrimaryFire( CurTime() + 0.2 )
@@ -238,6 +239,7 @@ end
 function SWEP:SecondaryAttack()
     if (not self:CanPrimaryAttack()) then return end
     if self.Spin == 1 then return end
+    if self.Weapon:Clip1() < 5 then return end
     if self.Weapon:Ammo1() < 5 then
         self.Weapon:EmitSound( "Weapon_Horde_Tau_Cannon.DryFire" )
         self:SetNextPrimaryFire( CurTime() + 0.2 )

@@ -11,12 +11,12 @@ local font = "HealthInfo"
 local font2 = "HealthInfo2"
 local font3 = "Horde_WeaponName"
 local fontweight = "Horde_Weight"
-local fontplayername = "PlayerName_EXT"
+local fontplayername = "Horde_Weight"--"PlayerName_EXT"
 
 local health_color = Color(201,13,13,222)
 local extra_health_color = Color(223,202,14,222)
-local armor_color = Color(28,4,240,222)
-local death_color = Color(145, 0, 0, 255)
+local armor_color = Color(40,208,250,222)
+local death_color = Color(223, 0, 0)
 local vanish = Color(0, 0, 0, 0)
 
 local PANEL = {}
@@ -64,14 +64,20 @@ function PANEL:Calculate_Data()
         self.player_position = table.KeyFromValue( all_players, ply )
     end
 
+    local airgap = ScreenScale(6)
+    local class_icon_y = ScrH() - airgap - ScreenScale(37) - (MySelf != ply and ScreenScale(10) or 0) - self.player_position * ScreenScale(40)
+
+    local size_x, size_y = airgap + ScreenScale(160), ScreenScale(43)
+    self:SetPos(airgap, class_icon_y)
+    self:SetSize(size_x, size_y)
+
     if !self.ply_Avatar then
         local prnt_panel = self
 
-        local avatar_size = ScreenScale(13.3)
-
         self.ply_Avatar = vgui.Create("AvatarImage", prnt_panel)
+        local avatar_size = ScreenScale(8)
+        self.ply_Avatar:SetPos(ScreenScale(30), size_y - avatar_size - ScreenScale(1.5))
         self.ply_Avatar:SetSize(avatar_size, avatar_size)
-        self.ply_Avatar:SetPos(ScreenScale(10), ScreenScale(5))
         self.ply_Avatar:SetVisible(true)
         self.ply_Avatar:SetPlayer(ply)
         self.ply_Avatar:SetMouseInputEnabled(false)
@@ -83,13 +89,6 @@ function PANEL:Calculate_Data()
         self.ply_Avatar.Dead_Pic:SetMaterial(dead)
         self.ply_Avatar.Dead_Pic:SetMouseInputEnabled(false)
     end
-
-    local airgap = ScreenScale(6)
-    --local class_icon_x = airgap + ScreenScale(4)
-    local class_icon_y = ScrH() - airgap - ScreenScale(37) - self.player_position * ScreenScale(40)
-
-    self:SetPos(airgap, class_icon_y)
-    self:SetSize(airgap + ScreenScale(160), ScreenScale(43))
 end
 
 function PANEL:OnRemove()
@@ -235,76 +234,82 @@ function PANEL:Paint()
     end
 
     -- NICKNAME
-    draw.SimpleTextOutlined(ply:LongName(), fontplayername, class_icon_x + class_icon_s + ScreenScale(6), icon_y + ScreenScale(1), color_white, nil, nil, 1, Color( 68, 68, 68))
+    draw.SimpleTextOutlined(ply:LongName(), fontplayername, class_icon_x + class_icon_s + ScreenScale(20), size_y - ScreenScale(9.5), color_white, nil, nil, 1, Color( 68, 68, 68))
     
     -- WEAPON AND AMMO
     draw.SimpleTextOutlined(ply:Horde_GetMoney() .. "$", fontweight, ScreenScale(32), icon_y + ScreenScale(12), color_white, nil, nil, 1, Color( 68, 68, 68))
-
-    local wpn = ply:GetActiveWeapon()
-    if IsValid(wpn) then
-        local ammo_type = wpn:GetPrimaryAmmoType()
-        local has_ammo = ammo_type > 0
-        local curwep_x = ScreenScale(69)
-        local clip1 = wpn:Clip1()
-        local maxclip1 = wpn:GetMaxClip1()
-        local has_clip = maxclip1 > 0
-        if has_ammo or has_clip then
-            local curammo = ply:GetAmmoCount(ammo_type)
-            if has_clip then
-                draw.SimpleText(tostring(clip1), fontweight, ScreenScale(57), size_y - ScreenScale(1), color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
-                if has_ammo then
-                    draw.SimpleText("/", fontweight, ScreenScale(58), size_y - ScreenScale(1), color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-                end
-            end
-            if has_ammo then
-                local curammo_x = ScreenScale(has_clip and 61 or 56)
-                local text_size_x, text_size_y =
-                draw.SimpleText(tostring(curammo), has_clip and font3 or fontweight, curammo_x, size_y - ScreenScale(1), color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-                curwep_x = math.max(curammo_x + text_size_x + ScreenScale(1), curwep_x)
-            end
-        else
-            curwep_x = ScreenScale(60)
-        end
-        draw.SimpleText(wpn:GetPrintName(), fontweight, curwep_x, size_y - ScreenScale(1), color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-    end
 
     surface.SetMaterial(weight)
     surface.SetDrawColor(color_white)
     local wx = size_x - ScreenScale(52)
     local wy = icon_y + ScreenScale(11)
     surface.DrawTexturedRect(wx, wy, ScreenScale(10), ScreenScale(10))
+
     draw.SimpleText(tostring(ply:Horde_GetMaxWeight() - ply:Horde_GetWeight()) .. "/" .. tostring(ply:Horde_GetMaxWeight()), fontweight, wx, wy + ScreenScale(1), color_white, TEXT_ALIGN_RIGHT)
 
-    if ply:Horde_GetGadget() ~= nil then
-        local gadget = ply:Horde_GetGadget()
-        local charge = ply:Horde_GetGadgetCharges()
-        local cd = ply:Horde_GetGadgetInternalCooldown()
-        local x = size_x - ScreenScale(38)
-        local y = size_y - ScreenScale(33)
-        local s = ScreenScale(20) + airgap
-        draw.RoundedBox(10, x, y, s, s, Color(40,40,40,150))
+    if ply != MySelf then
 
-        local mat = Material(HORDE.gadgets[gadget].Icon, "mips smooth")
-        surface.SetMaterial(mat) -- Use our cached material
-        if HORDE.gadgets[gadget].Active then
-            if HORDE.gadgets[gadget].Once then
-                surface.SetDrawColor(HORDE.color_gadget_once)
+        local wpn = ply:GetActiveWeapon()
+        if IsValid(wpn) then
+
+            local pos_y = icon_y + ScreenScale(12)--ScreenScale(21)--size_y - ScreenScale(1)
+            local pos_x = ScreenScale(36)
+            local ammo_type = wpn:GetPrimaryAmmoType()
+            local has_ammo = ammo_type > 0
+            local clip1 = wpn:Clip1()
+            local maxclip1 = wpn:GetMaxClip1()
+            local has_clip = maxclip1 > 0
+            if has_ammo or has_clip then
+                local curammo = ply:GetAmmoCount(ammo_type)
+                if has_clip then
+                    draw.SimpleText(tostring(clip1), fontweight, pos_x, pos_y, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+                    if has_ammo then
+                        draw.SimpleText("/", fontweight, pos_x + ScreenScale(1), pos_y, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+                    end
+                end
+                if has_ammo then
+                    local curammo_x = pos_x - ScreenScale(has_clip and -4 or 3)
+                    local text_size_x, text_size_y =
+                    draw.SimpleText(tostring(curammo), has_clip and font3 or fontweight, curammo_x, pos_y, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+                    pos_x = math.max(curammo_x + text_size_x + ScreenScale(1), pos_x)
+                end
             else
-                surface.SetDrawColor(HORDE.color_gadget_active)
+                pos_x = pos_x + ScreenScale(2)
             end
-        else
-            surface.SetDrawColor(color_white)
-        end
-        surface.DrawTexturedRect(x - ScreenScale(17), y - ScreenScale(2), ScreenScale(60), ScreenScale(30))
-
-        if cd > 0 then
-            draw.RoundedBox(10, x, y, s, s, Color(40,40,40,225))
-            surface.SetDrawColor(color_white)
-            draw.SimpleText(cd, font, x + s/2, y + s/2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText(wpn:GetPrintName(), fontweight, pos_x + ScreenScale(4), pos_y, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
         end
 
-        if charge >= 0 then
-            draw.SimpleText(charge, fontweight, x + s - ScreenScale(5), y + ScreenScale(5), color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        if ply:Horde_GetGadget() ~= nil then
+            local gadget = ply:Horde_GetGadget()
+            local charge = ply:Horde_GetGadgetCharges()
+            local cd = ply:Horde_GetGadgetInternalCooldown()
+            local x = size_x - ScreenScale(38)
+            local y = size_y - ScreenScale(33)
+            local s = ScreenScale(20) + airgap
+            draw.RoundedBox(10, x, y, s, s, Color(40,40,40,150))
+
+            local mat = Material(HORDE.gadgets[gadget].Icon, "mips smooth")
+            surface.SetMaterial(mat) -- Use our cached material
+            if HORDE.gadgets[gadget].Active then
+                if HORDE.gadgets[gadget].Once then
+                    surface.SetDrawColor(HORDE.color_gadget_once)
+                else
+                    surface.SetDrawColor(HORDE.color_gadget_active)
+                end
+            else
+                surface.SetDrawColor(color_white)
+            end
+            surface.DrawTexturedRect(x - ScreenScale(17), y - ScreenScale(2), ScreenScale(60), ScreenScale(30))
+
+            if cd > 0 then
+                draw.RoundedBox(10, x, y, s, s, Color(40,40,40,225))
+                surface.SetDrawColor(color_white)
+                draw.SimpleText(cd, font, x + s/2, y + s/2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            end
+
+            if charge >= 0 then
+                draw.SimpleText(charge, fontweight, x + s - ScreenScale(5), y + ScreenScale(5), color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            end
         end
     end
 end

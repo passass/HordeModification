@@ -13,8 +13,6 @@ include("KFNPCBaseVars.lua")
 
 ENT.PrevEnemyPos = Vector(0,0,0)
 
-ENT.HeadHealth = 250
-
 ENT.HeadLess = false
 
 ENT.StunInStun = true
@@ -48,13 +46,14 @@ ENT.MeleeAttackDistance = 19
 
 
 ENT.AutoChangeActivityWhenOnFire = false
-
-
+if CLIENT then
+    language.Add("npc_hordeext_husk", "Husk")
+end
 ENT.NextShoot = 0
 
 function ENT:Initialize()
 	self.Model = "models/Tripwire/Killing Floor/Zeds/KFHusk.mdl"
-	self:KFNPCInit(Vector(18,18,75),MOVETYPE_STEP,nil,600,"*0.1","/3","*0.05")
+	self:KFNPCInit(Vector(18,18,75),MOVETYPE_STEP,nil,300,"*0.1","/2.25","*0.05")
 	self.FlinchDamage = 0
 	
 	

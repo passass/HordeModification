@@ -62,11 +62,13 @@ ENT.PoundRageBumpDamScale = 0.01
 
 ENT.BigZed = true
 
-
+if CLIENT then
+    language.Add("npc_hordeext_brute", "Brute")
+end
 
 function ENT:Initialize()
 	self.Model = "models/Tripwire/Killing Floor/Zeds/KFBrute.mdl"
-	self:KFNPCInit(Vector(-19,-19,95),MOVETYPE_STEP,nil,825,"/4","/2","/4")
+	self:KFNPCInit(Vector(-19,-19,95),MOVETYPE_STEP,nil,750,"/4","/1.2","/4")
 	self.StunDamage = 0
 	self.FlinchDamage = 0
 	

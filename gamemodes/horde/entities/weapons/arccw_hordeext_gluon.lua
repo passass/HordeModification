@@ -153,6 +153,7 @@ function SWEP:PrimaryAttack()
         self.Weapon:EmitSound( "HL.DryFire" )
         self:SetNextPrimaryFire( CurTime() + 0.2 )
         self:SetNextSecondaryFire( CurTime() + 0.2 )
+        return
     end
     if self.AttacksUnderwater == false and self.Owner:WaterLevel() == 3 then
         self.Weapon:EmitSound( "HL.DryFire" )

@@ -45,7 +45,9 @@ ENT.IdlingSoundEnabled = true
 ENT.IdlingSound.name = "KFMod.Crawler.Idle"
 ENT.IdlingSound.min = 1
 ENT.IdlingSound.max = 4
-
+if CLIENT then
+    language.Add("npc_hordeext_crawler", "Crawler")
+end
 
 ENT.CanJump = true
 
@@ -72,7 +74,7 @@ end
 
 function ENT:Initialize()
 	self.Model = "models/Tripwire/Killing Floor/Zeds/KFCrawler.mdl"
-	self:KFNPCInit({ Vector(-25,-25,0), Vector(25,25,33) },MOVETYPE_STEP,nil,100,"0","/2.8")
+	self:KFNPCInit({ Vector(-25,-25,0), Vector(25,25,33) },MOVETYPE_STEP,nil,75, "0", "/3")
 	
 	self.StunDamage = 0
 	self.FlinchDamage = 0

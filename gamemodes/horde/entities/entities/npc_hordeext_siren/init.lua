@@ -44,11 +44,13 @@ ENT.IdlingSound.max = 1
 
 ENT.LastScream = nil
 
-
+if CLIENT then
+    language.Add("npc_hordeext_siren", "Siren")
+end
 
 function ENT:Initialize()
 	self.Model = "models/Tripwire/Killing Floor/Zeds/KFSiren.mdl"
-	self:KFNPCInit(Vector(-16,-16,70),MOVETYPE_STEP,nil,350,"*0.75","/1.5","*0.05")
+	self:KFNPCInit(Vector(-16,-16,70),MOVETYPE_STEP,nil,200,"*0.75","/1.5","*0.05")
 	self.StunDamage = 0
 	
 	self:DropToFloor()

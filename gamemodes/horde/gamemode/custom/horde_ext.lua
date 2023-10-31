@@ -39,19 +39,19 @@ local function ExtInclude(name, dir)
 	-- Determine where to load the files
 	if sep[1] == "sv" then
 		if SERVER then
-			include(name)
+			NEW_include(name)
 		end
 	elseif sep[1] == "cl" then
 		if SERVER then
-			AddCSLuaFile(name)
+			NEW_AddCSLuaFile(name)
 		else
-			include(name)
+			NEW_include(name)
 		end
 	elseif sep[1] == "sh" then
 		if SERVER then
-			AddCSLuaFile(name)
+			NEW_AddCSLuaFile(name)
 		end
-		include(name)
+		NEW_include(name)
 	end
 end
 

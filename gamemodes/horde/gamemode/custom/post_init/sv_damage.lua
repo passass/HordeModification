@@ -20,6 +20,13 @@ function HORDE:ApplyDamageUpgradewpnDamage(ply, bonus, dmginfo)
     end
 end
 
+hook.Add("ScaleNPCDamage", "Horde_ApplyDamage", function (npc, hitgroup, dmginfo)
+    if (not HORDE:IsPlayerMinion(npc)) then
+        if hitgroup == HITGROUP_KFHEAD then hitgroup = HITGROUP_HEAD end
+        HORDE:ApplyDamage(npc, hitgroup, dmginfo)
+    end
+end)
+
 function HORDE:ApplyDamage(npc, hitgroup, dmginfo)
     if dmginfo:GetDamageCustom() > 0 then return end
     if dmginfo:GetDamage() <= 0 then return end

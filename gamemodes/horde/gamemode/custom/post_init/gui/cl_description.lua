@@ -937,69 +937,74 @@ function PANEL:Paint()
                 surface.DrawRect(0, 0, self:GetWide(), 200)
             end
 
-            if self.item.category ~= "Equipment" and self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_WPN then
-                self.ammo_panel:SetVisible(true)
+            if self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_WPN then -- self.item.category ~= "Equipment" and 
+                local primary_ammo_price, secondary_ammo_price = self.item.ammo_price, self.item.secondary_ammo_price
+                
+                if primary_ammo_price and primary_ammo_price > 0 or secondary_ammo_price and secondary_ammo_price > 0 then
+                
+                    self.ammo_panel:SetVisible(true)
 
-                if self.item.ammo_price and self.item.ammo_price >= 0 then
-                    self.ammo_one_btn:SetTextColor(Color(255,255,255))
-                    local price = self.item.ammo_price and self.item.ammo_price or HORDE.default_ammo_price
-                    self.ammo_one_btn:SetText(translate.Get("Shop_Buy_Ammo_Clip") .. " x 1 (" .. tostring(HORDE:Ammo_RefillOneMagCost(MySelf, self.item)) .. "$)")
-                    self.ammo_one_btn:SetWide(self:GetWide() / 2)
-                    self.ammo_one_btn.Paint = function ()
-                        surface.SetDrawColor(HORDE.color_crimson)
-                        surface.DrawRect(0, 0, self:GetParent():GetParent():GetWide()/2, 200)
-                    end
+                    if primary_ammo_price and primary_ammo_price >= 0 then
+                        self.ammo_one_btn:SetTextColor(Color(255,255,255))
+                        local price = primary_ammo_price and primary_ammo_price or HORDE.default_ammo_price
+                        self.ammo_one_btn:SetText(translate.Get("Shop_Buy_Ammo_Clip") .. " x 1 (" .. tostring(HORDE:Ammo_RefillOneMagCost(MySelf, self.item)) .. "$)")
+                        self.ammo_one_btn:SetWide(self:GetWide() / 2)
+                        self.ammo_one_btn.Paint = function ()
+                            surface.SetDrawColor(HORDE.color_crimson)
+                            surface.DrawRect(0, 0, self:GetParent():GetParent():GetWide()/2, 200)
+                        end
 
 
-                    self.ammo_ten_btn:SetTextColor(Color(255,255,255))
-                    self.ammo_ten_btn:SetText((translate.Get("Shop_Buy_Ammo_All") or "Buy All") .. " (" .. HORDE:Ammo_GetMaxAmmo(MySelf:GetWeapon(self.item.class)) .. "max " .. tostring(HORDE:Ammo_RefillCost(MySelf, self.item)) .. "$)")
-                    self.ammo_ten_btn:SetWide(self:GetWide() / 2)
-                    self.ammo_ten_btn.Paint = function ()
-                        surface.SetDrawColor(HORDE.color_crimson)
-                        surface.DrawRect(0, 0, self:GetParent():GetParent():GetWide()/2, 200)
-                    end
-                else
-                    self.ammo_panel:SetVisible(false)
-                end
-
-                if self.item.secondary_ammo_price and self.item.secondary_ammo_price > 0 then
-                    self.ammo_secondary_btn:SetVisible(true)
-                    self.ammo_secondary_btn:SetTextColor(Color(255,255,255))
-                    self.ammo_secondary_btn:SetText(translate.Get("Shop_Buy_Secondary_Ammo") .. " x 1 (" .. tostring(self.item.secondary_ammo_price) .. "$)")
-                    self.ammo_secondary_btn.Paint = function ()
-                        surface.SetDrawColor(HORDE.color_crimson)
-                        surface.DrawRect(0, 0, self:GetWide(), 200)
-                    end
-                else
-                    self.ammo_secondary_btn:SetVisible(false)
-                end
-
-                --print("self:IsUpgradable()", self:IsUpgradable(), HORDE:ItemCanUpgrade(MySelf, self.item, self.is_special_weapon_item))
-                if self:IsUpgradable() then
-                    self.upgrade_btn:SetVisible(true)
-                    self.upgrade_btn:SetTextColor(Color(255,255,255))
-                    local price = HORDE:GetUpgradePrice(self.item.class)
-                    self.upgrade_btn:SetText((translate.Get("Shop_UpgradeTo") or "Upgrade to") .. " +" .. tostring(MySelf:Horde_GetUpgrade(self.item.class) + 1) .. " (" .. tostring(price) .. "$)")
-                    self.upgrade_btn:SetWide(self:GetWide())
-                    self.upgrade_btn.Paint = function ()
-                        surface.SetDrawColor(Color(153,50,204))
-                        surface.DrawRect(0, 0, self:GetParent():GetWide(), 200)
-                    end
-                else
-                    self.upgrade_btn:SetVisible(false)
-                end
-
-                self.current_ammo_panel.Paint = function ()
-                    if not self.item then return end
-                    local wpn = MySelf:GetWeapon(self.item.class)
-                    local clip_ammo = wpn:Clip1()
-                    local total_ammo = MySelf:GetAmmoCount(wpn:GetPrimaryAmmoType())
-                    if wpn:GetSecondaryAmmoType() > 0 then
-                        --local clip_ammo2 = wpn:Clip2()
-                        local total_ammo2 = MySelf:GetAmmoCount(wpn:GetSecondaryAmmoType())
-                        draw.SimpleText(translate.Get("Shop_Primary_Ammo") .. ": " .. tonumber(clip_ammo) .. " / " .. tonumber(total_ammo) .. " | " .. translate.Get("Shop_Secondary_Ammo") .. ": " .. tonumber(total_ammo2), "Content", self:GetWide()/2, 10, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                        self.ammo_ten_btn:SetTextColor(Color(255,255,255))
+                        self.ammo_ten_btn:SetText((translate.Get("Shop_Buy_Ammo_All") or "Buy All") .. " (" .. HORDE:Ammo_GetMaxAmmo(MySelf:GetWeapon(self.item.class)) .. "max " .. tostring(HORDE:Ammo_RefillCost(MySelf, self.item)) .. "$)")
+                        self.ammo_ten_btn:SetWide(self:GetWide() / 2)
+                        self.ammo_ten_btn.Paint = function ()
+                            surface.SetDrawColor(HORDE.color_crimson)
+                            surface.DrawRect(0, 0, self:GetParent():GetParent():GetWide()/2, 200)
+                        end
                     else
-                        draw.SimpleText(translate.Get("Shop_Primary_Ammo") .. ": " .. tonumber(clip_ammo) .. " / " .. tonumber(total_ammo), "Content", self:GetWide()/2, 10, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                        self.ammo_panel:SetVisible(false)
+                    end
+
+                    if secondary_ammo_price and secondary_ammo_price > 0 then
+                        self.ammo_secondary_btn:SetVisible(true)
+                        self.ammo_secondary_btn:SetTextColor(Color(255,255,255))
+                        self.ammo_secondary_btn:SetText(translate.Get("Shop_Buy_Secondary_Ammo") .. " x 1 (" .. tostring(secondary_ammo_price) .. "$)")
+                        self.ammo_secondary_btn.Paint = function ()
+                            surface.SetDrawColor(HORDE.color_crimson)
+                            surface.DrawRect(0, 0, self:GetWide(), 200)
+                        end
+                    else
+                        self.ammo_secondary_btn:SetVisible(false)
+                    end
+
+                    --print("self:IsUpgradable()", self:IsUpgradable(), HORDE:ItemCanUpgrade(MySelf, self.item, self.is_special_weapon_item))
+                    if self:IsUpgradable() then
+                        self.upgrade_btn:SetVisible(true)
+                        self.upgrade_btn:SetTextColor(Color(255,255,255))
+                        local price = HORDE:GetUpgradePrice(self.item.class)
+                        self.upgrade_btn:SetText((translate.Get("Shop_UpgradeTo") or "Upgrade to") .. " +" .. tostring(MySelf:Horde_GetUpgrade(self.item.class) + 1) .. " (" .. tostring(price) .. "$)")
+                        self.upgrade_btn:SetWide(self:GetWide())
+                        self.upgrade_btn.Paint = function ()
+                            surface.SetDrawColor(Color(153,50,204))
+                            surface.DrawRect(0, 0, self:GetParent():GetWide(), 200)
+                        end
+                    else
+                        self.upgrade_btn:SetVisible(false)
+                    end
+
+                    self.current_ammo_panel.Paint = function ()
+                        if not self.item then return end
+                        local wpn = MySelf:GetWeapon(self.item.class)
+                        local clip_ammo = wpn:Clip1()
+                        local total_ammo = MySelf:GetAmmoCount(wpn:GetPrimaryAmmoType())
+                        if wpn:GetSecondaryAmmoType() > 0 then
+                            --local clip_ammo2 = wpn:Clip2()
+                            local total_ammo2 = MySelf:GetAmmoCount(wpn:GetSecondaryAmmoType())
+                            draw.SimpleText(translate.Get("Shop_Primary_Ammo") .. ": " .. tonumber(clip_ammo) .. " / " .. tonumber(total_ammo) .. " | " .. translate.Get("Shop_Secondary_Ammo") .. ": " .. tonumber(total_ammo2), "Content", self:GetWide()/2, 10, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                        else
+                            draw.SimpleText(translate.Get("Shop_Primary_Ammo") .. ": " .. tonumber(clip_ammo) .. " / " .. tonumber(total_ammo), "Content", self:GetWide()/2, 10, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                        end
                     end
                 end
             else

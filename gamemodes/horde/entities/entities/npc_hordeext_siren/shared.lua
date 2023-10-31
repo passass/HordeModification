@@ -1,4 +1,4 @@
-ENT.Base = "kf_ai"
+ENT.Base = "npc_hordeext_kf_ai"
 ENT.Type = "ai"
 
 ENT.Author = "ERROR"

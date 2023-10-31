@@ -1,12 +1,11 @@
-ENT.Base = "kf_ai"
+ENT.Base = "npc_hordeext_kf_ai"
 ENT.Type = "ai"
 
-ENT.Author = "ERROR"
-ENT.Contact = ""
-ENT.Information		= ""
-ENT.Category		= "SNPCs"
+ENT.PrintName 		= "Crawler"
+ENT.Instructions 	= "Click on the spawnicon to spawn it."
+ENT.Category		= "npcs"
 
-ENT.Spawnable = false
+ENT.Spawnable = true
 ENT.AdminOnly = false
 
 

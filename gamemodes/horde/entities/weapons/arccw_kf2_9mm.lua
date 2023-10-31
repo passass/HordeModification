@@ -30,8 +30,8 @@ SWEP.CanFireUnderwater = true
 SWEP.ChamberSize = 1 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 0.8
-SWEP.RecoilSide = 0.2
+SWEP.Recoil = 0.75
+SWEP.RecoilSide = 0.3
 SWEP.RecoilRise = 2
 
 SWEP.Delay = 60 / 600 -- 60 / RPM.
@@ -48,9 +48,9 @@ SWEP.Firemodes = {
 SWEP.NPCWeaponType = "weapon_pistol"
 SWEP.NPCWeight = 100
 
-SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 250 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 250
+SWEP.AccuracyMOA = 2.5
+SWEP.HipDispersion = 200
+SWEP.MoveDispersion = 100
 
 game.AddAmmoType( {
 	name = "ammo_starterweapon",
