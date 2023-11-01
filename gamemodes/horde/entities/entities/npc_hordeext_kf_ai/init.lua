@@ -39,7 +39,7 @@ function ENT:KFNPCInit(VEC,MTYPE,CAPS,HP,HPAdd,HHP,HHPAdd,HHPAHP)
 	self.NeedStun = false
 	self.NeedFlinch = false
 	
-	local TEMP_Diff = HORDE.difficulty - 1
+	local TEMP_Diff = HORDE.difficulty
 	
 	self.DMGMult = 1
 	self.HPMult = 1

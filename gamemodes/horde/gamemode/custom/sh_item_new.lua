@@ -335,11 +335,11 @@ end
         }), "items/hl2/weapon_pistol.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"All"})
         HORDE:CreateItem("Melee",      "Combat Knife",   "arccw_horde_knife",    100,  0, "A reliable bayonet.\nRMB to deal a heavy slash.",
         nil, 10, -1, starter_weapons_entity_properties, nil, nil, nil, {HORDE.DMG_SLASH}, nil, {"All"})
-        HORDE:CreateItem("Equipment",  "Medkit",         "weapon_horde_medkit",      1500,   0, "Rechargeble medkit.\nRMB to self-heal, LMB to heal others.",
+        HORDE:CreateItem("Equipment",  "Medkit",         "weapon_horde_medkit",      1500,   1, "Rechargeble medkit.\nRMB to self-heal, LMB to heal others.",
         nil, -1, -1, {type=HORDE.ENTITY_PROPERTY_WPN}, "items/weapon_medkit.png", nil, nil, nil, nil, nil)
-        HORDE:CreateItem("Equipment",  "Ammokit",         "hordeext_ammokit",      1750,   0, "Rechargeble Ammokit.\nRMB to give to self ammo, LMB give ammo to teammate.",
+        HORDE:CreateItem("Equipment",  "Ammokit",         "hordeext_ammokit",      1750,   1, "Rechargeble Ammokit.\nRMB to give to self ammo, LMB give ammo to teammate.",
         {Medic=true, Survivor=true}, -1, -1, nil, "items/ammo_kit.png", {Medic=2}, nil, nil, nil, nil)
-        HORDE:CreateItem("Equipment",  "Armorkit",         "hordeext_armorkit",      2000,   0, "Rechargeble Armorkit.\nRMB to recover your armor, LMB to recover armor of your teammate.",
+        HORDE:CreateItem("Equipment",  "Armorkit",         "hordeext_armorkit",      2000,   1, "Rechargeble Armorkit.\nRMB to recover your armor, LMB to recover armor of your teammate.",
         {Medic=true, Survivor=true}, -1, -1, nil, "items/armor_refill.png", {Medic=3}, nil, nil, nil, nil)
         HORDE:CreateItem("Equipment",  "Syringe",         "hordeext_syringe",      50,   0, "Syringe.\nRMB to heal others, LMB to self-heal.\nHeals 35 HP.",
         nil, 50, -1, {type=HORDE.ENTITY_PROPERTY_WPN}, nil, nil, nil, nil, nil, {"All"})

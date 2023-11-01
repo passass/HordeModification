@@ -48,6 +48,34 @@ local function Horde_LoadPerks()
     PERK = nil
 end
 
+if CLIENT then
+    function HORDE:SendSavedPerkChoices(class)
+        local tbl = MySelf.Horde_PerkChoices
+        if not tbl or tbl == {} then
+            local f = file.Read("horde/horde_ext/perk_choices.txt", "DATA")
+            if !f then
+                f = file.Read("horde/perk_choices.txt", "DATA")
+            end
+            if f then
+                MySelf.Horde_PerkChoices = util.JSONToTable(f)
+                tbl = MySelf.Horde_PerkChoices
+            end
+        end
+
+        net.Start("Horde_PerkChoice")
+            net.WriteString(class)
+            net.WriteUInt(0, 4)
+            for perk_level = 1,4 do
+                if not tbl or not tbl[class] then
+                    net.WriteUInt(1, 4)
+                else
+                    net.WriteUInt(tbl[class][perk_level] or 1, 4)
+                end
+            end
+        net.SendToServer()
+    end
+end
+
 Horde_LoadPerks()
 
 function plymeta:Horde_CallClassHook(hookname, ...)
