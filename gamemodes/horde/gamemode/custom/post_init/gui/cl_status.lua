@@ -138,70 +138,141 @@ function PANEL:Paint()
         vmaxarmor = ply:GetMaxArmor()
     end
 
-    local armor_perc = math.min(1, varmor / vmaxarmor)
-    local armor_bars_count = math.Clamp(math.floor(vmaxarmor / 50), 1, 4)
-
     -- background
     draw_rect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(13) - airgap, bars_size_x, airgap + ScreenScale(3), Color(30,30,30,150))
     -- HP
     local hp_bar_size_y = airgap - ScreenScale(2)
-    local Horde_SlowHealHP = ply.Horde_HealHPRemain_Max
     local hp_perc = math.min(1, vhp / vmaxhp)
     local hpbars_size_x = math.floor((bars_size_x - ScreenScale(2)) * hp_perc)
-    if Horde_SlowHealHP and Horde_SlowHealHP >= 1 then
-        draw_rect(bars_pos_x + hpbars_size_x,
-        size_y - ScreenScale(9) - airgap,
-        math.ceil((bars_size_x - ScreenScale(2)) * math.min(1, ply.Horde_HealHPRemain_Max / vmaxhp)) - hpbars_size_x,
-        hp_bar_size_y,
-        Color(199, 199, 199, 204))
-    end
-    draw_rect(bars_pos_x,
+
+    --[[draw_rect(bars_pos_x,
     size_y - ScreenScale(9) - airgap,
     hpbars_size_x,
     hp_bar_size_y,
-    health_color)
+    health_color)]]
 
-    if vhp / vmaxhp > 1 then
+    --[[if vhp / vmaxhp > 1 then
         draw_rect(bars_pos_x,
         size_y - ScreenScale(9) - airgap,
         hpbars_size_x * math.min(1, (vhp / vmaxhp) - 1),
         hp_bar_size_y,
         extra_health_color)
+    end]]
+
+    local TEMP = math.Clamp(vmaxhp / 50, 1, 4)
+    local hp_bars_count = math.ceil(TEMP)
+
+    local hp_bars_pos_y = size_y - ScreenScale(9) - airgap
+
+    if hp_bars_count != 1 then
+        local vhp_2 = vhp
+        local Horde_SlowHealHP
+        if !ply.Horde_HealHPRemain_Max or vhp >= ply.Horde_HealHPRemain_Max then
+            ply.Horde_HealHPRemain_Max = 0
+            Horde_SlowHealHP = 0
+        else
+            Horde_SlowHealHP = ply.Horde_HealHPRemain_Max
+        end
+
+        local pos_x_mult = hp_bars_count / (vmaxhp / 50)
+        for i = 1, hp_bars_count do
+            local remain_hp = i != hp_bars_count and 50 or (vmaxhp % 50) == 0 and 50 or (vmaxhp % 50)
+            hp_perc = math.min(1, vhp_2 / remain_hp)
+
+            local bar_cut_by = (50 / remain_hp)
+
+            
+            local pos_x = math.ceil(bars_pos_x + (bars_size_x - ScreenScale(2)) / hp_bars_count * (i - 1) * pos_x_mult)
+            local hr_bar_size_x = math.ceil((bars_size_x - ScreenScale(2)) / hp_bars_count * hp_perc * pos_x_mult / bar_cut_by)
+            
+            if vhp_2 != 0 then
+                draw_rect(pos_x, hp_bars_pos_y, hr_bar_size_x, hp_bar_size_y, health_color)
+
+                vhp_2 = math.max(0, vhp_2 - 50)
+            end
+
+            if vhp_2 == 0 and Horde_SlowHealHP >= 50 * (i - 1) then
+                draw_rect(math.ceil(pos_x + hr_bar_size_x),
+                hp_bars_pos_y,
+                math.ceil(
+                    ((bars_size_x - ScreenScale(2)) / hp_bars_count * pos_x_mult) * math.min(1, (Horde_SlowHealHP - 50 * (i - 1)) / remain_hp) / bar_cut_by
+                ) - hr_bar_size_x
+                ,
+                hp_bar_size_y,
+                Color(199, 199, 199, 204))
+
+                --Horde_SlowHealHP = Horde_SlowHealHP + old_vhp_2 - remain_hp
+            end
+
+            if i != 1 then
+                draw_rect(pos_x - ScreenScale(1), hp_bars_pos_y, ScreenScale(1), hp_bar_size_y, Color(0,0,0,255))
+            end
+        end
+
+        if vhp > vmaxhp then
+            vhp_2 = vhp - vmaxhp
+            for i = 1, hp_bars_count do
+                local remain_hp = i != hp_bars_count and 50 or (vmaxhp % 50) == 0 and 50 or (vmaxhp % 50)
+                local bar_cut_by = (50 / remain_hp)
+                hp_perc = math.min(1, vhp_2 / remain_hp)
+                local pos_x = bars_pos_x + (bars_size_x - ScreenScale(2)) / hp_bars_count * (i - 1) * pos_x_mult
+                local hr_bar_size_x = (bars_size_x - ScreenScale(2)) / hp_bars_count * hp_perc * pos_x_mult / bar_cut_by
+                if vhp_2 != 0 then
+                    draw_rect(pos_x, hp_bars_pos_y, hr_bar_size_x, hp_bar_size_y, extra_health_color)
+
+                    vhp_2 = math.max(0, vhp_2 - 50)
+                end
+
+                if i != 1 then
+                    draw_rect(pos_x - ScreenScale(1), hp_bars_pos_y, ScreenScale(1), hp_bar_size_y, Color(0,0,0,255))
+                end
+            end
+        end
+    else
+        draw_rect(bars_pos_x, hp_bars_pos_y, (bars_size_x - ScreenScale(2)) * hp_perc, hp_bar_size_y, health_color)
     end
 
-    local separator_count = math.Clamp(math.ceil(vmaxhp / 50), 1, 4)
-    for i = 1, (separator_count - 1) do
-        draw_rect(bars_pos_x + (bars_size_x - ScreenScale(2)) / separator_count * i - ScreenScale(1), size_y - ScreenScale(9) - airgap, ScreenScale(1), hp_bar_size_y, Color(0,0,0,255))
-    end
+    --for i = 1, (separator_count - 1) do
+    --    draw_rect(bars_pos_x + (bars_size_x - ScreenScale(2)) / separator_count * i + right_rel - ScreenScale(1), hp_bars_pos_y, ScreenScale(1), hp_bar_size_y, Color(0,0,0,255))
+    --end
 
     -- Black
     surface.SetDrawColor(Color(0,0,0,255))
 
-    surface.DrawRect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(9) - airgap, bars_size_x, ScreenScale(1))
+    surface.DrawRect(bars_pos_x - ScreenScale(1), hp_bars_pos_y, bars_size_x, ScreenScale(1))
     surface.DrawRect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(11), bars_size_x, ScreenScale(1))
     surface.DrawRect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(13) - airgap, bars_size_x, ScreenScale(1))
 
     surface.DrawRect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(13) - airgap, ScreenScale(1), airgap + ScreenScale(3))
     surface.DrawRect(bars_pos_x + bars_size_x - ScreenScale(2), size_y - ScreenScale(13) - airgap, ScreenScale(1), airgap + ScreenScale(3))
     -- ARMOR
-    local armor_bar_x_rel = 0
+    local pos_y = size_y - ScreenScale(12) - airgap
+
+    
+    local armor_bars_count = math.Clamp(math.ceil(vmaxarmor / 50), 1, 4)
 
     if armor_bars_count != 1 then
+        local pos_x_mult = armor_bars_count / math.Clamp(vmaxarmor / 50, 1, 4)
+
         for i = 1, armor_bars_count do
             if varmor > 0 then
-                local armor_bar_size = (bars_size_x - ScreenScale(2)) * math.min(1, varmor / 50) / armor_bars_count
+                local remain_armor = i != armor_bars_count and 50 or (vmaxarmor % 50) == 0 and 50 or (vmaxarmor % 50)
+                local bar_cut_by = (50 / remain_armor)
 
-                draw_rect(bars_pos_x + (bars_size_x - ScreenScale(2)) / armor_bars_count * (i - 1), size_y - ScreenScale(12) - airgap, armor_bar_size, armor_field_size, armor_color_real)
+                local armor_perc = math.min(1, varmor / remain_armor)
+                local armor_bar_size = (bars_size_x - ScreenScale(2)) * armor_perc / armor_bars_count * pos_x_mult / bar_cut_by
 
-                armor_bar_x_rel = armor_bar_x_rel + 1
+                draw_rect(bars_pos_x + (bars_size_x - ScreenScale(2)) / armor_bars_count * (i - 1) * pos_x_mult, pos_y, armor_bar_size, armor_field_size, armor_color_real)
+
                 varmor = varmor - 50
             end
             if i != 1 then
-                draw_rect(bars_pos_x + (bars_size_x - ScreenScale(2)) / armor_bars_count * (i - 1) - ScreenScale(1), size_y - ScreenScale(12) - airgap, ScreenScale(1), armor_field_size, Color(0,0,0,255))
+                draw_rect(bars_pos_x + (bars_size_x - ScreenScale(2)) / armor_bars_count * (i - 1) * pos_x_mult - ScreenScale(1), pos_y, ScreenScale(1), armor_field_size, Color(0,0,0,255))
             end
         end
     else
-        draw_rect(bars_pos_x, size_y - ScreenScale(12) - airgap, (bars_size_x - ScreenScale(2)) * armor_perc, armor_field_size, armor_color_real)
+        local armor_perc = math.min(1, varmor / vmaxarmor)
+        draw_rect(bars_pos_x, pos_y, (bars_size_x - ScreenScale(2)) * armor_perc, armor_field_size, armor_color_real)
     end
     
     local subclass = HORDE.subclasses[ply:Horde_GetCurrentSubclass()]
