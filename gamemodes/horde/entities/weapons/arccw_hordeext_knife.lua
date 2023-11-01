@@ -5,3 +5,5 @@ end
 SWEP.Base = "arccw_horde_knife"
 
 SWEP.CantDropWep = true
+SWEP.MeleeDamage = 20
+SWEP.Melee2Damage = 40

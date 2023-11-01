@@ -386,7 +386,7 @@ end
         local common_pistols_reqs = {Medic=true, Assault=true, Heavy=true, Demolition=true, Survivor=true, Engineer=true, Warden=true, Cremator=true, SWAT=true}
         HORDE:CreateItem("Pistol",     "Glock",          "arccw_horde_glock",    750,  2, "Glock 18.\nSemi-automatic pistols manufactured in Austrian.",
         common_pistols_reqs, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Pistol",     "USP",            "arccw_horde_usp",      750,  2, "Universelle Selbstladepistole.\nA semi-automatic pistol developed in Germany by H&K.",
+        HORDE:CreateItem("Pistol",     "USP",            "arccw_horde_usp",      450,  2, "Universelle Selbstladepistole.\nA semi-automatic pistol developed in Germany by H&K.",
         common_pistols_reqs, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "P2000",          "arccw_horde_p2000",    750,  2, "Heckler & Koch P2000.\nA serviceable first-round pistol made by H&K.",
         common_pistols_reqs, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
@@ -396,8 +396,8 @@ end
         {Survivor=true, Ghost=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Pistol",     "Deagle",         "arccw_horde_deagle",   750,  2, "Night Hawk .50C.\nAn iconic pistol that is diffcult to master.",
         {Survivor=true, Ghost=true}, 5, -1, nil, nil, {Ghost=1}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Pistol",     "M1911",          "arccw_horde_m1911",   750,  2, "Colt 1911.\nStandard-issue sidearm for the United States Armed Forces.",
-        {Ghost=true}, 5, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
+        HORDE:CreateItem("Pistol",     "M1911",          "arccw_horde_m1911",   450,  2, "Colt 1911.\nStandard-issue sidearm for the United States Armed Forces.",
+        common_pistols_reqs, 4, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC})
         
 
         local special_pistol_classes, special_pistol_requir = {Ghost=true, SWAT=true, Survivor=true, Assault=true, Heavy=true}, {Ghost=30, Survivor=30, Assault=30, Heavy=30}

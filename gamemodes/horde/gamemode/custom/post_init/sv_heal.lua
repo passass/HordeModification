@@ -33,7 +33,7 @@ end
 function HORDE:Horde_SendStopSlowHeal(ply)
     net.Start("Horde_SlowHeal_Proceed")
     net.WriteEntity(ply)
-    net.WriteInt(0, 8)
+    net.WriteInt(0, 10)
     net.Broadcast()
 end
 

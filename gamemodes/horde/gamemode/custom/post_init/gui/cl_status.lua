@@ -164,72 +164,68 @@ function PANEL:Paint()
 
     local hp_bars_pos_y = size_y - ScreenScale(9) - airgap
 
-    if hp_bars_count != 1 then
-        local vhp_2 = vhp
-        local Horde_SlowHealHP
-        if !ply.Horde_HealHPRemain_Max or vhp >= ply.Horde_HealHPRemain_Max then
-            ply.Horde_HealHPRemain_Max = 0
-            Horde_SlowHealHP = 0
-        else
-            Horde_SlowHealHP = ply.Horde_HealHPRemain_Max
+    local vhp_2 = vhp
+    local Horde_SlowHealHP
+    if !ply.Horde_HealHPRemain_Max or vhp >= ply.Horde_HealHPRemain_Max then
+        ply.Horde_HealHPRemain_Max = 0
+        Horde_SlowHealHP = 0
+    else
+        Horde_SlowHealHP = ply.Horde_HealHPRemain_Max
+    end
+
+    local pos_x_mult = hp_bars_count / (vmaxhp / 50)
+    for i = 1, hp_bars_count do
+        local remain_hp = i != hp_bars_count and 50 or (vmaxhp % 50) == 0 and 50 or (vmaxhp % 50)
+        hp_perc = math.min(1, vhp_2 / remain_hp)
+
+        local bar_cut_by = (50 / remain_hp)
+
+        
+        local pos_x = math.ceil(bars_pos_x + (bars_size_x - ScreenScale(2)) / hp_bars_count * (i - 1) * pos_x_mult)
+        local hr_bar_size_x = math.ceil((bars_size_x - ScreenScale(2)) / hp_bars_count * hp_perc * pos_x_mult / bar_cut_by)
+        
+        if vhp_2 != 0 then
+            draw_rect(pos_x, hp_bars_pos_y, hr_bar_size_x, hp_bar_size_y, health_color)
+
+            vhp_2 = math.max(0, vhp_2 - 50)
         end
 
-        local pos_x_mult = hp_bars_count / (vmaxhp / 50)
+        if vhp_2 == 0 and Horde_SlowHealHP > 50 * (i - 1) then
+            draw_rect(math.ceil(pos_x + hr_bar_size_x),
+            hp_bars_pos_y,
+            math.ceil(
+                ((bars_size_x - ScreenScale(2)) / hp_bars_count * pos_x_mult) * math.min(1, (Horde_SlowHealHP - 50 * (i - 1)) / remain_hp) / bar_cut_by
+            ) - hr_bar_size_x
+            ,
+            hp_bar_size_y,
+            Color(199, 199, 199, 204))
+
+            --Horde_SlowHealHP = Horde_SlowHealHP + old_vhp_2 - remain_hp
+        end
+
+        if i != 1 then
+            draw_rect(pos_x - ScreenScale(1), hp_bars_pos_y, ScreenScale(1), hp_bar_size_y, Color(0,0,0,255))
+        end
+    end
+
+    if vhp > vmaxhp then
+        vhp_2 = vhp - vmaxhp
         for i = 1, hp_bars_count do
             local remain_hp = i != hp_bars_count and 50 or (vmaxhp % 50) == 0 and 50 or (vmaxhp % 50)
-            hp_perc = math.min(1, vhp_2 / remain_hp)
-
             local bar_cut_by = (50 / remain_hp)
-
-            
-            local pos_x = math.ceil(bars_pos_x + (bars_size_x - ScreenScale(2)) / hp_bars_count * (i - 1) * pos_x_mult)
-            local hr_bar_size_x = math.ceil((bars_size_x - ScreenScale(2)) / hp_bars_count * hp_perc * pos_x_mult / bar_cut_by)
-            
+            hp_perc = math.min(1, vhp_2 / remain_hp)
+            local pos_x = bars_pos_x + (bars_size_x - ScreenScale(2)) / hp_bars_count * (i - 1) * pos_x_mult
+            local hr_bar_size_x = (bars_size_x - ScreenScale(2)) / hp_bars_count * hp_perc * pos_x_mult / bar_cut_by
             if vhp_2 != 0 then
-                draw_rect(pos_x, hp_bars_pos_y, hr_bar_size_x, hp_bar_size_y, health_color)
+                draw_rect(pos_x, hp_bars_pos_y, hr_bar_size_x, hp_bar_size_y, extra_health_color)
 
                 vhp_2 = math.max(0, vhp_2 - 50)
-            end
-
-            if vhp_2 == 0 and Horde_SlowHealHP >= 50 * (i - 1) then
-                draw_rect(math.ceil(pos_x + hr_bar_size_x),
-                hp_bars_pos_y,
-                math.ceil(
-                    ((bars_size_x - ScreenScale(2)) / hp_bars_count * pos_x_mult) * math.min(1, (Horde_SlowHealHP - 50 * (i - 1)) / remain_hp) / bar_cut_by
-                ) - hr_bar_size_x
-                ,
-                hp_bar_size_y,
-                Color(199, 199, 199, 204))
-
-                --Horde_SlowHealHP = Horde_SlowHealHP + old_vhp_2 - remain_hp
             end
 
             if i != 1 then
                 draw_rect(pos_x - ScreenScale(1), hp_bars_pos_y, ScreenScale(1), hp_bar_size_y, Color(0,0,0,255))
             end
         end
-
-        if vhp > vmaxhp then
-            vhp_2 = vhp - vmaxhp
-            for i = 1, hp_bars_count do
-                local remain_hp = i != hp_bars_count and 50 or (vmaxhp % 50) == 0 and 50 or (vmaxhp % 50)
-                local bar_cut_by = (50 / remain_hp)
-                hp_perc = math.min(1, vhp_2 / remain_hp)
-                local pos_x = bars_pos_x + (bars_size_x - ScreenScale(2)) / hp_bars_count * (i - 1) * pos_x_mult
-                local hr_bar_size_x = (bars_size_x - ScreenScale(2)) / hp_bars_count * hp_perc * pos_x_mult / bar_cut_by
-                if vhp_2 != 0 then
-                    draw_rect(pos_x, hp_bars_pos_y, hr_bar_size_x, hp_bar_size_y, extra_health_color)
-
-                    vhp_2 = math.max(0, vhp_2 - 50)
-                end
-
-                if i != 1 then
-                    draw_rect(pos_x - ScreenScale(1), hp_bars_pos_y, ScreenScale(1), hp_bar_size_y, Color(0,0,0,255))
-                end
-            end
-        end
-    else
-        draw_rect(bars_pos_x, hp_bars_pos_y, (bars_size_x - ScreenScale(2)) * hp_perc, hp_bar_size_y, health_color)
     end
 
     --for i = 1, (separator_count - 1) do

@@ -56,7 +56,7 @@ game.AddAmmoType( {
 	name = "ammo_starterweapon",
 } )
 
-SWEP.Horde_MaxMags = 6
+SWEP.Horde_MaxMags = 8
 SWEP.Primary.Ammo = "ammo_starterweapon" -- what ammo type the gun uses
 
 SWEP.ShootVol = 115 -- volume of shoot sound

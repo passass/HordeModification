@@ -1,7 +1,7 @@
 SWEP.Base = "arccw_go_usp"
 
-SWEP.Damage = 32
-SWEP.DamageMin = 21
+SWEP.Damage = 25
+SWEP.DamageMin = 18
 SWEP.Primary.Ammo = "pistol"
 
 

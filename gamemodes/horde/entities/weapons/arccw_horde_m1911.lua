@@ -26,8 +26,8 @@ SWEP.WorldModel = "models/weapons/w_pist_p228.mdl"
 SWEP.ViewModelFOV = 65
 
 SWEP.Horde_MaxMags = 30
-SWEP.Damage = 40
-SWEP.DamageMin = 20
+SWEP.Damage = 30
+SWEP.DamageMin = 15
 SWEP.Range = 35
 SWEP.Penetration = 3
 SWEP.DamageType = DMG_BULLET
