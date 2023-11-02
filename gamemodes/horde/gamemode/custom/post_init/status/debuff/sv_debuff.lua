@@ -69,7 +69,7 @@ function entmeta:Horde_AddDebuffBuildup(debuff, buildup, inflictor, pos)
     if self.Horde_Debuff_Active[debuff] then return end
     if not self.Horde_Debuff_Buildup[debuff] then self.Horde_Debuff_Buildup[debuff] = 0 end
     if self:IsPlayer() then
-    if self.Horde_Debuff_Buildup[debuff] >= 100 then return end
+        if self.Horde_Debuff_Buildup[debuff] >= 100 then return end
         local bonus = {apply = 1, less = 1, add = 0}
         local d2 = debuff
         if d2 == HORDE.Status_Hemorrhage then
@@ -151,7 +151,6 @@ function entmeta:Horde_AddDebuffBuildup(debuff, buildup, inflictor, pos)
     if HORDE.Status_Trigger_Sounds[debuff] then
         sound.Play(HORDE.Status_Trigger_Sounds[debuff], self:GetPos())
     end
-
     if self:IsPlayer() then
         local apply = hook.Run("Horde_PrePlayerDebuffApply", self, debuff)
         if apply ~= nil then
@@ -220,7 +219,6 @@ function entmeta:Horde_AddDebuffBuildup(debuff, buildup, inflictor, pos)
         timer.Create(str, duration, 1, function ()
             self:Horde_RemoveDebuff(debuff)
         end)
-
         -- Apply debuff effect
         if debuff == HORDE.Status_Bleeding then
             self:Horde_AddBleedingEffect(inflictor)

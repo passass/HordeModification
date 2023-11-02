@@ -1357,7 +1357,7 @@ function ENT:KFNPCClearAnimation()
 		self:ResetSequenceInfo()
 		self:SetNPCState(NPC_STATE_COMBAT)
 		
-		if(GetConVar("ai_disabled"):GetInt()==1) then
+		if(GetConVar("ai_disabled"):GetInt()==1 or self.DisableAI) then
 			self:ResetSequence(self:LookupSequence(self.IdleSequence))
 		end
 	else
@@ -1464,8 +1464,7 @@ function ENT:Think()
 	
 	self:KFNPCThinkAnyway()
 	
-	if(GetConVar("ai_disabled"):GetInt()==0&&self.IsAlive==true) then
-		
+	if(GetConVar("ai_disabled"):GetInt()==0 and self.IsAlive==true and !self.DisableAI) then
 		self:KFNPCThink()
 		
 		

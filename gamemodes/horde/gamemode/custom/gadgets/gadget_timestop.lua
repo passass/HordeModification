@@ -206,18 +206,51 @@ function HORDE:TimeStop_freeze_npc(ent)
 		ent.CustomOnThink = function() end
 	end
 
+    local is_kf_npc = not not ent.KFNPCStopAllTimers
+
     local timername = "Horde_TimeStop_FreezeNPC" .. ent:EntIndex()
 
     ent:SetSchedule(SCHED_NPC_FREEZE)
 	ent:SetMoveVelocity(Vector(0,0,0))
+
+    if is_kf_npc then
+        ent:KFNPCClearAnimation()
+        ent:KFNPCStopAllTimers()
+        ent:SetNPCState(NPC_STATE_DEAD)
+        ent:SetSchedule(SCHED_CHASE_ENEMY_FAILED)
+        ent:KFNPCStopPreviousSound()
+        ent:StopMoving()
+        ent.DisableAI = true
+        ent.MustNotMove = true
+    end
 
     timer.Create(timername, 0.1, 0, function()
         if !IsValid(ent) then
             timer.Remove(timername)
             return
         end
+
         ent:SetSchedule(SCHED_NPC_FREEZE)
 		ent:SetMoveVelocity(Vector(0,0,0))
+
+        if is_kf_npc then
+            ent:SetNPCState(NPC_STATE_DEAD)
+		    ent:SetSchedule(SCHED_CHASE_ENEMY_FAILED)
+            ent:KFNPCStopPreviousSound()
+            ent:KFNPCClearAnimation()
+            ent:StopMoving()
+            
+		    ent:SetCondition(67)
+            ent:KFNPCStopAllTimers()
+
+            ent:SetPlaybackRate(0)
+            ent:SetVelocity(Vector(0, 0, 0))
+            ent:SetLocalVelocity(Vector(0, 0, 0))
+            ent:SetPlaybackRate(0)
+            ent:KFNPCStun(ent.StunSequence)
+
+            ent:ResetSequence(ent:LookupSequence(ent.IdleSequence))
+        end
     end)
 	
     if ent.StopAttacks then ent:StopAttacks(true) end
@@ -239,6 +272,8 @@ function HORDE:TimeStop_unfreeze_npc(ent)
     if IsValid(phys) then
         phys:Wake()
     end
+
+
     ent.HasIdleSounds = ent.oldHasIdleSounds
     ent.oldHasIdleSounds = nil
 
@@ -266,6 +301,15 @@ function HORDE:TimeStop_unfreeze_npc(ent)
 		ent.CustomOnThink = ent.oldCustomOnThink
 		ent.oldCustomOnThink = nil
 	end
+
+    local is_kf_npc = not not ent.KFNPCStopAllTimers
+
+    if is_kf_npc then
+        ent:SetNPCState( NPC_STATE_NONE )
+        ent:KFNPCClearAnimation()
+        ent.DisableAI = false
+        ent.MustNotMove = false
+    end
 
     local timername = "Horde_TimeStop_FreezeNPC" .. ent:EntIndex()
 

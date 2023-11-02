@@ -13,11 +13,13 @@ function entmeta:Horde_ChangeMovementSpeed()
 	hook.Add("Think", hookid, function()
 		if !IsValid(self) then
 			hook.Remove("Think", hookid)
-			return end
+			return
+		end
 		speed = self:Horde_MovementSpeedModifierGet()
-		if !IsValid(self) then
+		if speed == 1 then
 			hook.Remove("Think", hookid)
-			return end
+			return
+		end
 		local speed_is_lower = speed < 1 and speeds_array[speed]
 		-- I HAVE NO IDEA HOW IT WORKS
 		-- I'VE TESTED MULT WITH THE HULK AND CHECK THAT HE SPEED IS NOT SUPER LOWER
@@ -33,20 +35,22 @@ end
 function entmeta:Horde_MovementSpeedModifierAdd(name, modifier)  -- THIS FUNCTION ISN'T WORK WHEN SPEED MULT LOWER THAN 1 EXCLUDE 0.5!!!!!!!!!!!!!
 	if !self.Horde_MovementSpeedModifiers then self.Horde_MovementSpeedModifiers = {} end
 	local is_npc = self:IsNPC()
-	local mult = self.Horde_MovementSpeedModifiers[name]
-	if is_npc and mult then
-		self.FootStepTimeRun = self.FootStepTimeRun * mult
-		self.FootStepTimeWalk = self.FootStepTimeWalk * mult
-	end
-	self.Horde_MovementSpeedModifiers[name] = modifier
 	if is_npc then
-		self.FootStepTimeRun = self.FootStepTimeRun / modifier
-		self.FootStepTimeWalk = self.FootStepTimeWalk / modifier
+		if self.FootStepTimeRun then
+			local mult = self.Horde_MovementSpeedModifiers[name]
+			if mult then
+				self.FootStepTimeRun = self.FootStepTimeRun * mult
+				self.FootStepTimeWalk = self.FootStepTimeWalk * mult
+			end
+			self.FootStepTimeRun = self.FootStepTimeRun / modifier
+			self.FootStepTimeWalk = self.FootStepTimeWalk / modifier
+		end
+		self.Horde_MovementSpeedModifiers[name] = modifier
 		self:Horde_ChangeMovementSpeed()
 	end
 end
 
-function entmeta:Horde_MovementSpeedModifierDelete(name) 
+function entmeta:Horde_MovementSpeedModifierDelete(name)
 	if !self.Horde_MovementSpeedModifiers then
 		self.Horde_MovementSpeedModifiers = {}
 		return
@@ -54,7 +58,7 @@ function entmeta:Horde_MovementSpeedModifierDelete(name)
 	local modif = self.Horde_MovementSpeedModifiers[name]
 	if modif then
 		self.Horde_MovementSpeedModifiers[name] = nil
-		if self:IsNPC() then
+		if self:IsNPC() and self.FootStepTimeRun then
 			self.FootStepTimeRun = self.FootStepTimeRun * modif
 			self.FootStepTimeWalk = self.FootStepTimeWalk * modif
 		end
@@ -62,6 +66,7 @@ function entmeta:Horde_MovementSpeedModifierDelete(name)
 end
 
 function entmeta:Horde_MovementSpeedModifierGet(name)
+	if !IsValid(self) then return 0 end
 	if name then
 		if !self.Horde_MovementSpeedModifiers then
 			self.Horde_MovementSpeedModifiers = {}
@@ -111,18 +116,17 @@ function entmeta:Horde_AddFrostbiteEffect(duration)
     local id = self:EntIndex()
     local bones = self:GetBoneCount()
     timer.Create("FrostbiteEffect" .. id, 0.5, 0, function ()
-        if IsValid(self) and self.Health and self:Health() > 0 and self.Horde_Debuff_Active and self.Horde_Debuff_Active[HORDE.Status_Frostbite] then 	timer.Remove("FrostbiteEffect" .. id)
-			for bone = 1, bones-1 do
-				local pos, angle = self:GetBonePosition(bone)
-				local effectdata = EffectData()
-				effectdata:SetOrigin(pos)
-				effectdata:SetScale( 1 )
-				effectdata:SetMagnitude( 1 )
-				effectdata:SetRadius( 18 )
-				util.Effect( "GlassImpact", effectdata, true, true )
-				util.Effect("horde_status_frostbite", effectdata, true, true)
-			end
-		end
+        if !self:IsValid() or (self:IsPlayer() and !self:Alive()) or not self.Horde_Debuff_Active or not self.Horde_Debuff_Active[HORDE.Status_Frostbite] then timer.Remove("FrostbiteEffect" .. id) return end
+        for bone = 1, bones-1 do
+            local pos, angle = self:GetBonePosition(bone)
+            local effectdata = EffectData()
+            effectdata:SetOrigin(pos)
+            effectdata:SetScale( 1 )
+            effectdata:SetMagnitude( 1 )
+            effectdata:SetRadius( 18 )
+            util.Effect( "GlassImpact", effectdata, true, true )
+            util.Effect("horde_status_frostbite", effectdata, true, true)
+        end
     end)
 end
 
