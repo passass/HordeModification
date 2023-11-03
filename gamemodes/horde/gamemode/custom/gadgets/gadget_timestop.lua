@@ -176,6 +176,8 @@ function HORDE:TimeStop_freeze_npc(ent)
 	if ent.RangeAttackCode_DoFinishTimers then ent:RangeAttackCode_DoFinishTimers(true) end
 	if ent.LeapAttackCode_DoFinishTimers then ent:LeapAttackCode_DoFinishTimers(true) end
 
+    if ent.AllowMovementJumping then ent.oldAllowMovementJumping = ent.AllowMovementJumping ent.AllowMovementJumping = false end
+
     ent.MeleeAttacking = false
     ent.IsAbleToMeleeAttack = true
     ent.AlreadyDoneMeleeAttackFirstHit = false
@@ -301,6 +303,8 @@ function HORDE:TimeStop_unfreeze_npc(ent)
 		ent.CustomOnThink = ent.oldCustomOnThink
 		ent.oldCustomOnThink = nil
 	end
+    print("ent.AllowMovementJumping", ent.AllowMovementJumping)
+    if ent.AllowMovementJumping then ent.AllowMovementJumping = ent.oldAllowMovementJumping ent.oldAllowMovementJumping = nil end
 
     local is_kf_npc = not not ent.KFNPCStopAllTimers
 
