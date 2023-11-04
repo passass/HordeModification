@@ -522,7 +522,9 @@ if SERVER then
 
     hook.Add("WeaponEquip", "Horde_ModifiersLoad", function(wep)
         timer.Simple(0, function()
-            HORDE:Modifier_LoadToWeaponModifier(wep)
+            if IsValid(wep) then
+                HORDE:Modifier_LoadToWeaponModifier(wep)
+            end
         end)
     end)
     util.AddNetworkString("Horde_wepModifierApply")

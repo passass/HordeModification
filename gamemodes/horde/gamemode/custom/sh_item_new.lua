@@ -319,9 +319,8 @@ end
         end
 
         HORDE.items["arccw_horde_nade_stun"].whitelist["SWAT"] = true
-
-        HORDE:CreateItem("Pistol",     "9mm",            "arccw_kf2_9mm",   50,  0, "Combine standard sidearm.",
-        nil, 4, -1, table.Merge(table.Copy(starter_weapons_entity_properties),
+        
+        local pistol_properties = table.Merge(table.Copy(starter_weapons_entity_properties),
         {
             upgrade_price_base = 500,
             is_upgradable = true,
@@ -331,17 +330,33 @@ end
             upgrade_modifiers = {
                 Horde_MaxMags = {base = 1, mult = 1},
                 Horde_TotalMaxAmmoMult = {base = 1, mult = 1}
-            }
-        }), "items/hl2/weapon_pistol.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"All"})
-        HORDE:CreateItem("Melee",      "Combat Knife",   "arccw_horde_knife",    100,  0, "A reliable bayonet.\nRMB to deal a heavy slash.",
-        nil, 10, -1, starter_weapons_entity_properties, nil, nil, nil, {HORDE.DMG_SLASH}, nil, {"All"})
+            },
+            weapons_group = "pistol",
+        })
+        local melees_properties = table.Copy(pistol_properties)
+
+        melees_properties.upgrade_modifiers = nil
+        melees_properties.weapons_group = "knife"
+        melees_properties.upgrade_damage_mult_incby = .5
+
+        HORDE:CreateItem("Pistol",     "9mm [Pistol Category]",            "arccw_kf2_9mm",   100,  0, "Combine standard sidearm.",
+        nil, 4, -1, pistol_properties, "items/hl2/weapon_pistol.png", nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"All"})
+        HORDE:CreateItem("Pistol",     "H-M500 [Pistol Category]",            "arccw_hordeext_hm500",   2000,  0, "Strong Revolver.\nDisappear after death.",
+        nil, 5, -1, pistol_properties, nil, nil, nil, {HORDE.DMG_BALLISTIC})
+    
+        HORDE:CreateItem("Melee",      "Combat Knife [Knife Category]",   "arccw_horde_knife",    100,  0, "A reliable bayonet.\nRMB to deal a heavy slash.",
+        nil, 10, -1, melees_properties, nil, nil, nil, {HORDE.DMG_SLASH}, nil, {"All"})
+        HORDE:CreateItem("Melee",      "Tomahawk [Knife Category]",   "arccw_hordeext_tomahawk",    2500,  0, "Tomahawk.\nRMB to deal a heavy slash.\nDisappear after death.",
+        nil, 10, -1, melees_properties, nil, nil, nil, {HORDE.DMG_SLASH})
+
+
         HORDE:CreateItem("Equipment",  "Medkit",         "weapon_horde_medkit",      1500,   1, "Rechargeble medkit.\nRMB to self-heal, LMB to heal others.",
         nil, -1, -1, {type=HORDE.ENTITY_PROPERTY_WPN}, "items/weapon_medkit.png", nil, nil, nil, nil, nil)
         HORDE:CreateItem("Equipment",  "Ammokit",         "hordeext_ammokit",      1750,   1, "Rechargeble Ammokit.\nRMB to give to self ammo, LMB give ammo to teammate.",
         {Medic=true, Survivor=true}, -1, -1, nil, "items/ammo_kit.png", {Medic=2}, nil, nil, nil, nil)
         HORDE:CreateItem("Equipment",  "Armorkit",         "hordeext_armorkit",      2000,   1, "Rechargeble Armorkit.\nRMB to recover your armor, LMB to recover armor of your teammate.",
         {Medic=true, Survivor=true}, -1, -1, nil, "items/armor_refill.png", {Medic=3}, nil, nil, nil, nil)
-        HORDE:CreateItem("Equipment",  "Syringe",         "hordeext_syringe",      50,   0, "Syringe.\nRMB to heal others, LMB to self-heal.\nHeals 35 HP.",
+        HORDE:CreateItem("Equipment",  "Syringe",         "hordeext_syringe",      250,   0, "Syringe.\nRMB to heal others, LMB to self-heal.\nHeals 35 HP.",
         nil, 50, -1, {type=HORDE.ENTITY_PROPERTY_WPN}, nil, nil, nil, nil, nil, {"All"})
 
         HORDE:CreateItem("SMG",        "Colt M635",           "arccw_horde_smg1",   100, 3, "A compact, shoots burst.",

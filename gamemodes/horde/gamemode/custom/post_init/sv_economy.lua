@@ -148,6 +148,17 @@ hook.Add("WeaponEquip", "Horde_Economy_Equip", function (wpn, ply)
             end)
             return
         end
+        if item.entity_properties.weapons_group then
+            local class_1 = wpn:GetClass()
+            for _, wpn_2 in pairs(ply:GetWeapons()) do
+                local class_2 = wpn_2:GetClass()
+                if class_2 == class_1 then continue end
+                local item_2 = HORDE.items[class_2]
+                if item_2 and item_2.entity_properties.weapons_group == item.entity_properties.weapons_group then
+                    ply:StripWeapon(class_2)
+                end
+            end
+        end
         ply:Horde_AddWeight(-item.weight)
         ply:Horde_SyncEconomy()
         return
@@ -157,6 +168,7 @@ end)
 local function buy_weapon(ply, class, price, skull_tokens)
     local wpns = list.Get("Weapon")
     if not wpns[class] then return end
+
     local wpn = weapons.Get(class)
     if wpn and wpn.Primary then
         local this_ammo = wpn.Primary.Ammo

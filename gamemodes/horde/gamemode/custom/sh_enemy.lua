@@ -360,9 +360,9 @@ if waves_type != 1 then
     if waves_type == 2 then
         HORDE.kill_reward_base = math.floor(HORDE.kill_reward_base * 1.15)
         HORDE.total_enemies_per_wave = {24, 28, 30, 33, 38, 41, 45}
+        HORDE.round_bonus_base = math.floor(HORDE.round_bonus_base * 1.4)
 
         HORDE.max_waves = 7
-        HORDE.max_max_waves = HORDE.max_waves
 
         HORDE.waves_for_perk = {
             1,3,4,5
@@ -371,25 +371,34 @@ if waves_type != 1 then
         HORDE.kill_reward_base = math.floor(HORDE.kill_reward_base * 1.6)
         HORDE.total_enemies_per_wave = {36, 38, 40, 45}
         HORDE.start_money = math.floor(HORDE.start_money * 1.25)
-        HORDE.round_bonus_base = math.floor(HORDE.round_bonus_base * 1.1)
+        HORDE.round_bonus_base = math.floor(HORDE.round_bonus_base * 2.5)
 
         HORDE.max_waves = 4
-        HORDE.max_max_waves = HORDE.max_waves
 
         HORDE.waves_for_perk = {
             1,2,3,3
         }
     end
+    HORDE.max_max_waves = HORDE.max_waves
 end
 
+local GetDefaultEnemiesData_funcs = {
+    old_enemies,
+    HORDE.GetDefaultEnemiesData_7Waves,
+    HORDE.GetDefaultEnemiesData_4Waves
+}
+
+local GetDefaultEnemiesData_func = GetDefaultEnemiesData_funcs[waves_type]
+
 function HORDE:GetDefaultEnemiesData()
-    if waves_type == 1 then
+    --[[if waves_type == 1 then
         old_enemies()
     elseif waves_type == 2 then
         HORDE:GetDefaultEnemiesData_7Waves()
     elseif waves_type == 3 then
         HORDE:GetDefaultEnemiesData_4Waves()
-    end
+    end]]
+    GetDefaultEnemiesData_func(HORDE)
     for name, id in pairs(names) do
         for i = 1, HORDE.max_max_waves do
             local enemy = HORDE.enemies[name .. i]

@@ -303,7 +303,7 @@ function HORDE:TimeStop_unfreeze_npc(ent)
 		ent.CustomOnThink = ent.oldCustomOnThink
 		ent.oldCustomOnThink = nil
 	end
-    print("ent.AllowMovementJumping", ent.AllowMovementJumping)
+
     if ent.AllowMovementJumping then ent.AllowMovementJumping = ent.oldAllowMovementJumping ent.oldAllowMovementJumping = nil end
 
     local is_kf_npc = not not ent.KFNPCStopAllTimers

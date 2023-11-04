@@ -23,13 +23,12 @@ SWEP.ViewModel			= "models/weapons/kf2/tfa_c_ar15.mdl"--"models/weapons/kf2/arcc
 SWEP.WorldModel			= "models/weapons/kf2/tfa_w_ar15.mdl"
 SWEP.Horde_MaxMags = 30
 SWEP.ClipsPerAmmoBox = 2
-SWEP.ActivePos = Vector(3,7.25,-1)
 SWEP.ActiveAng = Angle(0, 0, 0)
-SWEP.ActivePos 							= Vector(4.6, 4, -1.6)
+SWEP.ActivePos 							= Vector(3.3, 6.5, -1)
 SWEP.HolsterPos = Vector(4.8, 6, 0)
 SWEP.HolsterAng = Angle(-7.036, 30.016, 0)
 
-SWEP.Damage = 22
+SWEP.Damage = 25
 SWEP.DamageMin = 14 -- damage done at maximum range
 SWEP.RangeMin = 15
 SWEP.Range = 45
@@ -49,7 +48,7 @@ SWEP.Recoil = 0.8
 SWEP.RecoilSide = 0.35
 SWEP.RecoilRise = 3
 
-SWEP.Delay = 60 / 600 -- 60 / RPM.
+SWEP.Delay = 60 / 690 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
@@ -77,7 +76,7 @@ SWEP.Primary.Ammo = "ar2" -- what ammo type the gun uses
 SWEP.ShootVol = 115 -- volume of shoot sound
 SWEP.ShootPitch = 100 -- pitch of shoot sound
 
-SWEP.ShootSound = {"weapons/kf2/ar15/fire1.wav", "weapons/kf2/ar15/fire2.wav", "weapons/kf2/ar15/fire3.wav"}
+SWEP.ShootSound = "weapons/kf2/ar15/shoot.wav"
 SWEP.ShootSoundSilenced = "arccw_go/m4a1/m4a1_silencer_01.wav"
 
 SWEP.MuzzleEffect = "muzzleflash_pistol"
@@ -105,7 +104,7 @@ SWEP.ProceduralIronFire = false
 SWEP.CaseBones = {}
 
 SWEP.IronSightStruct = {
-    Pos = Vector(0,10,0),
+    Pos = Vector(0,1.5,0),
     Ang = Angle(0, 0, 0),
     Magnification = 1.1,
     SwitchToSound = "", -- sound that plays when switching to this sight
@@ -219,10 +218,10 @@ SWEP.Animations = {
         Source = "idle_empty",
     },
     ["draw"] = {
-        Source = "draw", MinProgress = 1,
+        Source = "draw",
     },
     ["fire"] = {
-		Source = "shoot",
+		Source = {"shoot_standard"},
 	},
     ["fire_iron"] = {
         Source = {"shoot_iron", "shoot_iron2", "shoot_iron3"},

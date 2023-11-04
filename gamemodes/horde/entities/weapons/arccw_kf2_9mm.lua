@@ -106,7 +106,7 @@ function SWEP:DrawWeaponSelection(x, y, w, h, a)
 end
 
 SWEP.IronSightStruct = {
-    Pos = Vector(0,10,0),
+    Pos = Vector(0,7,0),
     Ang = Angle(0, 0, 0),
     Magnification = 1.1,
     SwitchToSound = "", -- sound that plays when switching to this sight

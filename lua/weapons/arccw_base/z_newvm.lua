@@ -387,7 +387,9 @@ end
 function SWEP:createCustomVM(mdl)
     local ply = self:GetOwner()
     if SERVER then
-        self.REAL_VM = ply:GetViewModel()
+        if ply.GetViewModel then
+            self.REAL_VM = ply:GetViewModel()
+        end
         return
     end
     local vm = ply:GetViewModel()
@@ -1367,7 +1369,7 @@ end
 
 function SWEP:GetTracerOrigin()
     local ow = self:GetOwner()
-    local wm = !self.REAL_VM:IsValid() or ow:ShouldDrawLocalPlayer()
+    local wm = !IsValid(self.REAL_VM) or ow:ShouldDrawLocalPlayer()
     local muzz = self:GetMuzzleDevice(wm)
 
     if muzz and muzz:IsValid() then
