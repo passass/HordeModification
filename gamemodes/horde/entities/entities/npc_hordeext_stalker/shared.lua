@@ -8,6 +8,7 @@ ENT.Category		= "SNPCs"
 
 ENT.Spawnable = false
 ENT.AdminOnly = false
+VJ.AddNPC("Stalker","npc_hordeext_stalker", "Zombies")
 
 
 

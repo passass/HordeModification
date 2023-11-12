@@ -7,6 +7,7 @@ ENT.Category		= "npcs"
 
 ENT.Spawnable = true
 ENT.AdminOnly = false
+VJ.AddNPC("Crawler","npc_hordeext_crawler", "Zombies")
 
 
 

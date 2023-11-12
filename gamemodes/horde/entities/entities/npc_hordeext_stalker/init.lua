@@ -8,7 +8,6 @@ AddCSLuaFile( "shared.lua" )
 include('shared.lua')
 include("KFNPCBaseVars.lua")
 ENT.VJ_NPC_Class = {"CLASS_ZOMBIE", "CLASS_XEN"}
-VJ.AddNPC("Stalker","npc_hordeext_stalker", "Zombies")
 ENT.AutoChangeActivityWhenHeadless = false
 
 ENT.StunInStun = true

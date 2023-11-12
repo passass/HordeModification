@@ -7,7 +7,6 @@ AddCSLuaFile( "shared.lua" )
 include('shared.lua')
 include("KFNPCBaseVars.lua")
 ENT.VJ_NPC_Class = {"CLASS_ZOMBIE", "CLASS_XEN"}
-VJ.AddNPC("Brute","npc_hordeext_brute", "Zombies")
 ENT.StunOnHeadLoss = false
 
 ENT.GoreHead.model = "models/Tripwire/Killing Floor/Zeds/KFBruteGoreHead.mdl"

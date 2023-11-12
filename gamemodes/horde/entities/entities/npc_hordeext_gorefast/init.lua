@@ -4,7 +4,6 @@
 end
 
 ENT.VJ_NPC_Class = {"CLASS_ZOMBIE", "CLASS_XEN"}
-VJ.AddNPC("Gorefast","npc_hordeext_gorefast", "Zombies")
 
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )

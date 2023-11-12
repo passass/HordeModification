@@ -4,7 +4,6 @@ if(!file.Exists("lua/entities/kf_ai/init.lua","THIRDPARTY")) then
 end
 
 ENT.VJ_NPC_Class = {"CLASS_ZOMBIE", "CLASS_XEN"}
-VJ.AddNPC("Husk","npc_hordeext_husk", "Zombies")
 
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )

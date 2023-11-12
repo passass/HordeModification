@@ -32,14 +32,14 @@ function entmeta:Horde_AddEffect_MedicGrenade(ent)
     local id = self:GetCreationID()
     timer.Create("Horde_MedicGrenadeEffect" .. id, 0.5, 0, function ()
         if not self:IsValid() then timer.Remove("Horde_MedicGrenadeEffect" .. id) return end
-        print(self, ent:IsValid(), ent.Owner:IsValid(), ent.Inflictor:IsValid(), self:IsNPC(), (not self:GetNWEntity("HordeOwner"):IsValid()))
+
         if self:IsPlayer() then
             local healinfo = HealInfo:New({amount=10, healer=ent.Owner, immediately = false})
             HORDE:OnPlayerHeal(self, healinfo)
         elseif ent:GetClass() == "npc_vj_horde_antlion" then
             local healinfo = HealInfo:New({amount=5, healer=self.Owner})
             HORDE:OnAntlionHeal(ent, healinfo)
-        elseif ent:IsValid() and ent.Owner:IsValid() and ent.Inflictor:IsValid() and self:IsNPC() and (not self:GetNWEntity("HordeOwner"):IsValid()) then
+        elseif ent:IsValid() and ent.Owner:IsValid() and IsValid(ent.Inflictor) and self:IsNPC() and (not self:GetNWEntity("HordeOwner"):IsValid()) then
             local d = DamageInfo()
             d:SetDamage(25)
             d:SetAttacker(ent.Owner)

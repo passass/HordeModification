@@ -9,7 +9,6 @@ include('shared.lua')
 include("KFNPCBaseVars.lua")
 
 ENT.VJ_NPC_Class = {"CLASS_ZOMBIE", "CLASS_XEN"}
-VJ.AddNPC("Siren","npc_hordeext_siren", "Zombies")
 ENT.StunInStun = true
 
 ENT.GoreEnabled[HITGROUP_LEFTARM] = false

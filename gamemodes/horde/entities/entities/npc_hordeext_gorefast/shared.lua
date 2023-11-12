@@ -9,5 +9,5 @@ ENT.Category		= "SNPCs"
 ENT.Spawnable = false
 ENT.AdminOnly = false
 
-
+VJ.AddNPC("Gorefast","npc_hordeext_gorefast", "Zombies")
 

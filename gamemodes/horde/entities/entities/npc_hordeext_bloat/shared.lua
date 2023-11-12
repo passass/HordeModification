@@ -10,4 +10,5 @@ ENT.Spawnable = false
 ENT.AdminOnly = false
 
 
+VJ.AddNPC("Bloat","npc_hordeext_bloat", "Zombies")
 

@@ -8,6 +8,7 @@ ENT.Category		= "SNPCs"
 
 ENT.Spawnable = true
 ENT.AdminOnly = false
+VJ.AddNPC("Husk","npc_hordeext_husk", "Zombies")
 
 
 

@@ -893,8 +893,9 @@ function ENT:KFNPCKill(dmginfo,PHYSTABLE,BoomDamage)
 		self:SetCondition(67)
 		self:SetNPCState(NPC_STATE_DEAD)
 		self:SetSchedule(SCHED_IDLE_STAND)
-		
+		HORDE:OnEnemyKilled(self, dmginfo:GetAttacker(), dmginfo:GetInflictor())
 		self:Fire("kill","",TEMP_KillTime)
+
 	end
 end
 

@@ -10,4 +10,5 @@ ENT.Spawnable = false
 ENT.AdminOnly = false
 
 
+VJ.AddNPC("Scrake","npc_hordeext_scrake", "Zombies")
 

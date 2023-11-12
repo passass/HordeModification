@@ -11,7 +11,6 @@ include("KFNPCBaseVars.lua")
 ENT.StunInStun = true
 
 ENT.VJ_NPC_Class = {"CLASS_ZOMBIE", "CLASS_XEN"}
-VJ.AddNPC("Scrake","npc_hordeext_scrake", "Zombies")
 
 
 ENT.GoreHead.model = "models/Tripwire/Killing Floor/Zeds/KFScrakeGoreHead.mdl"
