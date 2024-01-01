@@ -194,6 +194,19 @@ function HORDE:PlayerInit(ply)
         net.Send(ply)
     end
 
+    for _, ply2 in pairs(player.GetAll()) do
+        if not ply2:IsValid() or ply2 == ply then continue end
+        if not ply2.Horde_money or not ply2.Horde_weight or not ply2.Horde_class then continue end
+        net.Start("Horde_SyncEconomy")
+            net.WriteEntity(ply2)
+            net.WriteInt(ply2.Horde_money, 32)
+            net.WriteInt(ply2.Horde_skull_tokens, 32)
+            net.WriteInt(ply2.Horde_weight, 32)
+            net.WriteString(ply2:Horde_GetSubclass(ply2.Horde_class.name))
+            net.WriteTable(ply2.Horde_drop_entities)
+        net.Send(ply)
+    end
+
     if HORDE.start_game then return end
 
     local ready_count = 0

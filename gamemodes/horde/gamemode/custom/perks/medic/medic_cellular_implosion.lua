@@ -8,7 +8,6 @@ PERK.Params = {
 PERK.Hooks = {}
 PERK.Hooks.Horde_OnEnemyKilled = function(victim, killer, inflictor)
     if not killer:Horde_GetPerk("medic_cellular_implosion") then return end
-    print(inflictor, killer, victim)
     if IsValid(inflictor) and (inflictor:IsNPC() or inflictor:GetClass() == "arccw_hordeext_nade_medic") then return end -- Prevent infinite chains
     
     local p = math.random()

@@ -37,6 +37,26 @@ function plymeta:Horde_SetWeight(weight)
     self.Horde_weight = math.Clamp(weight, 0, self:Horde_GetMaxWeight())
 end
 
+function plymeta:Horde_SetMaxWeight(weight)
+    if self.Horde_max_weight then
+        if self.Horde_max_weight > weight then
+            local old_max_weight = self:Horde_GetMaxWeight()
+            self.Horde_max_weight = weight
+            self:Horde_RecalcWeight()
+            self.Horde_weight = math.min(weight, self:Horde_GetWeight() - (old_max_weight - weight))
+            self:Horde_SyncEconomy()
+        else
+            self.Horde_weight = math.min(weight, self:Horde_GetWeight() + weight - self:Horde_GetMaxWeight())
+            self:Horde_SyncEconomy()
+        end
+    end
+    self.Horde_max_weight = weight
+    net.Start("Horde_SyncMaxWeight")
+        net.WriteEntity(self)
+        net.WriteUInt(self.Horde_max_weight, 5)
+    net.Broadcast()--(self)
+end
+
 function plymeta:Horde_RecalcWeight()
     local weight = 0
     for _, wpn in pairs(self:GetWeapons()) do
@@ -638,14 +658,15 @@ net.Receive("Horde_BuyItemAmmoSecondary", function (len, ply)
         HORDE:SendNotification("You don't have this weapon!", 0, ply)
         return
     end
-    
+
     local price = HORDE.items[class].secondary_ammo_price
     if ply:Horde_GetMoney() >= price then
         ply:Horde_AddMoney(-price)
         local wpn = ply:GetWeapon(class)
         local ammo_id = wpn:GetSecondaryAmmoType()
-        if ammo_id >= 0 then
-            ply:GiveAmmo(1, ammo_id, false)
+        local remain = HORDE:Ammo_RemainToFillAmmo_Secondary(wpn)
+        if ammo_id >= 0 and remain > 0 then
+            ply:GiveAmmo(math.min(remain, wpn.ArcCW and wpn:GetBuff_Override("UBGL_Capacity") or wpn.Secondary.ClipSize), ammo_id, false)
             ply:Horde_SyncEconomy()
         end
     end

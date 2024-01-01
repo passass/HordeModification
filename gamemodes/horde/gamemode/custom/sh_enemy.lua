@@ -61,9 +61,9 @@ local news_npcs = {
         class = "npc_hordeext_brute",
         weight = 0.05,
         wave = {
-            [10] = {6, 10},
-            [7] = {5, 7},
-            [4] = {3, 4},
+            [10] = {6, 9},
+            [7] = {5, 6},
+            [4] = {3, 3},
         },
         elite = true,
         health_scale = 1,

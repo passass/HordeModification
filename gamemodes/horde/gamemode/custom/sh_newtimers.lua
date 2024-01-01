@@ -37,27 +37,32 @@ function HORDE.Timers:CallFunc()
     self.bypasses = self.bypasses + 1
 end
 
-function HORDE.Timers:StartTimer()
-    if self.callfunconstart then
+function HORDE.Timers:StartTimer(forcednotcallfunc)
+    if !forcednotcallfunc and self.callfunconstart then
         self:CallFunc()
     end
 
+    local delay = self.delay
+
     if self:IsValid() then
-        timer.Create(self.timername, self.delay, self.repetitions, function()
+        timer.Create(self.timername, delay, self.repetitions, function()
             self:CallFunc()
+            if self.alwayscheckfordelay and delay != self.delay then
+                self:StartTimer(true)
+            end
         end)
     end
 end
 
 function HORDE.Timers:UpdateTimer(updateonlydata)
 
+    if self:IsPaused() then self:UnPause() end
+
     if self:IsProceed() then
 
         timer.Create(self.timername, timer.TimeLeft( self.timername ), 1, function()
-            if !self.callfunconstart then
-                self:CallFunc()
-            end
-            self:StartTimer()
+            self:CallFunc()
+            self:StartTimer(true)
         end)
 
         return
@@ -107,9 +112,24 @@ function HORDE.Timers:IsStopped()
     return self.stopped
 end
 
+function HORDE.Timers:IsPaused()
+    return self.paused
+end
+
+function HORDE.Timers:Pause()
+    timer.Pause(self.timername)
+    self.paused = true
+end
+
+function HORDE.Timers:UnPause()
+    timer.UnPause(self.timername)
+    self.paused = false
+end
+
 function HORDE.Timers:Start()
-    timer.Start(self.timername)
     self.stopped = false
+    self.paused = false
+    self:StartTimer()
 end
 
 --[[function HORDE.Timers:IsProceed()

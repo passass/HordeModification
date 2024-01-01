@@ -4,14 +4,13 @@ local mind = Material("status/mind.png", "mips smooth")
 local weight = Material("weight.png")
 local dead = Material("status/necrosis.png", "mips smooth")
 
-local count_of_GUIs = 0
-
 surface.CreateFont("PlayerName_EXT", { font = "arial", size = ScreenScale(9), extended = true})
 local font = "HealthInfo"
 local font2 = "HealthInfo2"
 local font3 = "Horde_WeaponName"
 local fontweight = "Horde_Weight"
 local fontplayername = "Horde_Weight"--"PlayerName_EXT"
+local players_huds = {}
 
 local health_color = Color(201,13,13,222)
 local extra_health_color = Color(223,202,14,222)
@@ -20,12 +19,6 @@ local death_color = Color(223, 0, 0)
 local vanish = Color(0, 0, 0, 0)
 
 local PANEL = {}
-
-function PANEL:Init()
-
-    count_of_GUIs = count_of_GUIs + 1
-
-end
 
 function PANEL:Think()
     if GetConVarNumber("horde_enable_health_gui") != 1 then self:Remove() return end
@@ -53,15 +46,14 @@ end
 
 function PANEL:Calculate_Data()
     local ply = self.ply
+    self.plyid = ply:EntIndex()
 
     ply.Horde_HealthGUI = self
 
     if MySelf == ply then
         self.player_position = 0
     else
-        local all_players = table.Copy(player.GetAll())
-        table.RemoveByValue(all_players, MySelf)
-        self.player_position = table.KeyFromValue( all_players, ply )
+        self.player_position = table.Count(players_huds)
     end
 
     local airgap = ScreenScale(6)
@@ -94,7 +86,7 @@ end
 function PANEL:OnRemove()
     self.ply_Avatar:Remove()
     self.ply_Avatar.Dead_Pic:Remove()
-    count_of_GUIs = count_of_GUIs - 1
+    players_huds[self.plyid] = nil
     for _, ply in pairs(player.GetAll()) do
         if ply.Horde_HealthGUI == self then continue end
         ply.Horde_HealthGUI:Calculate_Data()
@@ -138,14 +130,20 @@ function PANEL:Paint()
         vmaxarmor = ply:GetMaxArmor()
     end
 
+    if !ply:Alive() then
+        vhp = 0
+        varmor = 0
+    end
+
     -- background
     draw_rect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(13) - airgap, bars_size_x, airgap + ScreenScale(3), Color(30,30,30,150))
     -- HP
+    
     local hp_bar_size_y = airgap - ScreenScale(2)
     local hp_perc = math.min(1, vhp / vmaxhp)
-    local hpbars_size_x = math.floor((bars_size_x - ScreenScale(2)) * hp_perc)
+    --[[local hpbars_size_x = math.floor((bars_size_x - ScreenScale(2)) * hp_perc)
 
-    --[[draw_rect(bars_pos_x,
+    draw_rect(bars_pos_x,
     size_y - ScreenScale(9) - airgap,
     hpbars_size_x,
     hp_bar_size_y,
@@ -311,8 +309,11 @@ function PANEL:Paint()
     local wx = size_x - ScreenScale(52)
     local wy = icon_y + ScreenScale(11)
     surface.DrawTexturedRect(wx, wy, ScreenScale(10), ScreenScale(10))
-
-    draw.SimpleText(tostring(ply:Horde_GetMaxWeight() - ply:Horde_GetWeight()) .. "/" .. tostring(ply:Horde_GetMaxWeight()), fontweight, wx, wy + ScreenScale(1), color_white, TEXT_ALIGN_RIGHT)
+    local max_weight = ply:Horde_GetMaxWeight()
+    if max_weight == 0 then
+        max_weight = 15
+    end
+    draw.SimpleText(tostring(math.max(0, max_weight - ply:Horde_GetWeight())) .. "/" .. tostring(max_weight), fontweight, wx, wy + ScreenScale(1), color_white, TEXT_ALIGN_RIGHT)
 
     if ply != MySelf then
 
@@ -321,20 +322,23 @@ function PANEL:Paint()
 
             local pos_y = icon_y + ScreenScale(12)--ScreenScale(21)--size_y - ScreenScale(1)
             local pos_x = ScreenScale(36)
-            local ammo_type = wpn:GetPrimaryAmmoType()
-            local has_ammo = ammo_type > 0
-            local clip1 = wpn:Clip1()
+            local ammo_type = wpn.Primary.Ammo or wpn:GetPrimaryAmmoType()
+            local has_ammo = false
+            if !wpn.ArcCW or !wpn.Backstab then
+                has_ammo = isnumber(ammo_type) and ammo_type > 0 or !isnumber(ammo_type) and !!ammo_type
+            end
             local maxclip1 = wpn:GetMaxClip1()
             local has_clip = maxclip1 > 0
             if has_ammo or has_clip then
-                local curammo = ply:GetAmmoCount(ammo_type)
                 if has_clip then
+                    local clip1 = wpn.CLIENT_CLIP or wpn:Clip1()
                     draw.SimpleText(tostring(clip1), fontweight, pos_x, pos_y, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
                     if has_ammo then
                         draw.SimpleText("/", fontweight, pos_x + ScreenScale(1), pos_y, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
                     end
                 end
                 if has_ammo then
+                    local curammo = wpn.CLIENT_AMMO or ply:GetAmmoCount(ammo_type)
                     local curammo_x = pos_x - ScreenScale(has_clip and -4 or 3)
                     local text_size_x, text_size_y =
                     draw.SimpleText(tostring(curammo), has_clip and font3 or fontweight, curammo_x, pos_y, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
@@ -386,8 +390,11 @@ vgui.Register("HealthGUI_PlayerStats", PANEL, "Panel")
 hook.Add("Think", "Horde_ProceedHealthGUI", function ()
     if GetConVarNumber("horde_enable_health_gui") != 1 then return end
     for _, ply in pairs(player.GetAll()) do
-        if !ply.Horde_HealthGUI and (count_of_GUIs < (MySelf.Horde_HealthGUI and 6 or 5) or MySelf == ply ) then
+        if !ply.Horde_HealthGUI and (table.Count(players_huds) - (MySelf.Horde_HealthGUI and 1 or 0) < 5 or MySelf == ply ) then
             local HpGUI = vgui.Create("HealthGUI_PlayerStats")
+            if MySelf != ply then
+                players_huds[ply:EntIndex()] = HpGUI
+            end
             HpGUI.ply = ply
             HpGUI:Calculate_Data()
         end
@@ -584,23 +591,6 @@ hook.Add("HUDPaint", "Horde_DrawHud", function ()
             end
         end
     end
-end)
-
-
-net.Receive("Horde_SyncEconomy", function(length)
-    local ply = net.ReadEntity()
-    local prev_money = ply.Horde_money or 0
-    ply.Horde_money = net.ReadInt(32)
-    HORDE:PlayMoneyNotification(ply.Horde_money - prev_money, ply.Horde_money, ply)
-    ply.Horde_skull_tokens = net.ReadInt(32)
-    ply.Horde_weight = net.ReadInt(32)
-
-    local subclass = net.ReadString()
-    local class = HORDE.subclasses_to_classes[subclass]
-    ply.Horde_class = HORDE.classes[class]
-    if not ply.Horde_subclasses then ply.Horde_subclasses = {} end
-    ply.Horde_subclasses[class] = subclass
-    ply.Horde_drop_entities = net.ReadTable()
 end)
 
 function HORDE:PlayMoneyNotification(diff, money, ply)

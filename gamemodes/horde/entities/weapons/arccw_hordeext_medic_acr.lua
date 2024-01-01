@@ -36,6 +36,7 @@ SWEP.Penetration = 7
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
 
+SWEP.Horde_MaxMags_Secondary = 20
 
 SWEP.ChamberSize = 0
 SWEP.Primary.ClipSize = 30 -- DefaultClip is automatically set.

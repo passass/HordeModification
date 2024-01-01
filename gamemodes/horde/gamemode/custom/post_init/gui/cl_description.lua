@@ -220,16 +220,16 @@ function PANEL:AmmoDoClick(max_ammo, IsSecondary)
         net.SendToServer()
         return
     end
+    local wep = MySelf:GetWeapon(self.item.class)
     if IsSecondary then
         -- Secondary ammo
-        if self.item.secondary_ammo_price <= 0 or MySelf:Horde_GetMoney() < self.item.secondary_ammo_price then return end
+        if self.item.secondary_ammo_price <= 0 or MySelf:Horde_GetMoney() < self.item.secondary_ammo_price or HORDE:Ammo_RemainToFillAmmo_Secondary(wep) <= 0 then return end
         -- Buy the item
         net.Start("Horde_BuyItemAmmoSecondary")
         net.WriteString(self.item.class)
         net.SendToServer()
         return
     end
-    local wep = MySelf:GetWeapon(self.item.class)
     if HORDE:Ammo_RemainToFillAmmo(wep) <= 0 then return end
     local price
     if max_ammo then
@@ -1000,8 +1000,9 @@ function PANEL:Paint()
                         local total_ammo = MySelf:GetAmmoCount(wpn:GetPrimaryAmmoType())
                         if wpn:GetSecondaryAmmoType() > 0 then
                             --local clip_ammo2 = wpn:Clip2()
+                            local max_ammo2 = HORDE:Ammo_GetMaxAmmo_Secondary(wpn)
                             local total_ammo2 = MySelf:GetAmmoCount(wpn:GetSecondaryAmmoType())
-                            draw.SimpleText(translate.Get("Shop_Primary_Ammo") .. ": " .. tonumber(clip_ammo) .. " / " .. tonumber(total_ammo) .. " | " .. translate.Get("Shop_Secondary_Ammo") .. ": " .. tonumber(total_ammo2), "Content", self:GetWide()/2, 10, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                            draw.SimpleText(translate.Get("Shop_Primary_Ammo") .. ": " .. tonumber(clip_ammo) .. " / " .. tonumber(total_ammo) .. " | " .. translate.Get("Shop_Secondary_Ammo") .. ": " .. tonumber(total_ammo2) .. "/ " .. tonumber(max_ammo2), "Content", self:GetWide()/2, 10, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                         else
                             draw.SimpleText(translate.Get("Shop_Primary_Ammo") .. ": " .. tonumber(clip_ammo) .. " / " .. tonumber(total_ammo), "Content", self:GetWide()/2, 10, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                         end

@@ -142,7 +142,7 @@ function SWEP:Heal(target)
     
     local Owner = self:GetOwner()
     local healinfo = HealInfo:New({amount = 35, healer = Owner})
-    HORDE:OnPlayerHeal(Owner, healinfo)
+    HORDE:OnPlayerHeal(target, healinfo)
 
 
     local ammo_type = self:GetPrimaryAmmoType()
