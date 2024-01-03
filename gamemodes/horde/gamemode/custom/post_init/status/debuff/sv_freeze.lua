@@ -84,28 +84,28 @@ function entmeta:Horde_MovementSpeedModifierGet(name)
 	return sum
 end
 
-function entmeta:Horde_AddFrostbiteEffect(duration)
+function entmeta:Horde_AddFreezeEffect(duration)
     if self:IsPlayer() then
     else
-        timer.Remove("Horde_RemoveFrostbite" .. self:GetCreationID())
-        timer.Create("Horde_RemoveFrostbite" .. self:GetCreationID(), 4, 1, function ()
-            self:Horde_RemoveFrostbite()
+        timer.Remove("Horde_RemoveFreeze" .. self:GetCreationID())
+        timer.Create("Horde_RemoveFreeze" .. self:GetCreationID(), 4, 1, function ()
+            self:Horde_RemoveFreeze()
         end)
 
-        self.Horde_Frostbite = 1
+        self.Horde_Freeze = 1
 
         -- VJ
         if self:IsNPC() then
-			self:Horde_MovementSpeedModifierAdd("Horde_FrostbiteDebuff", .5)  -- THIS FUNCTION ISN'T WORK WHEN SPEED MULT LOWER THAN 1 EXCLUDE 0.5!!!!!!!!!!!!!
+			self:Horde_MovementSpeedModifierAdd("Horde_FreezeDebuff", .5)  -- THIS FUNCTION ISN'T WORK WHEN SPEED MULT LOWER THAN 1 EXCLUDE 0.5!!!!!!!!!!!!!
             self:SetSchedule(SCHED_IDLE_STAND)
             timer.Simple(0, function ()
                 if not self:IsValid() then return end
-                if not self.Horde_StoredAnimationPlaybackRateFrostbite then
+                if not self.Horde_StoredAnimationPlaybackRateFreeze then
                     if self.AnimationPlaybackRate then
-                        self.Horde_StoredAnimationPlaybackRateFrostbite = self.AnimationPlaybackRate
+                        self.Horde_StoredAnimationPlaybackRateFreeze = self.AnimationPlaybackRate
                         self.AnimationPlaybackRate = 0.6
                     else
-                        self.Horde_StoredAnimationPlaybackRateFrostbite = self:GetPlaybackRate()
+                        self.Horde_StoredAnimationPlaybackRateFreeze = self:GetPlaybackRate()
                         self:SetPlaybackRate(0.6)
                     end
                 end
@@ -115,8 +115,8 @@ function entmeta:Horde_AddFrostbiteEffect(duration)
 
     local id = self:EntIndex()
     local bones = self:GetBoneCount()
-    timer.Create("FrostbiteEffect" .. id, 0.5, 0, function ()
-        if !self:IsValid() or (self:IsPlayer() and !self:Alive()) or not self.Horde_Debuff_Active or not self.Horde_Debuff_Active[HORDE.Status_Frostbite] then timer.Remove("FrostbiteEffect" .. id) return end
+    timer.Create("FreezeEffect" .. id, 0.5, 0, function ()
+        if !self:IsValid() or (self:IsPlayer() and !self:Alive()) or not self.Horde_Debuff_Active or not self.Horde_Debuff_Active[HORDE.Status_Freeze] then timer.Remove("FreezeEffect" .. id) return end
         for bone = 1, bones-1 do
             local pos, angle = self:GetBonePosition(bone)
             local effectdata = EffectData()
@@ -125,29 +125,29 @@ function entmeta:Horde_AddFrostbiteEffect(duration)
             effectdata:SetMagnitude( 1 )
             effectdata:SetRadius( 18 )
             util.Effect( "GlassImpact", effectdata, true, true )
-            util.Effect("horde_status_frostbite", effectdata, true, true)
+            util.Effect("horde_status_Freeze", effectdata, true, true)
         end
     end)
 end
 
-hook.Add("Horde_PlayerMoveBonus", "Horde_FrostbiteMovespeed", function(ply, bonus_walk, bonus_run)
-    if ply.Horde_Debuff_Active and ply.Horde_Debuff_Active[HORDE.Status_Frostbite] then
-        bonus_walk.more = bonus_walk.more * HORDE.difficulty_frostbite_slow[HORDE.difficulty]
-        bonus_run.more = bonus_run.more * 0.5 * HORDE.difficulty_frostbite_slow[HORDE.difficulty]
+hook.Add("Horde_PlayerMoveBonus", "Horde_FreezeMovespeed", function(ply, bonus_walk, bonus_run)
+    if ply.Horde_Debuff_Active and ply.Horde_Debuff_Active[HORDE.Status_Freeze] then
+        bonus_walk.more = bonus_walk.more * HORDE.difficulty_Freeze_slow[HORDE.difficulty]
+        bonus_run.more = bonus_run.more * 0.5 * HORDE.difficulty_Freeze_slow[HORDE.difficulty]
     end
 end)
 
-function entmeta:Horde_RemoveFrostbite()
+function entmeta:Horde_RemoveFreeze()
     if not self:IsValid() then return end
     local id = self:EntIndex()
-    timer.Remove("FrostbiteEffect" .. id)
+    timer.Remove("FreezeEffect" .. id)
     if self:IsNPC() then
-		self:Horde_MovementSpeedModifierDelete("Horde_FrostbiteDebuff")
-        if self.Horde_StoredAnimationPlaybackRateFrostbite then
-            self.AnimationPlaybackRate = self.Horde_StoredAnimationPlaybackRateFrostbite
+		self:Horde_MovementSpeedModifierDelete("Horde_FreezeDebuff")
+        if self.Horde_StoredAnimationPlaybackRateFreeze then
+            self.AnimationPlaybackRate = self.Horde_StoredAnimationPlaybackRateFreeze
         else
-            self:SetPlaybackRate(self.Horde_StoredAnimationPlaybackRateFrostbite)
+            self:SetPlaybackRate(self.Horde_StoredAnimationPlaybackRateFreeze)
         end
-        self.Horde_StoredAnimationPlaybackRateFrostbite = nil
+        self.Horde_StoredAnimationPlaybackRateFreeze = nil
     end
 end

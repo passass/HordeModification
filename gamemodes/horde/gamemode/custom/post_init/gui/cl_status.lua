@@ -325,7 +325,7 @@ function PANEL:Paint()
 
             local pos_y = icon_y + ScreenScale(12)--ScreenScale(21)--size_y - ScreenScale(1)
             local pos_x = ScreenScale(36)
-            local ammo_type = wpn.Primary.Ammo or wpn:GetPrimaryAmmoType()
+            local ammo_type = wpn:GetPrimaryAmmoType() or wpn.Primary.Ammo
             local has_ammo = false
             if !wpn.ArcCW or !wpn.Backstab then
                 has_ammo = isnumber(ammo_type) and ammo_type > 0 or !isnumber(ammo_type) and !!ammo_type
@@ -598,6 +598,7 @@ end)
 
 function HORDE:PlayMoneyNotification(diff, money, ply)
     if GetConVarNumber("horde_enable_ammo_gui") == 0 then return end
+    if !IsValid(ply.Horde_HealthGUI) then return end
     if diff == 0 then return end
     local color = HORDE.color_crimson_dark
     local text = diff

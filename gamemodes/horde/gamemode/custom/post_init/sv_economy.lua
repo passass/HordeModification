@@ -551,15 +551,22 @@ net.Receive("Horde_SelectClass", function (len, ply)
 
     -- Drop all weapons
     local occupied_weight = 0
-    local not_regive_starter_weapons = GetConVar("horde_enable_starter"):GetInt() == 0 or HORDE.start_game
-	if !not_regive_starter_weapons then
-		not_regive_starter_weapons = HORDE.start_money != ply:Horde_GetMoney()
-	end
 
     ply:Horde_SetClass(class)
     ply:Horde_SetSubclass(name, subclass_name)
-    if not_regive_starter_weapons then
+    if GetConVar("horde_enable_starter"):GetInt() == 1 and not HORDE.start_game then
+        ply:StripAmmo()
+        --ply:StripWeapons()
         for _, wpn in pairs(ply:GetWeapons()) do
+            ply:StripWeapon(wpn:GetClass())
+        end
+        ply:Horde_SetGivenStarterWeapons(false)
+        HORDE:GiveStarterWeapons(ply)
+        for _, wpn in pairs(ply:GetWeapons()) do
+            occupied_weight = occupied_weight + HORDE.items[wpn:GetClass()].weight
+        end
+    else
+		for _, wpn in pairs(ply:GetWeapons()) do
             local wpnclass = wpn:GetClass()
             if HORDE.items[wpnclass] and hook.Run("PlayerCanPickupWeapon", ply, wpn) == true then
                 occupied_weight = occupied_weight + HORDE.items[wpnclass].weight
@@ -573,17 +580,6 @@ net.Receive("Horde_SelectClass", function (len, ply)
         end
 
         HORDE:GiveClassGrenades(ply)
-    else
-		ply:StripAmmo()
-        --ply:StripWeapons()
-        for _, wpn in pairs(ply:GetWeapons()) do
-            ply:StripWeapon(wpn:GetClass())
-        end
-        ply:Horde_SetGivenStarterWeapons(false)
-        HORDE:GiveStarterWeapons(ply)
-        for _, wpn in pairs(ply:GetWeapons()) do
-            occupied_weight = occupied_weight + HORDE.items[wpn:GetClass()].weight
-        end
     end
 
     -- Remove all entities
@@ -704,7 +700,7 @@ end)
 
 -------------------------> Cant buy anything before start game
 
-hook.Add("CanBuyItemUpgrade", "Horde_PrepareBuy", function(ply, class)
+--[[hook.Add("CanBuyItemUpgrade", "Horde_PrepareBuy", function(ply, class)
     HORDE:SendNotification("You Can't upgrade before start game!", 1, ply)
     return false
 end)
@@ -744,7 +740,7 @@ hook.Add("HordeWaveStart", "Horde_PrepareBuy", function(wave)
     hook.Remove("HordeWaveStart", "Horde_PrepareBuy")
 end)
 
-HORDE.start_money = 0
+HORDE.start_money = 0]]
 
 -------------------------> Cant buy anything before start game
 
