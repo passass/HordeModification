@@ -11,6 +11,7 @@ local font3 = "Horde_WeaponName"
 local fontweight = "Horde_Weight"
 local fontplayername = "Horde_Weight"--"PlayerName_EXT"
 local players_huds = {}
+local ply_id = 0
 
 local health_color = Color(201,13,13,222)
 local extra_health_color = Color(223,202,14,222)
@@ -53,7 +54,9 @@ function PANEL:Calculate_Data()
     if MySelf == ply then
         self.player_position = 0
     else
-        self.player_position = table.Count(players_huds)
+        PrintTable(players_huds)
+        self.player_position = table.KeyFromValue( players_huds, self )
+        print(self.player_position)
     end
 
     local airgap = ScreenScale(6)
@@ -86,7 +89,7 @@ end
 function PANEL:OnRemove()
     self.ply_Avatar:Remove()
     self.ply_Avatar.Dead_Pic:Remove()
-    players_huds[self.plyid] = nil
+    table.RemoveByValue( players_huds, self )
     for _, ply in pairs(player.GetAll()) do
         if ply.Horde_HealthGUI == self then continue end
         ply.Horde_HealthGUI:Calculate_Data()
@@ -393,7 +396,7 @@ hook.Add("Think", "Horde_ProceedHealthGUI", function ()
         if !ply.Horde_HealthGUI and (table.Count(players_huds) - (MySelf.Horde_HealthGUI and 1 or 0) < 5 or MySelf == ply ) then
             local HpGUI = vgui.Create("HealthGUI_PlayerStats")
             if MySelf != ply then
-                players_huds[ply:EntIndex()] = HpGUI
+                table.insert(players_huds, HpGUI)
             end
             HpGUI.ply = ply
             HpGUI:Calculate_Data()
@@ -647,6 +650,19 @@ function HORDE:PlayMoneyNotification(diff, money, ply)
         timer.Simple(0.5, function ()
             display_money = money
             main:Remove()
+        end)
+    end)
+end
+
+if CLIENT then
+    net.Receive("Horde_GadgetStartCooldown", function()
+        local ply = net.ReadEntity()
+        ply:Horde_SetGadgetInternalCooldown(net.ReadUInt(8))
+        if ply:Horde_GetGadgetInternalCooldown() <= 0 then return end
+        local timername = "Horde_LocalGadgetCooldown" .. ply:EntIndex()
+        timer.Create(timername, 1, 0, function()
+            if ply:Horde_GetGadgetInternalCooldown() <= 0 then timer.Remove(timername) return end
+            ply:Horde_SetGadgetInternalCooldown(ply:Horde_GetGadgetInternalCooldown() - 1)
         end)
     end)
 end

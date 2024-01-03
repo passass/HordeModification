@@ -32,7 +32,7 @@ SWEP.TracerWidth = 3
 
 SWEP.ChamberSize = 0-- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 2 -- DefaultClip is automatically set.
-SWEP.Horde_MaxMags = 40
+SWEP.Horde_MaxMags = 60
 
 SWEP.Recoil = 8
 SWEP.RecoilSide = 1
@@ -55,8 +55,8 @@ SWEP.NPCWeaponType = {
 SWEP.NPCWeight = 100
 
 SWEP.AccuracyMOA = 60 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 650 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 200
+SWEP.HipDispersion = 550 -- inaccuracy added by hip firing.
+SWEP.MoveDispersion = 100
 
 SWEP.Primary.Ammo = "buckshot" -- what ammo type the gun uses
 SWEP.MagID = "toz34" -- the magazine pool this gun draws from

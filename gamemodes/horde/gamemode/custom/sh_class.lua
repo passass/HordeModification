@@ -164,11 +164,13 @@ end
 
 function HORDE:SaveSubclassChoices()
     local f = file.Open("horde/horde_ext/subclass_choices.txt", "wb", "DATA")
-    for class, subclass in pairs(MySelf.Horde_subclass_choices) do
-        f:WriteULong(HORDE.classes_to_order[class])
-        f:WriteULong(HORDE.subclass_name_to_crc[subclass])
+    if f then
+        for class, subclass in pairs(MySelf.Horde_subclass_choices) do
+            f:WriteULong(HORDE.classes_to_order[class])
+            f:WriteULong(HORDE.subclass_name_to_crc[subclass])
+        end
+        f:Close()
     end
-    f:Close()
 end
 
 if CLIENT then

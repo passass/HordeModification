@@ -110,7 +110,7 @@ end
 function SWEP:PrimaryAttack()
 	if not self:CanAttack() then return end
 
-	self:SetNextFire(CurTime() + 2)
+	self:SetNextFire(CurTime() + .5)
 
 	local tr = self:GetHitTrace()
 
@@ -144,7 +144,7 @@ end
 function SWEP:SecondaryAttack()
 	if not self:CanAttack() then return end
 
-	self:SetNextFire(CurTime() + 2)
+	self:SetNextFire(CurTime() + .5)
 
 	OwnerMaxArmor = self.Owner:GetMaxArmor()
 

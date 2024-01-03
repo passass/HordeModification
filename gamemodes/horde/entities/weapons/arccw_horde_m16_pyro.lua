@@ -46,6 +46,8 @@ SWEP.Recoil = 0.7
 SWEP.RecoilSide = 0.45
 SWEP.RecoilRise = 0.2
 
+SWEP.Horde_MaxMags_Secondary = 35
+
 SWEP.Delay = 0.064 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {

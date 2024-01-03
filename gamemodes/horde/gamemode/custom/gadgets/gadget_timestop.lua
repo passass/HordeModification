@@ -52,7 +52,9 @@ if CLIENT then
             Weapons_Stop_Beams()
             timer.Simple(.5, function()
 
-                timer.Stop("Horde_LocalGadgetCooldown")
+                for _, ply2 in pairs(player.GetAll()) do
+                    timer.Stop("Horde_LocalGadgetCooldown" .. ply2:EntIndex())
+                end
 
                 timer.Simple(.1, function()
                     timestop_start_time = CurTime()
@@ -110,7 +112,10 @@ if CLIENT then
             timer.Simple(1.2, function()
                 Weapons_Start_Beams()
                 TimeStopProceed = false
-                timer.Start("Horde_LocalGadgetCooldown")
+                for _, ply2 in pairs(player.GetAll()) do
+                    timer.Start("Horde_LocalGadgetCooldown" .. ply2:EntIndex())
+                end
+                --timer.Start("Horde_LocalGadgetCooldown")
             end)
             timer.Remove("TimerStopTicking")
             hook.Add("RenderScreenspaceEffects", "TimeStop_screeneffect", function()
