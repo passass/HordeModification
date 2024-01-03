@@ -1996,13 +1996,13 @@ function ENT:OnTakeDamage(dmginfo)
 			self.HeadLess==true)) then
 				if(self.HeadLess==false) then
 					local TEMP_FirstBone = string.Explode(",",self.GoreHead.bone)[1]
-					local TEMP_FirstBonePos = self:GetBonePosition(self:LookupBone(TEMP_FirstBone))
+					local TEMP_FirstBonePos, TEMP_FirstBoneAngl = self:GetBonePosition(self:LookupBone(TEMP_FirstBone))
 					local TEMP_FirstBonePosSmall = TEMP_FirstBonePos:Distance(dmginfo:GetDamagePosition())<TEMP_ExplosionRadius
 					
 					
 					if((TEMP_BoomDamage&&TEMP_FirstBonePosSmall)||TEMP_ExpDamageFullDestroy||!TEMP_BoomDamage) then
 						self:KFNPCKillHead(TEMP_DMGHEADPOP,dmginfo:GetDamageForce(),dmginfo:GetDamage())
-						sound.Play("KFMod.Gore"..math.random(1,8),self:GetBonePosition(self:LookupBone(TEMP_FirstBone)))
+						sound.Play("KFMod.Gore"..math.random(1,8),TEMP_FirstBonePos)
 					end
 				end
 				
@@ -2012,7 +2012,7 @@ function ENT:OnTakeDamage(dmginfo)
 			if(self.GoreEnabled[HITGROUP_LEFTLEG]&&(TEMP_BoomDamage||
 			(isnumber(self.HitBoxLastDamage[HITGROUP_LEFTLEG])&&self.HitBoxLastDamage[HITGROUP_LEFTLEG]>CurTime()))) then
 				local TEMP_FirstBone = string.Explode(",",self.GoreLLeg.bone)[1]
-				local TEMP_FirstBonePos = self:GetBonePosition(self:LookupBone(TEMP_FirstBone))
+				local TEMP_FirstBonePos, TEMP_FirstBoneAngl = self:GetBonePosition(self:LookupBone(TEMP_FirstBone))
 				local TEMP_FirstBonePosSmall = TEMP_FirstBonePos:Distance(dmginfo:GetDamagePosition())<TEMP_ExplosionRadius
 				
 				if((TEMP_BoomDamage&&TEMP_FirstBonePosSmall)||TEMP_ExpDamageFullDestroy||!TEMP_BoomDamage) then
@@ -2020,14 +2020,14 @@ function ENT:OnTakeDamage(dmginfo)
 					self:KFNPCSetBodygoup(self.GoreLLeg.bodygroup1)
 					self:KFNPCCreateGib(TEMP_FirstBone, self.GoreLLeg.model,dmginfo:GetDamageForce(),dmginfo:GetDamage(),true)
 					KFNPCBleed(self,math.random(13,15),TEMP_FirstBonePos,AngleRand())
-					sound.Play("KFMod.Gore"..math.random(1,8),self:GetBonePosition(self:LookupBone(TEMP_FirstBone)))
+					sound.Play("KFMod.Gore"..math.random(1,8),TEMP_FirstBonePos)
 				end
 			end
 			
 			if(self.GoreEnabled[HITGROUP_RIGHTLEG]&&(TEMP_BoomDamage||
 			(isnumber(self.HitBoxLastDamage[HITGROUP_RIGHTLEG])&&self.HitBoxLastDamage[HITGROUP_RIGHTLEG]>CurTime()))) then
 				local TEMP_FirstBone = string.Explode(",",self.GoreRLeg.bone)[1]
-				local TEMP_FirstBonePos = self:GetBonePosition(self:LookupBone(TEMP_FirstBone))
+				local TEMP_FirstBonePos, TEMP_FirstBoneAngl = self:GetBonePosition(self:LookupBone(TEMP_FirstBone))
 				local TEMP_FirstBonePosSmall = TEMP_FirstBonePos:Distance(dmginfo:GetDamagePosition())<TEMP_ExplosionRadius
 				
 				if((TEMP_BoomDamage&&TEMP_FirstBonePosSmall)||TEMP_ExpDamageFullDestroy||!TEMP_BoomDamage) then
@@ -2035,14 +2035,14 @@ function ENT:OnTakeDamage(dmginfo)
 					self:KFNPCSetBodygoup(self.GoreRLeg.bodygroup1)
 					self:KFNPCCreateGib(TEMP_FirstBone,self.GoreRLeg.model,dmginfo:GetDamageForce(),dmginfo:GetDamage(),true)
 					KFNPCBleed(self,math.random(13,15),TEMP_FirstBonePos,AngleRand())
-					sound.Play("KFMod.Gore"..math.random(1,8),self:GetBonePosition(self:LookupBone(TEMP_FirstBone)))
+					sound.Play("KFMod.Gore"..math.random(1,8),TEMP_FirstBonePos)
 				end
 			end
 			
 			if(self.GoreEnabled[HITGROUP_LEFTARM]&&(TEMP_BoomDamage||
 			(isnumber(self.HitBoxLastDamage[HITGROUP_LEFTARM])&&self.HitBoxLastDamage[HITGROUP_LEFTARM]>CurTime()))) then
 				local TEMP_FirstBone = string.Explode(",",self.GoreLArm.bone)[1]
-				local TEMP_FirstBonePos = self:GetBonePosition(self:LookupBone(TEMP_FirstBone))
+				local TEMP_FirstBonePos, TEMP_FirstBoneAngl = self:GetBonePosition(self:LookupBone(TEMP_FirstBone))
 				local TEMP_FirstBonePosSmall = TEMP_FirstBonePos:Distance(dmginfo:GetDamagePosition())<TEMP_ExplosionRadius
 				
 				if((TEMP_BoomDamage&&TEMP_FirstBonePosSmall)||TEMP_ExpDamageFullDestroy||!TEMP_BoomDamage) then
@@ -2050,14 +2050,14 @@ function ENT:OnTakeDamage(dmginfo)
 					self:KFNPCSetBodygoup(self.GoreLArm.bodygroup1)
 					self:KFNPCCreateGib(TEMP_FirstBone,self.GoreLArm.model,dmginfo:GetDamageForce(),dmginfo:GetDamage(),true)
 					KFNPCBleed(self,math.random(13,15),TEMP_FirstBonePos,AngleRand())
-					sound.Play("KFMod.Gore"..math.random(1,8),self:GetBonePosition(self:LookupBone(TEMP_FirstBone)))
+					sound.Play("KFMod.Gore"..math.random(1,8),TEMP_FirstBonePos)
 				end
 			end
 			
 			if(self.GoreEnabled[HITGROUP_RIGHTARM]&&(TEMP_BoomDamage||
 			(isnumber(self.HitBoxLastDamage[HITGROUP_RIGHTARM])&&self.HitBoxLastDamage[HITGROUP_RIGHTARM]>CurTime()))) then
 				local TEMP_FirstBone = string.Explode(",",self.GoreRArm.bone)[1]
-				local TEMP_FirstBonePos = self:GetBonePosition(self:LookupBone(TEMP_FirstBone))
+				local TEMP_FirstBonePos, TEMP_FirstBoneAngl = self:GetBonePosition(self:LookupBone(TEMP_FirstBone))
 				local TEMP_FirstBonePosSmall = TEMP_FirstBonePos:Distance(dmginfo:GetDamagePosition())<TEMP_ExplosionRadius
 				
 				if((TEMP_BoomDamage&&TEMP_FirstBonePosSmall)||TEMP_ExpDamageFullDestroy||!TEMP_BoomDamage) then
@@ -2065,7 +2065,7 @@ function ENT:OnTakeDamage(dmginfo)
 					self:KFNPCSetBodygoup(self.GoreRArm.bodygroup1)
 					self:KFNPCCreateGib(TEMP_FirstBone,self.GoreRArm.model,dmginfo:GetDamageForce(),dmginfo:GetDamage(),true)
 					KFNPCBleed(self,math.random(13,15),TEMP_FirstBonePos,AngleRand())
-					sound.Play("KFMod.Gore"..math.random(1,8),self:GetBonePosition(self:LookupBone(TEMP_FirstBone)))
+					sound.Play("KFMod.Gore"..math.random(1,8),TEMP_FirstBonePos)
 				end
 			end
 		end
