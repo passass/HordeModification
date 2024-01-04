@@ -80,6 +80,7 @@ function HORDE.Syringe:ApplyMedicSkills(wep, hptoheal)
     function wep:ChangeFiremode(pred)
         if self.Horde_Medic_SyringeCount < 50 then return end
         if !self.CanBash and !self:GetBuff_Override("Override_CanBash") then return end
+        if HORDE.TimeStop_Proceed() then return end
         self.Horde_Medic_SyringeCount = self.Horde_Medic_SyringeCount - 50
         start_regen_syringes(self)
         if CLIENT then return end

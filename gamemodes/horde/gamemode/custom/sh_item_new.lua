@@ -210,6 +210,8 @@ end
 
         arccw_horde_gau = "arccw_hordeext_gau",
 
+        arccw_horde_barret = "arccw_hordeext_barret",
+
         arccw_horde_law = "arccw_hordeext_law",
         arccw_horde_m16m203 = "arccw_hordeext_m16m203",
         arccw_horde_javelin = "arccw_hordeext_javelin",
@@ -635,12 +637,12 @@ end
             Survivor = {Medic=20, Survivor=20},
         }, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Special",    "Healthrower",     "arccw_hordeext_healthrower", 3000, 7, "Healthrower.\nMedic weapon like flamethrower.",
-        {Medic=true}, 10, -1, nil, nil, {
+        {Medic=true}, 20, -1, nil, nil, {
             Medic=15,
         }, nil, {HORDE.DMG_POISON})
 
-        HORDE:CreateItem("Rifle",      "Corrupter Carbine",     "arccw_hordeext_corrupcarb",    3500, 8, "Corrupter Carbine.\nBolt-action weapon with Medic Module.",
-        {Medic=true}, 5, -1, nil, nil, {
+        HORDE:CreateItem("Rifle",      "Corrupter Carbine",     "arccw_hordeext_corrupcarb",    3500, 9, "Corrupter Carbine.\nBolt-action weapon with Medic Module.",
+        {Medic=true}, 8, -1, nil, nil, {
             Medic=25,
         }, nil, {HORDE.DMG_POISON})
 
@@ -1433,6 +1435,7 @@ end
         HORDE.items["arccw_horde_stg44"].infusions = ballistic_infusions_rifles
         HORDE.items["arccw_horde_ak117"].infusions = ballistic_infusions_rifles
 
+        HORDE.items["arccw_hordeext_corrupcarb"].infusions = {HORDE.Infusion_Ruination, HORDE.Infusion_Chrono, HORDE.Infusion_Impaling, HORDE.Infusion_Quality, HORDE.Infusion_Quicksilver, HORDE.Infusion_Septic, HORDE.Infusion_Siphoning}
         HORDE.items["arccw_horde_m40a3"].infusions = ballistic_infusions_sniper_rifles
         HORDE.items["arccw_horde_hkg28"].infusions = ballistic_infusions_sniper_rifles
         HORDE.items["arccw_horde_m14"].infusions = ballistic_infusions_sniper_rifles

@@ -79,6 +79,7 @@ function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
     
     local timer_obj
     if !self.Horde_HealTimer or !self.Horde_HealTimer:IsValid() then
+        local old_health = 0
         timer_obj = HORDE.Timers:New({
             linkwithent = self,
             timername = "Horde_" .. self:EntIndex() .. "SlowlyHeal",
@@ -96,6 +97,10 @@ function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
                 if IsValid(self) and remainhp and remainhp >= 1 then
                     health = self:Health()
                     if health < self.Horde_HealLastMaxHealth then
+                        if old_health != health then
+                            HORDE:Horde_SendSlowHealData(self)
+                        end
+                        old_health = health
                         self.Horde_HealHPRemain = remainhp - 1
                         self:SetHealth(health + 1)
                         return

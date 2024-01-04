@@ -2645,8 +2645,9 @@ function SWEP:PrimaryAttack()
 
     self.Primary.Automatic = true
 
+    --print("PRE self:CanPrimaryAttack()")
     if !self:CanPrimaryAttack() then return end
-
+    --print("POST self:CanPrimaryAttack()")
     local clip = self:Clip1()
     local aps = self:GetBuff("AmmoPerShot")
 
@@ -2906,8 +2907,8 @@ function SWEP:PrimaryAttack()
     if shouldsupp then SuppressHostEvents(nil) end
 end
 
-local think_ct = 0
-local count = 0
+--local think_ct = 0
+--local count = 0
 function SWEP:Think()
     if IsValid(self:GetOwner()) and self:GetClass() == "arccw_base" then
         self:Remove()
@@ -2918,14 +2919,14 @@ function SWEP:Think()
 
     if !IsValid(owner) or owner:IsNPC() then return end
 
-    if CurTime() == think_ct then
+    --[[if CurTime() == think_ct then
         count = count + 1
         return
     else
         --if count > 1 then print(count) end
         count = 1
     end
-    think_ct = CurTime()
+    think_ct = CurTime()]]
 
     if self:GetState() == ArcCW.STATE_DISABLE and !self:GetPriorityAnim() then
         self:SetState(ArcCW.STATE_IDLE)

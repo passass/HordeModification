@@ -54,9 +54,9 @@ SWEP.CanFireUnderwater = true
 SWEP.ChamberSize = 0 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 1.75
+SWEP.Recoil = 1.5
 SWEP.RecoilSide = 0.8
-SWEP.RecoilRise = 2
+SWEP.RecoilRise = 1
 
 SWEP.Delay = 60 / 240 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
@@ -187,6 +187,8 @@ SWEP.Attachments = {
     },
 }
 
+local reloadmult = .8
+
 SWEP.Animations = {
     ["idle"] = {
         Source = "idle",
@@ -208,14 +210,15 @@ SWEP.Animations = {
     ["reload"] = {
         Source = "reload",
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_REVOLVER,
+        Mult = reloadmult,
         SoundTable = {
-            {t = 0 / 30, s = Sound("YURIE_CUSTOMS.HM500.StartReload")},
-            {t = 20 / 30, s = Sound("YURIE_CUSTOMS.HM500.CylinderOpen")},
-            {t = 22 / 30, s = Sound("YURIE_CUSTOMS.HM500.DumpRounds")},
-            {t = 38 / 30, s = Sound("YURIE_CUSTOMS.HM500.MagTransition")},
-            {t = 48 / 30, s = Sound("YURIE_CUSTOMS.HM500.SpeedLoaderInsert")},
-            {t = 63 / 30, s = Sound("YURIE_CUSTOMS.HM500.CylinderClose")},
-		    {t = 72 / 30, s = Sound("YURIE_CUSTOMS.HM500.ReturnToIdle")},
+            {t = 0 / 30 * reloadmult, s = Sound("YURIE_CUSTOMS.HM500.StartReload")},
+            {t = 20 / 30 * reloadmult, s = Sound("YURIE_CUSTOMS.HM500.CylinderOpen")},
+            {t = 22 / 30 * reloadmult, s = Sound("YURIE_CUSTOMS.HM500.DumpRounds")},
+            {t = 38 / 30 * reloadmult, s = Sound("YURIE_CUSTOMS.HM500.MagTransition")},
+            {t = 48 / 30 * reloadmult, s = Sound("YURIE_CUSTOMS.HM500.SpeedLoaderInsert")},
+            {t = 63 / 30 * reloadmult, s = Sound("YURIE_CUSTOMS.HM500.CylinderClose")},
+		    {t = 72 / 30 * reloadmult, s = Sound("YURIE_CUSTOMS.HM500.ReturnToIdle")},
         },
         
     },

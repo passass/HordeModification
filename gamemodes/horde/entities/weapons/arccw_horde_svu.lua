@@ -34,7 +34,7 @@ SWEP.WorldModel = "models/weapons/arccw/w_bo2_svu.mdl"
 SWEP.MirrorWorldModel = "models/weapons/arccw/w_bo2_svu.mdl"
 SWEP.ViewModelFOV = 60
 SWEP.Horde_MaxMags = 30
-SWEP.Damage = 140
+SWEP.Damage = 165
 SWEP.DamageMin = 135 -- damage done at maximum range
 SWEP.Range = 400 -- in METRES
 SWEP.RangeMin = 40
@@ -193,7 +193,7 @@ SWEP.Attachments = {
         CorrectivePos = Vector(0, 0, 0),
         CorrectiveAng = Angle(0, 0, 0),
         InstalledEles = {"rail"},
-        Installed = "optic_bo2_svu"
+        --Installed = "optic_bo2_svu"
     },
     { --2
         Hidden = true,

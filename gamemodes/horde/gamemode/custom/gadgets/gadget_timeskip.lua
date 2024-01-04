@@ -101,6 +101,10 @@ if CLIENT then
         if MySelf:Horde_GetGadget() != "gadget_timeskip" and cd > 0 then
             MySelf:Horde_SetGadgetInternalCooldown(math.max(0, cd - math.Round(skip_on)))
         end
+
+        for _, ply in pairs(player.GetAll()) do
+            ply:Horde_SetGadgetInternalCooldown(math.max(0, ply:Horde_GetGadgetInternalCooldown() - math.Round(skip_on)))
+        end
     end)
 	return
 end

@@ -40,14 +40,14 @@ SWEP.AccuracyMOA = 2 -- accuracy in Minutes of Angle. There are 60 MOA in a degr
 SWEP.HipDispersion = 700 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 75
 
-SWEP.Primary.Ammo = "ar2" -- what ammo type the gun uses
+SWEP.Primary.Ammo = "SniperPenetratedRound" -- what ammo type the gun uses
 
 SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 
 SWEP.SpeedMult = .9
 SWEP.SightedSpeedMult = 0.75
-SWEP.SightTime = 0.275
+SWEP.SightTime = 0.4
 
 SWEP.IronSightStruct = {
     Pos = Vector(-3.5175, 0, 0),
@@ -58,8 +58,8 @@ SWEP.IronSightStruct = {
 }
 
 SWEP.HoldtypeHolstered = "passive"
-SWEP.HoldtypeActive = "smg"
-SWEP.HoldtypeSights = "smg"
+SWEP.HoldtypeActive = "ar2"
+SWEP.HoldtypeSights = "rpg"
 
 SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_SMG1
 
@@ -79,8 +79,6 @@ SWEP.CustomizePos = Vector(8, 0, 1)
 SWEP.CustomizeAng = Angle(5, 30, 30)
 
 SWEP.BarrelLength = 18
-
-
 
 --[[SWEP.ExtraSightDist = 10
 SWEP.GuaranteeLaser = true]]
@@ -187,6 +185,7 @@ SWEP.Animations = {
         Source = {"shoot_iron", "shoot_iron2", "shoot_iron3"},
     },
     ["reload"] = {
+        TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Source = "reload",
     },
     ["holster"] = {
@@ -196,7 +195,7 @@ SWEP.Animations = {
 
 
 -- TFA ADAPTIVE
-HORDE.Syringe:ApplyMedicSkills(SWEP, 15)
+HORDE.Syringe:ApplyMedicSkills(SWEP, 10)
 
 SWEP.PrintName = "Corrupter Carbine"
 SWEP.ViewModel						= "models/weapons/locuslocutus/c_locus_locutus.mdl"
@@ -223,8 +222,8 @@ local tfa_viewmodel_models = {
 }
 
 SWEP.WorldModelOffset = {
-    pos = Vector(0, 0, 0),
-    ang = Angle(0, 180, 0)
+    pos = Vector(-11, 5, -7.2),
+    ang = Angle(0, 0, 180)
 }
 
 SWEP.AttachmentElements = {}

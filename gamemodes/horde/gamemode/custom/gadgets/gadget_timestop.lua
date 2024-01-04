@@ -56,6 +56,12 @@ if CLIENT then
                     timer.Stop("Horde_LocalGadgetCooldown" .. ply2:EntIndex())
                 end
 
+                for _, wep in pairs(MySelf:GetWeapons()) do
+                    if IsValid(wep) and wep.Horde_HealSyringeTimer then
+                        wep.Horde_HealSyringeTimer:Stop()
+                    end
+                end
+
                 timer.Simple(.1, function()
                     timestop_start_time = CurTime()
                     hook.Add("RenderScreenspaceEffects", "TimeStop_screeneffect", function()
@@ -114,6 +120,12 @@ if CLIENT then
                 TimeStopProceed = false
                 for _, ply2 in pairs(player.GetAll()) do
                     timer.Start("Horde_LocalGadgetCooldown" .. ply2:EntIndex())
+                end
+
+                for _, wep in pairs(MySelf:GetWeapons()) do
+                    if IsValid(wep) and wep.Horde_HealSyringeTimer then
+                        wep.Horde_HealSyringeTimer:Start()
+                    end
                 end
                 --timer.Start("Horde_LocalGadgetCooldown")
             end)
@@ -560,6 +572,10 @@ local function start_timestop(activator)
                                 vm:SetPlaybackRate(0)
                             end
                         end
+
+                        if wep.Horde_HealSyringeTimer then
+                            wep.Horde_HealSyringeTimer:Stop()
+                        end
                     end
                 end
 
@@ -659,6 +675,10 @@ local function start_timestop(activator)
                                 end
                                 wep.oldPlaybackRate = nil
                             end
+                        end
+
+                        if wep.Horde_HealSyringeTimer then
+                            wep.Horde_HealSyringeTimer:Start()
                         end
                     end
                 end

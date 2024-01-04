@@ -121,7 +121,7 @@ function SWEP:PrimaryAttack()
 		-- Even though the viewmodel has looping IDLE anim at all times, we need this to make fire animation work in multiplayer
 		timer.Create( "weapon_idle" .. self:EntIndex(), self:SequenceDuration(), 1, function() if ( IsValid( self ) ) then self:SendWeaponAnim( ACT_VM_IDLE ) end end )
 
-		self:StartRegenPoints(6)
+		self:StartRegenPoints(2)
 
 	else
 
@@ -160,7 +160,7 @@ function SWEP:SecondaryAttack()
 
 		timer.Create( "weapon_idle" .. self:EntIndex(), self:SequenceDuration(), 1, function() if ( IsValid( self ) ) then self:SendWeaponAnim( ACT_VM_IDLE ) end end )
 
-		self:StartRegenPoints(8)
+		self:StartRegenPoints(5)
 
 	else
 

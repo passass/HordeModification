@@ -138,7 +138,7 @@ function SWEP:UseEffect(target, time)
 		self.Owner:SetAnimation(PLAYER_ATTACK1)
 
         for _, wpn in pairs(target:GetWeapons()) do
-            HORDE:GiveAmmo(target, wpn, wpn.ClipsPerAmmoBox or 1)
+            HORDE:GiveAmmo(target, wpn, wpn.ClipsPerAmmoBox or 1, true)
         end
 	end
 end

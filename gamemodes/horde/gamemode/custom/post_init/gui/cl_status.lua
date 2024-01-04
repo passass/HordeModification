@@ -393,7 +393,7 @@ vgui.Register("HealthGUI_PlayerStats", PANEL, "Panel")
 hook.Add("Think", "Horde_ProceedHealthGUI", function ()
     if GetConVarNumber("horde_enable_health_gui") != 1 then return end
     for _, ply in pairs(player.GetAll()) do
-        if !ply.Horde_HealthGUI and (table.Count(players_huds) - (MySelf.Horde_HealthGUI and 1 or 0) < 5 or MySelf == ply ) then
+        if !IsValid(ply.Horde_HealthGUI) and (table.Count(players_huds) < 5 or MySelf == ply ) then
             local HpGUI = vgui.Create("HealthGUI_PlayerStats")
             if MySelf != ply then
                 table.insert(players_huds, HpGUI)

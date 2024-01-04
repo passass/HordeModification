@@ -195,7 +195,7 @@ function HORDE:PlayerInit(ply)
     end
 
     for _, ply2 in pairs(player.GetAll()) do
-        if not ply2:IsValid() or ply2 == ply then continue end
+        if not IsValid(ply2) or ply2 == ply then continue end
         if not ply2.Horde_money or not ply2.Horde_weight or not ply2.Horde_class then continue end
         net.Start("Horde_SyncEconomy")
             net.WriteEntity(ply2)

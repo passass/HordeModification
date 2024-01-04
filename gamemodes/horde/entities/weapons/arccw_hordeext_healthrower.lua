@@ -14,16 +14,17 @@ SWEP.ViewModel				= 		"models/weapons/v_models/v_medigun_medic.mdl"
 SWEP.WorldModel				= "models/weapons/w_models/w_medigun.mdl"
 SWEP.ViewModelFOV = 50
 
-SWEP.Horde_MaxMags = 8
+SWEP.Horde_MaxMags = 7
+HORDE.Syringe:ApplyMedicSkills(SWEP, 10)
 
-SWEP.Damage = 16
+SWEP.Damage = 14
 SWEP.Penetration = 1
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
 SWEP.MuzzleVelocity = 1050 -- projectile or phys bullet muzzle velocity
 -- IN M/S
 SWEP.ChamberSize = 0 -- how many rounds can be chambered.
-SWEP.Primary.ClipSize = 30 -- DefaultClip is automatically set.
+SWEP.Primary.ClipSize = 50 -- DefaultClip is automatically set.
 SWEP.Recoil = 0.25
 SWEP.RecoilSide = 0.125
 SWEP.RecoilRise = 0.1
@@ -43,8 +44,11 @@ SWEP.Firemodes = {
 SWEP.AccuracyMOA = 12 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 300 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 75
-
-SWEP.Primary.Ammo = "ar2" -- what ammo type the gun uses
+game.AddAmmoType( {
+	name = "ammo_healthrower",
+	dmgtype = DMG_BLAST,
+} )
+SWEP.Primary.Ammo = "ammo_healthrower" -- what ammo type the gun uses
 
 SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
@@ -107,6 +111,7 @@ SWEP.Animations = {
         SoundTable = {
             {s = "ambient/machines/keyboard2_clicks.wav", t = 0},
         },
+        TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Source = "idle",
         Time = 2,
     },
@@ -146,9 +151,15 @@ function SWEP:PrimaryAttack()
             dmg:SetDamageType(DMG_POISON)
             dmg:SetDamageCustom(HORDE.DMG_PLAYER_FRIENDLY)
             dmg:SetDamage(self:GetBuff("Damage", self.Damage))
-            util.BlastDamageInfo(dmg, trace.HitPos, 128)
-
             for _, ent in pairs(ents.FindInSphere(trace.HitPos, 128)) do
+                if IsValid(ent) and ent:IsNPC() then
+                    dmg:SetDamagePosition(ent:GetPos() + Vector(0, 0 ,50))
+                    ent:TakeDamageInfo(dmg)
+                end
+            end
+            --util.BlastDamageInfo(dmg, trace.HitPos, 128)
+
+            for _, ent in pairs(ents.FindInSphere(trace.HitPos, 96)) do
                 if ent:IsPlayer() then
                     local healinfo = HealInfo:New({amount = 4, healer = self.Owner, immediately = false})
                     HORDE:OnPlayerHeal(ent, healinfo)
