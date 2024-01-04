@@ -634,8 +634,20 @@ end
             Medic = {Medic=25},
             Survivor = {Medic=20, Survivor=20},
         }, nil, {HORDE.DMG_BALLISTIC})
+        HORDE:CreateItem("Special",    "Healthrower",     "arccw_hordeext_healthrower", 3000, 7, "Healthrower.\nMedic weapon like flamethrower.",
+        {Medic=true}, 10, -1, nil, nil, {
+            Medic=15,
+        }, nil, {HORDE.DMG_POISON})
+
+        HORDE:CreateItem("Rifle",      "Corrupter Carbine",     "arccw_hordeext_corrupcarb",    3500, 8, "Corrupter Carbine.\nBolt-action weapon with Medic Module.",
+        {Medic=true}, 5, -1, nil, nil, {
+            Medic=25,
+        }, nil, {HORDE.DMG_POISON})
+
         HORDE:CreateItem("Rifle",      "M40A3",     "arccw_horde_m40a3",    2250, 6, "M40A3.\nBolt-action weapon with big power.",
         {Ghost=true}, 3, -1, nil, nil, {Ghost=2}, nil, {HORDE.DMG_BALLISTIC})
+
+        
 
 
         HORDE.items["arccw_horde_awp"].whitelist["Survivor"] = true

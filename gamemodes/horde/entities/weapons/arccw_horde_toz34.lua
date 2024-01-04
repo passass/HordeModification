@@ -34,9 +34,9 @@ SWEP.ChamberSize = 0-- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 2 -- DefaultClip is automatically set.
 SWEP.Horde_MaxMags = 60
 
-SWEP.Recoil = 8
-SWEP.RecoilSide = 1
-SWEP.MaxRecoilBlowback = 2
+SWEP.Recoil = 5.25
+SWEP.RecoilSide = .6
+SWEP.MaxRecoilBlowback = 1.1
 
 SWEP.Delay = 60 / 600 -- 60 / RPM.
 SWEP.Num = 6 -- number of shots per trigger pull.
@@ -55,7 +55,7 @@ SWEP.NPCWeaponType = {
 SWEP.NPCWeight = 100
 
 SWEP.AccuracyMOA = 60 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 550 -- inaccuracy added by hip firing.
+SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 100
 
 SWEP.Primary.Ammo = "buckshot" -- what ammo type the gun uses
@@ -178,10 +178,11 @@ SWEP.Animations = {
         Source = "reload", --Mult = .64, MinProgress = 2.85, ForceEnd = true,
         --Time = 2,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
-        Framerate = 30,
         LHIK = true,
         LHIKIn = .4, LHIKEaseIn = .2,
-        LHIKOut = .65, LHIKEaseOut = .5,Mult=reload_mult1,
+        LHIKOut = .65, LHIKEaseOut = .5,
+        MinProgress = 1.8 / reload_mult1, ForceEnd = true,
+        Mult=reload_mult1,
         SoundTable = {
             {t = 0.65 * reload_mult1, s = "CW_FAS2_TOZ34_OPENSTART"},
             {t = 1.5 * reload_mult1, s = "CW_FAS2_TOZ34_OPENFINISH"},
@@ -196,6 +197,7 @@ SWEP.Animations = {
         LHIK = true,
         LHIKIn = .4, LHIKEaseIn = .2,
         LHIKOut = .5, LHIKEaseOut = .5,
+        MinProgress = 2.2 / reload_mult2, ForceEnd = true,
         Mult=reload_mult2,
         SoundTable = {
             {t = 0.65 * reload_mult2, s = "CW_FAS2_TOZ34_OPENSTART"},

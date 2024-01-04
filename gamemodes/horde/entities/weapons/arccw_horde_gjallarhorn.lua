@@ -185,7 +185,7 @@ SWEP.Attachments = {
     {
         PrintName = "Optic", -- print name
         DefaultAttName = "Iron Sights",
-        Slot = "hordeext_gjallarhorn_scope", -- what kind of attachments can fit here, can be string or table
+        Slot = "hordeext_Scopes", -- what kind of attachments can fit here, can be string or table
         Integral = true, Installed = "hordeext_gjallarhorn_scope",
         Bone = "SlideBone",
         --WMScale = Vector(0, 0, 0),

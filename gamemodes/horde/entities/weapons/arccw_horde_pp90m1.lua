@@ -17,7 +17,7 @@ if CLIENT then
     SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_mw3e_pp90m1.vtf")
     killicon.Add("arccw_horde_pp90m1", "arccw/weaponicons/arccw_mw3e_pp90m1", Color(0, 0, 0, 255))
 end
-SWEP.Slot = 1
+SWEP.Slot = 2
 
 SWEP.UseHands = true
 HORDE.Syringe:ApplyMedicSkills(SWEP, 10)
