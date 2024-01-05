@@ -20,6 +20,62 @@ function HORDE:ApplyDamageUpgradewpnDamage(ply, bonus, dmginfo)
     end
 end
 
+function HORDE:ApplyTemporaryDamage(ply, wep, npc, dmginfo, data)
+    --[[if npc.Horde_TemporaryDamage_TakenThisTick then
+        npc.Horde_TemporaryDamage_TakenThisTick = nil
+        return
+    end]]
+    if !npc.Horde_TemporaryDamage_Table then
+        npc.Horde_TemporaryDamage_Table = {}
+    end
+    data = data or wep.Horde_AfterHitEffects
+
+    local damage_type = data.Damage_Type
+    local damage = data.Damage
+    local delay = data.Delay
+    local damage_times = data.Damage_Times
+
+    local dmginfo_temp = DamageInfo()
+    dmginfo_temp:SetDamage(damage)
+    dmginfo_temp:SetDamageType(damage_type)
+    dmginfo_temp:SetAttacker(ply)
+    dmginfo_temp:SetInflictor(wep)
+
+    local pos_relative = data.Fixed_Pos_Relative or dmginfo:GetDamagePosition() - npc:GetPos()
+    local TEMP_KEYS = table.GetKeys(npc.Horde_TemporaryDamage_Table)
+    local temp_damage_id = (TEMP_KEYS[table.Count(TEMP_KEYS)] or 0) + 1
+    local timername
+
+    if data.OnlyOneDamageFromWeapon then
+        timername = "Horde_TempDamage_" .. npc:EntIndex() .. "_" .. wep:EntIndex()
+        local timer_obj = HORDE.Timers:Find(timername)
+        if timer_obj then
+            timer_obj:SetRepetitionsEnough(damage_times + 1)
+            timer_obj:UpdateTimer()
+            return
+        end
+    else
+        timername = "Horde_TempDamage_" .. npc:EntIndex() .. "_" .. temp_damage_id
+    end
+
+    npc.Horde_TemporaryDamage_Table[temp_damage_id] = HORDE.Timers:New({
+        linkwithent = npc,
+        timername = timername,
+        repetitions = damage_times,
+        func = function(timerobj)
+            if npc:Health() > 0 then
+                --npc.Horde_TemporaryDamage_TakenThisTick = true
+                dmginfo_temp:SetDamagePosition(npc:GetPos() + pos_relative)
+                npc:TakeDamageInfo(dmginfo_temp)
+                return
+            end
+            npc.Horde_TemporaryDamage_Table[temp_damage_id] = nil
+            timerobj:Remove()
+        end,
+        delay = delay
+    }, true)
+end
+
 hook.Add("ScaleNPCDamage", "Horde_ApplyDamage", function (npc, hitgroup, dmginfo)
     if (not HORDE:IsPlayerMinion(npc)) then
         if hitgroup == HITGROUP_KFHEAD then hitgroup = HITGROUP_HEAD end
@@ -70,7 +126,8 @@ function HORDE:ApplyDamage(npc, hitgroup, dmginfo)
         return
     end
     hook.Run("Horde_OnPlayerDamage", ply, npc, bonus, hitgroup, dmginfo)
-    if dmginfo:GetInflictor():GetNWEntity("HordeOwner"):IsPlayer() then
+    local entity_Owner = dmginfo:GetInflictor():GetNWEntity("HordeOwner")
+    if IsValid(entity_Owner) and entity_Owner:IsPlayer() then
         hook.Run("Horde_OnPlayerMinionDamage", ply, npc, bonus, dmginfo)
     end
 

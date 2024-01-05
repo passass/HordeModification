@@ -250,4 +250,4 @@ SWEP.Animations = {
 	},
 }
 
-if HORDE then HORDE.Syringe:ApplyMedicSkills(SWEP, 10) end
+if HORDE then HORDE.Syringe:ApplyMedicSkills(SWEP, 15, 50) end

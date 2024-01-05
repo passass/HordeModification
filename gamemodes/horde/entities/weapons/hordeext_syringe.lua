@@ -46,7 +46,7 @@ SWEP.HealAmount = 14 -- there will actually 15 cause regeneration makes instant 
 SWEP.RegenAmount = 21 -- 21 to compensate it
 
 SWEP.Primary.ClipSize = -1
-SWEP.Primary.DefaultClip = 3
+SWEP.Primary.DefaultClip = 4
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "Syringes"
 

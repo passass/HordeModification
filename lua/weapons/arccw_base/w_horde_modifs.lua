@@ -6,10 +6,26 @@ function SWEP:ChangeVar(varname, value, priority)
     self.TickCache_Overrides[varname] = nil
     self.TickCache_Mults[varname] = nil
     self.TickCache_Adds[varname] = nil
-    self[varname] = value
+
     if priority then
         self[varname .. "_Priority"] = priority
     end
+
+    local haspoint, _ = string.find( varname, "." )
+    local tbl = self
+    if haspoint then
+
+        local splitted_modifiers = string.Split( varname, "." )
+        
+        for i=1, #splitted_modifiers - 1 do
+            local v = splitted_modifiers[i]
+            tbl = tbl[v]
+        end
+
+        varname = splitted_modifiers[#splitted_modifiers]
+    end
+
+    tbl[varname] = value
 end
 
 function SWEP:AddElement(elementname, wm)

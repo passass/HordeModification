@@ -74,27 +74,34 @@ end
 
 local syringe_picture = Material("syringe_icon.png", "mips smooth")
 
-function HORDE.Syringe:ApplyMedicSkills(wep, hptoheal)
+function HORDE.Syringe:ApplyMedicSkills(wep, hptoheal, SyringePerShoot)
     if string.sub(wep.Base, 1, 6) != "arccw_" then return end
+    SyringePerShoot = SyringePerShoot or 50
     wep.Horde_Medic_SyringeCount = 100
     function wep:ChangeFiremode(pred)
-        if self.Horde_Medic_SyringeCount < 50 then return end
+        if self.Horde_Medic_SyringeCount < SyringePerShoot then return end
         if !self.CanBash and !self:GetBuff_Override("Override_CanBash") then return end
         if HORDE.TimeStop_Proceed() then return end
-        self.Horde_Medic_SyringeCount = self.Horde_Medic_SyringeCount - 50
+        self.Horde_Medic_SyringeCount = self.Horde_Medic_SyringeCount - SyringePerShoot
         start_regen_syringes(self)
         if CLIENT then return end
         local ply = self:GetOwner()
-		local tr = util.TraceHull({
+		--[[local tr = util.TraceHull({
 			start = self:GetOwner():GetShootPos(),
 			endpos = self:GetOwner():GetShootPos() + self:GetOwner():GetAimVector() * 5000,
 			filter = {ply},
 			mins = Vector(-16, -16, -8),
 			maxs = Vector(16, 16, 8),
 			mask = MASK_SHOT_HULL
-		})
-        
-        if tr.Hit then
+		})]]
+
+        if SERVER then
+            local ent = self:FireRocket("hordeext_syringe_medic_proj", 7000)
+
+            ent.Syringe_Heal = hptoheal
+        end
+
+        --[[if tr.Hit then
             local effectdata = EffectData()
             effectdata:SetOrigin(tr.HitPos)
             effectdata:SetRadius(50)
@@ -108,18 +115,18 @@ function HORDE.Syringe:ApplyMedicSkills(wep, hptoheal)
                     local healinfo = HealInfo:New({amount = 10, healer = self.Owner})
                     HORDE:OnAntlionHeal(ent, healinfo)
                 elseif ent:IsNPC() then
-                    local dmg = DamageInfo()
-                    dmg:SetDamage(25)
-                    dmg:SetDamageType(DMG_NERVEGAS)
-                    dmg:SetAttacker(ply)
-                    dmg:SetInflictor(self)
-                    dmg:SetDamagePosition(tr.HitPos)
-                    ent:TakeDamageInfo(dmg)
+                    HORDE:ApplyTemporaryDamage(ply, self, ent, nil, {
+                        Damage_Type = DMG_NERVEGAS,
+                        Damage = 10,
+                        Delay = .5,
+                        Damage_Times = 5,
+                        Fixed_Pos_Relative = Vector(0, 0, 50),
+                    })
                 end
             end
-        end
+        end]]
 
-        ply:EmitSound("horde/weapons/mp7m/heal.ogg", 125, 100, 1, CHAN_AUTO)
+        ply:EmitSound("horde/weapons/mp7m/heal.ogg", 100, 100, 1, CHAN_AUTO)
 
         return true
     end
@@ -134,7 +141,9 @@ function HORDE.Syringe:ApplyMedicSkills(wep, hptoheal)
             shadow = true,
             alpha = 255,
         }
+        local old_hook = wep.Hook_DrawHUD or function(wpn) end
         function wep:Hook_DrawHUD()
+            old_hook(self)
             local x, y = ScrW() - 95, ScrH() - 270
             data.x, data.y, data.text = x, y - 2, self.Horde_Medic_SyringeCount
             MyDrawText(data)

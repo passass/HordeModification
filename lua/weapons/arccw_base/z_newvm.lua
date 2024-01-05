@@ -27,23 +27,8 @@ if CLIENT then
                 vm_real:SetAngles( ang )
                 vm_real:SetParent( ply:GetViewModel() )
             end
-            
-            --vm_real:SetRenderMode( RENDERMODE_TRANSALPHA )
-            --[[local wep_color = wep:GetColor()
-            print(wep:GetColor())
-            vm_real:SetColor( Color( wep_color.r, wep_color.b, wep_color.g, 255 ) )]]
 
             local playbackrate = vm_real:GetPlaybackRate()
-            --[[local cur_anim = wep.LastAnimKey
-
-            local anim_is_exists = wep.REAL_VM.AnimThatExists[cur_anim]
-            
-            if anim_is_exists == nil then
-                anim_is_exists = vm_real:LookupSequence(cur_anim) != -1
-                wep.REAL_VM.AnimThatExists[cur_anim] = anim_is_exists
-            end
-
-            if !anim_is_exists then]]
 
             local idle_exists = vm_real.IdleExists
             
@@ -61,7 +46,6 @@ if CLIENT then
                     )
                 )
             end
-            --print(ply:ChatPrint(wep:GetAnimationProgress() .. "  /  " .. playbackrate))
 
             if wep.UseHands then
                 local hands = ply:GetHands()
@@ -2466,7 +2450,7 @@ function SWEP:Reload()
 
     if self:GetInUBGL() then
         if self:GetNextSecondaryFire() > CurTime() then return end
-            self:ReloadUBGL()
+        self:ReloadUBGL()
         return
     end
 
@@ -2488,7 +2472,8 @@ function SWEP:Reload()
         if r then return end
     end
 
-    if !self:GetMalfunctionJam() and self:Ammo1() <= 0 and !self:HasInfiniteAmmo() then return end
+    if !self:GetMalfunctionJam() and self:Ammo1() <= 0 and !self:HasInfiniteAmmo() then
+        return end
 
     if self:HasBottomlessClip() then return end
 
@@ -3066,7 +3051,7 @@ function SWEP:Think()
             end
         end
     end
-
+    
     if owner and owner:GetInfoNum("arccw_automaticreload", 0) == 1 and self:Clip1() == 0 and !self:GetReloading() and CurTime() > self:GetNextPrimaryFire() + 0.2 then
         self:Reload()
     end

@@ -413,4 +413,4 @@ SWEP.Animations = {
 }
 
 
-HORDE.Syringe:ApplyMedicSkills(SWEP, 13)
+HORDE.Syringe:ApplyMedicSkills(SWEP, 12, 40)

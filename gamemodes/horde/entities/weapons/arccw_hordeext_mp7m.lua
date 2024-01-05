@@ -404,4 +404,4 @@ sound.Add({
     sound = "arccw_go/mp7/mp7_cliphit.wav"
 })
 
-HORDE.Syringe:ApplyMedicSkills(SWEP, 15)
+HORDE.Syringe:ApplyMedicSkills(SWEP, 20, 40)

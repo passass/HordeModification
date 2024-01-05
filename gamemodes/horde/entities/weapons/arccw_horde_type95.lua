@@ -37,8 +37,8 @@ SWEP.WorldModelOffset = {
 }
 SWEP.ViewModelFOV = 60
 
-SWEP.Damage = 100
-SWEP.DamageMin = 90 -- damage done at maximum range
+SWEP.Damage = 135
+SWEP.DamageMin = 95 -- damage done at maximum range
 SWEP.Range = 125 -- in METRES
 SWEP.RangeMin = 38
 SWEP.Horde_MaxMags = 15

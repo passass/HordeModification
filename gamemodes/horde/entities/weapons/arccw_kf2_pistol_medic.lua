@@ -19,7 +19,7 @@ SWEP.Trivia_Year = 1993]]
 SWEP.Slot = 1
 
 SWEP.UseHands = true
-HORDE.Syringe:ApplyMedicSkills(SWEP, 10)
+HORDE.Syringe:ApplyMedicSkills(SWEP, 15, 50)
 SWEP.ViewModel			= "models/weapons/kf2/tfa_c_medicpistol.mdl"
 SWEP.WorldModel			= "models/weapons/kf2/tfa_w_medicpistol.mdl"
 SWEP.ViewModelFOV = 60

@@ -292,7 +292,7 @@ end
 
 hook.Add("Move", "Horde_PlayerMove", function (ply, mv)
     if ply:Horde_GetClass() then
-        ply:SetJumpPower(135)
+        ply:SetJumpPower(150)
         local bonus_walk = {more = 1, increase = 0}
         local bonus_run = {more = 1, increase = 0}
         hook.Run("Horde_PlayerMoveBonus", ply, bonus_walk, bonus_run)

@@ -450,6 +450,7 @@ function HORDE:Modifier_AddToWeapons(ply, modifier, primarykey, mult)
 
         CalculateTotalMult(wep, modifier)
     end
+    
     if SERVER then
         net.Start("Horde_plyModifierApply")
         net.WriteString(modifier)
@@ -666,6 +667,9 @@ else
         if !need_to_delete then
             mult = net.ReadFloat()
         end
-        HORDE:Modifier_AddToWeapons(ply, modifier, primarykey, mult)
+        timer.Simple(engine.TickInterval(), function()
+            HORDE:Modifier_AddToWeapons(ply, modifier, primarykey, mult)
+        end)
+        
     end)
 end

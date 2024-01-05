@@ -151,7 +151,8 @@ function ENT:KFNPCThink()
 				local revelead = false
 
 				for _, ply in pairs(player.GetAll()) do
-					if ply:Alive() and ply:Horde_GetSubclass(ply:Horde_GetClass().name) == "Assault" and ply:GetPos():Distance(self:GetPos()) < 450 then
+					local player_class = ply:Horde_GetClass()
+					if ply:Alive() and player_class and ply:Horde_GetSubclass(player_class.name) == "Assault" and ply:GetPos():Distance(self:GetPos()) < 450 then
 						self:SetMaterial("models/tripwire/killing floor/zeds/stalker/stalker_spec_show",true)
 						self:SetColor(Color(255,255,255,210))
 						revelead = true

@@ -328,4 +328,4 @@ SWEP.Animations = {
         LHIKOut = 0.5,
     },
 }
-HORDE.Syringe:ApplyMedicSkills(SWEP, 15)
+HORDE.Syringe:ApplyMedicSkills(SWEP, 20, 40)

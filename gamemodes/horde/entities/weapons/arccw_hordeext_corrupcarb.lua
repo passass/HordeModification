@@ -10,7 +10,7 @@ SWEP.Slot = 3
 
 SWEP.UseHands = true
 
-SWEP.Horde_MaxMags = 20
+SWEP.Horde_MaxMags = 18
 
 SWEP.Damage = 270
 SWEP.DamageMin = 215
@@ -195,14 +195,31 @@ SWEP.Animations = {
 
 
 -- TFA ADAPTIVE
-HORDE.Syringe:ApplyMedicSkills(SWEP, 10)
+HORDE.Syringe:ApplyMedicSkills(SWEP, 15, 40)
 
 SWEP.PrintName = "Corrupter Carbine"
 SWEP.ViewModel						= "models/weapons/locuslocutus/c_locus_locutus.mdl"
 SWEP.WorldModel				= SWEP.ViewModel
 SWEP.ViewModelFOV = 50
-SWEP.Damage = 270
-SWEP.DamageMin = 215
+SWEP.Damage = 180
+SWEP.DamageMin = 155
+
+SWEP.Horde_AfterHitEffects = {
+    Damage_Type = DMG_POISON,
+    Damage = 10,
+    Delay = .2,
+    Damage_Times = 15,
+}
+
+if SERVER then
+    function SWEP:Hook_PostBulletHit(data)
+        local tr = data.tr
+        local trent = tr.Entity
+        if IsValid(trent) and trent:IsNPC() and trent:Health() > 0 then
+            HORDE:ApplyTemporaryDamage(data.att, self, trent, data.dmg)
+        end
+    end
+end
 
 --[[if CLIENT then
     DEFINE_BASECLASS(SWEP.Base)

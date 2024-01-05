@@ -20,7 +20,7 @@ end
 SWEP.Slot = 2
 
 SWEP.UseHands = true
-HORDE.Syringe:ApplyMedicSkills(SWEP, 10)
+HORDE.Syringe:ApplyMedicSkills(SWEP, 10, 50)
 SWEP.ViewModel = "models/weapons/arccw/c_mw3e_pp90m1.mdl"
 SWEP.WorldModel = "models/weapons/arccw/c_mw3e_pp90m1.mdl"
 SWEP.MirrorVMWM = true

@@ -54,9 +54,7 @@ function PANEL:Calculate_Data()
     if MySelf == ply then
         self.player_position = 0
     else
-        PrintTable(players_huds)
         self.player_position = table.KeyFromValue( players_huds, self )
-        print(self.player_position)
     end
 
     local airgap = ScreenScale(6)

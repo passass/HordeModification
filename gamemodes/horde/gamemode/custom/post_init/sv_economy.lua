@@ -554,7 +554,7 @@ net.Receive("Horde_SelectClass", function (len, ply)
 
     ply:Horde_SetClass(class)
     ply:Horde_SetSubclass(name, subclass_name)
-    if GetConVar("horde_enable_starter"):GetInt() == 1 and not (HORDE.start_game and HORDE.current_break_time <= 0) then
+    if GetConVar("horde_enable_starter"):GetInt() == 1 and not (HORDE.start_game and HORDE.current_break_time <= 0) and HORDE.current_wave == 0 then
         ply:StripAmmo()
         --ply:StripWeapons()
         for _, wpn in pairs(ply:GetWeapons()) do

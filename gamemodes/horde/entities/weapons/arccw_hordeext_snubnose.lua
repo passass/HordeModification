@@ -101,6 +101,7 @@ SWEP.IronSightStruct = {
     SwitchToSound = "", -- sound that plays when switching to this sight
 }
 SWEP.Horde_MaxMags = 25
+SWEP.StartAmmo = 25 * 6
 SWEP.ClipsPerAmmoBox = 2
 SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"

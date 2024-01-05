@@ -43,9 +43,6 @@ local function addFireSound(name, snd, volume, soundLevel, channel, pitchStart, 
 	sound.Add(tbl)
 end
 
-addFireSound("CW_KK_INS2_MP5K_FIRE", "weapons/mp5k/mp5k_fp.wav")
-addFireSound("CW_KK_INS2_MP5K_FIRE_SUPPRESSED", "weapons/mp5k/mp5k_suppressed_fp.wav")
-
 addSound("CW_KK_INS2_MP5K_BOLTBACK", "weapons/mp5k/handling/mp5k_boltback.wav")
 addSound("CW_KK_INS2_MP5K_BOLTLOCK", "weapons/mp5k/handling/mp5k_boltlock.wav")
 addSound("CW_KK_INS2_MP5K_BOLTRELEASE", "weapons/mp5k/handling/mp5k_boltrelease.wav")
@@ -124,8 +121,8 @@ SWEP.MoveDispersion = 150
 SWEP.Primary.Ammo = "smg1" -- what ammo type the gun uses
 SWEP.MagID = "vityaz" -- the magazine pool this gun draws from
 
-SWEP.ShootSound			= Sound("CW_KK_INS2_MP5K_FIRE")
-SWEP.ShootSoundSilenced			= Sound("CW_KK_INS2_MP5K_FIRE_SUPPRESSED")
+SWEP.ShootSound			= "weapons/mp5k/mp5k_fp.wav"
+SWEP.ShootSoundSilenced			= "weapons/mp5k/mp5k_suppressed_fp.wav"
 SWEP.MuzzleEffect = "muzzleflash_m3"
 SWEP.ShellModel = "models/shells/shell_12gauge.mdl"
 SWEP.ShellPitch = 100

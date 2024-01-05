@@ -17,7 +17,7 @@ end
 local plymeta = FindMetaTable("Player")
 
 function plymeta:Horde_GetTotalHP()
-	return math.min(self:Health() + (self.Horde_HealHPRemain or 0), self.Horde_HealLastMaxHealth)
+	return math.min(self:Health() + (self.Horde_HealHPRemain or 0), self.Horde_HealLastMaxHealth or 100)
 end
 
 util.AddNetworkString("Horde_SlowHeal_Proceed")
@@ -148,7 +148,8 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
     hook.Run("Horde_OnPlayerHeal", ply, healinfo)
     hook.Run("Horde_PostOnPlayerHeal", ply, healinfo)
 	local maxhealth_mult = 1 + healinfo:GetOverHealPercentage()
-    if (ply:GetMaxHealth() * maxhealth_mult <= ply:Health()) then return end
+    local maxhealth = ply:GetMaxHealth() * maxhealth_mult
+    if (maxhealth <= ply:Health()) then return end
     
     local healer = healinfo:GetHealer()
     if healer:IsPlayer() and healer:IsValid() then
@@ -165,7 +166,7 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
             ply:Horde_SlowHeal(heal_bonus * healinfo:GetHealAmount(), healinfo, maxhealth_mult)
         else
             HORDE:Horde_SetHealth(ply, math.min(
-                ply:GetMaxHealth() * maxhealth_mult,
+                maxhealth,
                 ply:Health() + heal_bonus * healinfo:GetHealAmount()
             ))
         end
@@ -174,7 +175,7 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
             ply:Horde_SlowHeal(healinfo:GetHealAmount(), healinfo, maxhealth_mult)
         else
             HORDE:Horde_SetHealth(ply, math.min(
-                ply:GetMaxHealth() * maxhealth_mult,
+                maxhealth,
                 ply:Health() + healinfo:GetHealAmount()
             ))
         end
@@ -191,7 +192,7 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
         return
     end
     ply:ScreenFade(SCREENFADE.IN, Color(50, 200, 50, 10), 0.3, 0)
-    if healer ~= ply then
+    if healer ~= ply and ply:Horde_GetTotalHP() < maxhealth then
         healer:Horde_AddMoney(3)
         healer:Horde_SyncEconomy()
         net.Start("Horde_RenderHealer")

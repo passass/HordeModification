@@ -18,7 +18,10 @@ function HORDE.Timers:New(o, start_enabled)
     o.stopped = false
     o.removed = false
 
-    if !o.repetitions then o.repetitions = 0 end
+    if !o.repetitions then
+        o.repetitions = 0
+    end
+    o.repetitions_enough = o.repetitions
 
     if o.linkwithent then
         o.linkwithent:CallOnRemove( "Horde_timer_" .. o.timername, function() o:Remove() end)
@@ -35,17 +38,25 @@ end
 function HORDE.Timers:CallFunc()
     self:func()
     self.bypasses = self.bypasses + 1
+    if self.repetitions != 0 then
+        self.repetitions_enough = self.repetitions_enough - 1
+    end
 end
 
-function HORDE.Timers:StartTimer(forcednotcallfunc)
-    if !forcednotcallfunc and self.callfunconstart then
-        self:CallFunc()
+function HORDE.Timers:StartTimer(NoCallFuncAndChangeReps)
+    if !NoCallFuncAndChangeReps then
+        if self.callfunconstart then
+            self:CallFunc()
+        end
+        self.repetitions_enough = self.repetitions
     end
-
+    if self.repetitions != 0 and self.repetitions_enough == 0 then
+        return
+    end
     local delay = self.delay
 
     if self:IsValid() then
-        timer.Create(self.timername, delay, self.repetitions, function()
+        timer.Create(self.timername, delay, self.repetitions_enough, function()
             self:CallFunc()
             if self.alwayscheckfordelay and delay != self.delay then
                 self:StartTimer(true)
@@ -70,7 +81,7 @@ function HORDE.Timers:UpdateTimer(updateonlydata)
     elseif updateonlydata then
 
         if self:TimerExists() then
-            timer.Create(self.timername, self.delay, self.repetitions, function()
+            timer.Create(self.timername, self.delay, self.repetitions_enough, function()
                 self:CallFunc()
             end)
 
@@ -86,16 +97,20 @@ end
 
 -------------------------> Change Params
 
-function HORDE.Timers:SetFunc(func, isstart, update)
+function HORDE.Timers:SetFunc(func)
     self.func = func
 end
 
-function HORDE.Timers:SetDelay(delay, isstart, update)
+function HORDE.Timers:SetDelay(delay)
     self.delay = delay
 end
 
-function HORDE.Timers:SetReps(repetitions, isstart, update) -- you have to take into account that you need to set one number less
+function HORDE.Timers:SetRepetitions(repetitions) -- you have to take into account that you need to set one number less
     self.repetitions = repetitions
+end
+
+function HORDE.Timers:SetRepetitionsEnough(repetitions_enough)
+    self.repetitions_enough = repetitions_enough
 end
 
 ------------------------->

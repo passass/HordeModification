@@ -457,4 +457,4 @@ sound.Add({
 })
 
 
-HORDE.Syringe:ApplyMedicSkills(SWEP, 15)
+HORDE.Syringe:ApplyMedicSkills(SWEP, 20, 40)
