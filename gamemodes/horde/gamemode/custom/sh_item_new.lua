@@ -171,7 +171,7 @@ end
 
         arccw_horde_nade_stun = "arccw_hordeext_nade_stun",
         arccw_horde_nade_shrapnel = "arccw_hordeext_nade_shrapnel",
-        arccw_horde_nade_sonar = "arccw_hordeext_nade_sonar",
+        arccw_horde_nade_sonar = "arccw_hordeext_nade_freeze",
         arccw_horde_m67 = "arccw_hordeext_m67",
         arccw_nade_medic = "arccw_hordeext_nade_medic",
         arccw_horde_nade_nanobot = "arccw_hordeext_nade_nanobot",
@@ -226,7 +226,7 @@ end
         weapon_frag = "weapon_frag",
         arccw_horde_nade_stun = "arccw_hordeext_nade_stun",
         arccw_horde_nade_shrapnel = "arccw_hordeext_nade_shrapnel",
-        arccw_horde_nade_sonar = "arccw_hordeext_nade_sonar",
+        arccw_horde_nade_sonar = "arccw_hordeext_nade_freeze",
         arccw_horde_m67 = "arccw_hordeext_m67",
         arccw_nade_medic = "arccw_hordeext_nade_medic",
         arccw_horde_nade_nanobot = "arccw_hordeext_nade_nanobot",

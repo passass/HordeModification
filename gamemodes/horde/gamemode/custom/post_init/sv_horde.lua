@@ -14,6 +14,8 @@ function HORDE:InBreak()
     return horde_in_break
 end
 
+
+
 local function GetCurrentWave()
 
     local current_wave = ((HORDE.current_wave - 1) % HORDE.max_max_waves) + 1
@@ -24,8 +26,10 @@ local function GetCurrentWave()
     else
         return current_wave
     end
+end
 
-    
+function HORDE:GetEnemyWave()
+    return GetCurrentWave()
 end
 
 hook.Add("EntityRemoved", "Horde_EntityRemoved", function(ent)
