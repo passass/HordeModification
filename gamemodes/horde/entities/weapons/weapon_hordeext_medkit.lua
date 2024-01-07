@@ -196,4 +196,4 @@ function SWEP:CustomAmmoDisplay()
 
 end
 
-SWEP.CantDropWep = true
+--SWEP.CantDropWep = true

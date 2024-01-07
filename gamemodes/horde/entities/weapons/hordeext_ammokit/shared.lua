@@ -120,7 +120,7 @@ function SWEP:PrimaryAttack()
 
 	local need = (IsValid(tr.Entity) and tr.Entity:IsPlayer()) and math.min(OtherPLayerMaxArmor-tr.Entity:Armor(),self.ArmorAmount) or self.ArmorAmount
 	if self:Clip1() >= self.MaxAmmo and tr.Hit and IsValid(tr.Entity) and tr.Entity:IsPlayer() then
-		self:UseEffect(tr.Entity, 10)
+		self:UseEffect(tr.Entity, 8)
 	elseif SERVER then
 		self.Owner:EmitSound("items/suitchargeno1.wav")
 	end

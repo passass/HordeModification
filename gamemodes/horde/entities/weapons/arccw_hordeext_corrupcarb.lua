@@ -201,7 +201,7 @@ SWEP.PrintName = "Corrupter Carbine"
 SWEP.ViewModel						= "models/weapons/locuslocutus/c_locus_locutus.mdl"
 SWEP.WorldModel				= SWEP.ViewModel
 SWEP.ViewModelFOV = 50
-SWEP.Damage = 180
+SWEP.Damage = 210
 SWEP.DamageMin = 155
 
 SWEP.Horde_AfterHitEffects = {

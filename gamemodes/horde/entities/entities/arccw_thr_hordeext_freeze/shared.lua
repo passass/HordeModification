@@ -109,7 +109,9 @@ function ENT:Explode()
                 ent:SetMaterial(ent.old_Freeze_Material)
                 ent.old_Freeze_Material = nil
                 ent:StopParticles()
-                HORDE:TimeStop_unfreeze_npc(ent)
+                if !HORDE.TimeStop_Proceed() then
+                    HORDE:TimeStop_unfreeze_npc(ent)
+                end
             end
             hook.Remove("Horde_OnPlayerDamage", hookname)
         end)

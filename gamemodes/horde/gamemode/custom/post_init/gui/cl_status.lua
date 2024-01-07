@@ -10,14 +10,14 @@ local font2 = "HealthInfo2"
 local font3 = "Horde_WeaponName"
 local fontweight = "Horde_Weight"
 local fontplayername = "Horde_Weight"--"PlayerName_EXT"
-local players_huds = {}
-local ply_id = 0
 
-local health_color = Color(201,13,13,222)
+local health_color = Color(61, 182, 92)
 local extra_health_color = Color(223,202,14,222)
-local armor_color = Color(40,208,250,222)
-local death_color = Color(223, 0, 0)
+local armor_color = Color(23,80,165,222)
+local death_color = Color(201,13,13,222)
 local vanish = Color(0, 0, 0, 0)
+local panel_size_x = 140
+local panel_size_y = 20
 
 local PANEL = {}
 
@@ -28,7 +28,6 @@ function PANEL:Think()
     if !IsValid(ply) then
         self:Remove()
     else
-
         if GetConVarNumber("horde_enable_health_gui") != 1 then
             if IsValid(self.ply_Avatar) then
                 self.ply_Avatar:SetImageColor(vanish)
@@ -37,10 +36,43 @@ function PANEL:Think()
             return
         end
 
-        if !ply:Alive() then
-            self.ply_Avatar.Dead_Pic:SetImageColor( death_color )
+        if ply:Alive() then
+            if !IsValid(self.ply_Avatar) then
+                local prnt_panel = self
+
+                self.ply_Avatar = vgui.Create("AvatarImage", prnt_panel)
+                self.ply_Avatar:SetVisible(true)
+                self.ply_Avatar:SetPlayer(ply)
+                self.ply_Avatar:SetMouseInputEnabled(false)
+        
+                --[[self.ply_Avatar.Dead_Pic = vgui.Create("DImage", self.ply_Avatar)
+                self.ply_Avatar.Dead_Pic:SetSize(avatar_size, avatar_size)
+                self.ply_Avatar.Dead_Pic:SetPos(0, 0)
+                self.ply_Avatar.Dead_Pic:SetImageColor( vanish )
+                self.ply_Avatar.Dead_Pic:SetMaterial(dead)
+                self.ply_Avatar.Dead_Pic:SetMouseInputEnabled(false)]]
+            end
         else
-            self.ply_Avatar.Dead_Pic:SetImageColor( vanish )
+            if IsValid(self.ply_Avatar) then
+                self.ply_Avatar:Remove()
+            end
+            return
+        end
+
+        if self.player_dist and self.player_dist > 350 then
+            self.ply_Avatar:SetVisible(false)
+            return end
+        self.ply_Avatar:SetVisible(true)
+        --local x, y = self:GetSize()
+        --local bars_pos_x = 45
+        if self.TooMoreAngle then
+            local avatar_size = 50
+            self.ply_Avatar:SetPos(0, 0)
+            self.ply_Avatar:SetSize(avatar_size, avatar_size)
+        else
+            local avatar_size = 24
+            self.ply_Avatar:SetPos(5, 5)
+            self.ply_Avatar:SetSize(avatar_size, avatar_size)
         end
     end
 end
@@ -51,47 +83,17 @@ function PANEL:Calculate_Data()
 
     ply.Horde_HealthGUI = self
 
-    if MySelf == ply then
-        self.player_position = 0
-    else
-        self.player_position = table.KeyFromValue( players_huds, self )
-    end
-
     local airgap = ScreenScale(6)
-    local class_icon_y = ScrH() - airgap - ScreenScale(37) - (MySelf != ply and ScreenScale(10) or 0) - self.player_position * ScreenScale(40)
+    local class_icon_y = ScrH() - airgap - ScreenScale(37) - ScreenScale(10)
 
-    local size_x, size_y = airgap + ScreenScale(160), ScreenScale(43)
+    local size_x, size_y = ScreenScale(panel_size_x), ScreenScale(panel_size_y)
     self:SetPos(airgap, class_icon_y)
     self:SetSize(size_x, size_y)
-
-    if !self.ply_Avatar then
-        local prnt_panel = self
-
-        self.ply_Avatar = vgui.Create("AvatarImage", prnt_panel)
-        local avatar_size = ScreenScale(8)
-        self.ply_Avatar:SetPos(ScreenScale(30), size_y - avatar_size - ScreenScale(1.5))
-        self.ply_Avatar:SetSize(avatar_size, avatar_size)
-        self.ply_Avatar:SetVisible(true)
-        self.ply_Avatar:SetPlayer(ply)
-        self.ply_Avatar:SetMouseInputEnabled(false)
-
-        self.ply_Avatar.Dead_Pic = vgui.Create("DImage", self.ply_Avatar)
-        self.ply_Avatar.Dead_Pic:SetSize(avatar_size, avatar_size)
-        self.ply_Avatar.Dead_Pic:SetPos(0, 0)
-        self.ply_Avatar.Dead_Pic:SetImageColor( vanish )
-        self.ply_Avatar.Dead_Pic:SetMaterial(dead)
-        self.ply_Avatar.Dead_Pic:SetMouseInputEnabled(false)
-    end
 end
 
 function PANEL:OnRemove()
     self.ply_Avatar:Remove()
-    self.ply_Avatar.Dead_Pic:Remove()
-    table.RemoveByValue( players_huds, self )
-    for _, ply in pairs(player.GetAll()) do
-        if ply.Horde_HealthGUI == self then continue end
-        ply.Horde_HealthGUI:Calculate_Data()
-    end
+    --self.ply_Avatar.Dead_Pic:Remove()
 end
 
 local function draw_rect(x, y, width, height, color)
@@ -100,23 +102,36 @@ local function draw_rect(x, y, width, height, color)
 end
 
 function PANEL:Paint()
-
     local ply = self.ply
-    
-    local airgap = ScreenScale(6)
-    local armor_field_size = ScreenScale(3)
-    
-    --local icon_x = airgap + ScreenScale(55)
+    local pos_of_panel_x, pos_of_panel_y = self:GetPos()
     local size_x, size_y = self:GetSize()
 
-    local icon_y = size_y - airgap - ScreenScale(33)
+    local scrw, scrh = ScrW(), ScrH()
 
-    local bars_size_x = airgap + ScreenScale(90)
-    local bars_pos_x = size_x - bars_size_x - ScreenScale(40)
+    if pos_of_panel_x + size_x < 0 or pos_of_panel_x > scrw or
+        pos_of_panel_y + size_y < 0 or pos_of_panel_y > scrh or
+        !ply:Alive()
+    then return end
+
+    distance_beetwen_locplayer_and_ply = MySelf:GetPos():Distance(ply:GetPos())
+
+    if distance_beetwen_locplayer_and_ply > 350 then return end
+    
+    if self.TooMoreAngle then return end
+
+    local airgap = ScreenScale(6)
+    local armor_field_size = ScreenScale(2)
+    local hp_field_size = ScreenScale(3)
+    
+    --local icon_x = airgap + ScreenScale(55)
+
+    local bars_pos_x = ScreenScale(15)
+    local bars_size_x = size_x - bars_pos_x
+
+    --draw_rect(0, 0, size_x, size_y, Color(215,215,215,150))
 
     local vhp = ply:Health()
     local vmaxhp = ply:GetMaxHealth()
-    
     
     local armor_color_real
     local varmor
@@ -131,46 +146,33 @@ function PANEL:Paint()
         vmaxarmor = ply:GetMaxArmor()
     end
 
-    if !ply:Alive() then
-        vhp = 0
-        varmor = 0
-    end
-
-    -- background
-    draw_rect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(13) - airgap, bars_size_x, airgap + ScreenScale(3), Color(30,30,30,150))
-    -- HP
-    
-    local hp_bar_size_y = airgap - ScreenScale(2)
-    local hp_perc = math.min(1, vhp / vmaxhp)
-    --[[local hpbars_size_x = math.floor((bars_size_x - ScreenScale(2)) * hp_perc)
-
-    draw_rect(bars_pos_x,
-    size_y - ScreenScale(9) - airgap,
-    hpbars_size_x,
-    hp_bar_size_y,
-    health_color)]]
-
-    --[[if vhp / vmaxhp > 1 then
-        draw_rect(bars_pos_x,
-        size_y - ScreenScale(9) - airgap,
-        hpbars_size_x * math.min(1, (vhp / vmaxhp) - 1),
-        hp_bar_size_y,
-        extra_health_color)
-    end]]
-
-    local TEMP = math.Clamp(vmaxhp / 50, 1, 4)
-    local hp_bars_count = math.ceil(TEMP)
-
-    local hp_bars_pos_y = size_y - ScreenScale(9) - airgap
-
-    local vhp_2 = vhp
     local Horde_SlowHealHP
+
     if !ply.Horde_HealHPRemain_Max or vhp >= ply.Horde_HealHPRemain_Max then
         ply.Horde_HealHPRemain_Max = 0
         Horde_SlowHealHP = 0
     else
         Horde_SlowHealHP = ply.Horde_HealHPRemain_Max
     end
+
+    local bars_start_pos_y = size_y - airgap - ScreenScale(13)
+    local borders_size = 2
+
+    local bars_size_y = bars_start_pos_y + hp_field_size + borders_size * 3 + armor_field_size-- airgap + ScreenScale(3)
+
+    -- background
+    draw_rect(bars_pos_x, bars_start_pos_y, bars_size_x, bars_size_y, Color(30,30,30,150))
+    -- HP
+
+    
+    local hp_perc = math.min(1, vhp / vmaxhp)
+
+    local TEMP = math.Clamp(vmaxhp / 50, 1, 4)
+    local hp_bars_count = math.ceil(TEMP)
+
+    local hp_bars_pos_y = bars_start_pos_y + armor_field_size + borders_size * 2 + 1
+
+    local vhp_2 = vhp
 
     local pos_x_mult = hp_bars_count / (vmaxhp / 50)
     for i = 1, hp_bars_count do
@@ -180,11 +182,11 @@ function PANEL:Paint()
         local bar_cut_by = (50 / remain_hp)
 
         
-        local pos_x = math.ceil(bars_pos_x + (bars_size_x - ScreenScale(2)) / hp_bars_count * (i - 1) * pos_x_mult)
-        local hr_bar_size_x = math.ceil((bars_size_x - ScreenScale(2)) / hp_bars_count * hp_perc * pos_x_mult / bar_cut_by)
+        local pos_x = math.ceil(bars_pos_x + (bars_size_x - borders_size * 2) / hp_bars_count * (i - 1) * pos_x_mult)
+        local hr_bar_size_x = math.ceil((bars_size_x - borders_size * 2) / hp_bars_count * hp_perc * pos_x_mult / bar_cut_by + borders_size)
         
         if vhp_2 != 0 then
-            draw_rect(pos_x, hp_bars_pos_y, hr_bar_size_x, hp_bar_size_y, health_color)
+            draw_rect(pos_x, hp_bars_pos_y, hr_bar_size_x, hp_field_size, health_color)
 
             vhp_2 = math.max(0, vhp_2 - 50)
         end
@@ -193,17 +195,16 @@ function PANEL:Paint()
             draw_rect(math.ceil(pos_x + hr_bar_size_x),
             hp_bars_pos_y,
             math.ceil(
-                ((bars_size_x - ScreenScale(2)) / hp_bars_count * pos_x_mult) * math.min(1, (Horde_SlowHealHP - 50 * (i - 1)) / remain_hp) / bar_cut_by
-            ) - hr_bar_size_x
-            ,
-            hp_bar_size_y,
+                ((bars_size_x - borders_size * 2) / hp_bars_count * pos_x_mult) * math.min(1, (Horde_SlowHealHP - 50 * (i - 1)) / remain_hp) / bar_cut_by
+            ) - hr_bar_size_x + borders_size,
+            hp_field_size,
             Color(199, 199, 199, 204))
 
             --Horde_SlowHealHP = Horde_SlowHealHP + old_vhp_2 - remain_hp
         end
 
         if i != 1 then
-            draw_rect(pos_x - ScreenScale(1), hp_bars_pos_y, ScreenScale(1), hp_bar_size_y, Color(0,0,0,255))
+            draw_rect(pos_x - borders_size, hp_bars_pos_y, borders_size, hp_field_size, Color(0,0,0,255))
         end
     end
 
@@ -213,37 +214,36 @@ function PANEL:Paint()
             local remain_hp = i != hp_bars_count and 50 or (vmaxhp % 50) == 0 and 50 or (vmaxhp % 50)
             local bar_cut_by = (50 / remain_hp)
             hp_perc = math.min(1, vhp_2 / remain_hp)
-            local pos_x = bars_pos_x + (bars_size_x - ScreenScale(2)) / hp_bars_count * (i - 1) * pos_x_mult
-            local hr_bar_size_x = (bars_size_x - ScreenScale(2)) / hp_bars_count * hp_perc * pos_x_mult / bar_cut_by
+            local pos_x = bars_pos_x + (bars_size_x - borders_size * 2) / hp_bars_count * (i - 1) * pos_x_mult
+            local hr_bar_size_x = (bars_size_x - borders_size * 2) / hp_bars_count * hp_perc * pos_x_mult / bar_cut_by
             if vhp_2 != 0 then
-                draw_rect(pos_x, hp_bars_pos_y, hr_bar_size_x, hp_bar_size_y, extra_health_color)
+                draw_rect(pos_x, hp_bars_pos_y, hr_bar_size_x, hp_field_size, extra_health_color)
 
                 vhp_2 = math.max(0, vhp_2 - 50)
             end
 
             if i != 1 then
-                draw_rect(pos_x - ScreenScale(1), hp_bars_pos_y, ScreenScale(1), hp_bar_size_y, Color(0,0,0,255))
+                draw_rect(pos_x - borders_size, hp_bars_pos_y, borders_size, hp_field_size, Color(0,0,0,255))
             end
         end
     end
 
     --for i = 1, (separator_count - 1) do
-    --    draw_rect(bars_pos_x + (bars_size_x - ScreenScale(2)) / separator_count * i + right_rel - ScreenScale(1), hp_bars_pos_y, ScreenScale(1), hp_bar_size_y, Color(0,0,0,255))
+    --    draw_rect(bars_pos_x + (bars_size_x - ScreenScale(2)) / separator_count * i + right_rel - ScreenScale(1), hp_bars_pos_y, ScreenScale(1), hp_field_size, Color(0,0,0,255))
     --end
 
     -- Black
     surface.SetDrawColor(Color(0,0,0,255))
 
-    surface.DrawRect(bars_pos_x - ScreenScale(1), hp_bars_pos_y, bars_size_x, ScreenScale(1))
-    surface.DrawRect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(11), bars_size_x, ScreenScale(1))
-    surface.DrawRect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(13) - airgap, bars_size_x, ScreenScale(1))
+    surface.DrawRect(bars_pos_x - borders_size, bars_size_y, bars_size_x, borders_size)
+    surface.DrawRect(bars_pos_x - borders_size, bars_start_pos_y + borders_size + armor_field_size, bars_size_x, borders_size)
+    surface.DrawRect(bars_pos_x - borders_size, bars_start_pos_y, bars_size_x, borders_size)
 
-    surface.DrawRect(bars_pos_x - ScreenScale(1), size_y - ScreenScale(13) - airgap, ScreenScale(1), airgap + ScreenScale(3))
-    surface.DrawRect(bars_pos_x + bars_size_x - ScreenScale(2), size_y - ScreenScale(13) - airgap, ScreenScale(1), airgap + ScreenScale(3))
+    surface.DrawRect(bars_pos_x - borders_size, bars_start_pos_y, borders_size, bars_size_y)
+    surface.DrawRect(bars_pos_x + bars_size_x - borders_size, bars_start_pos_y, borders_size, bars_size_y)
     -- ARMOR
-    local pos_y = size_y - ScreenScale(12) - airgap
+    local pos_y = bars_start_pos_y + borders_size
 
-    
     local armor_bars_count = math.Clamp(math.ceil(vmaxarmor / 50), 1, 4)
 
     if armor_bars_count != 1 then
@@ -255,22 +255,22 @@ function PANEL:Paint()
                 local bar_cut_by = (50 / remain_armor)
 
                 local armor_perc = math.min(1, varmor / remain_armor)
-                local armor_bar_size = (bars_size_x - ScreenScale(2)) * armor_perc / armor_bars_count * pos_x_mult / bar_cut_by
+                local armor_bar_size = (bars_size_x - borders_size * 2) * armor_perc / armor_bars_count * pos_x_mult / bar_cut_by + borders_size + 1
 
-                draw_rect(bars_pos_x + (bars_size_x - ScreenScale(2)) / armor_bars_count * (i - 1) * pos_x_mult, pos_y, armor_bar_size, armor_field_size, armor_color_real)
+                draw_rect(bars_pos_x + (bars_size_x - borders_size * 2) / armor_bars_count * (i - 1) * pos_x_mult, pos_y, armor_bar_size, armor_field_size, armor_color_real)
 
                 varmor = varmor - 50
             end
             if i != 1 then
-                draw_rect(bars_pos_x + (bars_size_x - ScreenScale(2)) / armor_bars_count * (i - 1) * pos_x_mult - ScreenScale(1), pos_y, ScreenScale(1), armor_field_size, Color(0,0,0,255))
+                draw_rect(bars_pos_x + (bars_size_x - borders_size * 2) / armor_bars_count * (i - 1) * pos_x_mult - borders_size, pos_y, borders_size, armor_field_size, Color(0,0,0,255))
             end
         end
     else
         local armor_perc = math.min(1, varmor / vmaxarmor)
-        draw_rect(bars_pos_x, pos_y, (bars_size_x - ScreenScale(2)) * armor_perc, armor_field_size, armor_color_real)
+        draw_rect(bars_pos_x, pos_y, (bars_size_x - borders_size * 2) * armor_perc, armor_field_size, armor_color_real)
     end
     
-    local subclass = HORDE.subclasses[ply:Horde_GetCurrentSubclass()]
+    --[[local subclass = HORDE.subclasses[ply:Horde_GetCurrentSubclass()]
     if not subclass then subclass = HORDE.subclasses[HORDE.Class_Survivor] end
     local display_name = subclass.PrintName
     local class_icon = Material(subclass.Icon, "mips smooth")
@@ -278,8 +278,8 @@ function PANEL:Paint()
     local rank, rank_level = HORDE:LevelToRank(level)
     
     local class_icon_s = ScreenScale(13)
-    local class_icon_x = airgap + ScreenScale(4)
-    local class_icon_y = size_y - airgap - ScreenScale(13)
+    local class_icon_x = 0
+    local class_icon_y = 0
 
     surface.SetMaterial(class_icon)
     surface.SetDrawColor(HORDE.Rank_Colors[rank])
@@ -297,13 +297,18 @@ function PANEL:Paint()
                 y_pos = y_pos - ScreenScale(3)
             end
         end
-    end
+    end]]
 
     -- NICKNAME
-    draw.SimpleTextOutlined(ply:LongName(), fontplayername, class_icon_x + class_icon_s + ScreenScale(20), size_y - ScreenScale(9.5), color_white, nil, nil, 1, Color( 68, 68, 68))
-    
+
+    --[[if distance_beetwen_locplayer_and_ply < 200 then
+
+        local avatar_size = ScreenScale(8)
+
+        draw.SimpleTextOutlined(ply:LongName(), fontplayername, bars_pos_x + avatar_size, size_y - ScreenScale(9.5), color_white, nil, nil, 1, Color( 68, 68, 68))
+    end]]
     -- WEAPON AND AMMO
-    draw.SimpleTextOutlined(ply:Horde_GetMoney() .. "$", fontweight, ScreenScale(32), icon_y + ScreenScale(12), color_white, nil, nil, 1, Color( 68, 68, 68))
+    --[[draw.SimpleTextOutlined(ply:Horde_GetMoney() .. "$", fontweight, ScreenScale(32), icon_y + ScreenScale(12), color_white, nil, nil, 1, Color( 68, 68, 68))
 
     surface.SetMaterial(weight)
     surface.SetDrawColor(color_white)
@@ -383,7 +388,7 @@ function PANEL:Paint()
                 draw.SimpleText(charge, fontweight, x + s - ScreenScale(5), y + ScreenScale(5), color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             end
         end
-    end
+    end]]
 end
 
 vgui.Register("HealthGUI_PlayerStats", PANEL, "Panel")
@@ -391,18 +396,56 @@ vgui.Register("HealthGUI_PlayerStats", PANEL, "Panel")
 hook.Add("Think", "Horde_ProceedHealthGUI", function ()
     if GetConVarNumber("horde_enable_health_gui") != 1 then return end
     for _, ply in pairs(player.GetAll()) do
-        if !IsValid(ply.Horde_HealthGUI) and (table.Count(players_huds) < 5 or MySelf == ply ) then
-            local HpGUI = vgui.Create("HealthGUI_PlayerStats")
-            if MySelf != ply then
-                table.insert(players_huds, HpGUI)
+        if MySelf != ply then
+            if !IsValid(ply.Horde_HealthGUI) then
+                local HpGUI = vgui.Create("HealthGUI_PlayerStats")
+                HpGUI.ply = ply
+                HpGUI:Calculate_Data()
+                ply.Horde_HealthGUI = HpGUI
             end
-            HpGUI.ply = ply
-            HpGUI:Calculate_Data()
+
+            local attachment_id = ply:LookupAttachment("anim_attachment_head") or 0 -- Can't take any chances with nils here
+            local attachment = ply:GetAttachment(attachment_id)
+
+            local base_pos = Vector()
+
+            if attachment and attachment.Pos then -- Would've been too ugly with a ternary
+                base_pos = attachment.Pos
+            else
+                base_pos = (ply:LocalToWorld(ply:OBBCenter()) + ply:GetUp() * 24)
+            end
+
+            local render_pos = base_pos + ply:GetUp() * 15
+
+            local data2D = render_pos:ToScreen()
+
+            local player_dist = MySelf:GetPos():Distance(ply:GetPos())
+            ply.Horde_HealthGUI.player_dist = player_dist
+
+            local distance_mult = math.max(.3, 1 / (player_dist / 200 + 1) )
+
+            local myselfang = MySelf:EyeAngles()[2]
+            if myselfang <= 0 then
+                myselfang = 180 + (180 + myselfang)
+            end
+
+            local plyang = (ply:GetPos() - MySelf:GetShootPos()):Angle()[2]
+            if plyang <= 0 then
+                plyang = 180 + (180 + plyang)
+            end
+            local is_TooMoreAngle = math.abs(plyang - myselfang) > 20
+            ply.Horde_HealthGUI.TooMoreAngle = is_TooMoreAngle
+
+            local size_x = is_TooMoreAngle and 50 or ScreenScale(panel_size_x) * distance_mult
+            local size_y = is_TooMoreAngle and 50 or ScreenScale(panel_size_y)
+            ply.Horde_HealthGUI.distance_mult = distance_mult
+            ply.Horde_HealthGUI:SetSize(size_x, size_y)
+            ply.Horde_HealthGUI:SetPos(data2D.x - size_x / 2, data2D.y - (size_y * (1 - distance_mult)))
         end
     end
 end)
 
-hook.Add("HUDPaint", "Horde_DrawHud", function ()
+--[[hook.Add("HUDPaint", "Horde_DrawHud", function ()
     if GetConVarNumber("horde_enable_client_gui") == 0 then return end
     local colhp = Color(255, 255, 255, 255)
     local airgap = ScreenScale(6)
@@ -592,9 +635,9 @@ hook.Add("HUDPaint", "Horde_DrawHud", function ()
             end
         end
     end
-end)
+end)]]
 
-function HORDE:PlayMoneyNotification(diff, money, ply)
+--[[function HORDE:PlayMoneyNotification(diff, money, ply)
     if GetConVarNumber("horde_enable_ammo_gui") == 0 then return end
     if !IsValid(ply.Horde_HealthGUI) then return end
     if diff == 0 then return end
@@ -651,7 +694,7 @@ function HORDE:PlayMoneyNotification(diff, money, ply)
             main:Remove()
         end)
     end)
-end
+end]]
 
 if CLIENT then
     net.Receive("Horde_GadgetStartCooldown", function()

@@ -86,45 +86,42 @@ function HORDE.Syringe:ApplyMedicSkills(wep, hptoheal, SyringePerShoot)
         start_regen_syringes(self)
         if CLIENT then return end
         local ply = self:GetOwner()
-		--[[local tr = util.TraceHull({
+		local tr = util.TraceHull({
 			start = self:GetOwner():GetShootPos(),
 			endpos = self:GetOwner():GetShootPos() + self:GetOwner():GetAimVector() * 5000,
 			filter = {ply},
-			mins = Vector(-16, -16, -8),
-			maxs = Vector(16, 16, 8),
+			mins = Vector(-4, -4, -2),
+			maxs = Vector(4, 4, 2),
 			mask = MASK_SHOT_HULL
-		})]]
+		})
 
-        if SERVER then
+        --[[if SERVER then
             local ent = self:FireRocket("hordeext_syringe_medic_proj", 7000)
 
             ent.Syringe_Heal = hptoheal
-        end
-
-        --[[if tr.Hit then
+        end]]
+        PrintTable(tr)
+        if tr.Hit and IsValid(tr.Entity) then
             local effectdata = EffectData()
             effectdata:SetOrigin(tr.HitPos)
-            effectdata:SetRadius(50)
-            util.Effect("horde_heal_mist", effectdata)
-
-            for _, ent in pairs(ents.FindInSphere(tr.HitPos, 100)) do
-                if ent:IsPlayer() then
-                    local healinfo = HealInfo:New({amount = hptoheal, healer = ply, immediately = false})
-                    HORDE:OnPlayerHeal(ent, healinfo)
-                elseif ent:GetClass() == "npc_vj_horde_antlion" then
-                    local healinfo = HealInfo:New({amount = 10, healer = self.Owner})
-                    HORDE:OnAntlionHeal(ent, healinfo)
-                elseif ent:IsNPC() then
-                    HORDE:ApplyTemporaryDamage(ply, self, ent, nil, {
-                        Damage_Type = DMG_NERVEGAS,
-                        Damage = 10,
-                        Delay = .5,
-                        Damage_Times = 5,
-                        Fixed_Pos_Relative = Vector(0, 0, 50),
-                    })
-                end
+            util.Effect("hordeext_heal_mist_syringe", effectdata)
+            local ent = tr.Entity
+            if ent:IsPlayer() then
+                local healinfo = HealInfo:New({amount = hptoheal, healer = ply, immediately = false})
+                HORDE:OnPlayerHeal(ent, healinfo)
+            elseif ent:GetClass() == "npc_vj_horde_antlion" then
+                local healinfo = HealInfo:New({amount = 10, healer = self.Owner})
+                HORDE:OnAntlionHeal(ent, healinfo)
+            elseif ent:IsNPC() then
+                HORDE:ApplyTemporaryDamage(ply, self, ent, nil, {
+                    Damage_Type = DMG_NERVEGAS,
+                    Damage = 10,
+                    Delay = .5,
+                    Damage_Times = 5,
+                    Fixed_Pos_Relative = tr.HitPos - ent:GetPos(),
+                })
             end
-        end]]
+        end
 
         ply:EmitSound("horde/weapons/mp7m/heal.ogg", 100, 100, 1, CHAN_AUTO)
 

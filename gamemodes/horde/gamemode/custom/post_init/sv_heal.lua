@@ -151,6 +151,15 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
     local maxhealth = ply:GetMaxHealth() * maxhealth_mult
     if (maxhealth <= ply:Health()) then return end
     
+    if healer ~= ply and ply:Horde_GetTotalHP() < maxhealth then
+        healer:Horde_AddMoney(3)
+        healer:Horde_SyncEconomy()
+        net.Start("Horde_RenderHealer")
+            net.WriteString(healer:GetName())
+        net.Send(ply)
+
+        healer:Horde_AddHealAmount(healinfo:GetHealAmount())
+    end
     local healer = healinfo:GetHealer()
     if healer:IsPlayer() and healer:IsValid() then
 		local heal_bonus = 1
@@ -192,14 +201,5 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
         return
     end
     ply:ScreenFade(SCREENFADE.IN, Color(50, 200, 50, 10), 0.3, 0)
-    if healer ~= ply and ply:Horde_GetTotalHP() < maxhealth then
-        healer:Horde_AddMoney(3)
-        healer:Horde_SyncEconomy()
-        net.Start("Horde_RenderHealer")
-            net.WriteString(healer:GetName())
-        net.Send(ply)
-
-        healer:Horde_AddHealAmount(healinfo:GetHealAmount())
-    end
 end
 

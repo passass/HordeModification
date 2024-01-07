@@ -352,6 +352,8 @@ end
         nil, 10, -1, melees_properties, nil, nil, nil, {HORDE.DMG_SLASH})
 
 
+        HORDE:CreateItem("Equipment",  "Defibrilator",         "hordeext_defib",      3000,   5, "Defibrilator.\nLMB to revive.",
+        nil, -1, -1, {type=HORDE.ENTITY_PROPERTY_WPN}, nil, nil, nil, nil, nil, nil)
         HORDE:CreateItem("Equipment",  "Medkit",         "weapon_horde_medkit",      750,   1, "Rechargeble medkit.\nRMB to self-heal, LMB to heal others.",
         nil, -1, -1, {type=HORDE.ENTITY_PROPERTY_WPN}, "items/weapon_medkit.png", nil, nil, nil, nil, nil)
         HORDE:CreateItem("Equipment",  "Ammokit",         "hordeext_ammokit",      1750,   1, "Rechargeble Ammokit.\nRMB to give to self ammo, LMB give ammo to teammate.",

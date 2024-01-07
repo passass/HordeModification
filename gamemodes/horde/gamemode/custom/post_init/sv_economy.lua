@@ -84,15 +84,17 @@ hook.Add("PlayerSpawn", "Horde_Economy_Sync", function (ply)
     HORDE.refresh_living_players = true
 
 	if HORDE.start_game and HORDE.current_break_time <= 0 then
-        if ply:IsValid() then
+        if !ply.MarkedForRespawn then
             local ret = hook.Run("Horde_OnPlayerShouldRespawnDuringWave")
             if not ret then
                 ply:KillSilent()
                 HORDE:SendNotification("You will respawn next wave.", 0, ply)
             end
+        else
+            ply.MarkedForRespawn = nil
         end
     end
-	
+
     if not ply:IsValid() or not ply.Horde_Init_Complete then return end
     if not ply:Horde_GetCurrentSubclass() then return end
     ply:Horde_SetMaxWeight(HORDE.max_weight)
