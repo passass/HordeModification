@@ -159,6 +159,7 @@ function SWEP:HandleRespawn()
 	local spawnPos = self:FindPosition(self.Owner)
 	if not spawnPos then return false end
 	ply.MarkedForRespawn = true
+	ply:Horde_SetGivenStarterWeapons(true)
 	ply:Spawn()
 	timer.Simple(.5, function()
 		if IsValid(ply) then

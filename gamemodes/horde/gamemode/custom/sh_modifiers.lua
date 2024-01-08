@@ -502,6 +502,7 @@ function HORDE:Modifier_AddToWeapon(ply, wep, modifier, primarykey, mult, otherd
 
         CalculateTotalMult(wep, modifier)
     end
+
     if SERVER then
         net.Start("Horde_wepModifierApply")
         net.WriteBool(false)
@@ -591,7 +592,14 @@ function HORDE:Modifier_LoadToWeaponModifier(wep)
         end
 
         wep.Horde_ModifiersTable[modifier] = table.Copy(multtable) or {}
-        wep.Horde_ModifiersTable[modifier]["init"] = inits[modifier]
+        if !inits[modifier] then
+            local weptbl = Weapon_GetTable(wep, modifier)
+            local modifier_wep = weptbl[2]
+            local tbl = weptbl[1]
+            wep.Horde_ModifiersTable[modifier]["init"] = tbl[modifier_wep]
+        else
+            wep.Horde_ModifiersTable[modifier]["init"] = inits[modifier]
+        end
 
         CalculateTotalMult(wep, modifier)
     end
@@ -603,7 +611,14 @@ function HORDE:Modifier_LoadToWeaponModifier(wep)
         end
 
         wep.Horde_ModifiersTable[modifier] = table.Merge(wep.Horde_ModifiersTable[modifier] or {}, multtable)
-        wep.Horde_ModifiersTable[modifier]["init"] = inits[modifier]
+        if !inits[modifier] then
+            local weptbl = Weapon_GetTable(wep, modifier)
+            local modifier_wep = weptbl[2]
+            local tbl = weptbl[1]
+            wep.Horde_ModifiersTable[modifier]["init"] = tbl[modifier_wep]
+        else
+            wep.Horde_ModifiersTable[modifier]["init"] = inits[modifier]
+        end
 
         CalculateTotalMult(wep, modifier)
     end
@@ -615,7 +630,14 @@ function HORDE:Modifier_LoadToWeaponModifier(wep)
         end
 
         wep.Horde_ModifiersTable[modifier] = table.Merge(wep.Horde_ModifiersTable[modifier] or {}, multtable)
-        wep.Horde_ModifiersTable[modifier]["init"] = inits[modifier]
+        if !inits[modifier] then
+            local weptbl = Weapon_GetTable(wep, modifier)
+            local modifier_wep = weptbl[2]
+            local tbl = weptbl[1]
+            wep.Horde_ModifiersTable[modifier]["init"] = tbl[modifier_wep]
+        else
+            wep.Horde_ModifiersTable[modifier]["init"] = inits[modifier]
+        end
 
         CalculateTotalMult(wep, modifier)
     end
