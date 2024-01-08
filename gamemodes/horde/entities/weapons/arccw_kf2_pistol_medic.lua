@@ -17,7 +17,7 @@ SWEP.Trivia_Country = "Austria"
 SWEP.Trivia_Year = 1993]]
 
 SWEP.Slot = 1
-
+SWEP.ClipsPerAmmoBox = 2
 SWEP.UseHands = true
 HORDE.Syringe:ApplyMedicSkills(SWEP, 15, 50)
 SWEP.ViewModel			= "models/weapons/kf2/tfa_c_medicpistol.mdl"

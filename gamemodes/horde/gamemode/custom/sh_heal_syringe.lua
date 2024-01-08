@@ -100,7 +100,7 @@ function HORDE.Syringe:ApplyMedicSkills(wep, hptoheal, SyringePerShoot)
 
             ent.Syringe_Heal = hptoheal
         end]]
-        PrintTable(tr)
+
         if tr.Hit and IsValid(tr.Entity) then
             local effectdata = EffectData()
             effectdata:SetOrigin(tr.HitPos)
@@ -110,7 +110,7 @@ function HORDE.Syringe:ApplyMedicSkills(wep, hptoheal, SyringePerShoot)
                 local healinfo = HealInfo:New({amount = hptoheal, healer = ply, immediately = false})
                 HORDE:OnPlayerHeal(ent, healinfo)
             elseif ent:GetClass() == "npc_vj_horde_antlion" then
-                local healinfo = HealInfo:New({amount = 10, healer = self.Owner})
+                local healinfo = HealInfo:New({amount = 10, healer = ply})
                 HORDE:OnAntlionHeal(ent, healinfo)
             elseif ent:IsNPC() then
                 HORDE:ApplyTemporaryDamage(ply, self, ent, nil, {

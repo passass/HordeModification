@@ -150,7 +150,7 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
 	local maxhealth_mult = 1 + healinfo:GetOverHealPercentage()
     local maxhealth = ply:GetMaxHealth() * maxhealth_mult
     if (maxhealth <= ply:Health()) then return end
-    
+    local healer = healinfo:GetHealer()
     if healer ~= ply and ply:Horde_GetTotalHP() < maxhealth then
         healer:Horde_AddMoney(3)
         healer:Horde_SyncEconomy()
@@ -160,7 +160,7 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
 
         healer:Horde_AddHealAmount(healinfo:GetHealAmount())
     end
-    local healer = healinfo:GetHealer()
+    
     if healer:IsPlayer() and healer:IsValid() then
 		local heal_bonus = 1
 		local curr_weapon = HORDE:GetCurrentWeapon(healer)

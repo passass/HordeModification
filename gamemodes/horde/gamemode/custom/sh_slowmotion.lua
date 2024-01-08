@@ -44,7 +44,7 @@ local bonus_hooks = {
                             local ct = CurTime()
                             local start_reload = wep.LastAnimStartTime
                             local anim = wep.LastAnimKey
-                            local vm = wep.REAL_VM--ply:GetViewModel()
+                            local vm = wep.REAL_VM or ply:GetViewModel()
                             local vm_animdur = vm:SequenceDuration()
 
 
