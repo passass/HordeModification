@@ -206,7 +206,7 @@ SWEP.DamageMin = 155
 
 SWEP.Horde_AfterHitEffects = {
     Damage_Type = DMG_POISON,
-    Damage = 10,
+    Damage = 8,
     Delay = .2,
     Damage_Times = 15,
 }

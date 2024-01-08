@@ -115,7 +115,7 @@ function PANEL:Paint()
 
     distance_beetwen_locplayer_and_ply = MySelf:GetPos():Distance(ply:GetPos())
 
-    if distance_beetwen_locplayer_and_ply > 350 then return end
+    if distance_beetwen_locplayer_and_ply > 450 then return end
     
     if self.TooMoreAngle then return end
 

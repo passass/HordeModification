@@ -623,7 +623,7 @@ end
 
 if SERVER then
     hook.Add("WeaponEquip", "Horde_ModifiersLoad", function(wep)
-        timer.Simple(0, function()
+        timer.Simple(engine.TickInterval(), function()
             if IsValid(wep) then
                 HORDE:Modifier_LoadToWeaponModifier(wep)
             end
