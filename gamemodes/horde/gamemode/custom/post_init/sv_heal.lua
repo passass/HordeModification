@@ -16,8 +16,8 @@ end
 
 local plymeta = FindMetaTable("Player")
 
-function plymeta:Horde_GetTotalHP()
-	return math.min(self:Health() + (self.Horde_HealHPRemain or 0), self.Horde_HealLastMaxHealth or 100)
+function plymeta:Horde_GetTotalHP(maxhealth)
+	return math.min(self:Health() + (self.Horde_HealHPRemain or 0), self.Horde_HealLastMaxHealth or maxhealth or 100)
 end
 
 util.AddNetworkString("Horde_SlowHeal_Proceed")
@@ -151,7 +151,7 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
     local maxhealth = ply:GetMaxHealth() * maxhealth_mult
     if (maxhealth <= ply:Health()) then return end
     local healer = healinfo:GetHealer()
-    if healer ~= ply and ply:Horde_GetTotalHP() < maxhealth then
+    if healer ~= ply and ply:Horde_GetTotalHP(maxhealth) < maxhealth then
         healer:Horde_AddMoney(3)
         healer:Horde_SyncEconomy()
         net.Start("Horde_RenderHealer")

@@ -670,10 +670,12 @@ end
         {Ghost=true}, 20, -1, nil, nil, {Ghost=15}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Rifle",      "Barrett AMR",    "arccw_horde_barret",  3500, 10, ".50 Cal Anti-Material Sniper Rifle.\nDoes huge amounts of ballistic damage.",
         {Ghost=true}, 50, -1, nil, nil, {Ghost=20}, nil, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "Type25",    "arccw_horde_type95",  6000, 7, "Slow but power weapon.",
-        {Ghost=true}, 30, -1, nil, nil, {Ghost=30}, 1, {HORDE.DMG_BALLISTIC})
-        HORDE:CreateItem("Rifle",      "SVU-AS",    "arccw_horde_svu",  6000, 8, "Semi-Auto sniper rifle.",
-        {Ghost=true}, 20, -1, nil, nil, {Ghost=30}, 1, {HORDE.DMG_BALLISTIC})
+        HORDE:CreateItem("Rifle",      "Gauss Rifle",    "arccw_hordeext_gauss",  6000, 11, "Gauss Rifle.\nDoes huge amounts of ballistic damage.",
+        {Ghost=true}, 50, -1, nil, nil, {Ghost=30}, nil, {HORDE.DMG_BALLISTIC})
+        HORDE:CreateItem("Rifle",      "Type25",    "arccw_horde_type95",  5000, 7, "Slow but power weapon.",
+        {Ghost=true}, 30, -1, nil, nil, {Ghost=25}, 1, {HORDE.DMG_BALLISTIC})
+        HORDE:CreateItem("Rifle",      "SVU-AS",    "arccw_horde_svu",  5000, 8, "Semi-Auto sniper rifle.",
+        {Ghost=true}, 20, -1, nil, nil, {Ghost=25}, 1, {HORDE.DMG_BALLISTIC})
 
         HORDE:CreateItem("Rifle",    "M16 M203",         "arccw_horde_m16m203",2250,7, "M16A4 equipped with an M203 underbarrel grenade launcher.\nDouble press B or ZOOM button to equip M203.",
         {Assault=true, Demolition=true, Survivor=true}, 10, 10, nil, nil, {Assault=5, Demolition=5}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_BLAST})

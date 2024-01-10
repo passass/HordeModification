@@ -6,23 +6,23 @@ SWEP.AdminOnly = false
 local path = "weapons/yurie_customs/hm500/"
 local pref = "YURIE_CUSTOMS.HM500"
 
-TFA.AddFireSound(pref .. ".1", {path .. "magnum-1.wav", path .. "magnum-2.wav", path .. "magnum-3.wav"}, false, ")")
+HORDE:Sound_AddFireSound(pref .. ".1", {path .. "magnum-1.wav", path .. "magnum-2.wav", path .. "magnum-3.wav"}, false, ")")
 
-TFA.AddWeaponSound(pref .. ".Draw", path .. "handling/draw.wav")
-TFA.AddWeaponSound(pref .. ".Holster", path .. "handling/holster.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Draw", path .. "handling/draw.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".Holster", path .. "handling/holster.wav")
 
-TFA.AddWeaponSound(pref .. ".CockHammer", path .. "handling/revolver_cock_hammer.wav")
-TFA.AddWeaponSound(pref .. ".CylinderOpen", path .. "handling/revolver_open_chamber.wav")
-TFA.AddWeaponSound(pref .. ".CylinderClose", path .. "handling/revolver_close_chamber.wav")
-TFA.AddWeaponSound(pref .. ".DumpRounds", path .. "handling/revolver_dump_rounds.wav")
-TFA.AddWeaponSound(pref .. ".SpeedLoaderInsert", path .. "handling/revolver_speed_loader_insert.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".CockHammer", path .. "handling/revolver_cock_hammer.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".CylinderOpen", path .. "handling/revolver_open_chamber.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".CylinderClose", path .. "handling/revolver_close_chamber.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".DumpRounds", path .. "handling/revolver_dump_rounds.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".SpeedLoaderInsert", path .. "handling/revolver_speed_loader_insert.wav")
 
-TFA.AddWeaponSound(pref .. ".MagTransition", path .. "handling/cloth_magtransition01.wav")
-TFA.AddWeaponSound(pref .. ".StartReload", path .. "handling/cloth_startreload01.wav")
-TFA.AddWeaponSound(pref .. ".ReturnToIdle", path .. "handling/cloth_returntoidle01.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".MagTransition", path .. "handling/cloth_magtransition01.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".StartReload", path .. "handling/cloth_startreload01.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".ReturnToIdle", path .. "handling/cloth_returntoidle01.wav")
 
-TFA.AddWeaponSound(pref .. ".InspectionSpin", path .. "csgo/deagle_special_lookat_f133.wav")
-TFA.AddWeaponSound(pref .. ".InspectionSpinStop", path .. "csgo/deagle_special_lookat_f111.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".InspectionSpin", path .. "csgo/deagle_special_lookat_f133.wav")
+HORDE:Sound_AddWeaponSound(pref .. ".InspectionSpinStop", path .. "csgo/deagle_special_lookat_f111.wav")
 
 
 

@@ -203,6 +203,31 @@ SWEP.WorldModel				= SWEP.ViewModel
 SWEP.ViewModelFOV = 50
 SWEP.Damage = 210
 SWEP.DamageMin = 155
+if matproxy then
+    local Lerp = Lerp
+    local RealFrameTime = RealFrameTime
+
+    local vector_one = Vector(1, 1, 1)
+
+    matproxy.Add({
+        name = "TFA_CubemapTint",
+        init = function(self, mat, values)
+            self.ResultVar = values.resultvar or "$envmaptint"
+            self.MultVar = values.multiplier
+        end,
+        bind = function(self, mat, ent)
+            local tint = vector_one
+
+            if IsValid(ent) then
+                local mult = self.MultVar and mat:GetVector(self.MultVar) or vector_one
+
+                tint = Lerp(RealFrameTime() * 10, mat:GetVector(self.ResultVar), mult * render.GetLightColor(ent:GetPos()))
+            end
+
+            mat:SetVector(self.ResultVar, tint)
+        end
+    })
+end
 
 SWEP.Horde_AfterHitEffects = {
     Damage_Type = DMG_POISON,
@@ -280,17 +305,17 @@ end
 
 local sniper = "weapons/LocusLocutus/"
 
-TFA.AddFireSound("TFA_LOCUSLOCUTUS_FIRE.1",  { sniper .. "LocusLocutusFire1.wav", sniper .. "LocusLocutusFire2.wav", sniper .. "LocusLocutusFire3.wav", sniper .. "LocusLocutusFire4.wav" }, true, ")" )
+HORDE:Sound_AddFireSound("TFA_LOCUSLOCUTUS_FIRE.1",  { sniper .. "LocusLocutusFire1.wav", sniper .. "LocusLocutusFire2.wav", sniper .. "LocusLocutusFire3.wav", sniper .. "LocusLocutusFire4.wav" }, true, ")" )
 
-TFA.AddSound("TFA_LOCUSLOCUTUS_RELOAD.1", CHAN_AUTO, 0.6, 80, {97, 103}, { sniper .. "LocusLocutusReload1_1.wav", sniper .. "LocusLocutusReload1_2.wav"}, ")" )
-TFA.AddSound("TFA_LOCUSLOCUTUS_RELOAD.2", CHAN_AUTO, 0.6, 80, {97, 103}, { sniper .. "LocusLocutusReload2_1.wav", sniper .. "LocusLocutusReload2_2.wav"}, ")" )
-TFA.AddSound("TFA_LOCUSLOCUTUS_RELOAD.3", CHAN_AUTO, 0.6, 80, {97, 103}, { sniper .. "LocusLocutusReload3_1.wav", sniper .. "LocusLocutusReload3_2.wav"}, ")" )
-TFA.AddSound("TFA_LOCUSLOCUTUS_RELOAD.4", CHAN_AUTO, 0.6, 80, {97, 103}, { sniper .. "LocusLocutusReload4_1.wav", sniper .. "LocusLocutusReload4_2.wav"}, ")" )
-TFA.AddSound("TFA_LOCUSLOCUTUS_RELOAD.5", CHAN_AUTO, 0.6, 80, {97, 103}, { sniper .. "LocusLocutusReload5_1.wav", sniper .. "LocusLocutusReload5_2.wav"}, ")" )
-TFA.AddSound("TFA_LOCUSLOCUTUS_RELOAD.6", CHAN_AUTO, 0.6, 80, {97, 103}, { sniper .. "LocusLocutusReload6_1.wav", sniper .. "LocusLocutusReload6_2.wav"}, ")" )
+HORDE:Sound_AddSound("TFA_LOCUSLOCUTUS_RELOAD.1", CHAN_AUTO, 0.6, 80, {97, 103}, { sniper .. "LocusLocutusReload1_1.wav", sniper .. "LocusLocutusReload1_2.wav"}, ")" )
+HORDE:Sound_AddSound("TFA_LOCUSLOCUTUS_RELOAD.2", CHAN_AUTO, 0.6, 80, {97, 103}, { sniper .. "LocusLocutusReload2_1.wav", sniper .. "LocusLocutusReload2_2.wav"}, ")" )
+HORDE:Sound_AddSound("TFA_LOCUSLOCUTUS_RELOAD.3", CHAN_AUTO, 0.6, 80, {97, 103}, { sniper .. "LocusLocutusReload3_1.wav", sniper .. "LocusLocutusReload3_2.wav"}, ")" )
+HORDE:Sound_AddSound("TFA_LOCUSLOCUTUS_RELOAD.4", CHAN_AUTO, 0.6, 80, {97, 103}, { sniper .. "LocusLocutusReload4_1.wav", sniper .. "LocusLocutusReload4_2.wav"}, ")" )
+HORDE:Sound_AddSound("TFA_LOCUSLOCUTUS_RELOAD.5", CHAN_AUTO, 0.6, 80, {97, 103}, { sniper .. "LocusLocutusReload5_1.wav", sniper .. "LocusLocutusReload5_2.wav"}, ")" )
+HORDE:Sound_AddSound("TFA_LOCUSLOCUTUS_RELOAD.6", CHAN_AUTO, 0.6, 80, {97, 103}, { sniper .. "LocusLocutusReload6_1.wav", sniper .. "LocusLocutusReload6_2.wav"}, ")" )
 
-TFA.AddSound("TFA_LOCUSLOCUTUS_DRAW.1", CHAN_AUTO, 0.5, 80, {97, 103}, { sniper .. "LocusLocutusDraw1_1.wav", sniper .. "LocusLocutusDraw1_2.wav"}, ")" )
-TFA.AddSound("TFA_LOCUSLOCUTUS_DRAW.2", CHAN_AUTO, 0.5, 80, {97, 103}, { sniper .. "LocusLocutusDraw2_1.wav", sniper .. "LocusLocutusDraw2_2.wav"}, ")" )
+HORDE:Sound_AddSound("TFA_LOCUSLOCUTUS_DRAW.1", CHAN_AUTO, 0.5, 80, {97, 103}, { sniper .. "LocusLocutusDraw1_1.wav", sniper .. "LocusLocutusDraw1_2.wav"}, ")" )
+HORDE:Sound_AddSound("TFA_LOCUSLOCUTUS_DRAW.2", CHAN_AUTO, 0.5, 80, {97, 103}, { sniper .. "LocusLocutusDraw2_1.wav", sniper .. "LocusLocutusDraw2_2.wav"}, ")" )
 SWEP.ShootSound = { sniper .. "LocusLocutusFire1.wav", sniper .. "LocusLocutusFire2.wav", sniper .. "LocusLocutusFire3.wav", sniper .. "LocusLocutusFire4.wav" }
 SWEP.ShootSoundSilenced = "ArcCW_BO2.Pistol_Sil"
 SWEP.DistantShootSound = "ArcCW_BO2.PistolBurst_RingOff"
