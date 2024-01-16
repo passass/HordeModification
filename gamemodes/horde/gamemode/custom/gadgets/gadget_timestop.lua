@@ -52,9 +52,7 @@ if CLIENT then
             Weapons_Stop_Beams()
             timer.Simple(.5, function()
 
-                for _, ply2 in pairs(player.GetAll()) do
-                    timer.Stop("Horde_LocalGadgetCooldown" .. ply2:EntIndex())
-                end
+                timer.Stop("Horde_LocalGadgetCooldown")
 
                 for _, wep in pairs(MySelf:GetWeapons()) do
                     if IsValid(wep) and wep.Horde_HealSyringeTimer then
@@ -118,9 +116,7 @@ if CLIENT then
             timer.Simple(1.2, function()
                 Weapons_Start_Beams()
                 TimeStopProceed = false
-                for _, ply2 in pairs(player.GetAll()) do
-                    timer.Start("Horde_LocalGadgetCooldown" .. ply2:EntIndex())
-                end
+                timer.Start("Horde_LocalGadgetCooldown")
 
                 for _, wep in pairs(MySelf:GetWeapons()) do
                     if IsValid(wep) and wep.Horde_HealSyringeTimer then
@@ -570,7 +566,7 @@ local function start_timestop(activator)
                             wep.LastAnimFinishTime = wep.LastAnimFinishTime + 6.2
                             wep:SetNextIdle(wep:GetNextIdle() + 6.2)
                             wep:SetMagUpIn(wep:GetMagUpIn() + 6.2)
-                            local vm = wep.REAL_VM
+                            local vm = wep.REAL_VM or ply2:GetViewModel()
                             if vm and IsValid(vm) then
                                 wep.oldPlaybackRate = vm:GetPlaybackRate()
                                 vm:SetPlaybackRate(0)
@@ -634,7 +630,7 @@ local function start_timestop(activator)
                 hook.Remove("Horde_CanSlowTime", "Horde_TimeStop")
                 hook.Remove("Horde_SlowHeal_Post", "Horde_TimeStop")
 				hook.Remove("WeaponEquip", "Horde_TimeStop")
-				hook.Remove( "OnEntityCreated", "Horde_TimeStop")
+				hook.Remove("OnEntityCreated", "Horde_TimeStop")
                 hook.Remove("Horde_SlowHeal_NotAllow", "Horde_TimeStop")
 				unfreeze_mutations()
 				unfreeze_mutations_progress(activator)
@@ -669,12 +665,12 @@ local function start_timestop(activator)
                         if timer_obj then
                             timer_obj:Start()
                         end
-                        local wep = activator:GetActiveWeapon()
+                        local wep = ply2:GetActiveWeapon()
                         if IsValid(wep) then
                             if wep.Horde_EndTimeStop then wep:Horde_EndTimeStop() end
                             if wep.oldPlaybackRate then
-                                local vm = activator:GetViewModel()
-                                if vm and IsValid(vm) then
+                                local vm = wep.REAL_VM or ply2:GetViewModel()
+                                if IsValid(vm) then
                                     vm:SetPlaybackRate(wep.oldPlaybackRate)
                                 end
                                 wep.oldPlaybackRate = nil

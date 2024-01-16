@@ -184,13 +184,6 @@ SWEP.Hook_PreDoEffects = function(wep, fx)
     return true
 end
 
-SWEP.Hook_SelectFireAnimation = function(wep, anim)
-    local cap = wep.Attachments[2].Installed
-    if anim and cap == "gauss_rifle_capacitor" then
-        return anim .. "_turbo"
-    end
-end
-
 SWEP.Animations = {
     ["idle"] = {
         Source = "idle",
@@ -263,28 +256,3 @@ sound.Add({
     volume = 1.0,
     sound = "weapons/arccw/gauss_rifle/clipin.wav"
 })
-
-if engine.ActiveGamemode() == "terrortown" then
-    SWEP.Kind = WEAPON_EQUIP1
-    SWEP.Slot = 6
-    SWEP.CanBuy = { ROLE_TRAITOR }
-    SWEP.LimitedStock = true
-    SWEP.AutoSpawnable = false
-    SWEP.EquipMenuData = {
-        type = "Weapon",
-        desc = "Extremely powerful futuristic antimaterial rifle.\nHas unique and noticable tracers.\nCapacitor and munition attachments are free."
-    }
-    SWEP.Icon = "arccw/ttticons/arccw_m107.png"
-end
-
-local cvar = CreateConVar("arccw_gauss_rifle_op", "0", FCVAR_REPLICATED + FCVAR_ARCHIVE, "Enable to make the Gauss Rifle very overpowered. Set to 2 to also make it admin only.", 0, 2)
-if cvar:GetInt() > 0 then
-    SWEP.AdminOnly = (cvar:GetInt() > 1)
-    SWEP.Recoil = 2.5
-    SWEP.RecoilSide = 1
-    SWEP.HipDispersion = 300
-    SWEP.MoveDispersion = 150
-    SWEP.SpeedMult = 0.9
-    SWEP.SightedSpeedMult = 0.6
-    SWEP.SightTime = 0.3
-end

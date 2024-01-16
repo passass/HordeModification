@@ -5,9 +5,8 @@ if SERVER then
         !hook.Run("Horde_UseActiveGadget", ply) then -- also can try HORDE.gadgets[ply:Horde_GetGadget()].Hooks and HORDE.gadgets[ply:Horde_GetGadget()].Hooks.Horde_UseActiveGadget and !HORDE.gadgets[ply:Horde_GetGadget()].Hooks.Horde_UseActiveGadget(ply)
             ply:Horde_SetGadgetInternalCooldown(ply:Horde_GetGadgetCooldown())
             net.Start("Horde_GadgetStartCooldown")
-                net.WriteEntity(ply)
                 net.WriteUInt(ply:Horde_GetGadgetCooldown(), 8)
-            net.Broadcast()
+            net.Send(ply)
 
             if HORDE.gadgets[gadget].Once then
                 ply:Horde_UnsetGadget()

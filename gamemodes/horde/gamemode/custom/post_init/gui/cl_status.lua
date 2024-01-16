@@ -695,16 +695,3 @@ end)]]
         end)
     end)
 end]]
-
-if CLIENT then
-    net.Receive("Horde_GadgetStartCooldown", function()
-        local ply = net.ReadEntity()
-        ply:Horde_SetGadgetInternalCooldown(net.ReadUInt(8))
-        if ply:Horde_GetGadgetInternalCooldown() <= 0 then return end
-        local timername = "Horde_LocalGadgetCooldown" .. ply:EntIndex()
-        timer.Create(timername, 1, 0, function()
-            if ply:Horde_GetGadgetInternalCooldown() <= 0 then timer.Remove(timername) return end
-            ply:Horde_SetGadgetInternalCooldown(ply:Horde_GetGadgetInternalCooldown() - 1)
-        end)
-    end)
-end
