@@ -979,19 +979,7 @@ function PANEL:Paint()
                     end
 
                     --print("self:IsUpgradable()", self:IsUpgradable(), HORDE:ItemCanUpgrade(MySelf, self.item, self.is_special_weapon_item))
-                    if self:IsUpgradable() then
-                        self.upgrade_btn:SetVisible(true)
-                        self.upgrade_btn:SetTextColor(Color(255,255,255))
-                        local price = HORDE:GetUpgradePrice(self.item.class)
-                        self.upgrade_btn:SetText((translate.Get("Shop_UpgradeTo") or "Upgrade to") .. " +" .. tostring(MySelf:Horde_GetUpgrade(self.item.class) + 1) .. " (" .. tostring(price) .. "$)")
-                        self.upgrade_btn:SetWide(self:GetWide())
-                        self.upgrade_btn.Paint = function ()
-                            surface.SetDrawColor(Color(153,50,204))
-                            surface.DrawRect(0, 0, self:GetParent():GetWide(), 200)
-                        end
-                    else
-                        self.upgrade_btn:SetVisible(false)
-                    end
+                    
 
                     self.current_ammo_panel.Paint = function ()
                         if not self.item then return end
@@ -1007,6 +995,20 @@ function PANEL:Paint()
                             draw.SimpleText(translate.Get("Shop_Primary_Ammo") .. ": " .. tonumber(clip_ammo) .. " / " .. tonumber(total_ammo), "Content", self:GetWide()/2, 10, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
                         end
                     end
+                end
+
+                if self:IsUpgradable() then
+                    self.upgrade_btn:SetVisible(true)
+                    self.upgrade_btn:SetTextColor(Color(255,255,255))
+                    local price = HORDE:GetUpgradePrice(self.item.class)
+                    self.upgrade_btn:SetText((translate.Get("Shop_UpgradeTo") or "Upgrade to") .. " +" .. tostring(MySelf:Horde_GetUpgrade(self.item.class) + 1) .. " (" .. tostring(price) .. "$)")
+                    self.upgrade_btn:SetWide(self:GetWide())
+                    self.upgrade_btn.Paint = function ()
+                        surface.SetDrawColor(Color(153,50,204))
+                        surface.DrawRect(0, 0, self:GetParent():GetWide(), 200)
+                    end
+                else
+                    self.upgrade_btn:SetVisible(false)
                 end
             else
                 self.ammo_panel:SetVisible(false)
@@ -1130,11 +1132,11 @@ function PANEL:Paint()
 end
 
 function PANEL:IsUpgraded()
-    return HORDE:ItemCanUpgrade(MySelf, self.item, self.is_special_weapon_item)
+    return HORDE:ItemCanUpgrade(MySelf, self.item, not self.is_special_weapon_item)
 end
 
 function PANEL:IsUpgradable()
-    return HORDE:ItemIsUpgradable(MySelf, self.item.class, self.is_special_weapon_item)
+    return HORDE:ItemIsUpgradable(MySelf, self.item.class, not self.is_special_weapon_item)
 end
 
 vgui.Register("HordeDescription", PANEL, "DPanel")

@@ -96,7 +96,7 @@ function SWEP:GetHitTrace()
 	local shoot = self.Owner:GetShootPos()
 	return util.TraceLine({
 		start = shoot,
-		endpos = shoot + self.Owner:GetAimVector() * 64,
+		endpos = shoot + self.Owner:GetAimVector() * 150,
 		filter = self.Owner,
 	})
 end

@@ -251,7 +251,7 @@ end
     function HORDE:ItemCanUpgrade(ply, item, ...)
         local new_args = false
 
-        for _, arg in pairs(... or {}) do
+        for _, arg in pairs(istable(...) and ... or {}) do
             if arg == true then new_args = true end
         end
 
@@ -361,12 +361,12 @@ end
         HORDE:CreateItem("Equipment",  "Armorkit",         "hordeext_armorkit",      2000,   1, "Rechargeble Armorkit.\nRMB to recover your armor, LMB to recover armor of your teammate.",
         {Medic=true, Survivor=true}, -1, -1, nil, "items/armor_refill.png", {Medic=3}, nil, nil, nil, nil)
         HORDE:CreateItem("Equipment",  "Syringe",         "hordeext_syringe",      250,   0, "Syringe.\nRMB to heal others, LMB to self-heal.\nHeals 35 HP.",
-        nil, 50, -1, {type=HORDE.ENTITY_PROPERTY_WPN}, nil, nil, nil, nil, nil, {"All"})
+        nil, 50, -1, {type=HORDE.ENTITY_PROPERTY_WPN, sell_forbidden=true, cantdropwep=true}, nil, nil, nil, nil, nil, {"All"})
 
         HORDE:CreateItem("SMG",        "Colt M635",           "arccw_horde_smg1",   100, 3, "A compact, shoots burst.",
         {Assault=true, Heavy=true, Survivor=true, SWAT=true}, 3, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC}, nil, {"Assault", "Heavy", "SpecOps", "SWAT"})
         HORDE:CreateItem("Melee",      "Crowbar",        "arccw_horde_crowbar", 300,  3, "A trusty crowbar.\nEasy to use.",
-        {Berserker=true, Survivor=true}, 10, -1, nil, "items/hl2/weapon_crowbar.png", nil, nil, {HORDE.DMG_BLUNT}, nil, {"Berserker"})
+        {Berserker=true, Survivor=true}, 10, -1, nil, "items/hl2/weapon_crowbar.png", nil, nil, {HORDE.DMG_BLUNT}, nil, {"Berserker", "Samurai"})
         HORDE:CreateItem("Pistol",     "HX-25",          "arccw_horde_hx25",   300,  2, "HX-25.\n Compact explosive pistol.",
         {Demolition=true, Survivor=true}, 2, -1, nil, nil, nil, nil, {HORDE.DMG_BLAST}, nil, {"Demolition"})
         HORDE:CreateItem("Pistol",     "HMTech-101 Pistol",          "arccw_kf2_pistol_medic",   300,  2, "HMTech-101 Pistol.\n A modern pistol with heal module.",
@@ -840,6 +840,63 @@ end
         {Cremator=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, armor=100}, "items/armor_cremator.png", {Cremator=30}, 1)
         HORDE:CreateItem("Equipment", "Battle Vest", "armor_berserker", 1000, 0, "Distinguished Berserker armor.\n\nFills up 100 of your armor bar and override if your limit is lower.\nProvides 8% increased Slashing/Blunt damage resistance.",
         {Berserker=true}, 10, -1, {type=HORDE.ENTITY_PROPERTY_ARMOR, armor=100}, "items/armor_berserker.png", {Berserker=30}, 1)
+
+        local special_properties = {
+            type=HORDE.ENTITY_PROPERTY_WPN, sell_forbidden=true, cantdropwep=true,
+            upgrade_price_base = 800,
+            is_upgradable = true,
+            upgrade_damage_mult_incby = 0,
+            upgrade_count = 10,
+            upgrade_price_incby = 25,
+        }
+
+        HORDE:CreateItem("Special",    "Void Projector",   "horde_void_projector",   0,  11,
+        [[Only usable by Necromancer subclass!
+        Manipulates dark energy to inflict hypothermia and conjure entities.]],
+        {Engineer=true}, -1, -1, special_properties, nil, nil, nil, {HORDE.DMG_COLD, HORDE.DMG_PHYSICAL}, nil, {"Necromancer"}, true)
+
+        HORDE:CreateItem("Special",    "Solar Seal",   "horde_solar_seal",   0,  11,
+        [[Only usable by Artificer subclass!
+        Manipulates solar energy to wreak destruction.]],
+        {Cremator=true}, -1, -1, special_properties, nil, nil, nil, {HORDE.DMG_FIRE, HORDE.DMG_LIGHTNING}, nil, {"Artificer"}, true)
+
+        HORDE:CreateItem("Special",    "Astral Relic",   "horde_astral_relic",   0,  11,
+        [[Only usable by Warlock subclass!
+        Manipulates negative energy fields.]],
+        {Demolition=true}, -1, -1, special_properties, nil, nil, nil, {HORDE.DMG_PHYSICAL}, nil, {"Warlock"}, true)
+
+        HORDE:CreateItem("Special",    "Carcass Biosystem",   "horde_carcass",   0,  13,
+        [[Only usable by Carcass subclass!
+        Advanced combat biosystem that completely screws up the appearance of its user.
+        Leaves behind an unpleasant stench.
+        
+        LMB: Punch.
+        Hold for a charged punch that deals increased damage in an area.]],
+        {Heavy=true}, -1, -1, special_properties, nil, nil, nil, {HORDE.DMG_PHYSICAL}, nil, {"Carcass"}, true)
+
+        HORDE:CreateItem("Special",    "Pheropod",   "horde_pheropod",   0,  11,
+        [[Only usable by Hatcher subclass!
+        Pheropods that can hatch and control alien Antlions.
+        
+        LMB: Throw Pod
+        Throws a Pheropod at the target, forcing the Antlions to perform range attacks at the target.
+        Pods can also heal Antlion for 5% health.
+
+        RMB: Raise Antlion (40 Energy)
+        Creates an Antlion that follows you around. Heal Antlion to accelerate evolution.
+        HOLD RMB to force Antlions to your location.
+        Antlion gains new effects each stage:
+        - Stage I:
+            - Bug Pulse: Every 5 seconds, generates a pulse that heals players nearby for 5% health.
+        - Stage II:
+            - Increased health and damage.
+            - Increased Aroma Pulse radius and reduce Bug Pulse cooldown.
+            - 50% increased Poison damage resistance.
+        - Stage III:
+            - Increased health, damage and attack speed.
+            - Increased Aroma Pulse radius and reduce Bug Pulse cooldown.
+            - Immune to Poison damage and Break.]],
+        {Medic=true}, -1, -1, special_properties, nil, nil, nil, {HORDE.DMG_SLASH, HORDE.DMG_POISON}, nil, {"Hatcher"}, true)
 
         changeLevelRequirement("arccw_horde_doublebarrel", { Warden=6 })
         changeLevelRequirement("arccw_horde_spas12", { Warden=8 })

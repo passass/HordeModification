@@ -29,13 +29,7 @@ local STATE_NONE, STATE_PROGRESS = 0, 1
 
 if SERVER then
 	function SWEP:Horde_StartTimeStop()
-		local owner = self:GetOwner()
-		if self.Medkit_Ammo_Timer and owner ~= HORDE.TimeStop_Activator() then self.Medkit_Ammo_Timer:Stop() end
-	end
-
-	function SWEP:Horde_EndTimeStop()
-		local owner = self:GetOwner()
-		if self.Medkit_Ammo_Timer and owner ~= HORDE.TimeStop_Activator() then self.Medkit_Ammo_Timer:Start() end
+		self:SetDefibStartTime(self:GetDefibStartTime() + 6.2)
 	end
 end
 

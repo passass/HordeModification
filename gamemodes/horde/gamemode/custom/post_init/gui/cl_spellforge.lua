@@ -286,13 +286,13 @@ function PANEL:Init()
             local a_total_levels = 0
             local b_total_levels = 0
             if a.levels and a.levels.VariousConditions then
-                a_total_levels = a.total_levels[ply:Horde_GetClass().name] or 0
+                a_total_levels = a.total_levels[MySelf:Horde_GetClass().name] or 0
             else
                 a_total_levels = a.total_levels
             end
 
             if b.levels and b.levels.VariousConditions then
-                b_total_levels = b.total_levels[ply:Horde_GetClass().name] or 0
+                b_total_levels = b.total_levels[MySelf:Horde_GetClass().name] or 0
             else
                 b_total_levels = b.total_levels
             end

@@ -59,7 +59,7 @@ function PANEL:Think()
             return
         end
 
-        if self.player_dist and self.player_dist > 350 then
+        if self.player_dist and self.player_dist > 450 then
             self.ply_Avatar:SetVisible(false)
             return end
         self.ply_Avatar:SetVisible(true)
@@ -113,7 +113,7 @@ function PANEL:Paint()
         !ply:Alive()
     then return end
 
-    distance_beetwen_locplayer_and_ply = MySelf:GetPos():Distance(ply:GetPos())
+    distance_beetwen_locplayer_and_ply = self.player_dist
 
     if distance_beetwen_locplayer_and_ply > 450 then return end
     

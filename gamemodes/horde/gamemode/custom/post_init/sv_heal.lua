@@ -151,17 +151,21 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
     local maxhealth = ply:GetMaxHealth() * maxhealth_mult
     if (maxhealth <= ply:Health()) then return end
     local healer = healinfo:GetHealer()
-    if healer ~= ply and ply:Horde_GetTotalHP(maxhealth) < maxhealth then
-        healer:Horde_AddMoney(3)
-        healer:Horde_SyncEconomy()
-        net.Start("Horde_RenderHealer")
-            net.WriteString(healer:GetName())
-        net.Send(ply)
-
-        healer:Horde_AddHealAmount(healinfo:GetHealAmount())
-    end
     
-    if healer:IsPlayer() and healer:IsValid() then
+    if IsValid(healer) and healer:IsPlayer() then
+        if healer ~= ply and ply:Horde_GetTotalHP(maxhealth) < maxhealth then
+            healer:Horde_AddHealAmount(healinfo:GetHealAmount())
+            if !silent then
+                healer:Horde_AddMoney(3)
+                healer:Horde_SyncEconomy()
+                net.Start("Horde_RenderHealer")
+                    net.WriteString(healer:GetName())
+                net.Send(ply)
+        
+                healer:Horde_AddHealAmount(healinfo:GetHealAmount())
+            end
+        end
+
 		local heal_bonus = 1
 		local curr_weapon = HORDE:GetCurrentWeapon(healer)
 		if curr_weapon and curr_weapon:IsValid() and ply.Horde_Infusions then
@@ -196,10 +200,8 @@ function HORDE:OnPlayerHeal(ply, healinfo, silent)
         HORDE.player_heal[healer:SteamID()] = HORDE.player_heal[healer:SteamID()] + healinfo:GetHealAmount()
     end
 
-    if silent then
-        healer:Horde_AddHealAmount(healinfo:GetHealAmount())
-        return
+    if !silent then
+        ply:ScreenFade(SCREENFADE.IN, Color(50, 200, 50, 10), 0.3, 0)
     end
-    ply:ScreenFade(SCREENFADE.IN, Color(50, 200, 50, 10), 0.3, 0)
 end
 

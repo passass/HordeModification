@@ -559,10 +559,12 @@ net.Receive("Horde_SelectClass", function (len, ply)
     local subclass_name = net.ReadString()
 
     if ply:Horde_GetSubclassUnlocked(subclass_name) == false then
-        net.Start("Horde_LegacyNotification")
-        net.WriteString("Subclass " .. subclass_name .. " is not unlocked on this server.")
+        --HORDE:SendNotification("You don't have this spell!")
+        HORDE:SendNotification("Subclass " .. subclass_name .. " is not unlocked on this server.", 1, ply)
+        --[[net.Start("Horde_LegacyNotification")
+        net.WriteString()
         net.WriteInt(1,2)
-        net.Send(ply)
+        net.Send(ply)]]
         return
     end
     local class = HORDE.classes[name]
@@ -576,7 +578,6 @@ net.Receive("Horde_SelectClass", function (len, ply)
     local occupied_weight = 0
 
     ply:Horde_SetClass(class)
-    ply:Horde_SetSubclass(name, subclass_name)
     if GetConVar("horde_enable_starter"):GetInt() == 1 and not (HORDE.start_game and HORDE.current_break_time <= 0) and HORDE.current_wave == 0 then
         ply:StripAmmo()
         --ply:StripWeapons()
@@ -604,6 +605,7 @@ net.Receive("Horde_SelectClass", function (len, ply)
 
         HORDE:GiveClassGrenades(ply)
     end
+    ply:Horde_SetSubclass(name, subclass_name)
 
     -- Remove all entities
     if HORDE.player_drop_entities[ply:SteamID()] then
