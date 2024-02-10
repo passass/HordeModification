@@ -791,11 +791,9 @@ hook.Add("PlayerCanPickupWeapon", "Horde_Economy_Pickup", function (ply, wpn)
                 return false
             end
         end
-        if ply:Horde_GetCurrentSubclass() == "Carcass"
-        and (item.class ~= "horde_carcass" and item.class ~= "weapon_hordeext_medkit") then
-            return false
-        end
-        if ply:Horde_GetSpellWeapon() and (item.class ~= "weapon_hordeext_medkit") then
+        if item.class ~= "weapon_hordeext_medkit" and item.class ~= "hordeext_syringe" and
+           (ply:Horde_GetCurrentSubclass() == "Carcass" and item.class ~= "horde_carcass" or ply:Horde_GetSpellWeapon())
+        then
             return false
         end
     end

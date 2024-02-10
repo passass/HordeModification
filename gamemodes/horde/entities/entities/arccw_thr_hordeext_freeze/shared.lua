@@ -84,7 +84,7 @@ function ENT:Explode()
     local duration = {7, 8}
 
     for _, ent in pairs(ents.FindInSphere(self:GetPos(), 225)) do
-        if !IsValid(ent) or ent:Health() <= 0 or !ent:IsNPC() then continue end
+        if !IsValid(ent) or ent:Health() <= 0 or !ent:IsNPC() or HORDE:IsPlayerOrMinion(ent) then continue end
         local crea_id = ent:GetCreationID()
         if ent:GetVar("is_elite") then
             local cur_dur = math.Rand(duration_elite[1], duration_elite[2])
