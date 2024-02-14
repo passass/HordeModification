@@ -1206,6 +1206,55 @@ function SWEP:PlayEvent(v)
     v = self:GetBuff_Hook("Hook_PostPlayEvent", v) or v
 end
 
+function SWEP:RebuildSubSlots()
+    -- this function rebuilds the subslots while preserving installed attachment data
+    local subslottrees = {}
+
+    local extra_slots = 0
+    for _, data in pairs(self.Attachments) do
+        if data.PrintName == "Horde Magazine" or data.PrintName == "Horde Calibers" then
+            extra_slots = extra_slots + 1
+        end
+    end
+
+    local baseatts = table.Count(weapons.Get(self:GetClass()).Attachments) + extra_slots
+
+    self.Attachments.BaseClass = nil
+
+    for i = 1, baseatts do
+        subslottrees[baseatts] = self:GetSubSlotTree(i)
+    end
+
+    -- remove all sub slots
+    for i, k in pairs(self.Attachments) do
+        if !isnumber(i) then continue end
+        if !istable(k) then continue end
+        if i > baseatts then
+            self.Attachments[i] = nil
+        else
+            self.Attachments[i].SubAtts = nil
+        end
+    end
+
+    self.SubSlotCount = 0
+    -- add the sub slots back
+    for i, k in pairs(self.Attachments) do
+        if !k.Installed then continue end
+        local att = ArcCW.AttachmentTable[k.Installed]
+        if !att then continue end
+        if !istable(k) then continue end
+
+        if att.SubSlots then
+            self:AddSubSlot(i, k.Installed)
+        end
+    end
+    -- add the sub slot data back
+
+    for i, k in pairs(subslottrees) do
+        self:SubSlotTreeReinstall(i, k)
+    end
+end
+
 function SWEP:Initialize()
 
     local owner = self:GetOwner()
@@ -1221,6 +1270,33 @@ function SWEP:Initialize()
         timer.Simple(0, function()
             if IsValid(self) then self:createCustomVM(self.ViewModel) end
         end)
+    end
+    if !self.Backstab then -- is not melee
+        local do_createnewattcat_magazine = true
+        local do_createnewattcat_calibers = true
+        for _, data in pairs(self.Attachments) do
+            if data.PrintName == "Horde Magazine" then
+                do_createnewattcat_magazine = false
+            end
+            if data.PrintName == "Horde Calibers" then
+                do_createnewattcat_calibers = false
+            end
+        end
+
+        if do_createnewattcat_magazine then
+            table.insert(self.Attachments, {
+                PrintName = "Horde Magazine",
+                Slot = "horde_magazine",
+                DefaultAttName = "Default Mag"
+            })
+        end
+        if do_createnewattcat_calibers then
+            table.insert(self.Attachments, {
+                PrintName = "Horde Calibers",
+                Slot = "horde_caliber",
+                DefaultAttName = "Default Caliber"
+            })
+        end
     end
     
     if CLIENT then
@@ -2825,7 +2901,6 @@ function SWEP:PrimaryAttack()
         end
     else
         if !bullet then return end
-
         for n = 1, bullet.Num do
             bullet.Num = 1
             local dirry = Vector(dir.x, dir.y, dir.z)
@@ -2839,7 +2914,6 @@ function SWEP:PrimaryAttack()
             self:DoPrimaryFire(false, bullet)
         end
     end
-
     self:DoRecoil()
 
     self:SetNthShot(self:GetNthShot() + 1)

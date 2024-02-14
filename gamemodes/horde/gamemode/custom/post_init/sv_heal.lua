@@ -58,6 +58,19 @@ hook.Add("Horde_OnPlayerDamageTakenPost", "Horde_SlowHeal_Proceed", function(ply
     end
 end)
 
+function plymeta:Horde_AddHealAmount(amount)
+    if GetConVar("horde_enable_sandbox"):GetInt() == 1 then return end
+    if not self.Horde_HealAmount then self.Horde_HealAmount = 0 end
+    self.Horde_HealAmount = self.Horde_HealAmount + amount
+    if self.Horde_HealAmount >= 100 then
+        self.Horde_HealAmount = 0
+        if HORDE.current_wave <= 0 then return end
+		local class_name = self:Horde_GetClass().name
+		if self:Horde_GetLevel(class_name) >= HORDE.max_level then return end
+		self:Horde_SetExp(class_name, self:Horde_GetExp(class_name) + 1 * HORDE.XpGainRate)
+    end
+end
+
 function plymeta:Horde_SlowHeal(amount, healinfo, overhealmult)
 
     overhealmult = overhealmult or 1 + healinfo:GetOverHealPercentage()

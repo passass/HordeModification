@@ -1437,6 +1437,31 @@ end
                 i > 1 and (data["condition" .. str_i] or commoncondition and {[commoncondition.class]=commoncondition.lvl_per_tier*(i-1)}))
             end
         end
+
+        for class, data in pairs(HORDE.items) do
+            if data.entity_properties.arccw_attachment_type == "Magazine" or 
+            data.entity_properties.arccw_attachment_type == "Ammo Type"
+                then 
+                HORDE.items[class] = nil
+            end
+        end
+
+        HORDE:CreateItem("Attachment", "Extended Magazine",   "hordemag_more1", 500,  0, "",
+        nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Magazine"})
+        HORDE:CreateItem("Attachment", "Large Magazine",   "hordemag_more2",  800,  0, "",
+        nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Magazine"})
+        HORDE:CreateItem("Attachment", "Drum Magazine",   "hordemag_more3",  1250,  0, "",
+        nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Magazine"})
+        HORDE:CreateItem("Attachment", "Extended Pistol Magazine",   "hordemag_more1_pistol",  750,  0, "",
+        nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Magazine"})
+        HORDE:CreateItem("Attachment", "Short Magazine",   "hordemag_less1",  350,  0, "",
+        nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Magazine"})
+        HORDE:CreateItem("Attachment", "12 Gauge",   "hordecal_12gauge", 750,  0, "",
+        nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Ammo Type"})
+        HORDE:CreateItem("Attachment", ".50 Cal",   "hordecal_50cal", 750,  0, "",
+        nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Ammo Type"})
+        HORDE:CreateItem("Attachment", "9mm Cal",   "hordecal_9mm", 750,  0, "",
+        nil, 10, -1, {type=HORDE.ENTITY_PROPERTY_GIVE, is_arccw_attachment=true, arccw_attachment_type="Ammo Type"})
     end
 
 -- INFUSIONS

@@ -99,3 +99,33 @@ function HORDE:LoadRank(ply)
 
 	ply.Horde_Rank_Loaded = true
 end
+
+HORDE.XpGainRate = 3
+
+if GetConVar("horde_enable_sandbox"):GetInt() == 0 and GetConVar("horde_enable_rank"):GetInt() == 1 then
+	hook.Add("Horde_OnEnemyKilled", "Horde_GiveExp", function(victim, killer, wpn)
+		if HORDE.current_wave <= 0 or GetConVar("sv_cheats"):GetInt() == 1 then return end
+		if killer:IsPlayer() and killer:IsValid() and killer:Horde_GetClass() then
+			local class_name = killer:Horde_GetCurrentSubclass()
+			if killer:Horde_GetLevel(class_name) >= HORDE.max_level then return end
+			if victim:Horde_IsElite() then
+				killer:Horde_SetExp(class_name, killer:Horde_GetExp(class_name) + 2 * HORDE.XpGainRate)
+				local p = math.random()
+				if p < 0.01 or (p < 0.1 and killer:Horde_GetGadget() == "gadget_corporate_mindset") then
+					-- Drop a skull token
+					local ent = ents.Create("horde_skull_token")
+					local pos = victim:GetPos()
+					local drop_pos = pos
+					drop_pos = drop_pos + VectorRand() * 5
+					drop_pos.z = pos.z + 15
+					ent:SetPos(drop_pos)
+					ent.Owner = killer
+					ent:Spawn()
+				end
+			else
+				killer:Horde_SetExp(class_name, killer:Horde_GetExp(class_name) + 1 * HORDE.XpGainRate)
+				HORDE:SaveRank(killer)
+			end
+		end
+	end)
+end

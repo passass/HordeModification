@@ -300,7 +300,7 @@ function ENT:KFNPCTryToFindEnemy()
 	local TEMP_NearestNpc = self
 	
 
-	local TEMP_MyNearbyTargets = ents.FindByClass("npc_*")
+	--[[local TEMP_MyNearbyTargets = ents.FindByClass("npc_*")
 	local TEMP_MyNearbyTargetsAdd = ents.FindByClass("drg_*")
 
 	table.Add(TEMP_MyNearbyTargets,TEMP_MyNearbyTargetsAdd)
@@ -346,7 +346,7 @@ function ENT:KFNPCTryToFindEnemy()
 				end
 			end
 		end
-	end
+	end]]
 	
 	
 	
