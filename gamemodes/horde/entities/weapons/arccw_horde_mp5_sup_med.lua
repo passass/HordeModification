@@ -31,8 +31,8 @@ SWEP.WorldModelOffset = {
     bone    =    "ValveBiped.Bip01_R_Hand",
 }
 SWEP.ViewModelFOV = 60
-
-HORDE.Syringe:ApplyMedicSkills(SWEP, 15, 40)
+if HORDE.Syringe then
+HORDE.Syringe:ApplyMedicSkills(SWEP, 15, 40) end
 SWEP.Damage = 50
 SWEP.DamageMin = 37 -- damage done at maximum range
 SWEP.RangeMin = 35

@@ -9,15 +9,22 @@ SWEP.Slot = 2
 
 SWEP.UseHands = true
 if CLIENT then
-    SWEP.WepSelectIcon = surface.GetTextureID("vgui/hud/tfa_at_as_val.vtf")
-    killicon.Add("arccw_horde_asval", "vgui/hud/tfa_at_as_val", Color(255, 255, 255, 255))
+    SWEP.WepSelectIcon = Material("items/hl2/weapon_shotgun.png")
+    killicon.AddAlias("arccw_horde_toz34", "items/hl2/weapon_shotgun.png")
+end
+
+function SWEP:DrawWeaponSelection(x, y, w, h, a)
+    surface.SetDrawColor(255, 255, 255, a)
+    surface.SetMaterial(self.WepSelectIcon)
+
+    surface.DrawTexturedRect(x, y, w, w / 2)
 end
 
 SWEP.WorldModel = "models/weapons/arccw/w_defender.mdl"
 SWEP.ViewModelFOV = 70
 
-SWEP.Damage = 13.5
-SWEP.DamageMin = 8 -- damage done at maximum range
+SWEP.Damage = 17
+SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.RangeMin = 15
 SWEP.Range = 25 -- in METRES
 SWEP.Penetration = 10
@@ -25,7 +32,6 @@ SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
 SWEP.MuzzleVelocity = 690 -- projectile or phys bullet muzzle velocity
 -- IN M/S
-SWEP.ClipsPerAmmoBox = 5
 SWEP.TracerNum = 1 -- tracer every X
 SWEP.TracerCol = Color(255, 25, 25)
 SWEP.TracerWidth = 3
@@ -33,6 +39,7 @@ SWEP.TracerWidth = 3
 SWEP.ChamberSize = 0-- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 2 -- DefaultClip is automatically set.
 SWEP.Horde_MaxMags = 60
+SWEP.ClipsPerAmmoBox = 10
 
 SWEP.Recoil = 5.25
 SWEP.RecoilSide = .6
@@ -181,7 +188,9 @@ SWEP.Animations = {
         LHIK = true,
         LHIKIn = .4, LHIKEaseIn = .2,
         LHIKOut = .65, LHIKEaseOut = .5,
-        MinProgress = 1.8 / reload_mult1, ForceEnd = true,
+        MagUpIn = 1.5,
+        MinProgress = 1.8 / reload_mult1,
+        ForceEnd = true,
         Mult=reload_mult1,
         SoundTable = {
             {t = 0.65 * reload_mult1, s = "CW_FAS2_TOZ34_OPENSTART"},
@@ -197,6 +206,7 @@ SWEP.Animations = {
         LHIK = true,
         LHIKIn = .4, LHIKEaseIn = .2,
         LHIKOut = .5, LHIKEaseOut = .5,
+        MagUpIn = 1.5,
         MinProgress = 2.2 / reload_mult2, ForceEnd = true,
         Mult=reload_mult2,
         SoundTable = {

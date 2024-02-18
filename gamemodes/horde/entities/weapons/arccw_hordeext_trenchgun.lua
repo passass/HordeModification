@@ -91,7 +91,8 @@ SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 SWEP.SpeedMult = 1
 SWEP.SightedSpeedMult = 0.8
 SWEP.SightTime = 0.3
-
+SWEP.Horde_MaxMags = 30
+SWEP.ClipsPerAmmoBox = 2
 SWEP.BulletBones = { -- the bone that represents bullets in gun/mag
     -- [0] = "bulletchamber",
     -- [1] = "bullet1"

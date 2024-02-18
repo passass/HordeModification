@@ -1,3 +1,7 @@
+function GM:PlayerSetModel(ply)
+    return ply:SetModel(ply:GetModel())
+end
+
 if SERVER then
     local limit = 2
     local SetMDL = FindMetaTable("Entity").SetModel

@@ -689,9 +689,8 @@ else
         if !need_to_delete then
             mult = net.ReadFloat()
         end
-        timer.Simple(engine.TickInterval(), function()
+        timer.Simple(engine.TickInterval() * 2, function()
             HORDE:Modifier_AddToWeapons(ply, modifier, primarykey, mult)
         end)
-        
     end)
 end

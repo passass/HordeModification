@@ -15,7 +15,8 @@ SWEP.WorldModel				= "models/weapons/w_models/w_medigun.mdl"
 SWEP.ViewModelFOV = 50
 
 SWEP.Horde_MaxMags = 7
-HORDE.Syringe:ApplyMedicSkills(SWEP, 20, 40)
+if HORDE.Syringe then
+HORDE.Syringe:ApplyMedicSkills(SWEP, 20, 40) end
 
 SWEP.Damage = 10
 SWEP.Penetration = 1

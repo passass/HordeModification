@@ -350,7 +350,7 @@ function SWEP:Holster(wep)
         local anim = self:SelectAnimation("holster")
         if anim then
             local prd = self.Animations[anim].ProcHolster
-            time = self:GetAnimKeyTime(anim)
+            time = self:GetAnimKeyTime(anim, true)
             if prd then
                 self:ProceduralHolster()
                 time = 0.25
@@ -2634,19 +2634,19 @@ function SWEP:Reload()
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
         self:PlayAnimationWithSync(anim, mult, true, self.Animations[anim].StartFrom, false, nil, true, nil)
         --print("reload", self:GetAnimationProgress(), CurTime(), self:GetNextIdle(), !!self:PlayAnimation(anim, mult, true, self.Animations[anim].StartFrom, false, nil, true, nil, {SyncWithClient = true }), self.LastAnimKey)
+        local magupin = self.Animations[anim].MagUpIn
         local reloadtime = self:GetAnimKeyTime(anim, true) * mult
-        local reloadtime2
+        local reload_end_on
         if !self.Animations[anim].ForceEnd then
-            reloadtime2 = self:GetAnimKeyTime(anim, false) * mult
+            reload_end_on = self:GetAnimKeyTime(anim, false) * mult
         else
-            reloadtime2 = reloadtime
+            reload_end_on = self.Animations[anim].EndReloadOn or reloadtime
         end
-
-        self:SetNextPrimaryFire(CurTime() + reloadtime2)
-        self:SetReloading(CurTime() + reloadtime2)
+        self:SetNextPrimaryFire(CurTime() + reload_end_on)
+        self:SetReloading(CurTime() + reload_end_on)
 
         self:SetMagUpCount(0)
-        self:SetMagUpIn(CurTime() + reloadtime)
+        self:SetMagUpIn(CurTime() + (magupin or reloadtime))
     end
 
     self:SetClipInfo(load)

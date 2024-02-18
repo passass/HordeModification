@@ -33,7 +33,7 @@ SWEP.ViewModelFOV = 60
 SWEP.DefaultBodygroups = "000000000"
 SWEP.DefaultSkin = 0
 
-SWEP.Damage = 22
+SWEP.Damage = 26
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.RangeMin = 10
 SWEP.Range = 40 -- in METRES
@@ -324,7 +324,7 @@ SWEP.Animations = {
     },
     ["sgreload_start"] = {
         Source = "reload_in",
-        Time = 40 / 30,
+        Time = 1,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
         RestoreAmmo = 1,
         LHIK = true,
@@ -339,7 +339,7 @@ SWEP.Animations = {
     },
     ["sgreload_insert"] = {
         Source = "reload_loop",
-        Time = 0.74,
+        Time = 0.5,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
         TPAnimStartTime = 0.3,
         LHIK = true,
@@ -364,17 +364,17 @@ SWEP.Animations = {
     },
     ["sgreload_finish"] = {
         Source = "reload_out",
-        Time = 30 / 30,
+        Time = 20 / 30,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 1,
         SoundTable = {
-            {s = "ArcCW_MW3E.M1887_Close", t = 12 / 30},
+            {s = "ArcCW_MW3E.M1887_Close", t = 8 / 30},
         },
     },
     ["sgreload_finish_empty"] = {
         Source = "reload_out",
-        Time = 24 / 30,
+        Time = 15 / 30,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 1,

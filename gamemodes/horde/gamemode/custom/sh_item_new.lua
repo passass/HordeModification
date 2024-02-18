@@ -179,6 +179,9 @@ end
         arccw_horde_nade_emp = "arccw_hordeext_nade_emp",
         arccw_horde_nade_molotov = "arccw_hordeext_nade_molotov",
 
+        arccw_horde_m1014 = "arccw_hordeext_m1014",
+        arccw_go_mag7 = "arccw_hordeext_mag7",
+
         arccw_horde_357 = "arccw_hordeext_snubnose",
         arccw_horde_akimbo_deagle = "arccw_hordeext_akimbo_deagle",
         arccw_horde_akimbo_m9 = "arccw_hordeext_akimbo_m9",
@@ -305,6 +308,9 @@ end
         HORDE.items["arccw_horde_357"].starter_classes = {"Gunslinger"}
         HORDE.items["arccw_horde_357"].whitelist["Gunslinger"] = true
         HORDE.items["horde_welder"].starter_classes = nil
+
+        HORDE.items["arccw_horde_nade_sonar"].name = "Freeze Grenade"
+        HORDE.items["arccw_horde_nade_sonar"].description = "Freeze nearby enemies."
 
         table.insert(HORDE.items["arccw_horde_flaregun"].starter_classes, "Survivor")
         table.insert(HORDE.items["arccw_horde_shotgun"].starter_classes, "Survivor")
@@ -547,7 +553,7 @@ end
         changeLevelRequirement("arccw_horde_trenchgun", {Warden=3, Cremator=1})
         
         HORDE:CreateItem("Shotgun",    "Executioner",        "arccw_horde_exec",  2250, 6, "Executioner.\nA automatic shotgun like the judge.",
-        {Survivor=true, Warden=true}, 15, -1, nil, nil, {Warden=8}, nil, {HORDE.DMG_BALLISTIC})
+        {Survivor=true, Warden=true}, 10, -1, nil, nil, {Warden=8}, nil, {HORDE.DMG_BALLISTIC})
         HORDE:CreateItem("Shotgun",    "Striker",        "arccw_horde_striker", 2500, 8, "Armsel Striker.\nA 12-gauge shotgun with a revolving cylinder from South Africa.",
         {Warden=true, Survivor=true}, 15, -1, nil, nil, {
             VariousConditions=true,

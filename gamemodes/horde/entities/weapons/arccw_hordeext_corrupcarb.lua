@@ -195,7 +195,8 @@ SWEP.Animations = {
 
 
 -- TFA ADAPTIVE
-HORDE.Syringe:ApplyMedicSkills(SWEP, 15, 40)
+if HORDE.Syringe then
+HORDE.Syringe:ApplyMedicSkills(SWEP, 15, 40) end
 
 SWEP.PrintName = "Corrupter Carbine"
 SWEP.ViewModel						= "models/weapons/locuslocutus/c_locus_locutus.mdl"

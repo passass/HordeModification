@@ -215,15 +215,15 @@ SWEP.Animations = {
     },
     ["ready"] = {
         Source = "draw",
-        MinProgress = .8,
+        MinProgress = .4,
     },
     ["draw_empty"] = {
         Source = "idle_empty",
-        MinProgress = .8,
+        MinProgress = .4,
     },
     ["draw"] = {
         Source = "draw",
-        MinProgress = .8,
+        MinProgress = .4,
     },
     ["fire"] = {
 		Source = "shoot",
@@ -232,14 +232,17 @@ SWEP.Animations = {
         Source = {"shoot_iron", "shoot_iron2", "shoot_iron3"},
     },
     ["reload"] = {
-        Source = "reload", MinProgress = 2.35, ForceEnd = true,
+        Source = "reload",
+        MinProgress = 2.35,
+        MagUpIn = 1.3,
+        ForceEnd = true,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
-        Checkpoints = {20, 26, 40}, StartFrom = 1,
+        Checkpoints = {20, 26, 40},-- StartFrom = 2.2,
         LHIK = true,
         LHIKIn = .4,
         LHIKOut = 1.8,
         LHIKEaseIn = 1,
-        LHIKEaseOut = .6, 
+        LHIKEaseOut = .6,
     },
     ["reload_empty"] = {
         Source = "reload_empty", MinProgress = 2.5, ForceEnd = true,
@@ -253,5 +256,6 @@ SWEP.Animations = {
     },
     ["holster"] = {
 		Source = "holster",
+        MinProgress = .2,
 	},
 }

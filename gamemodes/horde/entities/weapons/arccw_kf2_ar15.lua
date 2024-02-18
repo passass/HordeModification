@@ -235,6 +235,7 @@ SWEP.Animations = {
         LHIKOut = 1.3,
         LHIKEaseIn = 1,
         LHIKEaseOut = .3,
+        MagUpIn = 1.75,
     },
     ["reload_empty"] = {
         Source = "reload_empty", MinProgress = 3.1, ForceEnd = true,
@@ -245,6 +246,7 @@ SWEP.Animations = {
         LHIKOut = 1.3,
         LHIKEaseIn = 1,
         LHIKEaseOut = .5,
+        MagUpIn = 1.3,
     },
     ["holster"] = {
 		Source = "holster",

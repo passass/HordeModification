@@ -32,7 +32,7 @@ SWEP.WorldModelOffset = {
 }
 SWEP.ViewModelFOV = 60
 
-SWEP.Damage = 31.25
+SWEP.Damage = 35
 SWEP.DamageMin = 19 -- damage done at maximum range
 SWEP.Range = 20
 
@@ -58,7 +58,8 @@ SWEP.ExtendedClipSize = 5
 SWEP.Recoil = 1.25
 SWEP.RecoilSide = 1.25
 SWEP.RecoilRise = 1
-
+SWEP.Horde_MaxMags = 30
+SWEP.ClipsPerAmmoBox = 3
 SWEP.Delay = 60 / 468 -- 60 / RPM.
 SWEP.Num = 4 -- number of shots per trigger pull.
 SWEP.Firemodes = {
@@ -119,7 +120,7 @@ SWEP.ProceduralIronFire = false
 
 SWEP.CaseBones = {}
 
-SWEP.ShotgunReload = true
+SWEP.ShotgunReload = false
 
 SWEP.IronSightStruct = {
     Pos = Vector(-2.175, 3, 0),
@@ -172,9 +173,11 @@ SWEP.ExtraSightDist = 10
 SWEP.RejectAttachments = {
 }
 
-SWEP.Horde_MaxMags = 25
-
 SWEP.Attachments = {
+    {
+        DefaultEles = {"bo1_speedloader"},
+        Hidden=true,
+    },
     { --1
         PrintName = "Optic",
         Slot = "optic_lp",
@@ -254,6 +257,7 @@ SWEP.Hook_TranslateAnimation = function(wep, anim)
     end
 end
 
+local mult = 3.76 / 3.25
 
 SWEP.Animations = {
     ["idle"] = {
@@ -324,18 +328,18 @@ SWEP.Animations = {
     -- speed--
     ["reload"] = {
         Source = "reload_speed",
-        Time = 3.76 * (30 / 40),
+        Time = 3.76 * (30 / 40) / mult,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_REVOLVER,
         LHIK = true,
         LHIKIn = 0.2,
         LHIKOut = 0.2,
         RestoreAmmo = 5,
-        MinProgress = 1,
+        MinProgress = 2,
         SoundTable = {
-            {s = "ArcCW_BO1.Python_Open", t = 20 / 40},
-            {s = "ArcCW_BO2.Judge_Empty", t = 40 / 40},
-            {s = "ArcCW_BO1.Python_Load", t = 60 / 40},
-            {s = "ArcCW_BO1.Python_Close", t = 80 / 40},
+            {s = "ArcCW_BO1.Python_Open", t = 20 / 40 / mult},
+            {s = "ArcCW_BO2.Judge_Empty", t = 40 / 40 / mult},
+            {s = "ArcCW_BO1.Python_Load", t = 60 / 40 / mult},
+            {s = "ArcCW_BO1.Python_Close", t = 80 / 40 / mult},
         },
     },
 

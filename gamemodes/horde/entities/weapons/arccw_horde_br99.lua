@@ -87,6 +87,9 @@ SWEP.ShellSounds = ArcCW.ShotgunShellSoundsTable
 SWEP.ShellScale = 1.5
 SWEP.ShellRotateAngle = Angle(0, 90, 0)
 
+SWEP.Horde_MaxMags = 30
+SWEP.ClipsPerAmmoBox = 2
+
 --[[SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 SWEP.ProceduralViewBobAttachment = 1]]
@@ -260,14 +263,14 @@ SWEP.Animations = {
     ["reload"] = {
         Source = "base_reload",
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        LHIK = true, Mult = .8,
+        LHIK = true, Mult = .75,
         LHIKIn = .5, LHIKEaseIn = .4,
         LHIKOut = .9, LHIKEaseOut = .5,
     },
     ["reload_empty"] = {
         Source = "base_reloadempty",
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        LHIK = true, Mult = .8,
+        LHIK = true, Mult = .75,
         LHIKIn = .5, LHIKEaseIn = .4,
         LHIKOut = .65, LHIKEaseOut = .5,
     },
