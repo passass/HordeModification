@@ -3461,3 +3461,201 @@ function SWEP:PlayEvent(v)
 
     v = self:GetBuff_Hook("Hook_PostPlayEvent", v) or v
 end
+
+-- NEW FIRE SYSTEM
+
+function SWEP:IsVeryAccurateShoot()
+    return self:GetBuff("Num") <= 1
+end
+if CLIENT then
+    local mth        = math
+    local m_log10    = mth.log10
+    local m_rand     = mth.Rand
+    local rnd        = render
+    local SetMat     = rnd.SetMaterial
+    local DrawBeam   = rnd.DrawBeam
+    local DrawSprite = rnd.DrawSprite
+    local lasermat = Material("arccw/laser")
+    local flaremat = Material("effects/whiteflare")
+
+    local delta    = 1
+    function SWEP:DrawLaser(laser, model, color, world)
+        local owner = self:GetOwner()
+        local behav = ArcCW.LaserBehavior
+
+        if !owner then return end
+
+        if !IsValid(owner) then return end
+
+        if !model then return end
+
+        if !IsValid(model) then return end
+
+        local att = model:LookupAttachment(laser.LaserBone or "laser")
+
+        att = att == 0 and model:LookupAttachment("muzzle") or att
+
+        local pos, ang, dir
+
+        if att == 0 then
+            pos = model:GetPos()
+            ang = owner:EyeAngles() + self:GetFreeAimOffset()
+            dir = ang:Forward()
+        else
+            local attdata  = model:GetAttachment(att)
+            pos, ang = attdata.Pos, attdata.Ang
+            dir      = -ang:Right()
+        end
+
+        if world then
+            dir = owner:IsNPC() and (-ang:Right()) or dir
+        else
+            ang:RotateAroundAxis(ang:Up(), 90)
+
+            if self.LaserOffsetAngle then
+                ang:RotateAroundAxis(ang:Right(), self.LaserOffsetAngle[1])
+                ang:RotateAroundAxis(ang:Up(), self.LaserOffsetAngle[2])
+                ang:RotateAroundAxis(ang:Forward(), self.LaserOffsetAngle[3])
+            end
+            if self.LaserIronsAngle and self:GetActiveSights().IronSight then
+                local d = 1 - self:GetSightDelta()
+                ang:RotateAroundAxis(ang:Right(), d * self.LaserIronsAngle[1])
+                ang:RotateAroundAxis(ang:Up(), d * self.LaserIronsAngle[2])
+                ang:RotateAroundAxis(ang:Forward(), d * self.LaserIronsAngle[3])
+            end
+
+            dir = ang:Forward()
+
+            local eyeang   = EyeAngles() - self:GetOurViewPunchAngles() + self:GetFreeAimOffset()
+            local canlaser = self:GetCurrentFiremode().Mode != 0 and !self:GetReloading() and self:BarrelHitWall() <= 0
+
+            delta = Lerp(0, delta, canlaser and self:GetSightDelta() or 1)
+
+            --if self.GuaranteeLaser then
+                delta = 1
+            --else
+            --    delta = self:GetSightDelta()
+            --end
+
+            dir = Lerp(delta, eyeang:Forward(), dir)
+        end
+
+        local beamdir, tracepos = dir, pos
+
+        beamdir = world and (-ang:Right()) or beamdir
+
+        if behav and !world then
+            -- local cheap = GetConVar("arccw_cheapscopes"):GetBool()
+            local punch = self:GetOurViewPunchAngles()
+
+            ang = EyeAngles() - punch + self:GetFreeAimOffset()
+
+            tracepos = EyePos() - Vector(0, 0, 1)
+            pos, dir = tracepos, ang:Forward()
+            beamdir  = dir
+        end
+
+        local dist = 128
+
+        local tl = {}
+        tl.start  = tracepos
+        tl.endpos = tracepos + (dir * 33000)
+        tl.filter = owner
+
+        local tr = util.TraceLine(tl)
+
+        tl.endpos = tracepos + (beamdir * dist)
+
+        local btr = util.TraceLine(tl)
+
+        local hit    = tr.Hit
+        local hitpos = tr.HitPos
+        local solid  = tr.StartSolid
+
+        local strength = laser.LaserStrength or 1
+        local laserpos = solid and tr.StartPos or hitpos
+
+        laserpos = laserpos - ((EyeAngles() + self:GetFreeAimOffset()):Forward())
+
+        if solid then return end
+
+        local width = m_rand(0.05, 0.1) * strength * 1
+
+        if (!behav or world) and hit then
+            SetMat(lasermat)
+            local a = 200
+            DrawBeam(pos, btr.HitPos, width * 0.3, 1, 0, Color(a, a, a, a))
+            DrawBeam(pos, btr.HitPos, width, 1, 0, color)
+        end
+
+        if hit and !tr.HitSky then
+            local mul = 1 * strength
+            mul = m_log10((hitpos - EyePos()):Length()) * strength
+            local rad = m_rand(4, 6) * mul
+            local glr = rad * m_rand(0.2, 0.3)
+
+            SetMat(flaremat)
+
+            -- if !world then
+            --     cam.IgnoreZ(true)
+            -- end
+            DrawSprite(laserpos, rad, rad, color)
+            DrawSprite(laserpos, glr, glr, color_white)
+
+            -- if !world then
+            --     cam.IgnoreZ(false)
+            -- end
+        end
+    end
+end
+
+function SWEP:GetDispersion()
+    local owner = self:GetOwner()
+
+    if vrmod and vrmod.IsPlayerInVR(owner) then return 0 end
+
+    local very_high_Accuracy = self:IsVeryAccurateShoot()
+
+    local hipdisp = self:GetBuff("HipDispersion")
+    local sights  = self:GetState() == ArcCW.STATE_SIGHTS
+    local sightdisp = self:GetBuff("SightsDispersion")
+
+    local hip = very_high_Accuracy and math.min(sightdisp * 3, hipdisp) or hipdisp
+
+    if sights then hip = Lerp(self:GetNWSightDelta(), sightdisp, hip) end
+
+    local speed = owner:GetAbsVelocity():Length()
+    local maxspeed = owner:GetWalkSpeed() * self:GetBuff("SpeedMult")
+    if sights then maxspeed = maxspeed * self:GetBuff("SightedSpeedMult") end
+    speed = math.Clamp(speed / maxspeed, 0, 2)
+
+    local move_dispersion = very_high_Accuracy and math.min(30, self:GetBuff("MoveDispersion")) or self:GetBuff("MoveDispersion")
+
+    local jump_dispersion = very_high_Accuracy and math.min(90, self:GetBuff("JumpDispersion")) or self:GetBuff("JumpDispersion")
+
+    if owner:OnGround() or owner:WaterLevel() > 0 and owner:GetMoveType() != MOVETYPE_NOCLIP then
+        hip = hip + speed * move_dispersion
+    elseif owner:GetMoveType() != MOVETYPE_NOCLIP then
+        hip = hip + math.max(speed * move_dispersion, jump_dispersion)
+    end
+
+    if self:InBipod() then hip = hip * (self.BipodDispersion * self:GetBuff_Mult("Mult_BipodDispersion")) end
+
+    if GetConVar("arccw_mult_crouchdisp"):GetFloat() != 1 and owner:OnGround() and owner:Crouching() then
+        hip = hip * GetConVar("arccw_mult_crouchdisp"):GetFloat()
+    end
+
+    if GetConVar("arccw_freeaim"):GetInt() == 1 and !sights then
+        hip = hip ^ 0.9
+    end
+
+    --local t = hook.Run("ArcCW_ModDispersion", self, {dispersion = hip})
+    --hip = t and t.dispersion or hip
+    hip = self:GetBuff_Hook("Hook_ModDispersion", hip) or hip
+    return hip
+end
+
+function SWEP:ShouldDrawCrosshair()
+    return false
+end
+-- NEW FIRE SYSTEM

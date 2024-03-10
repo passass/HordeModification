@@ -249,6 +249,7 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         Checkpoints = {20, 26, 40, 60, 80},
         LHIK = true,
+        MagUpIn = 1.35,
         LHIKIn = .4,
         LHIKOut = 2.1,
         LHIKEaseIn = 1,
