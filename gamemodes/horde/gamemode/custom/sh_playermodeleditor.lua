@@ -1,21 +1,26 @@
 
-local groups = {"group01", "group03"}
-local sex = {"female", "male"}
-local nums = {"_01", "_02", "_03", "_04", "_05", "_06"}
-
-function GM:PlayerSetModel(ply)
-    print("ply:GetModel()", ply:GetModel())
-    if IsValid(ply:GetModel()) then
-        return ply:SetModel(ply:GetModel())
-    end
-    local class = ply:Horde_GetClass()
-    if class and class.model and class.model ~= nil then
-        return ply:Horde_SetClassModel(class)
-    end
-    return ply:SetModel("models/player/" .. table.Random(groups) .. "/" .. table.Random(sex) .. table.Random(nums) .. ".mdl")
-end
-
 if SERVER then
+    local mdl_groups = {"group01", "group03"}
+    local sex = {"female", "male"}
+    local nums = {"_01", "_02", "_03", "_04", "_05", "_06"}
+
+    local player_models = {}
+
+    function GM:PlayerSetModel(ply)
+        if player_models[ply] then
+            return ply:SetModel(player_models[ply])
+        end
+        local class = ply:Horde_GetClass()
+        if class and class.model and class.model ~= nil then
+            return ply:Horde_SetClassModel(class)
+        end
+        return ply:SetModel("models/player/" .. table.Random(mdl_groups) .. "/" .. table.Random(sex) .. table.Random(nums) .. ".mdl")
+    end
+
+    hook.Add("PlayerDisconnected", "Horde_PlayerDisconnect", function(ply)
+        player_models[ply] = nil
+    end)
+
     local limit = 2
     local SetMDL = FindMetaTable("Entity").SetModel
 
@@ -24,13 +29,14 @@ if SERVER then
         local mdlpath = player_manager.TranslatePlayerModel( mdlname )
         
         SetMDL(ply, mdlpath)
+        player_models[ply] = mdlpath
 
         local skin = ply:GetInfoNum( "cl_playerskin", 0 )
 		ply:SetSkin( skin )
 		
 		local groups = ply:GetInfo( "cl_playerbodygroups" )
 		if ( groups == nil ) then groups = "" end
-		local groups = string.Explode( " ", groups )
+		groups = string.Explode( " ", groups )
 		for k = 0, ply:GetNumBodyGroups() - 1 do
 			local v = tonumber( groups[ k + 1 ] ) or 0
 			ply:SetBodygroup( k, v )

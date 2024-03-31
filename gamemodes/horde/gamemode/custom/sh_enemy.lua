@@ -460,3 +460,32 @@ function HORDE:GetDefaultEnemiesData()
 
     HORDE:NormalizeEnemiesWeight()
 end
+
+if SERVER and GetConVarNumber("horde_default_enemy_config") == 0 then
+    if not file.IsDir("horde", "DATA") then
+        file.CreateDir("horde")
+    else
+        local enemies_file = file.Read("horde/enemies.txt", "DATA")
+        if enemies_file then
+            local t = util.JSONToTable(enemies_file)
+            -- Integrity
+            for _, enemy in pairs(t) do
+                if enemy.name == nil or enemy.name == "" or enemy.class == nil or enemy.class == "" or enemy.weight == nil or enemy.wave == nil then
+                    HORDE:SendNotification("Enemy config file validation failed! Please update your file or delete it.", 0)
+                    return
+                else
+                    if not enemy.weapon then
+                        enemy.weapon = ""
+                    end
+                end
+            end
+
+            -- Be careful of backwards compataiblity
+            CONFIG.enemies = t
+            HORDE.enemies = CONFIG.enemies
+            HORDE:NormalizeEnemiesWeight()
+
+            print("[HORDE] - Loaded custom enemy config.")
+        end
+    end
+end
