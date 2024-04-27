@@ -112,8 +112,11 @@ end
 
 function plymeta:Horde_UnsetPerk(perk, shared)
     self.Horde_Perks = self.Horde_Perks or {}
-
-    self:Horde_CallClassHook("Horde_OnUnsetPerk", self, perk)
+	local perk_data = HORDE.perks[perk]
+	if perk_data.Hooks and perk_data.Hooks.Horde_OnUnsetPerk then
+		perk_data.Hooks.Horde_OnUnsetPerk(self, perk)
+	end
+    --self:Horde_CallClassHook("Horde_OnUnsetPerk", self, perk)
 
     self.Horde_Perks[perk] = nil
 
@@ -136,7 +139,11 @@ function plymeta:Horde_SetPerk(perk, shared)
 
     if self:Alive() then
         -- No need to set perks when dead
-        self:Horde_CallClassHook("Horde_OnSetPerk", self, perk)
+		local perk_data = HORDE.perks[perk]
+		if perk_data.Hooks and perk_data.Hooks.Horde_OnSetPerk then
+			perk_data.Hooks.Horde_OnSetPerk(self, perk)
+		end
+        --self:Horde_CallClassHook("Horde_OnSetPerk", self, perk)
     end
 
     if SERVER and not shared then
