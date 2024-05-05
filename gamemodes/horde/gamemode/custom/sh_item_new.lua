@@ -376,7 +376,7 @@ end
         HORDE:CreateItem("Pistol",     "HX-25",          "arccw_horde_hx25",   300,  2, "HX-25.\n Compact explosive pistol.",
         {Demolition=true, Survivor=true}, 2, -1, nil, nil, nil, nil, {HORDE.DMG_BLAST}, nil, {"Demolition"})
         HORDE:CreateItem("Pistol",     "HMTech-101 Pistol",          "arccw_kf2_pistol_medic",   300,  2, "HMTech-101 Pistol.\n A modern pistol with heal module.",
-        {Medic=true, Survivor=true}, 4, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON}, nil, {"Medic"})
+        {Medic=true, Survivor=true}, 4, -1, nil, nil, nil, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON}, nil, {"Medic", "Hatcher"})
         HORDE:CreateItem("Pistol",     "Trespasser",          "arccw_horde_trespasser",   300,  2, "Trespasser.\n A modern pistol with electric damage.",
         {Engineer=true, Survivor=true}, 4, -1, nil, nil, nil, nil, {HORDE.DMG_SHOCK}, nil, {"Engineer"})
         HORDE:CreateItem("Rifle",     "Kar98k",          "arccw_horde_k98k",   300,  3, "Mauser Kar98k.\n A old with bolt-action.",

@@ -33,6 +33,11 @@ function HORDE:PlayerInit(ply)
         net.Broadcast()
     end
 
+    ply:Horde_SetWeight(ply:Horde_GetMaxWeight())
+    if ply:Alive() and not (HORDE.start_game and HORDE.current_break_time <= 0) then
+        HORDE:GiveStarterWeapons(ply)
+    end
+
     if HORDE.start_game then
         net.Start("Horde_RemoveReadyPanel")
         net.Send(ply)
@@ -40,7 +45,7 @@ function HORDE:PlayerInit(ply)
             -- Already provided social welfare.
             ply:Horde_SetMoney(HORDE.player_money[ply:SteamID()])
         else
-            ply:Horde_SetMoney(HORDE.start_money + math.max(0, HORDE.current_wave - 1) * 150)
+            ply:Horde_SetMoney(HORDE:GetStartMoney() + math.max(0, HORDE.current_wave - 1) * 150)
         end
         HORDE:LoadSkullTokens(ply)
         if HORDE.horde_boss and HORDE.horde_boss:IsValid() and HORDE.horde_boss_name then
@@ -119,7 +124,9 @@ function HORDE:PlayerInit(ply)
         if HORDE.player_money[ply:SteamID()] then
             ply:Horde_SetMoney(HORDE.player_money[ply:SteamID()])
         else
-            ply:Horde_SetMoney(HORDE.start_money)
+            local class_name = ply:Horde_GetClass().name
+            local subclass_name = ply:Horde_GetSubclass(ply:Horde_GetClass().name)
+            ply:Horde_SetMoney(HORDE:GetStartMoney(ply:Horde_GetSpellWeapon() or HORDE.class_withstartmoney[class_name] and HORDE.class_withstartmoney[class_name][subclass_name]))
         end
         HORDE:LoadSkullTokens(ply)
     end
@@ -137,12 +144,8 @@ function HORDE:PlayerInit(ply)
     -- Misc stuff
     ply.Horde_Spectre_Max_Count = 1
     ply:Horde_ApplyPerksForClass()
-    ply:Horde_SetWeight(ply:Horde_GetMaxWeight())
     HORDE.player_class_changed[ply:SteamID()] = false
     ply:Horde_SyncEconomy()
-    if ply:Alive() and not (HORDE.start_game and HORDE.current_break_time <= 0) then
-        HORDE:GiveStarterWeapons(ply)
-    end
 
     ply.Horde_Status = {}
     ply:PrintMessage(HUD_PRINTTALK, "Use '!help' to see special commands!")
@@ -229,7 +232,6 @@ function HORDE:GiveStarterWeapons(ply)
     if GetConVar("horde_enable_starter"):GetInt() == 0 then return end
     local weapons_gotted = {}
     if ply:Alive() and (not ply:Horde_GetGivenStarterWeapons()) then
-
         if HORDE.starter_weapons[ply:Horde_GetCurrentSubclass()] then
             for _, wpn_class in pairs(HORDE.starter_weapons[ply:Horde_GetCurrentSubclass()]) do
                 ply:Give(wpn_class)

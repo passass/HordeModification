@@ -8,14 +8,22 @@ SWEP.PrintName = "TOZ-34"
 SWEP.Slot = 2
 
 SWEP.UseHands = true
-if CLIENT then
+--[[if CLIENT then
     SWEP.WepSelectIcon = Material("items/hl2/weapon_shotgun.png")
     killicon.AddAlias("arccw_horde_toz34", "items/hl2/weapon_shotgun.png")
+end]]
+if CLIENT then
+    SWEP.WepSelectIcon = Material("items/hl2/weapon_shotgun.png")
+    killicon.AddAlias("arccw_horde_toz34", "weapon_shotgun")
 end
 
 function SWEP:DrawWeaponSelection(x, y, w, h, a)
     surface.SetDrawColor(255, 255, 255, a)
-    surface.SetMaterial(self.WepSelectIcon)
+    if isnumber(self.WepSelectIcon) then
+        surface.SetMaterial(Material(surface.GetTextureNameByID( self.WepSelectIcon )))
+    else
+        surface.SetMaterial(self.WepSelectIcon)
+    end
 
     surface.DrawTexturedRect(x, y, w, w / 2)
 end

@@ -1,4 +1,51 @@
+local waves_type = GetConVar("horde_waves_type"):GetInt()
 
+HORDE.class_withstartmoney = {
+    [HORDE.Class_Heavy] = {
+        Carcass = true
+    }
+}
+
+function HORDE:GetStartMoney(default_startmoney)
+    if default_startmoney then
+        return math.max(0, math.floor(GetConVarNumber("horde_start_money") * HORDE.difficulty_start_money_multiplier[HORDE.difficulty] * HORDE.wavestype_startmoneybonus[waves_type]))
+    end
+    return 100
+end
+
+HORDE.wavestype_startmoneybonus = {
+    [1] = 1,
+    [2] = 1.15,
+    [3] = 1.25,
+}
+HORDE.difficulty_start_money_multiplier = {1, 0.9, 0.8, 0.75, 0.6}
+if waves_type != 1 then
+    if waves_type == 2 then
+        HORDE.kill_reward_base = math.floor(HORDE.kill_reward_base * 1.15)
+        HORDE.total_enemies_per_wave = {24, 28, 30, 33, 38, 41, 45}
+        HORDE.round_bonus_base = math.floor(HORDE.round_bonus_base * 1.4)
+
+        HORDE.max_waves = 7
+
+        HORDE.waves_for_perk = {
+            1,3,4,5
+        }
+    elseif waves_type == 3 then
+        HORDE.kill_reward_base = math.floor(HORDE.kill_reward_base * 1.6)
+        HORDE.total_enemies_per_wave = {36, 38, 40, 45}
+        HORDE.round_bonus_base = math.floor(HORDE.round_bonus_base * 2.5)
+
+        HORDE.max_waves = 4
+
+        HORDE.waves_for_perk = {
+            1,2,3,3
+        }
+    end
+    HORDE.start_money = math.floor(HORDE.start_money * HORDE.wavestype_startmoneybonus[waves_type])
+    HORDE.kill_reward_base = math.floor(HORDE.kill_reward_base * HORDE.wavestype_startmoneybonus[waves_type])
+    
+    HORDE.max_max_waves = HORDE.max_waves
+end
 
 local plymeta = FindMetaTable("Player")
 
@@ -576,19 +623,33 @@ net.Receive("Horde_SelectClass", function (len, ply)
 
     -- Drop all weapons
     local occupied_weight = 0
-
     ply:Horde_SetClass(class)
+    ply:Horde_SetSubclass(name, subclass_name)
     if GetConVar("horde_enable_starter"):GetInt() == 1 and not (HORDE.start_game and HORDE.current_break_time <= 0) and HORDE.current_wave == 0 then
         ply:StripAmmo()
         --ply:StripWeapons()
+
         for _, wpn in pairs(ply:GetWeapons()) do
             ply:StripWeapon(wpn:GetClass())
         end
+        if IsValid(ply.Horde_Upgrades) then
+            table.Empty(ply.Horde_Upgrades)
+        end
+        ply.Horde_SpellWeapon = nil
+
         ply:Horde_SetGivenStarterWeapons(false)
         HORDE:GiveStarterWeapons(ply)
         for _, wpn in pairs(ply:GetWeapons()) do
             occupied_weight = occupied_weight + HORDE.items[wpn:GetClass()].weight
         end
+
+        if ply:Horde_GetSpellWeapon() or HORDE.class_withstartmoney[name] and HORDE.class_withstartmoney[name][subclass_name] then
+            ply:Horde_SetMoney(HORDE:GetStartMoney(true))
+        else
+            ply:Horde_SetMoney(HORDE:GetStartMoney())
+        end
+
+        ply:SetArmor(0)
     else
 		for _, wpn in pairs(ply:GetWeapons()) do
             local wpnclass = wpn:GetClass()
@@ -605,7 +666,6 @@ net.Receive("Horde_SelectClass", function (len, ply)
 
         HORDE:GiveClassGrenades(ply)
     end
-    ply:Horde_SetSubclass(name, subclass_name)
 
     -- Remove all entities
     if HORDE.player_drop_entities[ply:SteamID()] then
@@ -628,7 +688,12 @@ net.Receive("Horde_SelectClass", function (len, ply)
         ply:Horde_SetMaxArmor()
     end)
     
-    ply:Horde_UnsetGadget()
+    
+    if ply.Horde_Gadget and HORDE.items[ply.Horde_Gadget] and HORDE.items[ply.Horde_Gadget].whitelist and
+    !HORDE.items[ply.Horde_Gadget].whitelist[name] then
+        ply:Horde_AddMoney(math.floor(HORDE.items[ply.Horde_Gadget].price * .75))
+        ply:Horde_UnsetGadget()
+    end
     ply:SetMaxHealth(class.max_hp)
     net.Start("Horde_ToggleShop")
     net.Send(ply)
@@ -725,7 +790,7 @@ end)
 
 -------------------------> Cant buy anything before start game
 
-hook.Add("CanBuyItemUpgrade", "Horde_PrepareBuy", function(ply, class)
+--[[hook.Add("CanBuyItemUpgrade", "Horde_PrepareBuy", function(ply, class)
     HORDE:SendNotification("You Can't upgrade before start game!", 1, ply)
     return false
 end)
@@ -763,7 +828,7 @@ hook.Add("HordeWaveStart", "Horde_PrepareBuy", function(wave)
     hook.Remove("CanBuyItemUpgrade", "Horde_PrepareBuy")
     hook.Remove("Horde_PlayerDropMoney", "Horde_PrepareBuy")
     hook.Remove("HordeWaveStart", "Horde_PrepareBuy")
-end)
+end)]]
 
 HORDE.start_money = 0
 
