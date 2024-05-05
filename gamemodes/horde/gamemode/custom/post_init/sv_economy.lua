@@ -660,6 +660,14 @@ net.Receive("Horde_SelectClass", function (len, ply)
             if IsValid(wpn) and !ply:CanDropWeapon(wpn) then
                 ply:StripWeapon(wpnclass)
             else
+                if wpn.ArcCW and wpn.Attachments then
+                    for slot, v in pairs(wpn.Attachments) do
+                        if v.Installed and !v.FreeSlot and !v.Hidden and !v.Integral then
+                            wpn:Detach(slot, true)
+                        end
+                    end
+                    ArcCW:PlayerSendAttInv(ply)
+                end
                 ply:DropWeapon(wpn)
             end
         end
@@ -691,7 +699,7 @@ net.Receive("Horde_SelectClass", function (len, ply)
     
     if ply.Horde_Gadget and HORDE.items[ply.Horde_Gadget] and HORDE.items[ply.Horde_Gadget].whitelist and
     !HORDE.items[ply.Horde_Gadget].whitelist[name] then
-        ply:Horde_AddMoney(math.floor(HORDE.items[ply.Horde_Gadget].price * .75))
+        ply:Horde_AddMoney(math.floor(HORDE.items[ply.Horde_Gadget].price * .25))
         ply:Horde_UnsetGadget()
     end
     ply:SetMaxHealth(class.max_hp)
