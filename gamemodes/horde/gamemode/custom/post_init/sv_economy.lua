@@ -293,6 +293,9 @@ net.Receive("Horde_BuyItem", function (len, ply)
         if item.entity_properties then
             if item.entity_properties.type == HORDE.ENTITY_PROPERTY_WPN then
                 -- Weapon entity
+
+                if not HORDE:CanPickUpWeapon(ply, class) then return end
+                
                 local drop_entities
                 local limit = item.entity_properties.limit
                 if limit then
@@ -590,6 +593,12 @@ net.Receive("Horde_InitClass", function (len, ply)
     ply:Horde_SyncEconomy()
 end)
 
+local bugfix_spellers = {
+    Artificer = true,
+    Warlock = true,
+    Necromancer = true,
+}
+
 net.Receive("Horde_SelectClass", function (len, ply)
     if not ply:IsValid() then return end
     if ply:Alive() then
@@ -620,30 +629,53 @@ net.Receive("Horde_SelectClass", function (len, ply)
     -- Clear status
     net.Start("Horde_ClearStatus")
     net.Send(ply)
-
+    local game_is_not_start = not (HORDE.start_game and HORDE.current_break_time <= 0) and HORDE.current_wave == 0
+    -- ply.Horde_PlayerSpells
     -- Drop all weapons
     local occupied_weight = 0
     ply:Horde_SetClass(class)
     ply:Horde_SetSubclass(name, subclass_name)
-    if GetConVar("horde_enable_starter"):GetInt() == 1 and not (HORDE.start_game and HORDE.current_break_time <= 0) and HORDE.current_wave == 0 then
+    if GetConVar("horde_enable_starter"):GetInt() == 1 and game_is_not_start then
         ply:StripAmmo()
         --ply:StripWeapons()
 
         for _, wpn in pairs(ply:GetWeapons()) do
             ply:StripWeapon(wpn:GetClass())
         end
-        if IsValid(ply.Horde_Upgrades) then
-            table.Empty(ply.Horde_Upgrades)
-        end
-        ply.Horde_SpellWeapon = nil
 
-        ply:Horde_SetGivenStarterWeapons(false)
-        HORDE:GiveStarterWeapons(ply)
+        if ply.Horde_PlayerSpells then
+            --PrintTable(ply.Horde_PlayerSpells)
+            for i, spell_data in pairs(ply.Horde_PlayerSpells) do
+                ply:Horde_SetSpellUpgrade(spell_data.ClassName, 0)
+                ply:Horde_UnsetSpell(spell_data.ClassName)
+            end
+        end
+
+        if ply.Horde_Upgrades then
+            for wpnclass, data in pairs(ply.Horde_Upgrades) do
+                ply:Horde_SetUpgrade(wpnclass, 0)
+            end
+        end
+        ply:Horde_UnsetSpellWeapon()
+
+        if !bugfix_spellers[subclass_name] then
+            ply:Horde_SetGivenStarterWeapons(false)
+            HORDE:GiveStarterWeapons(ply)
+        else
+            timer.Simple(0, function()
+                ply:Give("hordeext_syringe")
+                local wep = ply:GetWeapon("hordeext_syringe")
+                if IsValid(wep) then
+                    ply:SetAmmo(wep.StartAmmo or math.Round(HORDE:Ammo_GetMaxAmmo(wep) / 4 * 3), wep:GetPrimaryAmmoType())
+                end
+            end)
+        end
+
         for _, wpn in pairs(ply:GetWeapons()) do
             occupied_weight = occupied_weight + HORDE.items[wpn:GetClass()].weight
         end
 
-        if ply:Horde_GetSpellWeapon() or HORDE.class_withstartmoney[name] and HORDE.class_withstartmoney[name][subclass_name] then
+        if ply:Horde_GetSpellWeapon() or HORDE.class_withstartmoney[name] and HORDE.class_withstartmoney[name][subclass_name] or bugfix_spellers[subclass_name] then
             ply:Horde_SetMoney(HORDE:GetStartMoney(true))
         else
             ply:Horde_SetMoney(HORDE:GetStartMoney())
@@ -840,13 +872,19 @@ end)]]
 
 HORDE.start_money = 0
 
--------------------------> Cant buy anything before start game
+function HORDE:CanPickUpWeapon(ply, wpn)
+    local wpn_class
+    if isstring(wpn) then
+        wpn_class = wpn
+    else
+        wpn_class = wpn:GetClass()
+    end
 
-hook.Add("PlayerCanPickupWeapon", "Horde_Economy_Pickup", function (ply, wpn)
+
     if not ply:IsValid() then return false end
     if ply:IsNPC() then return true end
-    if HORDE.items[wpn:GetClass()] then
-        local item = HORDE.items[wpn:GetClass()]
+    if HORDE.items[wpn_class] then
+        local item = HORDE.items[wpn_class]
         if (ply:Horde_GetWeight() - item.weight < 0) then
             return false
         end
@@ -864,6 +902,7 @@ hook.Add("PlayerCanPickupWeapon", "Horde_Economy_Pickup", function (ply, wpn)
                 return false
             end
         end
+
         if item.class ~= "weapon_hordeext_medkit" and item.class ~= "hordeext_syringe" and
            (ply:Horde_GetCurrentSubclass() == "Carcass" and item.class ~= "horde_carcass" or ply:Horde_GetSpellWeapon())
         then
@@ -872,6 +911,12 @@ hook.Add("PlayerCanPickupWeapon", "Horde_Economy_Pickup", function (ply, wpn)
     end
 
     return true
+end
+
+-------------------------> Cant buy anything before start game
+
+hook.Add("PlayerCanPickupWeapon", "Horde_Economy_Pickup", function (ply, wpn)
+    return HORDE:CanPickUpWeapon(ply, wpn)
 end)
 
 local old_dropweapon = plymeta.DropWeapon

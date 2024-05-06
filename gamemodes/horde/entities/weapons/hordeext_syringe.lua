@@ -122,6 +122,7 @@ function SWEP:SecondaryAttack()
     end
 end
 
+SWEP.StartAmmo = 4
 SWEP.Primary.MaxAmmo = 15
 function SWEP:CheckTrace()
     local Owner = self:GetOwner()
