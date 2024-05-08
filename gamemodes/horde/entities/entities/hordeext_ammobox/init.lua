@@ -25,7 +25,9 @@ function ENT:StartTouch(entity)
         local given_ammo = false
         for _, wpn in pairs(entity:GetWeapons()) do
             local given = HORDE:GiveAmmo(entity, wpn, wpn.ClipsPerAmmoBox or 1, true)
-            given_ammo = given_ammo or given
+            if given == true then
+                given_ammo = true
+            end
         end
 
         if given_ammo then

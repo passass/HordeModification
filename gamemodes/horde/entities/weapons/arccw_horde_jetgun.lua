@@ -65,16 +65,9 @@ SWEP.Firemodes = {
     }]]
 }
 
---[[game.AddAmmoType( {
-    name = "tesla_bulbs",
-    dmgtype = DMG_SHOCK,
-    tracer = TRACER_LINE,
-    plydmg = 0,
-    npcdmg = 0,
-    force = 2000,
-    minsplash = 10,
-    maxsplash = 5
-} )]]
+game.AddAmmoType( {
+    name = "Coolant",
+} )
 
 SWEP.NPCWeaponType = "weapon_pistol"
 SWEP.NPCWeight = 75
@@ -235,7 +228,7 @@ function SWEP:Initialize()
 	BaseClass.Initialize( self )
 	timer.Simple(0, function()
 		if self.Owner then
-			self.Owner:SetAmmo(150, "Coolant")
+			self.Owner:SetAmmo(self.Primary.MaxAmmo, "Coolant")
 		end
 	end)
 end
@@ -247,6 +240,8 @@ if CLIENT then
 		return huddata
 	end
 end
+
+SWEP.Primary.MaxAmmo = 250
 
 function SWEP:PrimaryAttack()
 	if self:GetHolster_Time() > 0 or self:GetWeaponOpDelay() > CurTime() or self:GetNextPrimaryFire() >= CurTime() then return end
@@ -273,14 +268,43 @@ function SWEP:PrimaryAttack()
 	
 	self:CallOnClient("RenderIntakeParticles")
     --print(self.TotalRPM)
-	if self.TotalRPM > 64 then -- We're spinning fast enough, pull 'em in and shred 'em!
-		for k, v in pairs(ents.FindInCone( shootpos, aimvec, 200, 0.75 )) do
-			v:SetVelocity((own:GetPos() - v:GetPos()) * 4)
+	if self.TotalRPM > 48 then -- We're spinning fast enough, pull 'em in and shred 'em!
+		for k, npc in pairs(ents.FindInCone( shootpos, aimvec, 200, 0.75 )) do
+			if IsValid(npc) and npc:Health() > 0 then
+				npc:SetVelocity((own:GetPos() - npc:GetPos()) * 4)
+			end
+		end
+
+		for k, npc in pairs(ents.FindInCone( shootpos, aimvec, 55, 0.75 )) do
+			--v:SetVelocity((own:GetPos() - v:GetPos()) * 4)
+			if IsValid(npc) and npc:Health() > 0 then
+				local dmginfo = DamageInfo()
+				dmginfo:SetDamage(60)
+				dmginfo:SetDamageType(HORDE.DMG_BLUNT)
+				dmginfo:SetAttacker(own)
+				dmginfo:SetInflictor(self)
+				dmginfo:SetDamagePosition(npc:GetPos() + Vector(0, 0, 50))
+				npc:TakeDamageInfo(dmginfo)
+			end
+			--[[local bullet = {
+				Attacker = own,
+				Damage = 60,
+				Force = Vector(0,0,0),
+				Distance = 8,
+				Num = 8,
+				Tracer = 0,
+				AmmoType = "Coolant",
+				Spread = Vector(16, 16, 0),
+				Src = shootpos,
+				Dir = aimvec*12,
+				IgnoreEntity = own
+			}
+			self:FireBullets(bullet)]]
 		end
 		own:SetVelocity(aimvec*16)
 		
 		
-		local bullet = {
+		--[[local bullet = {
 			Attacker = own,
 			Damage = 60,
 			Force = Vector(0,0,0),
@@ -288,12 +312,11 @@ function SWEP:PrimaryAttack()
 			Num = 8,
 			Tracer = 0,
 			AmmoType = "Coolant",
-			Spread = Vector(8, 8, 0),
+			Spread = Vector(16, 16, 0),
 			Src = shootpos,
-			Dir = aimvec*4,
+			Dir = aimvec*12,
 			IgnoreEntity = own
-		}
-		self:FireBullets(bullet)
+		}]]
 	end
 	self:SetNextPrimaryFire(CurTime() + 0.1)
 	timer.Pause(own:EntIndex().."jetgun_reload")
@@ -309,8 +332,9 @@ function SWEP:Think()
 			if timer.Exists(index .. "jetgun_reload") then
 				timer.UnPause(index .. "jetgun_reload")
 			else
-				timer.Create(index .. "jetgun_reload", 0.1, 0, function()
-					if self:Ammo1() == 150 and self.TotalRPM == 0 then -- We're done here, pause the timer
+				timer.Create(index .. "jetgun_reload", 0.08, 0, function()
+					local ammo_count = own:GetAmmoCount("Coolant")
+					if ammo_count >= self.Primary.MaxAmmo and self.TotalRPM == 0 then -- We're done here, pause the timer
 						timer.Pause(index .. "jetgun_reload")
 					end
 					self.TotalRPM = self.TotalRPM - 8
@@ -318,7 +342,7 @@ function SWEP:Think()
 						self.TotalRPM = 0
 					end
 					--self:SetRPM(math.Clamp(self:GetRPM() - 8, 0, 150)) -- Slow down
-					own:SetAmmo(math.Clamp(self:Ammo1() + 1, 0, 150), "Coolant", true) -- Cool down
+					own:SetAmmo(math.Clamp(ammo_count + 1, 0, self.Primary.MaxAmmo), "Coolant", true) -- Cool down
 				end)
 			end
 		end

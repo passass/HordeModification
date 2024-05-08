@@ -10,7 +10,10 @@ function HORDE:Ammo_CheckForValidWorking(ply) -- CALL FOR CHECK FOR AMMO LIMIT
         if !ammos_type[ammotype] then
             ammos_type[ammotype] = {}
         end
-        table.insert(ammos_type[ammotype], HORDE:Ammo_GetMaxAmmo(wep) + math.max(0, (wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1) - wep:Clip1()))
+
+        local clipsize = (wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 1)
+
+        table.insert(ammos_type[ammotype], HORDE:Ammo_GetMaxAmmo(wep) + math.max(0, clipsize - wep:Clip1()))
     end
 
     for ammotype, maxammos in pairs(ammos_type) do
@@ -78,20 +81,27 @@ end
 
 function HORDE:Ammo_GetMaxAmmo_Secondary(wep) -- MAX AMMO ON WEAPON
     local max_mags = wep.Horde_MaxMags_Secondary
-    if !max_mags then return HORDE:Ammo_GetTotalLimit(wep) end
+    local clipsize
     local total
     if wep.Secondary and wep.Secondary.MaxAmmo then
         total = wep.Secondary.MaxAmmo
-    elseif wep.ArcCW then
-        local clipsize = wep:GetBuff_Override("UBGL_Capacity")
-        total = clipsize * max_mags
     else
-        local clipsize = (wep.Secondary and wep.Secondary.ClipSize) or 1
-        if clipsize == -1 then
-            clipsize = 1
+        if wep.ArcCW then
+            clipsize = wep:GetBuff_Override("UBGL_Capacity")
+        else
+            clipsize = (wep.Secondary and wep.Secondary.ClipSize) or 1
+            if clipsize == -1 then
+                clipsize = 1
+            end
         end
+
+        if !max_mags then
+            return clipsize * HORDE.Ammo_DefaultMaxMags--HORDE:Ammo_GetTotalLimit(wep)
+        end
+
         total = clipsize * max_mags
     end
+    
     return math.min(HORDE:Ammo_GetTotalLimit(wep), total)
 end
 

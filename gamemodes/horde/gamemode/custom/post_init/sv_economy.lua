@@ -868,9 +868,9 @@ hook.Add("HordeWaveStart", "Horde_PrepareBuy", function(wave)
     hook.Remove("CanBuyItemUpgrade", "Horde_PrepareBuy")
     hook.Remove("Horde_PlayerDropMoney", "Horde_PrepareBuy")
     hook.Remove("HordeWaveStart", "Horde_PrepareBuy")
-end)]]
+end)
 
-HORDE.start_money = 0
+HORDE.start_money = 0]]
 
 function HORDE:CanPickUpWeapon(ply, wpn)
     local wpn_class

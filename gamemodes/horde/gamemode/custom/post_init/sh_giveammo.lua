@@ -30,8 +30,8 @@ function HORDE:GiveAmmo(ply, wpn, count, withsecondary)
 				else
 					ammo_type_2 = wpn.Secondary.Ammo
 					clipsize_2 = wpn.Secondary.ClipSize
-				end
-				ply:GiveAmmo(clipsize_2, ammo_type_2, false)
+				end 
+				ply:GiveAmmo(math.min(remain_secondary, clipsize_2), ammo_type_2, false)
 				result = true
 			end
 		end
