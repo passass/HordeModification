@@ -97,13 +97,16 @@ function ENT:Explode()
             end)
             continue
         end
+        if !ent.IsFreezed then
+            ent.old_Freeze_Material = ent:GetMaterial()
+            ent:SetMaterial("Horde/Freeze/freeze_slush")
+            HORDE:TimeStop_freeze_npc(ent)
+            ParticleEffectAttach( "frost_char_cloud", PATTACH_POINT_FOLLOW, ent, ent:LookupAttachment("chest") )
+        end
+
         local cur_dur = math.Rand(duration[1], duration[2])
-        ent.old_Freeze_Material = ent:GetMaterial()
-        ent:SetMaterial("Horde/Freeze/freeze_slush")
-        HORDE:TimeStop_freeze_npc(ent)
-        
-        local hookname = "Horde_ZombieFreeze_IncreaseDamage_" .. crea_id
-        timer.Simple(cur_dur, function()
+        local hookname = "Horde_ZombieFreeze_" .. crea_id
+        timer.Create(hookname, cur_dur, 1, function()
             if IsValid(ent) then
                 ParticleEffectAttach( "frost_break_cloud", PATTACH_ABSORIGIN_FOLLOW, ent, 0 )
                 ent:SetMaterial(ent.old_Freeze_Material)
@@ -115,8 +118,6 @@ function ENT:Explode()
             end
             hook.Remove("Horde_OnPlayerDamage", hookname)
         end)
-
-        ParticleEffectAttach( "frost_char_cloud", PATTACH_POINT_FOLLOW, ent, ent:LookupAttachment("chest") )
 
         hook.Add("Horde_OnPlayerDamage", hookname, function(ply, npc, bonus, hitgroup, dmginfo)
             if npc == ent then

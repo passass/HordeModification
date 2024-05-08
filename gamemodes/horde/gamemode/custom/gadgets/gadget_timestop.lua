@@ -165,6 +165,8 @@ function HORDE:TimeStop_freeze_npc(ent)
     if IsValid(phys) then
         phys:Sleep()
     end
+
+    ent.IsFreezed = true
     
 	ent.oldAnimationPlaybackRate = ent.AnimationPlaybackRate
 	ent.oldPlaybackRate = ent:GetPlaybackRate()
@@ -288,7 +290,7 @@ function HORDE:TimeStop_unfreeze_npc(ent)
         phys:Wake()
     end
 
-
+    ent.IsFreezed = false
     ent.HasIdleSounds = ent.oldHasIdleSounds
     ent.oldHasIdleSounds = nil
 
