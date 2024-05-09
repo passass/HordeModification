@@ -45,10 +45,11 @@ function HORDE:ApplyTemporaryDamage(ply, wep, npc, dmginfo, data)
     local TEMP_KEYS = table.GetKeys(npc.Horde_TemporaryDamage_Table)
     local temp_damage_id = (TEMP_KEYS[table.Count(TEMP_KEYS)] or 0) + 1
     local timername
+    local timer_obj
 
     if data.OnlyOneDamageFromWeapon then
         timername = "Horde_TempDamage_" .. npc:EntIndex() .. "_" .. wep:EntIndex()
-        local timer_obj = HORDE.Timers:Find(timername)
+        timer_obj = HORDE.Timers:Find(timername)
         if timer_obj then
             timer_obj:SetRepetitionsEnough(damage_times + 1)
             timer_obj:UpdateTimer()
@@ -58,22 +59,28 @@ function HORDE:ApplyTemporaryDamage(ply, wep, npc, dmginfo, data)
         timername = "Horde_TempDamage_" .. npc:EntIndex() .. "_" .. temp_damage_id
     end
 
-    npc.Horde_TemporaryDamage_Table[temp_damage_id] = HORDE.Timers:New({
+    timer_obj = HORDE.Timers:New({
         linkwithent = npc,
         timername = timername,
         repetitions = damage_times,
+        OnTimerRepetitionsFinish = function()
+            table.RemoveByValue(npc.Horde_TemporaryDamage_Table, timer_obj)
+        end,
+        OnRemove = function()
+            table.RemoveByValue(npc.Horde_TemporaryDamage_Table, timer_obj)
+        end,
         func = function(timerobj)
             if npc:Health() > 0 then
-                --npc.Horde_TemporaryDamage_TakenThisTick = true
                 dmginfo_temp:SetDamagePosition(npc:GetPos() + pos_relative)
                 npc:TakeDamageInfo(dmginfo_temp)
                 return
             end
-            npc.Horde_TemporaryDamage_Table[temp_damage_id] = nil
             timerobj:Remove()
         end,
         delay = delay
     }, true)
+
+    table.insert(npc.Horde_TemporaryDamage_Table, timer_obj)
 end
 
 hook.Add("ScaleNPCDamage", "Horde_ApplyDamage", function (npc, hitgroup, dmginfo)

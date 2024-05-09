@@ -51,6 +51,9 @@ function HORDE.Timers:StartTimer(NoCallFuncAndChangeReps)
         self.repetitions_enough = self.repetitions
     end
     if self.repetitions != 0 and self.repetitions_enough == 0 then
+        if self.OnTimerRepetitionsFinish then
+            self:OnTimerRepetitionsFinish()
+        end
         return
     end
     local delay = self.delay
@@ -58,7 +61,11 @@ function HORDE.Timers:StartTimer(NoCallFuncAndChangeReps)
     if self:IsValid() then
         timer.Create(self.timername, delay, self.repetitions_enough, function()
             self:CallFunc()
-            if self.alwayscheckfordelay and delay != self.delay then
+            if self.repetitions != 0 and self.repetitions_enough == 0 then
+                if self.OnTimerRepetitionsFinish then
+                    self:OnTimerRepetitionsFinish()
+                end
+            elseif self.alwayscheckfordelay and delay != self.delay then
                 self:StartTimer(true)
             end
         end)
@@ -156,6 +163,9 @@ function HORDE.Timers:IsProceed()
 end
 
 function HORDE.Timers:Remove()
+    if self.OnRemove then
+        self:OnRemove()
+    end
     timer.Remove(self.timername)
     HORDE.Timers.alltimers[self.timername] = nil
     self.removed = true

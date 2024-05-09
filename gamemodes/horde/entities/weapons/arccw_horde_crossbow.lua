@@ -32,8 +32,8 @@ if CLIENT then
 end
 SWEP.DefaultBodygroups = "0100000000"
 
-SWEP.Damage = 250
-SWEP.DamageMin = 250
+SWEP.Damage = 300
+SWEP.DamageMin = 300
 
 SWEP.BlastRadius = 250
 

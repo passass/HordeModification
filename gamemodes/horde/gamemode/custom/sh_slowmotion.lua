@@ -22,86 +22,69 @@ local bonus_hooks = {
 				if !IsValid(ply) then hook.Remove("Think", hookname) return end
                 local wep = ply:GetActiveWeapon()
                 if !IsValid(wep) or !wep.ArcCW then return end
-                if wep:GetReloading() then
-            
-                    local mult = 1 / wep:GetBuff_Mult("Mult_ReloadTime") --> 0
-            
-                    if wep.LastRes != mult then
-            
-                        local shouldshotgunreload = wep:GetBuff_Override("Override_ShotgunReload")
-                        local shouldhybridreload = wep:GetBuff_Override("Override_HybridReload")
-            
-                        if shouldshotgunreload == nil then shouldshotgunreload = wep.ShotgunReload end
-                        if shouldhybridreload == nil then shouldhybridreload = wep.HybridReload end
-            
-                        if shouldhybridreload then
-                            shouldshotgunreload = wep:Clip1() != 0
-                        end
-            
-                        if shouldshotgunreload then
-                            if wep:GetShotgunReloading() > 0 then return end
-                        else
-                            local ct = CurTime()
-                            local start_reload = wep.LastAnimStartTime
-                            local anim = wep.LastAnimKey
-                            local vm = wep.REAL_VM or ply:GetViewModel()
-                            local vm_animdur = vm:SequenceDuration()
-
-
-                            if !wep.LastRes then
-                                wep.LastRes = mult
-                            end
-                            if !wep.LastAnimPrcd then
-                                wep.LastAnimPrcd = start_reload
-                            end
-
-                            local dur = wep:GetAnimKeyTime(anim)
-                            local dur_minprg = wep:GetAnimKeyTime(anim, true)
-            
-                            local anim_progress = math.Clamp((wep.LastAnimPrg or 0) + (ct - wep.LastAnimPrcd) * wep.LastRes / dur, 0, 1)
-                            wep.LastAnimPrg = anim_progress
-
-                            local anim_rate = mult * (vm_animdur / dur)
-                            vm:SetPlaybackRate(anim_rate)
-
-                            local anim_timetoend = dur / mult * (1 - anim_progress)
-        
-                            local reloadtime = dur_minprg / mult * (1 - anim_progress * (dur / dur_minprg))
-                            local reloadtime2
-                            if !wep.Animations[anim].ForceEnd then
-                                reloadtime2 = anim_timetoend
-                            else
-                                reloadtime2 = reloadtime
-                            end
-                            wep:SetReloadingREAL(ct + reloadtime2)
-                            wep:SetNextPrimaryFire(ct + reloadtime2)
-                            wep:SetMagUpIn(ct + reloadtime)
-                            wep:SetNextIdle(ct + anim_timetoend)
-
-                            --[[for i, sounds in ipairs(wep.EventTable) do
-                                for time, key in pairs(sounds) do
-                                    if key.AnimKey == anim then
-                                        local sound_delay = (time - key.StartTime) / mult * (key.StartTimeLastMult or wep.LastRes or 1)
-                
-                                        time2 = key.StartTime + sound_delay
-                                        if !wep.EventTable[i][time2] then
-                                            wep.EventTable[i][time2] = table.Copy(key)
-                                            wep.EventTable[i][time] = nil
-                                        end
-                                        key.StartTimeLastMult = mult
-                                    end
-                                end
-                            end]]
-
-                            wep.LastRes = mult
-                            wep.LastAnimPrcd = ct
-                        end
-                    end
-                else
+                if !wep:GetReloading() then
                     wep.LastRes = nil
                     wep.LastAnimPrg = nil
                     wep.LastAnimPrcd = nil
+                    return
                 end
+                local mult = 1 / wep:GetBuff_Mult("Mult_ReloadTime") --> 0
+                if wep.LastRes == mult then
+                    return
+                end
+                local shouldshotgunreload = wep:GetBuff_Override("Override_ShotgunReload")
+                local shouldhybridreload = wep:GetBuff_Override("Override_HybridReload")
+    
+                if shouldshotgunreload == nil then shouldshotgunreload = wep.ShotgunReload end
+                if shouldhybridreload == nil then shouldhybridreload = wep.HybridReload end
+    
+                if shouldhybridreload then
+                    shouldshotgunreload = wep:Clip1() != 0
+                end
+    
+                if shouldshotgunreload then
+                    return
+                    --if wep:GetShotgunReloading() > 0 then return end
+                end
+                local ct = CurTime()
+                local start_reload = wep.LastAnimStartTime
+                local anim = wep.LastAnimKey
+                local vm = wep.REAL_VM or ply:GetViewModel()
+                local vm_animdur = vm:SequenceDuration()
+
+
+                if !wep.LastRes then
+                    wep.LastRes = mult
+                end
+                if !wep.LastAnimPrcd then
+                    wep.LastAnimPrcd = start_reload
+                end
+
+                local dur = wep:GetAnimKeyTime(anim)
+                local dur_minprg = wep:GetAnimKeyTime(anim, true)
+
+                local anim_progress = math.Clamp((wep.LastAnimPrg or 0) + (ct - wep.LastAnimPrcd) * wep.LastRes / dur, 0, 1)
+                wep.LastAnimPrg = anim_progress
+
+                local anim_rate = mult * (vm_animdur / dur)
+                vm:SetPlaybackRate(anim_rate)
+
+                local anim_timetoend = dur / mult * (1 - anim_progress)
+
+                local reloadtime = dur_minprg / mult * (1 - anim_progress * (dur / dur_minprg))
+                local reloadtime2
+                if !wep.Animations[anim].ForceEnd then
+                    reloadtime2 = anim_timetoend
+                else
+                    reloadtime2 = reloadtime
+                end
+                wep:SetReloadingREAL(ct + reloadtime2)
+                wep:SetNextPrimaryFire(ct + reloadtime2)
+                wep:SetMagUpIn(ct + reloadtime)
+                wep:SetNextIdle(ct + anim_timetoend)
+
+                wep.LastRes = mult
+                wep.LastAnimPrcd = ct
             end)
         end
 
@@ -114,26 +97,6 @@ local bonus_hooks = {
                 wep.LastAnimPrg = nil
                 wep.LastAnimPrcd = nil
             end
-
-            --[[local wep = ply:GetActiveWeapon()
-            if IsValid(wep) and wep.ArcCW  then
-                local mult = 1 / wep:GetBuff_Mult("Mult_ReloadTime")
-
-                for i, sounds in ipairs(wep.EventTable) do
-                    for time, key in pairs(sounds) do
-                        if key.AnimKey == anim then
-                            local sound_delay = (time - key.StartTime) / mult * (key.StartTimeLastMult or wep.LastRes or 1)
-    
-                            time2 = key.StartTime + sound_delay
-                            if !wep.EventTable[i][time2] then
-                                wep.EventTable[i][time2] = table.Copy(key)
-                                wep.EventTable[i][time] = nil
-                            end
-                            key.StartTimeLastMult = mult
-                        end
-                    end
-                end
-            end]]
         end
     end},
     SlowMotion_RPMBonus = {
