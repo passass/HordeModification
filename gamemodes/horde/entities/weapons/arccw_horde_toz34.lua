@@ -168,6 +168,7 @@ SWEP.Animations = {
     },
     ["holster"] = {
         Source = "holster",
+        Mult = .75,
         LHIK = true,
         LHIKIn = 0.2,
         LHIKOut = 0.2,
@@ -199,7 +200,7 @@ SWEP.Animations = {
         MagUpIn = 1.5,
         MinProgress = 1.8 / reload_mult1,
         ForceEnd = true,
-        Mult=reload_mult1,
+        Mult = reload_mult1,
         SoundTable = {
             {t = 0.65 * reload_mult1, s = "CW_FAS2_TOZ34_OPENSTART"},
             {t = 1.5 * reload_mult1, s = "CW_FAS2_TOZ34_OPENFINISH"},
@@ -216,7 +217,7 @@ SWEP.Animations = {
         LHIKOut = .5, LHIKEaseOut = .5,
         MagUpIn = 1.5,
         MinProgress = 2.2 / reload_mult2, ForceEnd = true,
-        Mult=reload_mult2,
+        Mult = reload_mult2,
         SoundTable = {
             {t = 0.65 * reload_mult2, s = "CW_FAS2_TOZ34_OPENSTART"},
             {t = 0.8 * reload_mult2, s = "CW_FAS2_TOZ34_OPENFINISH"},

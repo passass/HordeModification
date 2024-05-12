@@ -248,11 +248,15 @@ function ENT:KFNPCIsEnemyPlayer(ENT2)
 end
 
 function KFNPCIsProp(ENT2)
-	if(IsValid(ENT2)&&((IsValid(ENT2:GetPhysicsObject())&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_DEBRIS
-	&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_DEBRIS_TRIGGER&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_VEHICLE_CLIP
-	&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_DISSOLVING&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_PUSHAWAY
-	&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_WORLD)||
-	KFNPCIsWeldedDoor(ENT2))&&!ENT2:IsPlayer()&&!ENT2:IsNPC()&&!ENT2:IsNextBot()) then
+	if (IsValid(ENT2) and (
+		(
+			IsValid(ENT2:GetPhysicsObject())&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_DEBRIS
+			&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_DEBRIS_TRIGGER&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_VEHICLE_CLIP
+			&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_DISSOLVING&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_PUSHAWAY
+			&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_WORLD
+		) or
+	KFNPCIsWeldedDoor(ENT2) or ENT2.VJ_AddEntityToSNPCAttackList or ENT2.KF_AddEntityToSNPCAttackList
+	)&&!ENT2:IsPlayer()&&!ENT2:IsNPC()&&!ENT2:IsNextBot()) then
 		return true
 	end
 	return false
@@ -1075,11 +1079,23 @@ function ENT:KFNPCMakeMeleeAttack(IND)
 
 end
 
+function ENT:KFPossibleAttackEnemies()
+	local enemies = {}
+	local TEMP_OBBSize = (Vector(math.abs(self:OBBMins().x),math.abs(self:OBBMins().y),0)+
+	Vector(math.abs(self:OBBMaxs().x),math.abs(self:OBBMaxs().y),0))/2
+	for _,v in pairs(ents.FindInSphere(self:GetPos(), self.MeleeAttackDistance+TEMP_OBBSize:Length()+15)) do
+		if (self:KFNPCCanAttackThis(v)&&self:Visible(v)) then
+			table.insert(enemies, v)
+		end
+	end
+	return enemies
+end
+
 function ENT:KFNPCDoMeleeDamage(DMG,TYPE,DIST,RAD,BONE,HITSND,MISSSND)
 	local TEMP_TargetTakeDamage = false
 	local TEMP_SomeoneTakeDamage = false
 	local TEMP_DamagesCount = 0
-	
+
 	if(DIST!=nil) then
 		local TEMP_OBBSize = (Vector(math.abs(self:OBBMins().x),math.abs(self:OBBMins().y),0)+
 		Vector(math.abs(self:OBBMaxs().x),math.abs(self:OBBMaxs().y),0))/2
@@ -1559,38 +1575,36 @@ function ENT:Think()
 						end
 					end
 
-					
-					if(self:GetEnemy():Visible(self)) then
-						local TEMP_PosToTarg = self:GetEnemy():GetPos()-self:GetPos()
-						local TEMP_PosToTargAng = Vector(TEMP_PosToTarg.x,TEMP_PosToTarg.y,0):Angle().Yaw
-								
-						local TEMP_AngToEn = math.abs(math.NormalizeAngle(TEMP_PosToTargAng-self:GetAngles().Yaw))
-						
-						local TEMP_MaxMeleeDistance = self.MeleeAttackDistance
-						
-						if(self:IsMoving()) then
-							TEMP_MaxMeleeDistance = self.MeleeAttackDistance+5
-						end
-
-						local TEMP_DistanceForMelee = self:KFNPCEnemyInMeleeRange(self:GetEnemy(),self.MeleeAttackDistanceMin,TEMP_MaxMeleeDistance)
-
-						if(TEMP_DistanceForMelee==2) then
-							if(TEMP_AngToEn<90) then
-								local TEMP_IND = self:KFNPCSelectMeleeAttack()
-								if(TEMP_IND!=false) then
-									self:KFNPCMeleePlay(TEMP_IND)
-								end
-							else
-								self:KFNPCRotateForMeleeTooBig()
+					for _, enemy in pairs(self:KFPossibleAttackEnemies()) do
+						if(enemy:Visible(self)) then
+							local TEMP_PosToTarg = enemy:GetPos()-self:GetPos()
+							local TEMP_PosToTargAng = Vector(TEMP_PosToTarg.x,TEMP_PosToTarg.y,0):Angle().Yaw
+									
+							local TEMP_AngToEn = math.abs(math.NormalizeAngle(TEMP_PosToTargAng-self:GetAngles().Yaw))
+							
+							local TEMP_MaxMeleeDistance = self.MeleeAttackDistance
+							
+							if(self:IsMoving()) then
+								TEMP_MaxMeleeDistance = self.MeleeAttackDistance+5
 							end
-						elseif(TEMP_DistanceForMelee==1) then
-							self:KFNPCDistanceForMeleeTooSmall()
-						else
-							self:KFNPCDistanceForMeleeTooBig()
+							local TEMP_DistanceForMelee = self:KFNPCEnemyInMeleeRange(enemy,self.MeleeAttackDistanceMin,TEMP_MaxMeleeDistance)
+							
+							if(TEMP_DistanceForMelee==2) then
+								if(TEMP_AngToEn<90) then
+									local TEMP_IND = self:KFNPCSelectMeleeAttack()
+									if(TEMP_IND!=false) then
+										self:KFNPCMeleePlay(TEMP_IND)
+									end
+								else
+									self:KFNPCRotateForMeleeTooBig()
+								end
+							elseif(TEMP_DistanceForMelee==1) then
+								self:KFNPCDistanceForMeleeTooSmall()
+							else
+								self:KFNPCDistanceForMeleeTooBig()
+							end
 						end
-						
 					end
-					
 					if(self.PlayingAnimation==false&&self.MustJumpTimes-CurTime()>1) then
 						local TEMP_MustJump = false
 						

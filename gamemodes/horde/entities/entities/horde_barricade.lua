@@ -33,7 +33,7 @@ if CLIENT then
 		local barheight = 30
 		local barwidth = maxbarwidth
 		local startx = barwidth * -0.5
-		cam.Start3D2D(self:LocalToWorld(Vector(self:OBBMaxs().x, 0, 25)), Angle(angl[1] - 180, angl[2] - 90, angl[3] - 90), 0.05)
+		cam.Start3D2D(self:LocalToWorld(Vector(self:OBBMaxs().x - 10, 0, 25)), Angle(angl[1] - 180, angl[2] - 90, angl[3] - 90), 0.05)
 			
 			surface.SetDrawColor(0, 0, 0, 220)
 			surface.DrawRect(startx, y, barwidth, barheight)
@@ -41,7 +41,7 @@ if CLIENT then
 			surface.DrawRect(startx + 4, y + 4, barwidth * percentage - 8, barheight - 8)
 			surface.DrawOutlinedRect(startx, y, barwidth, barheight)
 		cam.End3D2D()
-		cam.Start3D2D(self:LocalToWorld(Vector(-self:OBBMaxs().x, 0, 25)), Angle(angl[1] - 180, angl[2] - 90, angl[3] - 90), 0.05)
+		cam.Start3D2D(self:LocalToWorld(Vector(-self:OBBMaxs().x + 10, 0, 25)), Angle(angl[1] - 180, angl[2] - 90, angl[3] - 90), 0.05)
 			
 			surface.SetDrawColor(0, 0, 0, 220)
 			surface.DrawRect(startx, y, barwidth, barheight)
@@ -69,9 +69,9 @@ else
 	end
 
 	function ENT:Horde_OnTakeDamage(dmginfo)
-		if !dmginfo:GetAttacker():IsNPC() then
+		--[[if !dmginfo:GetAttacker():IsNPC() then
 			return
-		end
+		end]]
 		self:TakeDMG(dmginfo:GetDamage())
 	end
 
@@ -86,7 +86,6 @@ else
 		end
 	end)
 end
-
 function ENT:Initialize()
 	self:SetModel("models/props_c17/concrete_barrier001a.mdl")
 
@@ -100,8 +99,8 @@ function ENT:Initialize()
 		phys:AddGameFlag(FVPHYSICS_NO_IMPACT_DMG)
 		phys:Wake()
 	end
-	--self:SetCollisionBounds( Vector(-51, -51, -51), Vector(51, 51, 51) )
-	--self:SetCollisionGroup(COLLISION_GROUP_NONE)
+	self:SetCollisionBounds( Vector(-10.53, -56.35, -0.463), Vector(20.469, 56.2762, 48.35314) )
+	self:SetCollisionGroup(COLLISION_GROUP_NONE)
 	self:SetHealth(default_hp)
 	if SERVER then
 		self:SetMaxHealth(default_hp)
