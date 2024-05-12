@@ -57,7 +57,13 @@ function PANEL:SetData(item, description_panel, infusion_panel)
     
     self.description = item.description
     self.weight = item.weight
-    self.price = item.price
+
+    if self.item.is_buyable_perk then
+        self.loc_name = HORDE:GetBuyablePerkName(MySelf, self.item.class)
+        self.price = HORDE:GetBuyablePerkPrice(MySelf, self.item.class)
+    else
+        self.price = item.price
+    end
     self.skull_tokens = item.skull_tokens or 0
     self.description_panel = description_panel
     self.infusion_panel = infusion_panel
@@ -221,7 +227,13 @@ end
 
 function PANEL:Paint()
     if self.item ~= nil then
-        local is_rich = MySelf:Horde_GetMoney() >= self.item.price and MySelf:Horde_GetSkullTokens() >= (self.item.skull_tokens or 0) and MySelf:Horde_GetWeight() >= self.item.weight
+        local price = self.price
+        if self.item.is_buyable_perk then
+            self.loc_name = HORDE:GetBuyablePerkName(MySelf, self.item.class)
+            price = HORDE:GetBuyablePerkPrice(MySelf, self.item.class)
+        end
+
+        local is_rich = MySelf:Horde_GetMoney() >= price and MySelf:Horde_GetSkullTokens() >= (self.item.skull_tokens or 0) and MySelf:Horde_GetWeight() >= self.item.weight
         surface.SetDrawColor(self.bg_color)
         surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
         surface.SetFont("Item")
@@ -256,11 +268,12 @@ function PANEL:Paint()
                     self.weight_panel_icon:SetImageColor(self.text_color)
                     self.price_panel:SetTextColor(self.text_color_poor)
             end
+
             if self.skull_tokens and self.skull_tokens > 0 then
-                if self.price <= 0 then
+                if price <= 0 then
                     self.price_panel:SetText(tostring(self.skull_tokens) .. "    ")
                 else
-                    self.price_panel:SetText(tostring(self.price) .. "$ " .. tostring(self.skull_tokens) .. "    ")
+                    self.price_panel:SetText(tostring(price) .. "$ " .. tostring(self.skull_tokens) .. "    ")
                 end
                 local mat = Material("skull.png", "mips smooth")
                 surface.SetMaterial(mat)
@@ -272,7 +285,7 @@ function PANEL:Paint()
                 local x,y = self.price_panel:GetPos()
                 surface.DrawTexturedRect(x + self.price_panel:GetWide() - 20, y + 12, 14, 15)
             else
-                self.price_panel:SetText(tostring(self.price) .. "$ ")
+                self.price_panel:SetText(tostring(price) .. "$ ")
             end
         end
 
@@ -290,7 +303,7 @@ function PANEL:Paint()
                 surface.SetDrawColor(255, 255, 255, 255)
                 surface.SetMaterial(icon)
                 surface.DrawTexturedRect(self:GetWide() - 128, -10, 60, 60)
-                self.price_panel:SetText(tostring(self.price) .. "$   ")
+                self.price_panel:SetText(tostring(price) .. "$   ")
             end
             self.weight_panel:SetVisible(false)
         else

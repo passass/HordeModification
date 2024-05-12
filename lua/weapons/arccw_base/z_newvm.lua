@@ -2640,13 +2640,13 @@ function SWEP:Reload()
         if !self.Animations[anim].ForceEnd then
             reload_end_on = self:GetAnimKeyTime(anim, false) * mult
         else
-            reload_end_on = self.Animations[anim].EndReloadOn or reloadtime
+            reload_end_on = self.Animations[anim].EndReloadOn and self.Animations[anim].EndReloadOn * mult or reloadtime
         end
         self:SetNextPrimaryFire(CurTime() + reload_end_on)
         self:SetReloading(CurTime() + reload_end_on)
 
         self:SetMagUpCount(0)
-        self:SetMagUpIn(CurTime() + (magupin or reloadtime))
+        self:SetMagUpIn(CurTime() + (magupin and magupin * mult or reloadtime))
     end
 
     self:SetClipInfo(load)

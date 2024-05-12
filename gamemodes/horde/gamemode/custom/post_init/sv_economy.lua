@@ -465,6 +465,18 @@ net.Receive("Horde_BuyItem", function (len, ply)
                 ply:Horde_AddMoney(-price)
                 ply:Horde_AddSkullTokens(-skull_tokens)
                 ply:Horde_SyncEconomy()
+            elseif item.entity_properties.type == HORDE.ENTITY_PROPERTY_BUYABLEPERK then
+                price = HORDE:GetBuyablePerkPrice(ply, class)
+                local lvl = HORDE:GetBuyablePerkLevel(ply, class)
+                local maxlevel = item.maxlevel
+                if ply:Horde_GetMoney() >= price and (!maxlevel or lvl < maxlevel) then
+                    HORDE:AddBuyablePerkLevel(ply, class)
+                    ply:Horde_AddMoney(-price)
+                    ply:Horde_AddSkullTokens(-skull_tokens)
+                    ply:Horde_SyncEconomy()
+                else
+                    return
+                end
             end
         else
             buy_weapon(ply, class, price, skull_tokens)
@@ -534,6 +546,13 @@ net.Receive("Horde_SellItem", function (len, ply)
             ply:Horde_UnsetGadget()
             ply:Horde_AddMoney(math.floor(0.25 * item.price))
             ply:Horde_SyncEconomy()
+        elseif item.entity_properties.type == HORDE.ENTITY_PROPERTY_BUYABLEPERK then
+            local lvl = HORDE:GetBuyablePerkLevel(ply, class)
+            if lvl > 0 then
+                ply:Horde_AddMoney(math.floor(0.25 * HORDE:GetBuyablePerkPrice(ply, class, lvl-1)))
+                HORDE:StripBuyablePerk(ply, class)
+                ply:Horde_SyncEconomy()
+            end
         end
     end
 end)

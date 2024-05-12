@@ -171,9 +171,13 @@ function PANEL:DoClick()
         return
     end
     if not MySelf:Alive() then return end
+    local price = self.item.price
+    if self.item.is_buyable_perk then
+        price = HORDE:GetBuyablePerkPrice(MySelf, self.item.class)
+    end
     if self.item.Mind then
         -- spell item
-        if MySelf:Horde_GetMoney() < self.item.price or not self.level_satisfy then
+        if MySelf:Horde_GetMoney() < price or not self.level_satisfy then
             return
         end
         net.Start("Horde_BuySpell")
@@ -181,7 +185,8 @@ function PANEL:DoClick()
         net.SendToServer()
         return
     end
-    if MySelf:Horde_GetMoney() < self.item.price or MySelf:Horde_GetWeight() < self.item.weight or (not self.level_satisfy) then return end
+
+    if MySelf:Horde_GetMoney() < price or MySelf:Horde_GetWeight() < self.item.weight or (not self.level_satisfy) then return end
     local drop_entities = MySelf:Horde_GetDropEntities()
     if self.item.entity_properties and
     self.item.entity_properties.limit and
@@ -258,7 +263,7 @@ function PANEL:SellDoClick()
         return
     end
     if not MySelf:Alive() then return end
-    if MySelf:HasWeapon(self.item.class) or (self.item.entity_properties and (self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_DROP or self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_GADGET or self.item.entity_properties.wep_that_place)) then
+    if MySelf:HasWeapon(self.item.class) or (self.item.entity_properties and (self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_DROP or self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_BUYABLEPERK or self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_GADGET or self.item.entity_properties.wep_that_place)) then
         Derma_Query("Sell Item?!", "Sell",
                 "Yes",
                 function()
@@ -542,6 +547,12 @@ function PANEL:Paint()
 
     self.class_progress:SetVisible(false)
     if self.item then
+        local price = self.item.price
+        if self.item.is_buyable_perk then
+            self.loc_name = HORDE:GetBuyablePerkName(MySelf, self.item.class)
+            price = HORDE:GetBuyablePerkPrice(MySelf, self.item.class)
+        end
+
         self.buy_btn:SetVisible(true)
         self.sell_btn:SetVisible(true)
         self.sell_btn:SetWide(self:GetWide())
@@ -561,7 +572,7 @@ function PANEL:Paint()
 
                 self.sell_btn:SetVisible(true)
                 self.sell_btn:SetTextColor(Color(255,255,255))
-                self.sell_btn:SetText(translate.Get("Shop_Sell_For") .. " " .. tostring(math.floor(self.item.price * 0.25)) .. "$")
+                self.sell_btn:SetText(translate.Get("Shop_Sell_For") .. " " .. tostring(math.floor(price * 0.25)) .. "$")
                 self.sell_btn.Paint = function ()
                     surface.SetDrawColor(HORDE.color_crimson)
                     surface.DrawRect(0, 0, self:GetWide(), 200)
@@ -619,7 +630,7 @@ function PANEL:Paint()
 
                 self.sell_btn:SetVisible(false)
                 self.upgrade_btn:SetVisible(false)
-            elseif MySelf:Horde_GetMoney() < self.item.Price or (not MySelf:Alive()) then
+            elseif MySelf:Horde_GetMoney() < price or (not MySelf:Alive()) then
                 self.buy_btn:SetTextColor(Color(200,200,200))
                 if not MySelf:Alive() then
                     self.buy_btn:SetText("You are dead.")
@@ -917,21 +928,40 @@ function PANEL:Paint()
             return
         end
 
-        if MySelf:HasWeapon(self.item.class) or (self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_GADGET and MySelf:Horde_GetGadget() == self.item.class) then
-            self.buy_btn:SetTextColor(Color(255,255,255))
-            self.buy_btn:SetText("OWNED")
-            self.buy_btn.Paint = function ()
-                surface.SetDrawColor(Color(40,40,40))
-                surface.DrawRect(0, 0, self:GetWide(), 200)
+        if !self.item.entity_properties.sell_forbidden and (MySelf:HasWeapon(self.item.class) or
+        (self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_GADGET and MySelf:Horde_GetGadget() == self.item.class) or
+        (self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_BUYABLEPERK and HORDE:GetBuyablePerkLevel(MySelf, self.item.class) > 0)) then
+            if self.item.entity_properties.type != HORDE.ENTITY_PROPERTY_BUYABLEPERK or HORDE.items[self.item.class].maxlevel and HORDE:GetBuyablePerkLevel(MySelf, self.item.class) >= HORDE.items[self.item.class].maxlevel then
+                self.buy_btn:SetTextColor(Color(255,255,255))
+                self.buy_btn:SetText("OWNED")
+                self.buy_btn.Paint = function ()
+                    surface.SetDrawColor(Color(40,40,40))
+                    surface.DrawRect(0, 0, self:GetWide(), 200)
+                end
+            else
+                if MySelf:Horde_GetMoney() < price then
+                    if not MySelf:Alive() then
+                        self.buy_btn:SetText("You are dead.")
+                    else
+                        self.buy_btn:SetText(translate.Get("Shop_Not_Enough_Money_Or_Carrying_Capacity"))
+                    end
+                    self.buy_btn.Paint = function ()
+                        surface.SetDrawColor(HORDE.color_crimson_dark)
+                        surface.DrawRect(0, 0, self:GetWide(), 200)
+                    end
+                else
+                    self.buy_btn:SetText(translate.Get("Shop_Buy_Item"))
+                    self.buy_btn.Paint = function ()
+                        surface.SetDrawColor(HORDE.color_crimson)
+                        surface.DrawRect(0, 0, self:GetWide(), 200)
+                    end
+                end
+                self.buy_btn:SetTextColor(Color(255,255,255))
             end
 
-            if self.item.entity_properties then
-                self.sell_btn:SetVisible(!self.item.entity_properties.sell_forbidden)
-            else
-                self.sell_btn:SetVisible(true)
-            end
+            self.sell_btn:SetVisible(true)
             self.sell_btn:SetTextColor(Color(255,255,255))
-            self.sell_btn:SetText(translate.Get("Shop_Sell_For") .. " " .. tostring(math.floor(self.item.price * 0.25)) .. "$")
+            self.sell_btn:SetText(translate.Get("Shop_Sell_For") .. " " .. tostring(math.floor(HORDE:GetBuyablePerkPrice(MySelf, self.item.class, HORDE:GetBuyablePerkLevel(MySelf, self.item.class) - 1) * 0.25)) .. "$")
             self.sell_btn.Paint = function ()
                 surface.SetDrawColor(HORDE.color_crimson)
                 surface.DrawRect(0, 0, self:GetWide(), 200)
@@ -1059,7 +1089,7 @@ function PANEL:Paint()
             self.current_ammo_panel.Paint = function () end
             self.sell_btn:SetVisible(false)
             self.upgrade_btn:SetVisible(false)
-        elseif MySelf:Horde_GetMoney() < self.item.price or MySelf:Horde_GetWeight() < self.item.weight or (not MySelf:Alive()) then
+        elseif MySelf:Horde_GetMoney() < price or MySelf:Horde_GetWeight() < self.item.weight or (not MySelf:Alive()) then
             self.buy_btn:SetTextColor(Color(200,200,200))
             if not MySelf:Alive() then
                 self.buy_btn:SetText("You are dead.")
@@ -1080,7 +1110,7 @@ function PANEL:Paint()
                 if drop_entities[self.item.class] then
                     self.sell_btn:SetVisible(true)
                     self.sell_btn:SetTextColor(Color(255,255,255))
-                    self.sell_btn:SetText(translate.Get("Shop_Sell_All_For") .. " " .. tostring(math.floor(self.item.price * 0.25 * drop_entities[self.item.class])) .. "$")
+                    self.sell_btn:SetText(translate.Get("Shop_Sell_All_For") .. " " .. tostring(math.floor(price * 0.25 * drop_entities[self.item.class])) .. "$")
                     self.sell_btn.Paint = function ()
                         surface.SetDrawColor(HORDE.color_crimson)
                         surface.DrawRect(0, 0, self:GetWide(), 200)
@@ -1099,7 +1129,7 @@ function PANEL:Paint()
                     self.buy_btn:SetText(translate.Get("Shop_Buy_Item") .. " " .. drop_entities[self.item.class] .. "/" .. self.item.entity_properties.limit)
                     self.sell_btn:SetVisible(true)
                     self.sell_btn:SetTextColor(Color(255,255,255))
-                    self.sell_btn:SetText(translate.Get("Shop_Sell_All_For") .. " " .. tostring(math.floor(self.item.price * 0.25 * drop_entities[self.item.class])) .. "$")
+                    self.sell_btn:SetText(translate.Get("Shop_Sell_All_For") .. " " .. tostring(math.floor(price * 0.25 * drop_entities[self.item.class])) .. "$")
                     self.sell_btn.Paint = function ()
                         surface.SetDrawColor(HORDE.color_crimson)
                         surface.DrawRect(0, 0, self:GetWide(), 200)

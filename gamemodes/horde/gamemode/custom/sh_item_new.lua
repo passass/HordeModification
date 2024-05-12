@@ -1,5 +1,9 @@
 if !HORDE.items then HORDE.items = {} end
 
+if !table.HasValue(HORDE.categories, "BuyablePerks") then
+    table.insert(HORDE.categories, "BuyablePerks")
+end
+
 local function calcTotalLevels(item)
     local levels = item.levels
     if levels.VariousConditions then
@@ -938,6 +942,11 @@ end
         
         HORDE:GetDefaultGadgets()
         HORDE:GetDefaultItemInfusions()
+
+        for class, data in pairs(HORDE.BuyablePerks) do
+            data.class = class
+            HORDE:CreateBuyablePerk(data)
+        end
 
         if ArcCWInstalled == true and GetConVar("horde_arccw_attinv_free"):GetInt() == 0 then
             print("[HORDE] ArcCW detected. Loading attachments into shop.")

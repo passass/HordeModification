@@ -10,6 +10,7 @@ local shop_icons = {
 ["Equipment"] = Material("horde/categories/equipment.png"),
 ["Attachment"] = Material("horde/categories/attachments.png"),
 ["Gadget"] = Material("horde/categories/gadget.png"),
+["BuyablePerks"] = Material("horde/categories/gadget.png"),
 }
 
 local stats_offset = 145
@@ -271,7 +272,7 @@ function PANEL:Init()
         local items = {}
 
         for _, item in pairs(HORDE.items) do
-                        if item.category == category and ((item.whitelist == nil) or (item.whitelist and item.whitelist[class.name]) or (MySelf:Horde_GetCurrentSubclass() == "Gunslinger" and item.category == "Pistol")) then
+            if item.category == category and ((item.whitelist == nil) or (item.whitelist and item.whitelist[class.name]) or (MySelf:Horde_GetCurrentSubclass() == "Gunslinger" and item.category == "Pistol")) then
                 if (item.category == "Gadget" and MySelf:Horde_GetGadget() == item.class) or MySelf:HasWeapon(item.class) then
                     item.cmp = -1
                 else
@@ -354,7 +355,29 @@ function PANEL:Init()
         end
 
         ::cont::
-    end    
+    end
+
+    --[[local ShopCategoryTab = vgui.Create("DPanel", self)
+    ShopCategoryTab.Paint = function () end
+    
+    local DScrollPanel = vgui.Create("DScrollPanel", ShopCategoryTab)
+    DScrollPanel:Dock(FILL)
+    local ShopCategoryTabLayout = vgui.Create("DIconLayout", DScrollPanel)
+    ShopCategoryTabLayout:Dock(FILL)
+    ShopCategoryTabLayout:SetBorder(8)
+    ShopCategoryTabLayout:SetSpaceX(8)
+    ShopCategoryTabLayout:SetSpaceY(8)
+
+    DScrollPanel:AddItem(ShopCategoryTabLayout)
+
+    for _, item in pairs(HORDE.BuyablePerks) do
+        local model = vgui.Create("HordeShopItem")
+        model:SetSize(container:GetWide() - 16, 40)
+        model:SetData(item, description_panel, infusion_panel)
+        ShopCategoryTabLayout:Add(model)
+    end
+
+    createBtn("Gadget", ShopCategoryTab, LEFT)]]
 
     -- Class tab
     local ClassTab = vgui.Create("DPanel", self)

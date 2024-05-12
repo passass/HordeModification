@@ -1594,6 +1594,7 @@ function ENT:Think()
 									local TEMP_IND = self:KFNPCSelectMeleeAttack()
 									if(TEMP_IND!=false) then
 										self:KFNPCMeleePlay(TEMP_IND)
+										break
 									end
 								else
 									self:KFNPCRotateForMeleeTooBig()
