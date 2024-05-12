@@ -31,7 +31,7 @@ end
 SWEP.WorldModel = "models/weapons/arccw/w_defender.mdl"
 SWEP.ViewModelFOV = 70
 
-SWEP.Damage = 17
+SWEP.Damage = 21
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.RangeMin = 15
 SWEP.Range = 25 -- in METRES
@@ -159,6 +159,7 @@ local reload_mult2 = .5
 SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
+        Mult = .5,
         LHIK = true,
         LHIKIn = 0.2,
         LHIKOut = 0.2,
@@ -168,7 +169,7 @@ SWEP.Animations = {
     },
     ["holster"] = {
         Source = "holster",
-        Mult = .75,
+        Mult = .6,
         LHIK = true,
         LHIKIn = 0.2,
         LHIKOut = 0.2,

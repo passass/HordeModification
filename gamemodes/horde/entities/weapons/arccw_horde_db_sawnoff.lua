@@ -42,7 +42,7 @@ SWEP.MaxRecoilBlowback = 2
 
 SWEP.AccuracyMOA = 150 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 100 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 150
+SWEP.MoveDispersion = 70
 
 SWEP.Delay = 60 / 1000 -- 60 / RPM.
 SWEP.Num = 8 -- number of shots per trigger pull.

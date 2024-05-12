@@ -69,9 +69,9 @@ else
 	end
 
 	function ENT:Horde_OnTakeDamage(dmginfo)
-		--[[if !dmginfo:GetAttacker():IsNPC() then
+		if !dmginfo:GetAttacker():IsNPC() then
 			return
-		end]]
+		end
 		self:TakeDMG(dmginfo:GetDamage())
 	end
 
@@ -99,7 +99,7 @@ function ENT:Initialize()
 		phys:AddGameFlag(FVPHYSICS_NO_IMPACT_DMG)
 		phys:Wake()
 	end
-	self:SetCollisionBounds( Vector(-10.53, -56.35, -0.463), Vector(20.469, 56.2762, 48.35314) )
+	self:SetCollisionBounds( Vector(-15.53, -56.35, -0.463), Vector(15.469, 56.2762, 48.35314) )
 	self:SetCollisionGroup(COLLISION_GROUP_NONE)
 	self:SetHealth(default_hp)
 	if SERVER then
