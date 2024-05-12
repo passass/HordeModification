@@ -123,12 +123,12 @@ SWEP.MagID = "vityaz" -- the magazine pool this gun draws from
 
 SWEP.ShootSound			= "weapons/mp5k/mp5k_fp.wav"
 SWEP.ShootSoundSilenced			= "weapons/mp5k/mp5k_suppressed_fp.wav"
-SWEP.MuzzleEffect = "muzzleflash_m3"
-SWEP.ShellModel = "models/shells/shell_12gauge.mdl"
+SWEP.MuzzleEffect = "muzzleflash_mp5"
+SWEP.ShellModel = "models/shells/shell_9mm.mdl"
 SWEP.ShellPitch = 100
-SWEP.ShellSounds = ArcCW.ShotgunShellSoundsTable
-SWEP.ShellScale = 1.5
-SWEP.ShellRotateAngle = Angle(0, 90, 0)
+SWEP.ShellScale = 1.25
+SWEP.ShellRotateAngle = Angle(0, 180, 0)
+
 SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 --[[SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
