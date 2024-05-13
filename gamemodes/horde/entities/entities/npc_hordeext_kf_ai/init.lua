@@ -223,15 +223,21 @@ function ENT:KFNPCInit(VEC,MTYPE,CAPS,HP,HPAdd,HHP,HHPAdd,HHPAHP)
 end
 
 function ENT:KFNPCCanAttackThis(ENT2)
-	if(IsValid(ENT2)&&self:KFNPCIsEnemyNPC(ENT2)||self:KFNPCIsEnemyPlayer(ENT2)||KFNPCIsProp(ENT2)) then
+	if(IsValid(ENT2) and (
+		self:KFNPCIsEnemyNPC(ENT2) or
+		HORDE:IsPlayerOrMinion(ENT2) or
+		KFNPCIsProp(ENT2))) then
 		return true
 	end
 end
 
 function ENT:KFNPCIsEnemyNPC(ENT2)
-	if(IsValid(ENT2)&&((ENT2:IsNPC()&&ENT2:GetNPCState()!=NPC_STATE_DEAD)||
-	(ENT2:IsNextBot()&&(!ENT2.IsDrGNextbot||(!ENT2:IsDown()&&!ENT2:IsDead()))))&&
-	(!KFNPCIsZombie(ENT2)||(ENT2==self:GetEnemy()||self==ENT2:GetEnemy()))) then
+	if IsValid(ENT2) and (!ENT2.VJ_NPC_Class or !table.HasValue(ENT2.VJ_NPC_Class, "CLASS_ZOMBIE") and !table.HasValue(ENT2.VJ_NPC_Class, "CLASS_ZOMBIE")) and
+	(
+		(ENT2:IsNPC() && ENT2:GetNPCState()!=NPC_STATE_DEAD)||
+	(ENT2:IsNextBot() && (!ENT2.IsDrGNextbot||(!ENT2:IsDown() && !ENT2:IsDead())) )
+	) &&
+	(!KFNPCIsZombie(ENT2)||(ENT2==self:GetEnemy()||self==ENT2:GetEnemy())) then
 		return true
 	end
 	
@@ -248,15 +254,19 @@ function ENT:KFNPCIsEnemyPlayer(ENT2)
 end
 
 function KFNPCIsProp(ENT2)
-	if (IsValid(ENT2) and (
+	if (
+		IsValid(ENT2) and (
 		(
-			IsValid(ENT2:GetPhysicsObject())&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_DEBRIS
+			string.StartsWith(ENT2:GetClass(), "prop_") and IsValid(ENT2:GetPhysicsObject()) && ENT2:GetCollisionGroup()!=COLLISION_GROUP_DEBRIS
 			&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_DEBRIS_TRIGGER&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_VEHICLE_CLIP
 			&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_DISSOLVING&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_PUSHAWAY
 			&&ENT2:GetCollisionGroup()!=COLLISION_GROUP_WORLD
 		) or
-	KFNPCIsWeldedDoor(ENT2) or ENT2.VJ_AddEntityToSNPCAttackList or ENT2.KF_AddEntityToSNPCAttackList
-	)&&!ENT2:IsPlayer()&&!ENT2:IsNPC()&&!ENT2:IsNextBot()) then
+		KFNPCIsWeldedDoor(ENT2) or
+		ENT2.VJ_AddEntityToSNPCAttackList or
+		ENT2.KF_AddEntityToSNPCAttackList --or string.StartsWith(ENT2:GetClass(), "prop_")
+		) and !ENT2:IsPlayer() and !ENT2:IsNPC() and !ENT2:IsNextBot() and ENT2:Health() > 0
+	) then
 		return true
 	end
 	return false
@@ -1084,7 +1094,7 @@ function ENT:KFPossibleAttackEnemies()
 	local TEMP_OBBSize = (Vector(math.abs(self:OBBMins().x),math.abs(self:OBBMins().y),0)+
 	Vector(math.abs(self:OBBMaxs().x),math.abs(self:OBBMaxs().y),0))/2
 	for _,v in pairs(ents.FindInSphere(self:GetPos(), self.MeleeAttackDistance+TEMP_OBBSize:Length()+15)) do
-		if (self:KFNPCCanAttackThis(v)&&self:Visible(v)) then
+		if self:KFNPCCanAttackThis(v) and self:Visible(v) then
 			table.insert(enemies, v)
 		end
 	end
