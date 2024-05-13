@@ -701,6 +701,9 @@ SWEP.Horde_MaxMags = 30
 SWEP.Damage = 30
 SWEP.DamageMin = 25
 SWEP.Range = 50 -- in METRES
+SWEP.Primary.Ammo = "smg1"
+SWEP.UBGL_Ammo = SWEP.Primary.Ammo
+SWEP.UBGL_Ammo_Priority = 9999
 
 SWEP.Hook_SelectReloadAnimation = function(wep, anim)
     return anim .. "_akimbo_right"
@@ -710,7 +713,7 @@ SWEP.Hook_TranslateAnimation = function(wep, anim)
 end
 
 SWEP.Attachments = {
-    {
+    --[[{
         PrintName = "Optic",
         DefaultAttName = "Iron Sights",
         Slot = "optic_lp",
@@ -756,7 +759,7 @@ SWEP.Attachments = {
             vpos = Vector(2.5, 0, 0),
             vang = Angle(0, 0, 0),
         },
-    },
+    },]]
     {
         PrintName = "Fire Group",
         Slot = "fcg",

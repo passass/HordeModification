@@ -1,7 +1,7 @@
 if not ArcCWInstalled then return end
 if CLIENT then
-    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_hordeext_akimbo_ak47")
-    killicon.AddAlias("arccw_hordeext_akimbo_ak47", "arccw/weaponicons/arccw_hordeext_akimbo_ak47")
+    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_hordeext_akimbo_scarh")
+    killicon.AddAlias("arccw_hordeext_akimbo_scarh", "arccw/weaponicons/arccw_hordeext_akimbo_scarh")
 end
 SWEP.Base = "arccw_horde_akimbo_base"
 SWEP.Spawnable = true
@@ -9,7 +9,7 @@ SWEP.Category = "ArcCW - Horde" -- edit this if you like
 SWEP.AdminOnly = false
 SWEP.WeaponCamBone = tag_camera
 
-SWEP.PrintName = "AK47 + AK47"
+SWEP.PrintName = "Scar-H + Scar-H"
 SWEP.Trivia_Class = "Handgun"
 SWEP.Trivia_Desc = "Semi-automatic (single fire)\nUnofficial."
 
@@ -20,11 +20,11 @@ SWEP.UseHands = true
 SWEP.ViewModel = "models/weapons/arccw/fesiugmw2/c_glock17_1.mdl"
 SWEP.MirrorVMWM = true
 SWEP.WorldModelOffset = {
-    pos = Vector(-14, 6, -4),
+    pos = Vector(-3, 3.5, -6),
     ang = Angle(-10, 0, 180)
 }
 
-SWEP.WorldModel = "models/weapons/w_rif_ak47.mdl"
+SWEP.WorldModel = "models/weapons/arccw_go/v_rif_scar.mdl"
 SWEP.ViewModelFOV = 65
 SWEP.ClipsPerAmmoBox = 2
 SWEP.Damage = 40
@@ -126,10 +126,7 @@ SWEP.MeleeMissSound			= ""
 SWEP.MeleeHitSound			= "MW2Common.Melee.HitWorld"
 SWEP.MeleeHitNPCSound		= "MW2Common.Melee.HitFleshy_Slice"
 
-local wpnmodel = "models/weapons/arccw_go/v_rif_ak47.mdl"
-
-
-
+local wpnmodel = "models/weapons/arccw_go/v_rif_scar.mdl"
 local invis_mat = "Models/effects/vol_light001"
 function SWEP:Hook_Think_2()
     if CLIENT and self.VM then
@@ -145,17 +142,17 @@ end
 
 local vm_scale = .8
 local vm_ang = Angle(0, 0, 0)
-local Offset_pos = Vector(-12, -4, 3.96)
+local Offset_pos = Vector(-13.7, -4, 5)
 local reloadtime_mult = 1.4
 
 SWEP.LeftHand_ReloadSound = {
-    {s = "ARCCW_GO_AK47.Clipout", t = 0},--4/40
-    {s = "ARCCW_GO_AK47.Clipin", 	    t = 36/40},
+    {s = "ARCCW_GO_SCAR.Clipout", t = 0},--4/40
+    {s = "ARCCW_GO_SCAR.Clipin", 	    t = 36/40},
 }
 SWEP.LeftHand_ReloadSoundEmpty = {
-    {s = "ARCCW_GO_AK47.Clipout", t = 0},
-    {s = "ARCCW_GO_AK47.Clipin",  	t = 42/40},
-    {s = "ARCCW_GO_AK47.Boltpull", 	t = 67/40},
+    {s = "ARCCW_GO_SCAR.Clipout", t = 0},
+    {s = "ARCCW_GO_SCAR.Clipin",  	t = 42/40},
+    {s = "ARCCW_GO_SCAR.Boltforward", 	t = 67/40},
 }
 
 for i, data in pairs(SWEP.LeftHand_ReloadSound) do
@@ -166,21 +163,24 @@ for i, data in pairs(SWEP.LeftHand_ReloadSoundEmpty) do
     data.t = data.t * reloadtime_mult
 end
 
-SWEP.Primary.ClipSize = 30
-SWEP.Recoil = 1
-SWEP.RecoilSide = 0.6
-SWEP.RecoilRise = 0.3
-SWEP.Delay = 60 / 600 -- 60 / RPM
-SWEP.AccuracyMOA = 15 / 2.5 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 200 / 2.5 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 120
+SWEP.Primary.ClipSize = 20
+SWEP.Recoil = 0.95
+SWEP.RecoilSide = 0.5
+SWEP.RecoilRise = 0.2
+SWEP.RecoilPunch = 0.2
+SWEP.Delay = 60 / 650 -- 60 / RPM
+SWEP.AccuracyMOA = 1.5 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.HipDispersion = 285 -- inaccuracy added by hip firing.
+SWEP.MoveDispersion = 100
 SWEP.Horde_MaxMags = 30
-SWEP.Damage = 36
-SWEP.DamageMin = 25
-SWEP.Range = 100 -- in METRES
-SWEP.ShootSound = "arccw_go/ak47/ak47_01.wav"
+SWEP.Damage = 74
+SWEP.DamageMin = 60 -- damage done at maximum range
+SWEP.Range = 150 -- in METRES
+SWEP.Penetration = 23
+SWEP.FirstShootSound = "arccw_go/scar20/scar20_01.wav"
+SWEP.ShootSound = "arccw_go/scar20/scar20_02.wav"
 SWEP.ShootSoundSilenced = "arccw_go/m4a1/m4a1_silencer_01.wav"
-SWEP.DistantShootSound = "arccw_go/ak47/ak47-1-distant.wav"
+SWEP.DistantShootSound = "arccw_go/scar20/scar20_distant_01.wav"
 SWEP.Primary.Ammo = "ar2"
 SWEP.UBGL_Ammo = SWEP.Primary.Ammo
 SWEP.UBGL_Ammo_Priority = 9999

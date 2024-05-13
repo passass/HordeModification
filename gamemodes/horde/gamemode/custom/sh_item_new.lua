@@ -531,6 +531,14 @@ end
         {Assault=true}, 20, -1, nil, nil, {
             Assault = 15,
         }, nil, {HORDE.DMG_BALLISTIC})
+        HORDE:CreateItem("Rifle", "Akimbo Scar-H","arccw_hordeext_akimbo_scarh",4500, 9, "Akimbo Scar-H.\nDual Scar-H.",
+        {Ghost=true}, 30, -1, nil, nil, {
+            Ghost = 20,
+        }, nil, {HORDE.DMG_BALLISTIC})
+        HORDE:CreateItem("Shotgun", "Akimbo AA12","arccw_hordeext_akimbo_aa12",4500, 10, "Akimbo AA12.\nDual AA12.",
+        {Warden=true}, 20, -1, nil, nil, {
+            Warden = 20,
+        }, nil, {HORDE.DMG_BALLISTIC})
         
         HORDE:CreateItem("SMG",        "Medic MSMC", "arccw_horde_msmc", 6000, 7, "MSMC - an Elite medic weapon with big power.",
         {Medic=true}, 10, -1, nil, nil, {Medic=30}, 1, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})

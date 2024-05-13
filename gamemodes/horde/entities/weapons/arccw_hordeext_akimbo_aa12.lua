@@ -1,7 +1,7 @@
 if not ArcCWInstalled then return end
 if CLIENT then
-    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_hordeext_akimbo_ak47")
-    killicon.AddAlias("arccw_hordeext_akimbo_ak47", "arccw/weaponicons/arccw_hordeext_akimbo_ak47")
+    SWEP.WepSelectIcon = surface.GetTextureID("arccw/weaponicons/arccw_hordeext_akimbo_aa12")
+    killicon.AddAlias("arccw_hordeext_akimbo_aa12", "arccw/weaponicons/arccw_hordeext_akimbo_aa12")
 end
 SWEP.Base = "arccw_horde_akimbo_base"
 SWEP.Spawnable = true
@@ -9,7 +9,7 @@ SWEP.Category = "ArcCW - Horde" -- edit this if you like
 SWEP.AdminOnly = false
 SWEP.WeaponCamBone = tag_camera
 
-SWEP.PrintName = "AK47 + AK47"
+SWEP.PrintName = "AA12 + AA12"
 SWEP.Trivia_Class = "Handgun"
 SWEP.Trivia_Desc = "Semi-automatic (single fire)\nUnofficial."
 
@@ -20,11 +20,12 @@ SWEP.UseHands = true
 SWEP.ViewModel = "models/weapons/arccw/fesiugmw2/c_glock17_1.mdl"
 SWEP.MirrorVMWM = true
 SWEP.WorldModelOffset = {
-    pos = Vector(-14, 6, -4),
-    ang = Angle(-10, 0, 180)
+    pos = Vector(-5, 3, -4),
+    ang = Angle(-10, 0, 180),
+    scale = 1.25
 }
 
-SWEP.WorldModel = "models/weapons/w_rif_ak47.mdl"
+SWEP.WorldModel = "models/weapons/arccw/fesiugmw2_2/c_aa12_1.mdl"
 SWEP.ViewModelFOV = 65
 SWEP.ClipsPerAmmoBox = 2
 SWEP.Damage = 40
@@ -36,7 +37,7 @@ SWEP.ShootEntity = nil -- entity to fire, if any
 
 
 SWEP.ChamberSize = 0
-SWEP.Primary.ClipSize = 17
+SWEP.Primary.ClipSize = 30
 
 SWEP.VisualRecoilMult = 0
 
@@ -58,17 +59,15 @@ SWEP.NPCWeaponType = {"weapon_pistol"}
 SWEP.NPCWeight = 100
 
 
-
-SWEP.Primary.Ammo = "pistol" -- what ammo type the gun uses
-
 SWEP.ShootVol = 110 -- volume of shoot sound
 SWEP.ShootPitch = 105 -- pitch of shoot sound
 
-SWEP.MuzzleEffect = "muzzleflash_ak47"
-SWEP.ShellModel = "models/shells/shell_556.mdl"
-SWEP.ShellPitch = 90
+SWEP.MuzzleEffect = "muzzleflash_m3"
+SWEP.ShellModel = "models/shells/shell_12gauge.mdl"
+SWEP.ShellPitch = 100
+SWEP.ShellSounds = ArcCW.ShotgunShellSoundsTable
 SWEP.ShellScale = 1.5
-SWEP.ShellRotateAngle = Angle(0, 180, 0)
+SWEP.ShellRotateAngle = Angle(0, 90, 0)
 
 SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
@@ -126,10 +125,7 @@ SWEP.MeleeMissSound			= ""
 SWEP.MeleeHitSound			= "MW2Common.Melee.HitWorld"
 SWEP.MeleeHitNPCSound		= "MW2Common.Melee.HitFleshy_Slice"
 
-local wpnmodel = "models/weapons/arccw_go/v_rif_ak47.mdl"
-
-
-
+local wpnmodel = "models/weapons/arccw/fesiugmw2_2/c_aa12_1.mdl"
 local invis_mat = "Models/effects/vol_light001"
 function SWEP:Hook_Think_2()
     if CLIENT and self.VM then
@@ -143,19 +139,33 @@ function SWEP:Hook_Think_2()
     end
 end
 
+--[[timer.Create("testzc", .1, 0, function()
+    local ply = player.GetAll()[1]
+    if !IsValid(ply) then
+        return 
+    end
+    local wep = player.GetAll()[1]:GetActiveWeapon()
+    if wep.SetupModel then
+        wep:SetupModel()
+    end
+end)]]
+
 local vm_scale = .8
 local vm_ang = Angle(0, 0, 0)
-local Offset_pos = Vector(-12, -4, 3.96)
-local reloadtime_mult = 1.4
+local Offset_pos = Vector(-10, -2, 3.96)
+local reloadtime_mult = 1.6
 
 SWEP.LeftHand_ReloadSound = {
-    {s = "ARCCW_GO_AK47.Clipout", t = 0},--4/40
-    {s = "ARCCW_GO_AK47.Clipin", 	    t = 36/40},
+    {s = "weapons/fesiugmw2/foley/wpfoly_aa12_reload_lift_v1.wav", 		t = 0},
+    {s = "weapons/fesiugmw2/foley/wpfoly_aa12_reload_clipout_v1.wav", 	t = 3/24},
+    {s = "weapons/fesiugmw2/foley/wpfoly_aa12_reload_clipin_v1.wav", 	    t = 30/24},
+    --{s = "ARCCW_GO_AK47.Clipin", t = 36/40},
 }
 SWEP.LeftHand_ReloadSoundEmpty = {
-    {s = "ARCCW_GO_AK47.Clipout", t = 0},
-    {s = "ARCCW_GO_AK47.Clipin",  	t = 42/40},
-    {s = "ARCCW_GO_AK47.Boltpull", 	t = 67/40},
+    {s = "weapons/fesiugmw2/foley/wpfoly_aa12_reload_lift_v1.wav", 		t = 0},
+    {s = "weapons/fesiugmw2/foley/wpfoly_aa12_reload_clipout_v1.wav", 	t = 3/24},
+    {s = "weapons/fesiugmw2/foley/wpfoly_aa12_reload_clipin_v1.wav", 	    t = 30/24},
+    {s = "weapons/fesiugmw2/foley/wpfoly_aa12_reload_chamber_v1.wav", 	t = 67/40},
 }
 
 for i, data in pairs(SWEP.LeftHand_ReloadSound) do
@@ -166,24 +176,30 @@ for i, data in pairs(SWEP.LeftHand_ReloadSoundEmpty) do
     data.t = data.t * reloadtime_mult
 end
 
-SWEP.Primary.ClipSize = 30
-SWEP.Recoil = 1
-SWEP.RecoilSide = 0.6
-SWEP.RecoilRise = 0.3
-SWEP.Delay = 60 / 600 -- 60 / RPM
-SWEP.AccuracyMOA = 15 / 2.5 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 200 / 2.5 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 120
+SWEP.Mult_ReloadTime = 5
+SWEP.Primary.ClipSize = 20
+SWEP.VisualRecoilMult = 0
+SWEP.Recoil = 2
+SWEP.Num = 8
+SWEP.RecoilSide = 3
+SWEP.Delay = 60 / 300 -- 60 / RPM.
+SWEP.AccuracyMOA = 100 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.HipDispersion = 300 -- inaccuracy added by hip firing.
+SWEP.MoveDispersion = 200
 SWEP.Horde_MaxMags = 30
-SWEP.Damage = 36
-SWEP.DamageMin = 25
-SWEP.Range = 100 -- in METRES
-SWEP.ShootSound = "arccw_go/ak47/ak47_01.wav"
-SWEP.ShootSoundSilenced = "arccw_go/m4a1/m4a1_silencer_01.wav"
-SWEP.DistantShootSound = "arccw_go/ak47/ak47-1-distant.wav"
-SWEP.Primary.Ammo = "ar2"
+SWEP.Damage = 20
+SWEP.DamageMin = 15
+SWEP.Range = 800 * 0.025  -- GAME UNITS * 0.025 = METRES
+SWEP.Penetration = 1
+SWEP.ShootSound =			"weapons/fesiugmw2/fire/shot_aa12.wav"
+--SWEP.DistantShootSound =	"weapons/fesiugmw2/fire_distant/shot_aa12.wav"
+SWEP.ShootSoundSilenced =	"weapons/fesiugmw2/fire/shot_sil.wav"
+SWEP.Primary.Ammo = "buckshot" -- what ammo type the gun uses
 SWEP.UBGL_Ammo = SWEP.Primary.Ammo
 SWEP.UBGL_Ammo_Priority = 9999
+SWEP.SpeedMult = 0.9
+SWEP.SightedSpeedMult = 0.4
+SWEP.SightTime = 0.3
 
 SWEP.Hook_SelectReloadAnimation = function(wep, anim)
     return anim .. "_akimbo_right"

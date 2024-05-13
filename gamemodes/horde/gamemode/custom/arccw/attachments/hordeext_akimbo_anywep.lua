@@ -32,32 +32,20 @@ att.UBGL = true
 att.UBGL_PrintName = "AKIMBO"
 att.UBGL_Automatic = false
 att.UBGL_MuzzleEffect = "muzzleflash_4"
-att.UBGL_ClipSize = 17
+att.UBGL_ClipSize = 30
 att.UBGL_Ammo = "pistol"
 att.UBGL_RPM = 60 / 0.079
 att.UBGL_Recoil = .4
 att.UBGL_RecoilSide = .2
 att.UBGL_RecoilRise = .2
-att.UBGL_Capacity = 17
+att.UBGL_Capacity = 30
 att.UBGL_Icon = Material("")
 att.Hook_ShouldNotSight = function(wep)
     return true
 end
 
---[[att.DrawFunc = function(wep, element, wm)
-    --PrintTable(element)
-    for _, data in pairs(wep.Attachments) do
-        if data.PrintName == "akimboslot_2" then
-            PrintTable(data)
-            print(data.Model, element.Model)
-            data.Model:SetParent(element.Model)
-            break
-        end
-    end
-end]]
-
 local function Ammo(wep)
-    return wep.Owner:GetAmmoCount("pistol") -- att.UBGL_Ammo
+    return wep.Owner:GetAmmoCount(wep:GetPrimaryAmmoType()) -- att.UBGL_Ammo
 end
 
 att.Hook_Think = function(wep)
@@ -70,7 +58,7 @@ att.Hook_Think = function(wep)
         local reserve = Ammo(wep)
         reserve = reserve + wep:Clip2()
         local load = math.Clamp(clip, 0, reserve)
-        wep.Owner:SetAmmo(reserve - load, "pistol")
+        wep.Owner:SetAmmo(reserve - load, wep:GetPrimaryAmmoType())
         wep:SetClip2(load)
     end
 
@@ -122,10 +110,6 @@ att.Hook_LHIK_TranslateAnimation = function(wep, anim)
     if anim == "idle" and wep:Clip2() <= 0 then
         return "idle_empty"
     end
-end
-
-local function Ammo(wep)
-    return wep.Owner:GetAmmoCount("pistol") -- att.UBGL_Ammo
 end
 
 att.UBGL_Fire = function(wep, ubgl)
@@ -210,10 +194,12 @@ att.UBGL_Reload = function(wep, ubgl)
     reloadtime = reloadtime * mult
     wep:DoLHIKAnimation(is_empty and "reload_empty" or "reload", reloadtime * mult)
     wep:SetNextSecondaryFire(CurTime() + reloadtime * mult)
+    wep:SetMagUpIn(CurTime() + reloadtime * mult)
+    wep:SetReloading(CurTime() + reloadtime * mult)
     for i, data in pairs(soundtable) do
         data.t = data.t * mult
     end
-    wep:SetMW2Masterkey_ShellInsertTime(CurTime() + 1.2 * mult)
+    wep:SetMW2Masterkey_ShellInsertTime(CurTime() + reloadtime * mult)
     wep:PlaySoundTable(soundtable)
 end
 
