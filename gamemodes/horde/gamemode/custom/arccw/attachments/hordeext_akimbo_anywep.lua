@@ -194,8 +194,8 @@ att.UBGL_Reload = function(wep, ubgl)
     reloadtime = reloadtime * mult
     wep:DoLHIKAnimation(is_empty and "reload_empty" or "reload", reloadtime * mult)
     wep:SetNextSecondaryFire(CurTime() + reloadtime * mult)
-    wep:SetMagUpIn(CurTime() + reloadtime * mult)
-    wep:SetReloading(CurTime() + reloadtime * mult)
+    --wep:SetMagUpIn(CurTime() + reloadtime * mult)
+    --wep:SetReloading(CurTime() + reloadtime * mult)
     for i, data in pairs(soundtable) do
         data.t = data.t * mult
     end

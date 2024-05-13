@@ -928,7 +928,7 @@ function PANEL:Paint()
             return
         end
 
-        if !self.item.entity_properties.sell_forbidden and (MySelf:HasWeapon(self.item.class) or
+        if (MySelf:HasWeapon(self.item.class) or
         (self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_GADGET and MySelf:Horde_GetGadget() == self.item.class) or
         (self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_BUYABLEPERK and HORDE:GetBuyablePerkLevel(MySelf, self.item.class) > 0)) then
             if self.item.entity_properties.type != HORDE.ENTITY_PROPERTY_BUYABLEPERK or HORDE.items[self.item.class].maxlevel and HORDE:GetBuyablePerkLevel(MySelf, self.item.class) >= HORDE.items[self.item.class].maxlevel then
@@ -959,7 +959,7 @@ function PANEL:Paint()
                 self.buy_btn:SetTextColor(Color(255,255,255))
             end
 
-            self.sell_btn:SetVisible(true)
+            self.sell_btn:SetVisible(!self.item.entity_properties.sell_forbidden)
             self.sell_btn:SetTextColor(Color(255,255,255))
             self.sell_btn:SetText(translate.Get("Shop_Sell_For") .. " " .. tostring(math.floor(HORDE:GetBuyablePerkPrice(MySelf, self.item.class, HORDE:GetBuyablePerkLevel(MySelf, self.item.class) - 1) * 0.25)) .. "$")
             self.sell_btn.Paint = function ()
