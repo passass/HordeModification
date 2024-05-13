@@ -179,12 +179,12 @@ end
 SWEP.Mult_ReloadTime = 5
 SWEP.Primary.ClipSize = 20
 SWEP.VisualRecoilMult = 0
-SWEP.Recoil = 2
+SWEP.Recoil = 1.6
 SWEP.Num = 8
-SWEP.RecoilSide = 3
+SWEP.RecoilSide = 2.5
 SWEP.Delay = 60 / 300 -- 60 / RPM.
 SWEP.AccuracyMOA = 100 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 300 -- inaccuracy added by hip firing.
+SWEP.HipDispersion = 115 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 SWEP.Horde_MaxMags = 30
 SWEP.Damage = 20
