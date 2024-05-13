@@ -520,6 +520,17 @@ end
         {Medic=true}, 20, -1, nil, nil, {Medic=18}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
         HORDE:CreateItem("SMG",        "Vector Medic PDW","arccw_horde_vector",3000, 6, "KRISS Vector Gen I equipped with a medical dart launcher.\nUses an unconventional blowback system that results in its high firerate.\n\nPress B or ZOOM to fire healing darts.\nHealing dart recharges every 1.5 seconds.",
         {Medic=true}, 8, -1, nil, nil, {Medic=15}, nil, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})
+        HORDE:CreateItem("SMG",        "Akimbo MP5","arccw_hordeext_akimbo_mp5",3000, 9, "Akimbo MP5.\nDual MP5.",
+        {SWAT=true, Survivor=true}, 16, -1, nil, nil, {
+            VariousConditions=true,
+            Survivor = {Survivor=15},
+            SWAT = {SWAT=15},
+        }, nil, {HORDE.DMG_BALLISTIC})
+
+        HORDE:CreateItem("Rifle", "Akimbo AK47","arccw_hordeext_akimbo_ak47",4000, 9, "Akimbo AK47.\nDual AK47.",
+        {Assault=true}, 20, -1, nil, nil, {
+            Assault = 15,
+        }, nil, {HORDE.DMG_BALLISTIC})
         
         HORDE:CreateItem("SMG",        "Medic MSMC", "arccw_horde_msmc", 6000, 7, "MSMC - an Elite medic weapon with big power.",
         {Medic=true}, 10, -1, nil, nil, {Medic=30}, 1, {HORDE.DMG_BALLISTIC, HORDE.DMG_POISON})

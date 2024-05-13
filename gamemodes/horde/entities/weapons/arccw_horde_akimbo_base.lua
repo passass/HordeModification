@@ -6,6 +6,95 @@ SWEP.Base = "arccw_mw2_abase"
 
 DEFINE_BASECLASS(SWEP.Base)
 
+if CLIENT then
+	function SWEP:DoLHIKAnimation(key, time, spbitch)
+		if !IsValid(self:GetOwner()) then return end
+	
+		if game.SinglePlayer() and !spbitch then
+			timer.Simple(0, function() if IsValid(self) then self:DoLHIKAnimation(key, time, true) end end)
+			return
+		end
+	
+		local vm = self:GetOwner():GetViewModel()
+		if !IsValid(vm) then return end
+	
+		local lhik_model
+		local lhik_anim_model
+		local LHIK_GunDriver
+		local LHIK_CamDriver
+		local offsetang
+	
+		local tranim = self:GetBuff_Hook("Hook_LHIK_TranslateAnimation", key)
+	
+		key = tranim or key
+	
+		for i, k in pairs(self.Attachments) do
+			if !k.Installed then continue end
+			if !k.VElement then continue end
+	
+			if self:GetBuff_Stat("LHIK", i) then
+				lhik_model = k.VElement.Model
+				lhik_anim_model = k.GodDriver and k.GodDriver.Model or false
+				offsetang = k.VElement.OffsetAng
+	
+				if self:GetBuff_Stat("LHIK_GunDriver", i) then
+					LHIK_GunDriver = self:GetBuff_Stat("LHIK_GunDriver", i)
+				end
+	
+				if self:GetBuff_Stat("LHIK_CamDriver", i) then
+					LHIK_CamDriver = self:GetBuff_Stat("LHIK_CamDriver", i)
+				end
+			end
+		end
+	
+		if !IsValid(lhik_model) then return false end
+	
+		local seq = lhik_model:LookupSequence(key)
+	
+		if !seq then return false end
+		if seq == -1 then return false end
+	
+		lhik_model:ResetSequence(seq)
+		if IsValid(lhik_anim_model) then
+			lhik_anim_model:ResetSequence(seq)
+		end
+		lhik_model:SetPlaybackRate(lhik_model:SequenceDuration(seq) / time)
+	
+		if !time or time < 0 then time = lhik_model:SequenceDuration(seq) end
+	
+		self.LHIKAnimation = seq
+		self.LHIKAnimationStart = UnPredictedCurTime()
+		self.LHIKAnimationTime = time
+	
+		self.LHIKAnimation_IsIdle = false
+	
+		if IsValid(lhik_anim_model) and LHIK_GunDriver then
+			local att = lhik_anim_model:LookupAttachment(LHIK_GunDriver)
+			local ang = lhik_anim_model:GetAttachment(att).Ang
+			local pos = lhik_anim_model:GetAttachment(att).Pos
+	
+			self.LHIKGunAng = lhik_anim_model:WorldToLocalAngles(ang) - Angle(0, 90, 90)
+			self.LHIKGunPos = lhik_anim_model:WorldToLocal(pos)
+	
+			self.LHIKGunAngVM = vm:WorldToLocalAngles(ang) - Angle(0, 90, 90)
+			self.LHIKGunPosVM = vm:WorldToLocal(pos)
+		end
+	
+		if IsValid(lhik_anim_model) and LHIK_CamDriver then
+			local att = lhik_anim_model:LookupAttachment(LHIK_CamDriver)
+			local ang = lhik_anim_model:GetAttachment(att).Ang
+	
+			self.LHIKCamOffsetAng = offsetang
+			self.LHIKCamAng = lhik_anim_model:WorldToLocalAngles(ang)
+		end
+	
+		-- lhik_model:SetCycle(0)
+		-- lhik_model:SetPlaybackRate(dur / time)
+	
+		return true
+	end
+end
+
 function SWEP:GetFiremodeName()
     if self:GetBuff_Hook("Hook_FiremodeName") then return self:GetBuff_Hook("Hook_FiremodeName") end
 
@@ -1016,7 +1105,7 @@ do
 
 end
 
-function SWEP:ShouldDrawCrosshair()
+--[[function SWEP:ShouldDrawCrosshair()
     if GetConVar("arccw_override_crosshair_off"):GetBool() then return false end
     if !GetConVar("arccw_crosshair"):GetBool() then return false end
     if self:GetReloading() and
@@ -1036,9 +1125,181 @@ function SWEP:ShouldDrawCrosshair()
     if self:GetNWState() == ArcCW.STATE_CUSTOMIZE then return false end
     if self:GetNWState() == ArcCW.STATE_DISABLE then return false end
     return true
+end]]
+
+function SWEP:Attach(slot, attname, silent, noadjust)
+    silent = silent or false
+    local attslot = self.Attachments[slot]
+    if !attslot then return end
+    if attslot.Installed == attname then return end
+    if attslot.Internal then return end
+
+    -- Make an additional check to see if we can detach the current attachment
+    if attslot.Installed and !ArcCW:PlayerCanAttach(self:GetOwner(), self, attslot.Installed, slot, attname) then
+        if CLIENT and !silent then
+            surface.PlaySound("items/medshotno1.wav")
+        end
+        return
+    end
+
+    if !ArcCW:PlayerCanAttach(self:GetOwner(), self, attname, slot, false) then
+        if CLIENT and !silent then
+            surface.PlaySound("items/medshotno1.wav")
+        end
+        return
+    end
+
+    local pick = self:GetPickX()
+
+    if pick > 0 and self:CountAttachments() >= pick and !attslot.FreeSlot
+            and !attslot.Installed then
+        if CLIENT and !silent then
+            surface.PlaySound("items/medshotno1.wav")
+        end
+        return
+    end
+
+    local atttbl = ArcCW.AttachmentTable[attname]
+
+    if !atttbl then return end
+    if !ArcCW:SlotAcceptsAtt(attslot.Slot, self, attname) then return end
+    if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then return end
+    if !self:PlayerOwnsAtt(attname) then return end
+
+    local max = atttbl.Max
+
+    if max then
+        local amt = 0
+
+        for i, k in pairs(self.Attachments) do
+            if k.Installed == attname then amt = amt + 1 end
+        end
+
+        if amt >= max then return end
+    end
+
+    if attslot.SlideAmount then
+        attslot.SlidePos = 0.5
+    end
+
+    if atttbl.MountPositionOverride then
+        attslot.SlidePos = atttbl.MountPositionOverride
+    end
+
+    if atttbl.AdditionalSights then
+        self.SightMagnifications = {}
+    end
+
+    if atttbl.ToggleStats then
+        attslot.ToggleNum = 1
+    end
+
+    attslot.ToggleLock = atttbl.ToggleLockDefault or false
+
+    if CLIENT then
+        -- we are asking to attach something
+
+        self:SendAllDetails()
+
+        net.Start("arccw_asktoattach")
+        net.WriteUInt(slot, 8)
+        net.WriteUInt(atttbl.ID, 24)
+        net.SendToServer()
+
+        if !silent then
+            surface.PlaySound(atttbl.AttachSound or "weapons/arccw/install.wav")
+        end
+    else
+        self:DetachAllMergeSlots(slot)
+
+        for i, k in pairs(self.Attachments) do
+            if table.HasValue(k.MergeSlots or {}, slot) then
+                self:DetachAllMergeSlots(i)
+            end
+        end
+    end
+
+    attslot.Installed = attname
+
+    if atttbl.Health then
+        attslot.HP = self:GetAttachmentMaxHP(slot)
+    end
+
+    if atttbl.ColorOptionsTable then
+        attslot.ColorOptionIndex = 1
+    end
+
+    ArcCW:PlayerTakeAtt(self:GetOwner(), attname)
+
+    --[[]
+    local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
+    local fmi = self:GetFireMode()
+
+    if fmi > table.Count(fmt) then
+        self:SetFireMode(1)
+    end
+    ]]
+
+    --self.UnReady = false
+
+    if SERVER then
+        self:NetworkWeapon()
+        self:SetupModel(false)
+        self:SetupModel(true)
+        ArcCW:PlayerSendAttInv(self:GetOwner())
+
+        if engine.ActiveGamemode() == "terrortown" then
+            self:TTT_PostAttachments()
+        end
+    else
+        self:SetupActiveSights()
+
+        self.LHIKAnimation = 0
+        self.LHIKAnimationStart = 0
+        self.LHIKAnimationTime = 0
+
+        self.LHIKDelta = {}
+        self.LHIKDeltaAng = {}
+
+        self.ViewModel_Hit = Vector(0, 0, 0)
+
+        if !silent then
+            self:SavePreset("autosave")
+        end
+    end
+
+    for s, i in pairs(self.Attachments) do
+        if !self:CheckFlags(i.ExcludeFlags, i.RequireFlags) then
+            self:Detach(s, true, true)
+        end
+    end
+
+    if !noadjust then
+        self:AdjustAtts()
+    end
+
+    self:SetClip2(self:GetMaxClip1())
+
+    self:RefreshBGs()
+    return true
 end
 
-function SWEP:SecondaryAttack()
+--owner:KeyDown(IN_ATTACK) or owner:KeyDown(IN_ATTACK2)
+function SWEP:Hook_Think_2() end
+function SWEP:Hook_Think()
+	local owner = self:GetOwner()
+	if owner:KeyDown(IN_ATTACK) then
+		self:SetInUBGL(false)
+		self:PrimaryAttack()
+	end
+	if owner:KeyDown(IN_ATTACK2) then
+		self:SecondaryAttack()
+	end
+
+	self:Hook_Think_2()
+end
+
+function SWEP:SecondaryAttack(isprimaryattack)
 	local fm = self:GetCurrentFiremode().Mode
     self.Secondary.Automatic = fm == 2
 	self:SetInUBGL(true)
@@ -1073,6 +1334,9 @@ function SWEP:SecondaryAttack()
     -- Inoperable, but internally (burst resetting for example)
     if self:GetWeaponOpDelay() > CurTime() then return end
 
+	local curatt = self:GetNextSecondaryFire()
+    if curatt > CurTime() then return end
+
     -- Safety's on, dipshit
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
@@ -1085,20 +1349,363 @@ function SWEP:SecondaryAttack()
     if owner:IsNPC() then self:NPC_Shoot() return end
 
     -- If we are in a UBGL, shoot the UBGL, not the gun
-    if self:GetInUBGL() then
-		self:ShootUBGL()
-		local delay = self:GetFiringDelay()
+    --if self:GetInUBGL() then
+	self:ShootUBGL()
+	local delay = self:GetFiringDelay()
 
-		local curtime = CurTime()
-		local curatt = self:GetNextPrimaryFire()
-		local diff = curtime - curatt
+	local curtime = CurTime()
+	local diff = curtime - curatt
 
-		if diff > engine.TickInterval() or diff < 0 then
-			curatt = curtime
-		end
-
-		self:SetNextSecondaryFire(curatt + delay)
+	if diff > engine.TickInterval() or diff < 0 then
+		curatt = curtime
 	end
-
+	self:SetNextSecondaryFire(curatt + delay)
+	--self:SetNextPrimaryFire(curatt + delay)
+	--self:SetNextPrimaryFireSlowdown(curatt + delay) -- shadow for ONLY fire time
+	--end
 	
+	--if isprimaryattack then
+	self:SetInUBGL(false)
+	--end
+end
+
+function SWEP:PrimaryAttack()
+    local owner = self:GetOwner()
+
+    self.Primary.Automatic = true
+
+    --print("PRE self:CanPrimaryAttack()")
+
+    -- Should we not fire? But first.
+    if self:GetBuff_Hook("Hook_ShouldNotFireFirst") then return end
+
+    -- We're holstering
+    if IsValid(self:GetHolster_Entity()) then return end
+    if self:GetHolster_Time() > 0 then return end
+
+    -- Disabled (currently used only by deploy)
+    if self:GetState() == ArcCW.STATE_DISABLE then return end
+
+    -- Coostimzing
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE then
+        if CLIENT and ArcCW.Inv_Hidden then
+            ArcCW.Inv_Hidden = false
+            gui.EnableScreenClicker(true)
+        elseif game.SinglePlayer() then
+            -- Kind of ugly hack: in SP this is only called serverside so we ask client to do the same check
+            self:CallOnClient("CanPrimaryAttack")
+        end
+        return
+    end
+
+    -- A priority animation is playing (reloading, cycling, firemode etc)
+    if self:GetPriorityAnim() then return end
+
+    -- Inoperable, but internally (burst resetting for example)
+    if self:GetWeaponOpDelay() > CurTime() then return end
+
+    -- Safety's on, dipshit
+    if self:GetCurrentFiremode().Mode == 0 then
+        self:ChangeFiremode(false)
+        self:SetNextPrimaryFire(CurTime())
+        self.Primary.Automatic = false
+        return
+    end
+
+    -- If we are an NPC, do our own little methods
+    if owner:IsNPC() then self:NPC_Shoot() return end
+
+    -- If we are in a UBGL, shoot the UBGL, not the gun
+    --if self:GetInUBGL() then self:ShootUBGL() return end
+
+    -- Too early, come back later.
+    if self:GetNextPrimaryFire() >= CurTime() then return end
+
+    -- Gun is locked from heat.
+    if self:GetHeatLocked() then return end
+
+    -- Attempting a bash
+    if self:GetState() != ArcCW.STATE_SIGHTS and owner:KeyDown(IN_USE) or self.PrimaryBash then self:Bash() return end
+
+    -- Throwing weapon
+    if self.Throwing then self:PreThrow() return end
+
+    -- Too close to a wall
+    if self:BarrelHitWall() > 0 then return end
+
+    -- Can't shoot while sprinting
+    if self:GetNWState() == ArcCW.STATE_SPRINT and !self:CanShootWhileSprint() then return end
+
+    -- Maximum burst shots
+    if (self:GetBurstCount() or 0) >= self:GetBurstLength() then return end
+
+    -- We need to cycle
+    if self:GetNeedCycle() then return end
+
+    -- If we have a trigger delay, make sure its progress is done
+    if self:GetBuff_Override("Override_TriggerDelay", self.TriggerDelay) and ((!self:GetBuff_Override("Override_TriggerCharge", self.TriggerCharge) and self:GetTriggerDelta() < 1)
+            or (self:GetBuff_Override("Override_TriggerCharge", self.TriggerCharge) and self:IsTriggerHeld())) then
+        return
+    end
+
+    -- Should we not fire?
+    if self:GetBuff_Hook("Hook_ShouldNotFire") then return end
+    --print("POST self:CanPrimaryAttack()")
+    local clip = self:Clip1()
+    local aps = self:GetBuff("AmmoPerShot")
+
+    if self:HasBottomlessClip() then
+        clip = self:Ammo1()
+        if self:HasInfiniteAmmo() then
+            clip = math.huge
+        end
+    end
+
+    if clip < aps then
+        self:SetBurstCount(0)
+        self:DryFire()
+
+        self.Primary.Automatic = false
+
+        return
+    end
+
+    local dir = (owner:EyeAngles() + self:GetFreeAimOffset()):Forward() --owner:GetAimVector()
+    local src = self:GetShootSrc()
+
+    if bit.band(util.PointContents(src), CONTENTS_WATER) == CONTENTS_WATER and !(self.CanFireUnderwater or self:GetBuff_Override("Override_CanFireUnderwater")) then
+        self:DryFire()
+        return
+    end
+
+    if self:GetMalfunctionJam() then
+        self:DryFire()
+        return
+    end
+
+
+    -- Try malfunctioning
+    local mal = self:DoMalfunction(false)
+    if mal == true then
+        local anim = "fire_jammed"
+        self:PlayAnimation(anim, 1, true, 0, true)
+        return
+    end
+
+    self:GetBuff_Hook("Hook_PreFireBullets")
+
+    local desync = GetConVar("arccw_desync"):GetBool()
+    local desyncnum = (desync and math.random()) or 0
+    math.randomseed(math.Round(util.SharedRandom(self:GetBurstCount(), -1337, 1337, !game.SinglePlayer() and self:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (self:EntIndex() % 30241)) + desyncnum)
+
+    self.Primary.Automatic = true
+
+    local spread = ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")
+    local disp = self:GetDispersion() * ArcCW.MOAToAcc / 10
+
+    --dir:Rotate(Angle(0, ArcCW.StrafeTilt(self), 0))
+    --dir = dir + VectorRand() * disp
+
+    self:ApplyRandomSpread(dir, disp)
+
+    if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 3 and disp > 0 then
+        local dev_tr = util.TraceLine({
+            start = src,
+            endpos = src + owner:GetAimVector() * 33000,
+            mask = MASK_SHOT,
+            filter = {self, self:GetOwner()}
+        })
+        local dist = (dev_tr.HitPos - src):Length()
+        local r = dist / (1 / math.tan(disp)) -- had to google "trig cheat sheet to figure this one out"
+        local a = owner:GetAimVector():Angle()
+        local r_sqrt = r / math.sqrt(2)
+        debugoverlay.Line(dev_tr.HitPos - a:Up() * r, dev_tr.HitPos + a:Up() * r, 5, color_white, true)
+        debugoverlay.Line(dev_tr.HitPos - a:Right() * r, dev_tr.HitPos + a:Right() * r, 5, color_white, true)
+        debugoverlay.Line(dev_tr.HitPos - a:Right() * r_sqrt - a:Up() * r_sqrt, dev_tr.HitPos + a:Right() * r_sqrt + a:Up() * r_sqrt, 5, color_white, true)
+        debugoverlay.Line(dev_tr.HitPos - a:Right() * r_sqrt + a:Up() * r_sqrt, dev_tr.HitPos + a:Right() * r_sqrt - a:Up() * r_sqrt, 5, color_white, true)
+        debugoverlay.Text(dev_tr.HitPos, math.Round(self:GetDispersion(), 1) .. "MOA (" .. math.Round(disp, 3) .. "°)", 5)
+    end
+
+    local delay = self:GetFiringDelay()
+
+    local curtime = CurTime()
+    local curatt = self:GetNextPrimaryFire()
+    local diff = curtime - curatt
+
+    if diff > engine.TickInterval() or diff < 0 then
+        curatt = curtime
+    end
+
+    self:SetNextPrimaryFire(curatt + delay)
+    self:SetNextPrimaryFireSlowdown(curatt + delay) -- shadow for ONLY fire time
+
+    local num = self:GetBuff("Num")
+
+    num = num + self:GetBuff_Add("Add_Num")
+
+    local tracer = self:GetBuff_Override("Override_Tracer", self.Tracer)
+    local tracernum = self:GetBuff_Override("Override_TracerNum", self.TracerNum)
+    local lastout = self:GetBuff_Override("Override_TracerFinalMag", self.TracerFinalMag)
+    if lastout >= clip then
+        tracernum = 1
+        tracer = self:GetBuff_Override("Override_TracerFinal", self.TracerFinal) or self:GetBuff_Override("Override_Tracer", self.Tracer)
+    end
+    local dmgtable = self.BodyDamageMults
+    dmgtable = self:GetBuff_Override("Override_BodyDamageMults") or dmgtable
+
+    -- drive by is cool
+    src = ArcCW:GetVehicleFireTrace(self:GetOwner(), src, dir) or src
+
+    local bullet      = {}
+    bullet.Attacker   = owner
+    bullet.Dir        = dir
+    bullet.Src        = src
+    bullet.Spread     = Vector(0, 0, 0) --Vector(spread, spread, spread)
+    bullet.Damage     = 0
+    bullet.Num        = num
+
+    local sglove = math.ceil(num / 3)
+    bullet.Force      = self:GetBuff("Force", true) or math.Clamp( ( (50 / sglove) / ( (self:GetBuff("Damage") + self:GetBuff("DamageMin")) / (self:GetBuff("Num") * 2) ) ) * sglove, 1, 3 )
+                        -- Overperforming weapons get the jerf, underperforming gets boost
+    bullet.Distance   = self:GetBuff("Distance", true) or 33300
+    -- Setting AmmoType makes the engine look for the tracer effect on the ammo instead of TracerName!
+    --bullet.AmmoType   = self.Primary.Ammo
+    bullet.HullSize   = self:GetBuff("HullSize")
+    bullet.Tracer     = tracernum or 0
+    bullet.TracerName = tracer
+    bullet.Weapon     = self
+    bullet.Callback = function(att, tr, dmg)
+        ArcCW:BulletCallback(att, tr, dmg, self)
+    end
+
+
+    local shootent = self:GetBuff("ShootEntity", true) --self:GetBuff_Override("Override_ShootEntity", self.ShootEntity)
+    local shpatt   = self:GetBuff_Override("Override_ShotgunSpreadPattern", self.ShotgunSpreadPattern)
+    local shpattov = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun", self.ShotgunSpreadPatternOverrun)
+
+    local extraspread = AngleRand() * self:GetDispersion() * ArcCW.MOAToAcc / 10
+
+    local projectiledata = {}
+
+    if shpatt or shpattov or shootent then
+        if shootent then
+            projectiledata.ent = shootent
+            projectiledata.vel = self:GetBuff("MuzzleVelocity")
+        end
+
+        bullet = self:GetBuff_Hook("Hook_FireBullets", bullet)
+
+        if !bullet then return end
+
+        local doent = shootent and num or bullet.Num
+        local minnum = shootent and 1 or 0
+
+        if doent > minnum then
+            for n = 1, bullet.Num do
+                bullet.Num = 1
+
+                local dispers = self:GetBuff_Override("Override_ShotgunSpreadDispersion", self.ShotgunSpreadDispersion)
+                local offset  = self:GetShotgunSpreadOffset(n)
+                local calcoff = dispers and (offset * self:GetDispersion() * ArcCW.MOAToAcc / 10) or offset
+
+                local ang = owner:EyeAngles() + self:GetFreeAimOffset()
+                local ang2 = Angle(ang)
+                ang2:RotateAroundAxis(ang:Right(), -1 * calcoff.p)
+                ang2:RotateAroundAxis(ang:Up(), calcoff.y)
+                ang2:RotateAroundAxis(ang:Forward(), calcoff.r)
+
+                if !self:GetBuff_Override("Override_NoRandSpread", self.NoRandSpread) then -- Needs testing
+                    ang2 = ang2 + AngleRand() * spread / 5
+                end
+
+                if shootent then
+                    projectiledata.ang = ang2
+
+                    self:DoPrimaryFire(true, projectiledata)
+                else
+                    bullet.Dir = ang2:Forward()
+
+                    self:DoPrimaryFire(false, bullet)
+                end
+            end
+        elseif shootent then
+            local ang = owner:EyeAngles() + self:GetFreeAimOffset()
+
+            if !self:GetBuff_Override("Override_NoRandSpread", self.NoRandSpread) then
+               -- ang = (dir + VectorRand() * spread / 5):Angle()
+
+                local newdir = Vector(dir)
+                self:ApplyRandomSpread(newdir, spread / 5)
+                ang = newdir:Angle()
+            end
+
+            projectiledata.ang = ang
+
+            self:DoPrimaryFire(true, projectiledata)
+        end
+    else
+        if !bullet then return end
+        for n = 1, bullet.Num do
+            bullet.Num = 1
+            local dirry = Vector(dir.x, dir.y, dir.z)
+            math.randomseed(math.Round(util.SharedRandom(n, -1337, 1337, !game.SinglePlayer() and self:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (self:EntIndex() % 30241)) + desyncnum)
+            if !self:GetBuff_Override("Override_NoRandSpread", self.NoRandSpread) then
+                self:ApplyRandomSpread(dirry, spread)
+                bullet.Dir = dirry
+            end
+            bullet = self:GetBuff_Hook("Hook_FireBullets", bullet) or bullet
+
+            self:DoPrimaryFire(false, bullet)
+        end
+    end
+    self:DoRecoil()
+
+    self:SetNthShot(self:GetNthShot() + 1)
+
+    owner:DoAnimationEvent(self:GetBuff_Override("Override_AnimShoot") or self.AnimShoot)
+
+    local shouldsupp = SERVER and !game.SinglePlayer()
+
+    if shouldsupp then SuppressHostEvents(owner) end
+
+    self:DoEffects()
+
+    self:SetBurstCount(self:GetBurstCount() + 1)
+
+    self:TakePrimaryAmmo(aps)
+
+    self:DoShootSound()
+    self:DoPrimaryAnim()
+
+    if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == self:GetBurstLength() then
+        local postburst = (self:GetCurrentFiremode().PostBurstDelay or 0)
+        self:SetWeaponOpDelay(CurTime() + postburst * self:GetBuff_Mult("Mult_PostBurstDelay") + self:GetBuff_Add("Add_PostBurstDelay"))
+    end
+
+    if (self:GetIsManualAction()) and !(self.NoLastCycle and self:Clip1() == 0) then
+        local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
+        local firedelay = self.Animations[fireanim].MinProgress or 0
+        self:SetNeedCycle(true)
+        self:SetWeaponOpDelay(CurTime() + (firedelay * self:GetBuff_Mult("Mult_CycleTime")))
+        self:SetNextPrimaryFire(CurTime() + 0.1)
+    end
+
+    self:ApplyAttachmentShootDamage()
+
+    self:AddHeat(self:GetBuff("HeatGain"))
+
+    mal = self:DoMalfunction(true)
+    if mal == true then
+        local anim = "fire_jammed"
+        self:PlayAnimation(anim, 1, true, 0, true)
+    end
+
+    if self:GetCurrentFiremode().Mode == 1 then
+        self.LastTriggerTime = -1 -- Cannot fire again until trigger released
+        self.LastTriggerDuration = 0
+    end
+
+    self:GetBuff_Hook("Hook_PostFireBullets")
+
+    if shouldsupp then SuppressHostEvents(nil) end
 end
