@@ -197,7 +197,7 @@ SWEP.ShootSoundSilenced =	"weapons/fesiugmw2/fire/shot_sil.wav"
 SWEP.Primary.Ammo = "buckshot" -- what ammo type the gun uses
 SWEP.UBGL_Ammo = SWEP.Primary.Ammo
 SWEP.UBGL_Ammo_Priority = 9999
-SWEP.SpeedMult = 0.9
+SWEP.SpeedMult = 0.75
 SWEP.SightedSpeedMult = 0.4
 SWEP.SightTime = 0.3
 

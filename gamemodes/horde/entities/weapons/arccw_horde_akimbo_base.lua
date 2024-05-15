@@ -1287,13 +1287,16 @@ end
 --owner:KeyDown(IN_ATTACK) or owner:KeyDown(IN_ATTACK2)
 function SWEP:Hook_Think_2() end
 function SWEP:Hook_Think()
-	local owner = self:GetOwner()
-	if owner:KeyDown(IN_ATTACK) then
-		self:SetInUBGL(false)
-		self:PrimaryAttack()
-	end
-	if owner:KeyDown(IN_ATTACK2) then
-		self:SecondaryAttack()
+	local fm = self:GetCurrentFiremode().Mode
+	if fm == 2 then
+		local owner = self:GetOwner()
+		if owner:KeyDown(IN_ATTACK) then
+			self:SetInUBGL(false)
+			self:PrimaryAttack()
+		end
+		if owner:KeyDown(IN_ATTACK2) then
+			self:SecondaryAttack()
+		end
 	end
 
 	self:Hook_Think_2()
