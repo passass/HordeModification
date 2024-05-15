@@ -176,7 +176,6 @@ for i, data in pairs(SWEP.LeftHand_ReloadSoundEmpty) do
     data.t = data.t * reloadtime_mult
 end
 
-SWEP.Mult_ReloadTime = 5
 SWEP.Primary.ClipSize = 20
 SWEP.VisualRecoilMult = 0
 SWEP.Recoil = 1.6

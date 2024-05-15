@@ -121,8 +121,8 @@ att.UBGL_Fire = function(wep, ubgl)
     if mode == 0 then return end
 
     -- this bitch
-    local fixedcone = wep:GetDispersion() / 360 / 60
-    local clip = wep:Clip1()
+    --local fixedcone = wep:GetDispersion() / 360 / 60
+    local clip = wep:Clip2()
     local tracer = wep:GetBuff_Override("Override_Tracer", wep.Tracer)
     local tracernum = wep:GetBuff_Override("Override_TracerNum", wep.TracerNum)
     local lastout = wep:GetBuff_Override("Override_TracerFinalMag", wep.TracerFinalMag)
@@ -131,28 +131,95 @@ att.UBGL_Fire = function(wep, ubgl)
         tracer = wep:GetBuff_Override("Override_TracerFinal", wep.TracerFinal) or wep:GetBuff_Override("Override_Tracer", wep.Tracer)
     end
 
+    local dir = wep.Owner:EyeAngles():Forward()
+    local spread = ArcCW.MOAToAcc * wep:GetBuff("AccuracyMOA")
+    local disp = wep:GetDispersion() * ArcCW.MOAToAcc / 10
+    wep:ApplyRandomSpread(dir, disp)
+
     wep:DoRecoil()
 
     if tracer == "arccw_tracer" then
         tracer = "arccw_tracer_timestop"
     end
 
-    wep.Owner:FireBullets({
+    local bullet = {
 		Src = wep.Owner:EyePos(),
-		Num = 1,
+        Distance = wep:GetBuff("Distance", true) or 33300,
+		Num = wep:GetBuff("Num"),
 		Damage = 0,
 		Force = 1,
 		Attacker = wep.Owner,
-		Dir = wep.Owner:EyeAngles():Forward(),
+		Dir = dir,
         --Src = wep:GetShootSrc(),
-		Spread = Vector(fixedcone, fixedcone, 0),
+		Spread = Vector(0, 0, 0),--Vector(fixedcone, fixedcone, 0),
         Weapon = wep,
         TracerName = tracer,
         Tracer = tracernum or 0,
 		Callback = function(att, tr, dmg)
 			ArcCW:BulletCallback(att, tr, dmg, wep)
 		end
-	})
+	}
+
+    --wep.Owner:FireBullets(bullet)
+
+    local desync = GetConVar("arccw_desync"):GetBool()
+    local desyncnum = (desync and math.random()) or 0
+    for n = 1, bullet.Num do
+        bullet.Num = 1
+        local dirry = Vector(dir.x, dir.y, dir.z)
+        math.randomseed(math.Round(util.SharedRandom(n, -1337, 1337, !game.SinglePlayer() and wep:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (wep:EntIndex() % 30241)) + desyncnum)
+        if !wep:GetBuff_Override("Override_NoRandSpread", wep.NoRandSpread) then
+            wep:ApplyRandomSpread(dirry, spread)
+            bullet.Dir = dirry
+        end
+        bullet = wep:GetBuff_Hook("Hook_FireBullets", bullet) or bullet
+
+        if wep:HasBottomlessClip() then
+            if !wep:GetOwner():IsPlayer() then
+                clip = math.huge
+            else
+                clip = Ammo(wep)
+            end
+        end
+        local owner = wep:GetOwner()
+
+        local shouldphysical = GetConVar("arccw_bullet_enable"):GetBool()
+
+        if wep.AlwaysPhysBullet or wep:GetBuff_Override("Override_AlwaysPhysBullet") then
+            shouldphysical = true
+        end
+
+        if wep.NeverPhysBullet or wep:GetBuff_Override("Override_NeverPhysBullet") then
+            shouldphysical = false
+        end
+
+        if isent then
+            wep:FireRocket(bullet.ent, bullet.vel, bullet.ang, wep.PhysBulletDontInheritPlayerVelocity)
+        else
+            -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+            if !IsFirstTimePredicted() then return end
+
+            if shouldphysical then
+                local tracernum = bullet.Tracer or 1
+                local phystracer = wep:GetBuff_Override("Override_PhysTracerProfile", wep.PhysTracerProfile)
+                local lastout = wep:GetBuff_Override("Override_TracerFinalMag", wep.TracerFinalMag)
+                if lastout >= clip then
+                    phystracer = wep:GetBuff_Override("Override_PhysTracerProfileFinal", wep.PhysTracerProfileFinal) or phystracer
+                elseif tracernum == 0 or clip % tracernum != 0 then
+                    phystracer = 7
+                end
+
+                local vel = wep:GetMuzzleVelocity()
+
+                vel = vel * bullet.Dir:GetNormalized()
+
+                ArcCW:ShootPhysBullet(wep, bullet.Src, vel, phystracer or 0)
+            else
+                owner:FireBullets(bullet, true)
+            end
+        end
+    end
+
     wep:DoShootSound()
                             -- This is kinda important
                                             -- Wep volume

