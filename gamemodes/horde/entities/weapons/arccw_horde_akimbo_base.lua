@@ -1215,7 +1215,7 @@ function SWEP:SecondaryAttack(isprimaryattack)
 	--end
 end
 
-function SWEP:Reload()
+--[[function SWEP:Reload()
     if IsValid(self:GetHolster_Entity()) then return end
     if self:GetHolster_Time() > 0 then return end
 
@@ -1394,7 +1394,7 @@ function SWEP:Reload()
     end
 
     self:GetBuff_Hook("Hook_PostReload")
-end
+end]]
 
 function SWEP:PrimaryAttack()
     local owner = self:GetOwner()

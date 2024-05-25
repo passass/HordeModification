@@ -200,9 +200,7 @@ att.UBGL_Fire = function(wep, ubgl)
             if !IsFirstTimePredicted() then return end
 
             if shouldphysical then
-                local tracernum = bullet.Tracer or 1
                 local phystracer = wep:GetBuff_Override("Override_PhysTracerProfile", wep.PhysTracerProfile)
-                local lastout = wep:GetBuff_Override("Override_TracerFinalMag", wep.TracerFinalMag)
                 if lastout >= clip then
                     phystracer = wep:GetBuff_Override("Override_PhysTracerProfileFinal", wep.PhysTracerProfileFinal) or phystracer
                 elseif tracernum == 0 or clip % tracernum != 0 then
@@ -221,12 +219,6 @@ att.UBGL_Fire = function(wep, ubgl)
     end
 
     wep:DoShootSound()
-                            -- This is kinda important
-                                            -- Wep volume
-                                                    -- Weapon pitch (along with the pitch randomizer)
-
-
-
 
     wep:SetClip2(wep:Clip2() - 1)
     

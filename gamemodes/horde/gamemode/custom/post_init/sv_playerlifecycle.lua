@@ -33,6 +33,7 @@ function HORDE:PlayerInit(ply)
         net.Broadcast()
     end
 
+    ply:Horde_SetMaxWeight(HORDE.max_weight)
     ply:Horde_SetWeight(ply:Horde_GetMaxWeight())
     if ply:Alive() and not (HORDE.start_game and HORDE.current_break_time <= 0) then
         HORDE:GiveStarterWeapons(ply)
@@ -131,7 +132,6 @@ function HORDE:PlayerInit(ply)
         HORDE:LoadSkullTokens(ply)
     end
     ply:Horde_SetDropEntities({})
-    ply:Horde_SetMaxWeight(HORDE.max_weight)
     if not ply:Horde_GetClass() then
         ply:Horde_SetClass(HORDE.classes[HORDE.Class_Survivor])
     end

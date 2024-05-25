@@ -27,14 +27,24 @@ HORDE.BuyablePerks = {
         description = "Increase Your Max Health By 5",
         shop_icon = "items/weapon_medkit.png",
         category = "BuyablePerks",
+        OnUnset = function(ply, lvl)
+            if SERVER then
+                ply:Horde_SetMaxHealth()
+            end
+        end,
         OnSet = function(ply, lvl)
             if SERVER then
                 ply:Horde_SetMaxHealth()
             end
         end,
-        price = 300,
+        OnLevelUp = function(ply, lvl)
+            if SERVER then
+                ply:Horde_SetMaxHealth()
+            end
+        end,
+        price = 450,
         weight = 0,
-        price_incby = 150,
+        price_incby = 125,
         canupgrade = true,
         maxlevel = 10,
         Hooks = {
@@ -89,9 +99,21 @@ local function init_buyableperk(ply)
     end
 end
 
+local function levelup_buyableperk(ply, name)
+    local lvl = ply.HORDE_BuyablePerk[name].lvl
+
+    for modif_name, value in pairs(HORDE.items[name].buffs_modifiers or {}) do
+        HORDE:Modifier_AddToWeapons(ply, modif_name, "Horde_BuyablePerk_" .. name, (value.base or 1) * ((1 + (value.mult or 0)) ^ lvl) + (value.incby or 0) * lvl)
+    end
+
+    if HORDE.BuyablePerks[name] and HORDE.BuyablePerks[name].OnLevelUp then
+        HORDE.BuyablePerks[name].OnLevelUp(ply, lvl)
+    end
+end
+
 local function unequip_buyableperk(ply, name)
     for modif_name, value in pairs(HORDE.items[name].buffs_modifiers or {}) do
-        HORDE:Modifier_AddToWeapons(ply, modif_name, "Horde_BuyablePerk_" .. "_" .. "_" .. name)
+        HORDE:Modifier_AddToWeapons(ply, modif_name, "Horde_BuyablePerk_" .. name)
     end
 
     if HORDE.BuyablePerks[name] then
@@ -108,7 +130,7 @@ local function equip_buyableperk(ply, name)
     local lvl = ply.HORDE_BuyablePerk[name].lvl
 
     for modif_name, value in pairs(HORDE.items[name].buffs_modifiers or {}) do
-        HORDE:Modifier_AddToWeapons(ply, modif_name, "Horde_BuyablePerk_" .. "_" .. "_" .. name, (value.base or 1) * ((1 + (value.mult or 0)) ^ lvl) + (value.incby or 0) * lvl)
+        HORDE:Modifier_AddToWeapons(ply, modif_name, "Horde_BuyablePerk_" .. name, (value.base or 1) * ((1 + (value.mult or 0)) ^ lvl) + (value.incby or 0) * lvl)
     end
 
     if HORDE.BuyablePerks[name] then
@@ -161,13 +183,13 @@ function HORDE:SetBuyablePerkLevel(ply, name, lvl)
 
     if !ply.HORDE_BuyablePerk[name] then
         ply.HORDE_BuyablePerk[name] = {}
-    elseif HORDE.BuyablePerks[name] and HORDE.BuyablePerks[name].OnUnset then
-        HORDE.BuyablePerks[name].OnUnset(ply)
+        ply.HORDE_BuyablePerk[name].lvl = lvl
+        equip_buyableperk(ply, name)
+    else
+        ply.HORDE_BuyablePerk[name].lvl = lvl
+        levelup_buyableperk(ply, name)
     end
 
-    ply.HORDE_BuyablePerk[name].lvl = lvl
-
-    equip_buyableperk(ply, name)
 
     if SERVER then
         HORDE:SyncBuyablePerk(ply, name)
@@ -178,12 +200,14 @@ function HORDE:AddBuyablePerkLevel(ply, name)
     init_buyableperk(ply)
     if ply.HORDE_BuyablePerk[name] and ply.HORDE_BuyablePerk[name].lvl then
         ply.HORDE_BuyablePerk[name].lvl = ply.HORDE_BuyablePerk[name].lvl + 1
+        levelup_buyableperk(ply, name)
+        
         --unequip_buyableperk(ply, name)
-        if HORDE.BuyablePerks[name] and HORDE.BuyablePerks[name].OnUnset then
-            HORDE.BuyablePerks[name].OnUnset(ply)
-        end
+        --if HORDE.BuyablePerks[name] and HORDE.BuyablePerks[name].OnUnset then
+        --    HORDE.BuyablePerks[name].OnUnset(ply)
+        --end
 
-        equip_buyableperk(ply, name)
+        --equip_buyableperk(ply, name)
     else
         ply.HORDE_BuyablePerk[name] = {}
         ply.HORDE_BuyablePerk[name].lvl = 1

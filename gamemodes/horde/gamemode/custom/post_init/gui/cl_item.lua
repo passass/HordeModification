@@ -238,7 +238,8 @@ function PANEL:Paint()
         surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
         surface.SetFont("Item")
 
-        if MySelf:HasWeapon(self.item.class) or MySelf:Horde_GetGadget() == self.item.class or (MySelf.Horde_drop_entities and MySelf.Horde_drop_entities[self.item.class]) then
+        if MySelf:HasWeapon(self.item.class) or MySelf:Horde_GetGadget() == self.item.class or (MySelf.Horde_drop_entities and MySelf.Horde_drop_entities[self.item.class]) or 
+        self.item.is_buyable_perk and self.item.maxlevel and HORDE:GetBuyablePerkLevel(MySelf, self.item.class) >= self.item.maxlevel then
             self.price_panel:SetTextColor(HORDE.color_crimson)
             self.price_panel:SetText("Owned")
             self.weight_panel_text:SetTextColor(HORDE.color_crimson)

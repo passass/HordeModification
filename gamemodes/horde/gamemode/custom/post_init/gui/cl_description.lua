@@ -931,7 +931,7 @@ function PANEL:Paint()
         if (MySelf:HasWeapon(self.item.class) or
         (self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_GADGET and MySelf:Horde_GetGadget() == self.item.class) or
         (self.item.entity_properties.type == HORDE.ENTITY_PROPERTY_BUYABLEPERK and HORDE:GetBuyablePerkLevel(MySelf, self.item.class) > 0)) then
-            if self.item.entity_properties.type != HORDE.ENTITY_PROPERTY_BUYABLEPERK or HORDE.items[self.item.class].maxlevel and HORDE:GetBuyablePerkLevel(MySelf, self.item.class) >= HORDE.items[self.item.class].maxlevel then
+            if self.item.entity_properties.type != HORDE.ENTITY_PROPERTY_BUYABLEPERK or self.item.is_buyable_perk and self.item.maxlevel and HORDE:GetBuyablePerkLevel(MySelf, self.item.class) >= self.item.maxlevel then
                 self.buy_btn:SetTextColor(Color(255,255,255))
                 self.buy_btn:SetText("OWNED")
                 self.buy_btn.Paint = function ()
@@ -950,7 +950,7 @@ function PANEL:Paint()
                         surface.DrawRect(0, 0, self:GetWide(), 200)
                     end
                 else
-                    self.buy_btn:SetText(translate.Get("Shop_Buy_Item"))
+                    self.buy_btn:SetText(translate.Get("Shop_Buy_Item") .. " " .. tostring(price) .. "$ (" .. HORDE:GetBuyablePerkLevel(MySelf, self.item.class) .. " / " .. HORDE.items[self.item.class].maxlevel .. ")")
                     self.buy_btn.Paint = function ()
                         surface.SetDrawColor(HORDE.color_crimson)
                         surface.DrawRect(0, 0, self:GetWide(), 200)
@@ -1122,7 +1122,7 @@ function PANEL:Paint()
                 self.sell_btn:SetVisible(false)
             end
         else
-            self.buy_btn:SetText(translate.Get("Shop_Buy_Item"))
+            self.buy_btn:SetText(translate.Get("Shop_Buy_Item") .. " " .. tostring(price) .. "$")
             if self.item.entity_properties and (HORDE:IsItemPlacable(self.item)) then
                 local drop_entities = MySelf:Horde_GetDropEntities()
                 if drop_entities[self.item.class] then
