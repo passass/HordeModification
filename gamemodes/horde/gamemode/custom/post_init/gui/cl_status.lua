@@ -113,7 +113,7 @@ function PANEL:Paint()
         !ply:Alive()
     then return end
 
-    distance_beetwen_locplayer_and_ply = self.player_dist
+    distance_beetwen_locplayer_and_ply = self.player_dist or MySelf:GetPos():Distance(ply:GetPos())
 
     if distance_beetwen_locplayer_and_ply > 450 then return end
     
@@ -394,9 +394,10 @@ end
 vgui.Register("HealthGUI_PlayerStats", PANEL, "Panel")
 
 hook.Add("Think", "Horde_ProceedHealthGUI", function ()
+    if !MySelf or !IsValid(MySelf) then MySelf = LocalPlayer() end
     if GetConVarNumber("horde_enable_health_gui") != 1 then return end
     for _, ply in pairs(player.GetAll()) do
-        if MySelf != ply then
+        if IsValid(ply) and MySelf != ply then
             if !IsValid(ply.Horde_HealthGUI) then
                 local HpGUI = vgui.Create("HealthGUI_PlayerStats")
                 HpGUI.ply = ply
