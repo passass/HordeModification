@@ -174,6 +174,9 @@ function HORDE:SaveSubclassChoices()
 end
 
 if CLIENT then
+    local player_init = false
+    local player_initclass = false
+
     hook.Add("InitPostEntity", "Horde_PlayerInit", function()
         timer.Simple(0, function ()
             HORDE:LoadSubclassChoices()
@@ -192,14 +195,28 @@ if CLIENT then
                 end]]--
     
                 HORDE:SendSavedPerkChoices(f)
-    
+                player_initclass = true
                 net.Start("Horde_InitClass")
                 net.WriteString(class)
                 net.SendToServer()
             end
-
+            player_init = true
             net.Start("Horde_PlayerInit")
             net.SendToServer()
         end)
     end)
+
+    hook.Add("InitPostEntity", "Horde_PlayerInit_2", function()
+        timer.Simple(1, function()
+            if !player_init then
+                net.Start("Horde_PlayerInit")
+                net.SendToServer()
+            end
+            if !player_initclass then
+                net.Start("Horde_InitClass")
+                net.WriteString(HORDE.Class_Survivor)
+                net.SendToServer()
+            end
+        end)
+	end)
 end

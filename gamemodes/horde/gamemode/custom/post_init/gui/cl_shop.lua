@@ -268,6 +268,14 @@ function PANEL:Init()
 
     local class = MySelf:Horde_GetClass()
 
+    if !class then
+        net.Start("Horde_InitClass")
+        net.WriteString(HORDE.Class_Survivor)
+        net.SendToServer()
+
+        class = HORDE.Class_Survivor
+    end
+
     for _, category in pairs(HORDE.categories) do
         local items = {}
 
