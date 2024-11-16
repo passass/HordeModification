@@ -251,14 +251,14 @@ att.UBGL_Reload = function(wep, ubgl)
         soundtable = table.Copy(wep.LeftHand_ReloadSound)
     end
     reloadtime = reloadtime * mult
-    wep:DoLHIKAnimation(is_empty and "reload_empty" or "reload", reloadtime * mult)
-    wep:SetNextSecondaryFire(CurTime() + reloadtime * mult)
+    wep:DoLHIKAnimation(is_empty and "reload_empty" or "reload", reloadtime)
+    wep:SetNextSecondaryFire(CurTime() + reloadtime)
     --wep:SetMagUpIn(CurTime() + reloadtime * mult)
     --wep:SetReloading(CurTime() + reloadtime * mult)
     for i, data in pairs(soundtable) do
         data.t = data.t * mult
     end
-    wep:SetMW2Masterkey_ShellInsertTime(CurTime() + reloadtime * mult)
+    wep:SetMW2Masterkey_ShellInsertTime(CurTime() + reloadtime)
     wep:PlaySoundTable(soundtable)
 end
 

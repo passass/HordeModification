@@ -27,7 +27,7 @@ Can see invisible zombies.
 {1} more movement speed. ({2} per level, up to {3}).
 {4} increased Ballistic damage. ({5} per level, up to {6}).
 ]] .. shortcuts["slomo_rpm&reload"] .. [[
-5 slow motion stacks instead of 3.
+7 slow motion stacks instead of 3.
 
 Gain Adrenaline when you kill an enemy.
 Adrenaline increases damage and speed by {7}.]]

@@ -35,7 +35,7 @@ function ENT:Initialize()
 		self:Remove()
 	end
 	self.LifeTime = CurTime() + math.Rand(3,4)
-	
+	self:SetOwner(self.Owner)
 	self:EmitSound("weapons/originstaffs/fire/projectile/loop.wav", 70)
 end
 if SERVER then
@@ -52,10 +52,14 @@ if SERVER then
 		dmg:SetDamagePosition( pos )
 		dmg:SetInflictor( self )
 		util.BlastDamageInfo(dmg, self:GetPos(), 105)
-		SafeRemoveEntityDelayed(self,0)
-		self:PhysicsDestroy()
+		--if self.PhysicsDestroy then
+		--	self:PhysicsDestroy()
+		--end
 		self:EmitSound("weapons/originstaffs/fire/projectile/explo/proj_explo_"..math.random(0,2)..".ogg", 360)
 	    ParticleEffect( self.CollidePCF, pos, self:GetAngles() )
+
+		HORDE:CreateFloorFire(self, self:GetPos(), 50)
+		SafeRemoveEntityDelayed(self,0)
 	end
 	
 	function ENT:StartTouch(ent)

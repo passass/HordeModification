@@ -154,6 +154,10 @@ function HORDE.Timers:Start()
     self:StartTimer()
 end
 
+function HORDE.Timers:TimeLeft()
+    return timer.TimeLeft( self.timername )
+end
+
 --[[function HORDE.Timers:IsProceed()
     return self.isproceed
 end -- not implemented]]

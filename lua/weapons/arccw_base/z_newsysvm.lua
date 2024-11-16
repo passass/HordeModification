@@ -1,4 +1,4 @@
-if engine.ActiveGamemode() != "horde"  or GetConVar("horde_external_lua_config"):GetString() != "horde_ext" then return end
+if engine.ActiveGamemode() != "horde" or GetConVar("horde_external_lua_config"):GetString() ~= "horde_ext" then return end
 
 local function qerp(delta, a, b)
     local qdelta = -(delta ^ 2) + (delta * 2)
@@ -9,13 +9,13 @@ local function qerp(delta, a, b)
 end
 
 if CLIENT then
-    hook.Add("PreDrawViewModel", "ArcCW_NewVM", function(vm, ply,wep)
-        --if true then return end
+    hook.Add("PreDrawViewModel", "ArcCW_NewVM", function(vm, ply, wep)
+        if !wep.ArcCW then return end
         local vm_real = wep.REAL_VM
         if IsValid(vm_real) and !vm_real.Not_Stated then
 
             wep:PreDrawViewModel(vm_real)
-            local ct = CurTime()
+
             local ply_eyepos, ply_eyeangles = EyePos(), EyeAngles()
             local frmtime = FrameTime()
 
@@ -96,24 +96,48 @@ if CLIENT then
         return self.REAL_VM:SetCycle(cycle)
     end
 
+    SWEP.AnimationsQueue = {}
+
+    function SWEP:ProceedAnimationsQueue()
+        for key, animdata in pairs(self.AnimationsQueue) do
+            if animdata.deleteon < CurTime() then
+                self.AnimationsQueue[key] = nil
+                continue
+            end
+            if self:PlayAnimation(key, animdata.mult, false, animdata.startfrom, animdata.tt, false, animdata.priority) then
+                self.AnimationsQueue[key] = nil
+                break
+            end
+        end
+    end
+
     net.Receive("arccw_sync_anim", function(len, ply)
-        local wep    = LocalPlayer():GetActiveWeapon()
+        local wep    = net.ReadEntity()
+        if !IsValid(wep) or !wep.ArcCW then return end
         local key    = net.ReadString()
-        local mul    = net.ReadFloat()
+        if key == "idle" then return end
+        local mult    = net.ReadFloat()
         local start  = net.ReadFloat()
         local time   = net.ReadBool()
         --local skip   = net.ReadBool() Unused
         local ignore = net.ReadBool()
-    
-        if !IsValid(wep) or !wep.ArcCW then return end
-        wep:PlayAnimation(key, mul, false, start, time, false, ignore)
-
-        timer.Create("arccw_sync_anim" .. wep:EntIndex(), 0, 8, function()
+        --if !wep:PlayAnimation(key, mul, false, start, time, false, ignore) then
+            wep.AnimationsQueue[key] = {
+                mult = mult, 
+                startfrom=start, 
+                tt=time, 
+                priority=ignore,
+                deleteon = CurTime() + 1
+            }
+        --else
+        --    print("playanimation 1", key)
+        --end
+        --[[timer.Create("arccw_sync_anim" .. wep:EntIndex(), 0, 8, function()
             local wep2 = LocalPlayer():GetActiveWeapon()
             if IsValid(wep2) and wep2.LastAnimKey != key and wep2 == wep then
                 wep:PlayAnimation(key, mul, false, start, time, false, ignore)
             end
-        end)
+        end)]]
     end)
 else
     --- SERVER
@@ -166,7 +190,11 @@ else
 end
 
 function SWEP:GetViewModel()
-    return self.REAL_VM or self:GetOwner():GetViewModel()
+    if IsValid(self.REAL_VM) then
+        return self.REAL_VM
+    end
+    local owner = self:GetOwner()
+    return IsValid(owner) and owner:GetViewModel() or self
 end
 
 function SWEP:PlayIdleAnimation(pred)
@@ -189,13 +217,10 @@ function SWEP:PlayIdleAnimation(pred)
 end
 
 local ang0 = Angle(0, 0, 0)
-local dev_alwaysready = GetConVar("arccw_dev_alwaysready")
+local dev_alwaysready = ArcCW.ConVars["dev_alwaysready"]
+
 function SWEP:Deploy()
     if !IsValid(self:GetOwner()) or self:GetOwner():IsNPC() then
-        return
-    end
-
-    if !IsFirstTimePredicted() then
         return
     end
 
@@ -237,6 +262,9 @@ function SWEP:Deploy()
 
     self.LHIKAnimation = nil
     self.CrosshairDelta = 0
+    if CLIENT then
+        table.Empty(self.AnimationsQueue)
+    end
 
     self:SetBurstCount(0)
 
@@ -249,20 +277,25 @@ function SWEP:Deploy()
         local r_anim = self:SelectAnimation("ready")
         local d_anim = self:SelectAnimation("draw")
 
-        local time = 0
+        if (CLIENT and !game.SinglePlayer() and LocalPlayer():IsListenServerHost()) then
+            self.ReadySoundTableHack = true
+        end
 
         if self.Animations[r_anim] and ( dev_alwaysready:GetBool() or self.UnReady ) then
-            self:PlayAnimation(r_anim, 1, true, 0, false, nil, true, nil, {SyncWithClient = true})
+            self:PlayAnimationWithSync(r_anim, 1, true, 0, false)
             prd = self.Animations[r_anim].ProcDraw
 
-            time = self:GetAnimKeyTime(r_anim, true)
+            self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(r_anim, true))
+
+            if CLIENT then
+                self:SetTimer(self:GetAnimKeyTime(r_anim, true), function() self.UnReady = false end, "UnReady")
+            end
         elseif self.Animations[d_anim] then
-            self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, false, nil, nil, nil, {SyncWithClient = true})
+            self:PlayAnimationWithSync(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, false)
             prd = self.Animations[d_anim].ProcDraw
 
-            time = self:GetAnimKeyTime(d_anim, true) * self:GetBuff_Mult("Mult_DrawTime")
+            self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(d_anim, true) * self:GetBuff_Mult("Mult_DrawTime"))
         end
-        self:SetPriorityAnim(CurTime() + time)
 
         if prd or (!self.Animations[r_anim] and !self.Animations[d_anim]) then
             self:ProceduralDraw()
@@ -271,7 +304,7 @@ function SWEP:Deploy()
 
     self:SetState(ArcCW.STATE_DISABLE)
 
-    if self.UnReady then
+    if (SERVER or game.SinglePlayer()) and self.UnReady then
         if SERVER then
             self:InitialDefaultClip()
         end
@@ -289,9 +322,15 @@ function SWEP:Deploy()
     if SERVER then
         self:SetupShields()
         -- Networking the weapon at this time is too early - entity is not yet valid on client
+        -- Also not a good idea because networking many weapons will cause mass lag (e.g. TTT round setup)
         -- Instead, make client send a request when it is valid there
         --self:NetworkWeapon()
-    elseif CLIENT and !self.CertainAboutAtts then
+        self:GetOwner():SetSaveValue("m_flNextAttack", 0) -- the magic fix-it-all solution for custom deploy problems including sounds
+    elseif CLIENT and !self.CertainAboutAtts and !self.AttReqSent and IsValid(self:GetOwner()) then
+        -- If client is aware of this weapon and it's not on the ground, ask for attachment info
+        -- If it is not on a player, delay networking until it is rendered (in cl_viewmodel)
+        -- print(self, "network weapon from sh_deploy")
+        self.AttReqSent = true
         net.Start("arccw_rqwpnnet")
             net.WriteEntity(self)
         net.SendToServer()
@@ -693,7 +732,7 @@ function SWEP:DrawCustomModel(wm, origin, angle)
 end
 
 function SWEP:PlayAnimationWithSync(key, mult, pred, startfrom, tt, skipholster, priority, absolute, otherdata)
-    self:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priority, absolute, table.Merge(otherdata and table.Copy(otherdata) or {}, {SyncWithClient = true}))
+    return self:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priority, absolute, table.Merge(otherdata and table.Copy(otherdata) or {}, {SyncWithClient = true}))
 end
 
 function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priority, absolute, otherdata)
@@ -701,18 +740,28 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
     pred = pred or false
     startfrom = startfrom or 0
     tt = tt or false
-    
-    --if key != "idle" then print("-----------------------") print(key) end
     --skipholster = skipholster or false Unused
     priority = priority or false
     absolute = absolute or false
     otherdata = otherdata or {}
-
     if !key then return end
- 
+
     local ct = CurTime()
 
     if self:GetPriorityAnim() and !priority then return end
+
+    if SERVER and (game.SinglePlayer() and pred or otherdata.SyncWithClient) then
+    --if SERVER and pred then
+        net.Start("arccw_sync_anim")
+        net.WriteEntity(self)
+        net.WriteString(key)
+        net.WriteFloat(mult)
+        net.WriteFloat(startfrom)
+        net.WriteBool(tt)
+        --net.WriteBool(skipholster) Unused
+        net.WriteBool(otherdata.SyncWithClient or !otherdata.SyncWithClient and priority)
+        net.Send(self:GetOwner())
+    end
 
     local anim = self.Animations[key]
     if !anim then return end
@@ -724,18 +773,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
         anim = self.Animations[key]
     else
         return]]
-    end
-
-    if SERVER and (game.SinglePlayer() and pred or otherdata.SyncWithClient) then
-    --if SERVER and pred then
-        net.Start("arccw_sync_anim")
-        net.WriteString(key)
-        net.WriteFloat(mult)
-        net.WriteFloat(startfrom)
-        net.WriteBool(tt)
-        --net.WriteBool(skipholster) Unused
-        net.WriteBool(otherdata.SyncWithClient or !otherdata.SyncWithClient and priority)
-        net.Send(self:GetOwner())
     end
 
     if anim.ViewPunchTable and CLIENT then
@@ -765,7 +802,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
 
     if !self:GetOwner() then return end
     if !self:GetOwner().GetViewModel then return end
-
     local vm = self.REAL_VM
 
     if !vm then return end
@@ -848,11 +884,9 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
         end
     end
 
-    if anim.SoundTable and !(game.SinglePlayer() and CLIENT) then
-        -- self.EventTable = {}
-        if game.SinglePlayer() or (!game.SinglePlayer() and (ct != self.LastAnimStartTime or self.LastAnimKey != key)) then
-            self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom, key)
-        end
+    if !(game.SinglePlayer() and CLIENT) and (game.SinglePlayer() or IsFirstTimePredicted() or self.ReadySoundTableHack) then
+        self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom, key)
+        self.ReadySoundTableHack = nil
     end
 
     if CLIENT then
@@ -2495,8 +2529,6 @@ function SWEP:Reload()
     if IsValid(self:GetHolster_Entity()) then return end
     if self:GetHolster_Time() > 0 then return end
 
-    if !IsFirstTimePredicted() then return end
-
     if self:GetOwner():IsNPC() then
         return
     end
@@ -2526,7 +2558,7 @@ function SWEP:Reload()
 
     if self:GetInUBGL() then
         if self:GetNextSecondaryFire() > CurTime() then return end
-        self:ReloadUBGL()
+            self:ReloadUBGL()
         return
     end
 
@@ -2548,8 +2580,7 @@ function SWEP:Reload()
         if r then return end
     end
 
-    if !self:GetMalfunctionJam() and self:Ammo1() <= 0 and !self:HasInfiniteAmmo() then
-        return end
+    if !self:GetMalfunctionJam() and self:Ammo1() <= 0 and !self:HasInfiniteAmmo() then return end
 
     if self:HasBottomlessClip() then return end
 
@@ -2592,6 +2623,7 @@ function SWEP:Reload()
     if shouldshotgunreload and self:GetShotgunReloading() > 0 then return end
 
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
+
     if shouldshotgunreload then
         local anim = "sgreload_start"
         local insertcount = 0
@@ -2623,7 +2655,7 @@ function SWEP:Reload()
             self:SetMagUpCount(insertcount)
             self:SetMagUpIn(CurTime() + time2 * mult)
         end
-        self:PlayAnimation(anim, mult, true, 0, true, nil, true, nil, {SyncWithClient = true})
+        self:PlayAnimationWithSync(anim, mult, true, 0, true, nil, true)
 
         self:SetReloading(CurTime() + time * mult)
 
@@ -2632,21 +2664,17 @@ function SWEP:Reload()
         local anim = self:SelectReloadAnimation()
 
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
-        self:PlayAnimationWithSync(anim, mult, true, self.Animations[anim].StartFrom, false, nil, true, nil)
-        --print("reload", self:GetAnimationProgress(), CurTime(), self:GetNextIdle(), !!self:PlayAnimation(anim, mult, true, self.Animations[anim].StartFrom, false, nil, true, nil, {SyncWithClient = true }), self.LastAnimKey)
-        local magupin = self.Animations[anim].MagUpIn
-        local reloadtime = self:GetAnimKeyTime(anim, true) * mult
-        local reload_end_on
-        if !self.Animations[anim].ForceEnd then
-            reload_end_on = self:GetAnimKeyTime(anim, false) * mult
-        else
-            reload_end_on = self.Animations[anim].EndReloadOn and self.Animations[anim].EndReloadOn * mult or reloadtime
-        end
+
+        self:PlayAnimationWithSync(anim, mult, true, 0, false, nil, true)
+
+        local magupin = (self.Animations[anim].MagUpIn or self.Animations[anim].EndReloadOn or self:GetAnimKeyTime(anim, true)) * mult
+        local reload_end_on = (self.Animations[anim].EndReloadOn or self:GetAnimKeyTime(anim, false)) * mult
+        
         self:SetNextPrimaryFire(CurTime() + reload_end_on)
         self:SetReloading(CurTime() + reload_end_on)
 
         self:SetMagUpCount(0)
-        self:SetMagUpIn(CurTime() + (magupin and magupin * mult or reloadtime))
+        self:SetMagUpIn(CurTime() + magupin)
     end
 
     self:SetClipInfo(load)
@@ -2978,43 +3006,13 @@ function SWEP:Think()
 
     if !IsValid(owner) or owner:IsNPC() then return end
 
-    --[[if CurTime() == think_ct then
-        count = count + 1
-        return
-    else
-        --if count > 1 then print(count) end
-        count = 1
-    end
-    think_ct = CurTime()]]
-
     if self:GetState() == ArcCW.STATE_DISABLE and !self:GetPriorityAnim() then
         self:SetState(ArcCW.STATE_IDLE)
-    end
-    --[[-----> new sound table
-    print(self:GetAnimationProgress())
-    for i, v in ipairs(self.EventTable) do
-        for emiton, bz in pairs(v) do
-            if bz.EmitOnProgress then
-                if self:GetAnimationProgress() < bz.EmitOnProgress then
-                    continue
-                end
-            elseif emiton >= CurTime() then
-                continue
-            end
 
-            if bz.AnimKey and (bz.AnimKey != self.LastAnimKey or bz.StartTime != self.LastAnimStartTime) then
-                continue
-            end
-
-            self:PlayEvent(bz)
-            self.EventTable[i][emiton] = nil
-            --print(CurTime(), "Event completed at " .. i, emiton)
-            if table.IsEmpty(v) and i != 1 then
-                self.EventTable[i] = nil]] --[[print(CurTime(), "No more events at " .. i .. ", killing")]] 
-            --[[end
+        if CLIENT and self.UnReady then
+            self.UnReady = false
         end
     end
-    -----> new sound table]]
 
     for i, v in ipairs(self.EventTable) do
         for ed, bz in pairs(v) do
@@ -3024,13 +3022,11 @@ function SWEP:Think()
                 end
                 self:PlayEvent(bz)
                 self.EventTable[i][ed] = nil
-                --print(CurTime(), "Event completed at " .. i, ed, bz.s)
+                --print(CurTime(), "Event completed at " .. i, ed)
                 if table.IsEmpty(v) and i != 1 then self.EventTable[i] = nil --[[print(CurTime(), "No more events at " .. i .. ", killing")]] end
             end
         end
     end
-
-    local vm = self.REAL_VM
 
     if CLIENT and (!game.SinglePlayer() and IsFirstTimePredicted() or true)
             and self:GetOwner() == LocalPlayer() and ArcCW.InvHUD
@@ -3039,7 +3035,7 @@ function SWEP:Think()
         ArcCW.Inv_Fade = 0.01
     end
 
-    
+    local vm = self:GetViewModel()
 
     self.BurstCount = self:GetBurstCount()
 
@@ -3051,13 +3047,14 @@ function SWEP:Think()
     end
 
     self:InBipod()
+
     if self:GetNeedCycle() and !self.Throwing and !self:GetReloading() and self:GetWeaponOpDelay() < CurTime() and self:GetNextPrimaryFire() < CurTime() and -- Adding this delays bolting if the RPM is too low, but removing it may reintroduce the double pump bug. Increasing the RPM allows you to shoot twice on many multiplayer servers. Sure would be convenient if everything just worked nicely
-            (!GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 or !owner:KeyDown(IN_ATTACK))
-            or GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 or owner:KeyPressed(IN_ATTACK))) then
+            (!ArcCW.ConVars["clicktocycle"]:GetBool() and (self:GetCurrentFiremode().Mode == 2 or !owner:KeyDown(IN_ATTACK))
+            or ArcCW.ConVars["clicktocycle"]:GetBool() and (self:GetCurrentFiremode().Mode == 2 or owner:KeyPressed(IN_ATTACK))) then
         local anim = self:SelectAnimation("cycle")
         anim = self:GetBuff_Hook("Hook_SelectCycleAnimation", anim) or anim
         local mult = self:GetBuff_Mult("Mult_CycleTime")
-        local p = self:PlayAnimation(anim, mult, true, 0, true, nil, true, nil, {SyncWithClient = true})
+        local p = self:PlayAnimationWithSync(anim, mult, true, 0, true)
         if p then
             self:SetNeedCycle(false)
             self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(anim, true) * mult)
@@ -3125,7 +3122,7 @@ function SWEP:Think()
             end
         end
     end
-    
+
     if owner and owner:GetInfoNum("arccw_automaticreload", 0) == 1 and self:Clip1() == 0 and !self:GetReloading() and CurTime() > self:GetNextPrimaryFire() + 0.2 then
         self:Reload()
     end
@@ -3303,7 +3300,7 @@ function SWEP:Think()
     --end
 
     -- Only reset to idle if we don't need cycle. empty idle animation usually doesn't play nice
-    if !self:GetPriorityAnim() and self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() and !self:GetNeedCycle()
+    if self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() and !self:GetNeedCycle()
             and self:GetHolster_Time() == 0 and self:GetShotgunReloading() == 0 then
         self:SetNextIdle(0)
         self:PlayIdleAnimation(true)
@@ -3311,6 +3308,10 @@ function SWEP:Think()
 
     if self:GetUBGLDebounce() and !self:GetOwner():KeyDown(IN_RELOAD) then
         self:SetUBGLDebounce( false )
+    end
+
+    if CLIENT then
+        self:ProceedAnimationsQueue()
     end
 end
 
@@ -3461,201 +3462,3 @@ function SWEP:PlayEvent(v)
 
     v = self:GetBuff_Hook("Hook_PostPlayEvent", v) or v
 end
-
--- NEW FIRE SYSTEM
-
-function SWEP:IsVeryAccurateShoot()
-    return self:GetBuff("Num") <= 1
-end
-if CLIENT then
-    local mth        = math
-    local m_log10    = mth.log10
-    local m_rand     = mth.Rand
-    local rnd        = render
-    local SetMat     = rnd.SetMaterial
-    local DrawBeam   = rnd.DrawBeam
-    local DrawSprite = rnd.DrawSprite
-    local lasermat = Material("arccw/laser")
-    local flaremat = Material("effects/whiteflare")
-
-    local delta    = 1
-    function SWEP:DrawLaser(laser, model, color, world)
-        local owner = self:GetOwner()
-        local behav = ArcCW.LaserBehavior
-
-        if !owner then return end
-
-        if !IsValid(owner) then return end
-
-        if !model then return end
-
-        if !IsValid(model) then return end
-
-        local att = model:LookupAttachment(laser.LaserBone or "laser")
-
-        att = att == 0 and model:LookupAttachment("muzzle") or att
-
-        local pos, ang, dir
-
-        if att == 0 then
-            pos = model:GetPos()
-            ang = owner:EyeAngles() + self:GetFreeAimOffset()
-            dir = ang:Forward()
-        else
-            local attdata  = model:GetAttachment(att)
-            pos, ang = attdata.Pos, attdata.Ang
-            dir      = -ang:Right()
-        end
-
-        if world then
-            dir = owner:IsNPC() and (-ang:Right()) or dir
-        else
-            ang:RotateAroundAxis(ang:Up(), 90)
-
-            if self.LaserOffsetAngle then
-                ang:RotateAroundAxis(ang:Right(), self.LaserOffsetAngle[1])
-                ang:RotateAroundAxis(ang:Up(), self.LaserOffsetAngle[2])
-                ang:RotateAroundAxis(ang:Forward(), self.LaserOffsetAngle[3])
-            end
-            if self.LaserIronsAngle and self:GetActiveSights().IronSight then
-                local d = 1 - self:GetSightDelta()
-                ang:RotateAroundAxis(ang:Right(), d * self.LaserIronsAngle[1])
-                ang:RotateAroundAxis(ang:Up(), d * self.LaserIronsAngle[2])
-                ang:RotateAroundAxis(ang:Forward(), d * self.LaserIronsAngle[3])
-            end
-
-            dir = ang:Forward()
-
-            local eyeang   = EyeAngles() - self:GetOurViewPunchAngles() + self:GetFreeAimOffset()
-            local canlaser = self:GetCurrentFiremode().Mode != 0 and !self:GetReloading() and self:BarrelHitWall() <= 0
-
-            delta = Lerp(0, delta, canlaser and self:GetSightDelta() or 1)
-
-            --if self.GuaranteeLaser then
-                delta = 1
-            --else
-            --    delta = self:GetSightDelta()
-            --end
-
-            dir = Lerp(delta, eyeang:Forward(), dir)
-        end
-
-        local beamdir, tracepos = dir, pos
-
-        beamdir = world and (-ang:Right()) or beamdir
-
-        if behav and !world then
-            -- local cheap = GetConVar("arccw_cheapscopes"):GetBool()
-            local punch = self:GetOurViewPunchAngles()
-
-            ang = EyeAngles() - punch + self:GetFreeAimOffset()
-
-            tracepos = EyePos() - Vector(0, 0, 1)
-            pos, dir = tracepos, ang:Forward()
-            beamdir  = dir
-        end
-
-        local dist = 128
-
-        local tl = {}
-        tl.start  = tracepos
-        tl.endpos = tracepos + (dir * 33000)
-        tl.filter = owner
-
-        local tr = util.TraceLine(tl)
-
-        tl.endpos = tracepos + (beamdir * dist)
-
-        local btr = util.TraceLine(tl)
-
-        local hit    = tr.Hit
-        local hitpos = tr.HitPos
-        local solid  = tr.StartSolid
-
-        local strength = laser.LaserStrength or 1
-        local laserpos = solid and tr.StartPos or hitpos
-
-        laserpos = laserpos - ((EyeAngles() + self:GetFreeAimOffset()):Forward())
-
-        if solid then return end
-
-        local width = m_rand(0.05, 0.1) * strength * 1
-
-        if (!behav or world) and hit then
-            SetMat(lasermat)
-            local a = 200
-            DrawBeam(pos, btr.HitPos, width * 0.3, 1, 0, Color(a, a, a, a))
-            DrawBeam(pos, btr.HitPos, width, 1, 0, color)
-        end
-
-        if hit and !tr.HitSky then
-            local mul = 1 * strength
-            mul = m_log10((hitpos - EyePos()):Length()) * strength
-            local rad = m_rand(4, 6) * mul
-            local glr = rad * m_rand(0.2, 0.3)
-
-            SetMat(flaremat)
-
-            -- if !world then
-            --     cam.IgnoreZ(true)
-            -- end
-            DrawSprite(laserpos, rad, rad, color)
-            DrawSprite(laserpos, glr, glr, color_white)
-
-            -- if !world then
-            --     cam.IgnoreZ(false)
-            -- end
-        end
-    end
-end
-
-function SWEP:GetDispersion()
-    local owner = self:GetOwner()
-
-    if vrmod and vrmod.IsPlayerInVR(owner) then return 0 end
-
-    local very_high_Accuracy = self:IsVeryAccurateShoot()
-
-    local hipdisp = self:GetBuff("HipDispersion")
-    local sights  = self:GetState() == ArcCW.STATE_SIGHTS
-    local sightdisp = self:GetBuff("SightsDispersion")
-
-    local hip = very_high_Accuracy and math.min(sightdisp * 3, hipdisp) or hipdisp
-
-    if sights then hip = Lerp(self:GetNWSightDelta(), sightdisp, hip) end
-
-    local speed = owner:GetAbsVelocity():Length()
-    local maxspeed = owner:GetWalkSpeed() * self:GetBuff("SpeedMult")
-    if sights then maxspeed = maxspeed * self:GetBuff("SightedSpeedMult") end
-    speed = math.Clamp(speed / maxspeed, 0, 2)
-
-    local move_dispersion = very_high_Accuracy and math.min(30, self:GetBuff("MoveDispersion")) or self:GetBuff("MoveDispersion")
-
-    local jump_dispersion = very_high_Accuracy and math.min(90, self:GetBuff("JumpDispersion")) or self:GetBuff("JumpDispersion")
-
-    if owner:OnGround() or owner:WaterLevel() > 0 and owner:GetMoveType() != MOVETYPE_NOCLIP then
-        hip = hip + speed * move_dispersion
-    elseif owner:GetMoveType() != MOVETYPE_NOCLIP then
-        hip = hip + math.max(speed * move_dispersion, jump_dispersion)
-    end
-
-    if self:InBipod() then hip = hip * (self.BipodDispersion * self:GetBuff_Mult("Mult_BipodDispersion")) end
-
-    if GetConVar("arccw_mult_crouchdisp"):GetFloat() != 1 and owner:OnGround() and owner:Crouching() then
-        hip = hip * GetConVar("arccw_mult_crouchdisp"):GetFloat()
-    end
-
-    if GetConVar("arccw_freeaim"):GetInt() == 1 and !sights then
-        hip = hip ^ 0.9
-    end
-
-    --local t = hook.Run("ArcCW_ModDispersion", self, {dispersion = hip})
-    --hip = t and t.dispersion or hip
-    hip = self:GetBuff_Hook("Hook_ModDispersion", hip) or hip
-    return hip
-end
-
-function SWEP:ShouldDrawCrosshair()
-    return false
-end
--- NEW FIRE SYSTEM

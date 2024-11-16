@@ -215,14 +215,14 @@ SWEP.Animations = {
         SoundTable = {
             {t = 0, s = Sound ("TFA_DEATHBRINGER_RELOAD.1")},
         },
-        MinProgress = 2.5, ForceEnd = true, Mult=0.9,
+        EndReloadOn = 2.5, ForceEnd = true, Mult=0.9,
     },
     ["reload_empty"] = {
         Source = "reload",
         SoundTable = {
             {t = 0, s = Sound ("TFA_DEATHBRINGER_RELOAD.1")},
         },
-        MinProgress = 2.5, ForceEnd = true, Mult=0.9,
+        EndReloadOn = 2.5, ForceEnd = true, Mult=0.9,
     },
     ["fire"] = {
         Source = "shoot"

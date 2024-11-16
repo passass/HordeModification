@@ -290,6 +290,7 @@ SWEP.Animations = {
             {s = "ArcCW_MW3E.PM9_MagOut", t = 0.25},
             {s = "ArcCW_MW3E.PM9_MagIn", t = 1.4},
         },
+        EndReloadOn = 2.1,
         MinProgress = 2,
     },
     ["reload_empty"] = {
@@ -304,7 +305,8 @@ SWEP.Animations = {
             {s = "ArcCW_MW3E.PM9_MagIn", t = 1.4},
             {s = "ArcCW_MW3E.PM9_Chamber", t = 2}
         },
-        MinProgress = 2.7,
+        EndReloadOn = 2.7,
+        MinProgress = 2.6,
     },
     ["enter_sprint"] = {
         Source = "sprint_in",

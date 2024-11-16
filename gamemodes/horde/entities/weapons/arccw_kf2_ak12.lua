@@ -1079,12 +1079,12 @@ SWEP.Animations = {
         Source = {"shoot_iron", "shoot_iron2", "shoot_iron3"},
     },
     ["reload"] = {
-        MinProgress = 3.66, ForceEnd = true,
+        EndReloadOn = 3.66, ForceEnd = true,
         Source = "reload",
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
     },
     ["reload_empty"] = {
-        MinProgress = 3.75,
+        EndReloadOn = 3.75,
         Source = "reload_empty", ForceEnd = true,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
     },

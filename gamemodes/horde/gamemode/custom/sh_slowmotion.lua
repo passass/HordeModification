@@ -61,7 +61,7 @@ local bonus_hooks = {
                 end
 
                 local dur = wep:GetAnimKeyTime(anim)
-                local dur_minprg = wep:GetAnimKeyTime(anim, true)
+                local dur_minprg = (wep.Animations[anim].MagUpIn or wep.Animations[anim].EndReloadOn or wep:GetAnimKeyTime(anim, true))
 
                 local anim_progress = math.Clamp((wep.LastAnimPrg or 0) + (ct - wep.LastAnimPrcd) * wep.LastRes / dur, 0, 1)
                 wep.LastAnimPrg = anim_progress
@@ -69,19 +69,16 @@ local bonus_hooks = {
                 local anim_rate = mult * (vm_animdur / dur)
                 vm:SetPlaybackRate(anim_rate)
 
-                local anim_timetoend = dur / mult * (1 - anim_progress)
+                dur = (wep.Animations[anim].EndReloadOn or dur)
 
                 local reloadtime = dur_minprg / mult * (1 - anim_progress * (dur / dur_minprg))
-                local reloadtime2
-                if !wep.Animations[anim].ForceEnd then
-                    reloadtime2 = anim_timetoend
-                else
-                    reloadtime2 = reloadtime
-                end
+                local reloadtime2 = dur / mult * (1 - anim_progress)
                 wep:SetReloadingREAL(ct + reloadtime2)
                 wep:SetNextPrimaryFire(ct + reloadtime2)
+
                 wep:SetMagUpIn(ct + reloadtime)
-                wep:SetNextIdle(ct + anim_timetoend)
+                wep:SetMagUpCount(0)
+                //wep:SetNextIdle(ct + anim_timetoend)
 
                 wep.LastRes = mult
                 wep.LastAnimPrcd = ct
@@ -90,7 +87,6 @@ local bonus_hooks = {
 
         if slomo_stage == 1.0 then
             hook.Remove("Think", hookname)
-            
 
             for _, wep in pairs(ply:GetWeapons()) do
                 wep.LastRes = nil
@@ -341,10 +337,11 @@ end
 
 hook.Add("Horde_OnEnemyKilled", "StartSlowMotion", function(victim, killer, inflictor)
     if IsValid(inflictor) and inflictor:IsNPC() or CurTime() == last_slowmotion_called_timing then return end
+    local iskiller_assault = killer:Horde_GetPerk("assault_base")
     if last_player_called_slowmotion == NULL and
 	math.random() > .05 or
     last_player_called_slowmotion != NULL and
-	(killer != last_player_called_slowmotion or last_player_called_count >= (killer:Horde_GetPerk("assault_base") and 5 or 3)) or
+	(killer != last_player_called_slowmotion and !iskiller_assault or last_player_called_count >= (iskiller_assault and 7 or 3)) or
         hook.Run("Horde_CanSlowTime")
     then return end
     last_player_called_slowmotion = killer

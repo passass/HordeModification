@@ -199,7 +199,7 @@ SWEP.Animations = {
         LHIKIn = .4, LHIKEaseIn = .2,
         LHIKOut = .65, LHIKEaseOut = .5,
         MagUpIn = 1.5,
-        MinProgress = 1.8 / reload_mult1,
+        EndReloadOn = 1.8 / reload_mult1,
         ForceEnd = true,
         Mult = reload_mult1,
         SoundTable = {
@@ -217,7 +217,7 @@ SWEP.Animations = {
         LHIKIn = .4, LHIKEaseIn = .2,
         LHIKOut = .5, LHIKEaseOut = .5,
         MagUpIn = 1.5,
-        MinProgress = 2.2 / reload_mult2, ForceEnd = true,
+        EndReloadOn = 2.2 / reload_mult2, ForceEnd = true,
         Mult = reload_mult2,
         SoundTable = {
             {t = 0.65 * reload_mult2, s = "CW_FAS2_TOZ34_OPENSTART"},

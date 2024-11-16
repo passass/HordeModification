@@ -227,7 +227,7 @@ SWEP.Animations = {
         Source = {"shoot_iron", "shoot_iron2", "shoot_iron3"},
     },
     ["reload"] = {
-        Source = "reload", MinProgress = 3, ForceEnd = true,
+        Source = "reload", EndReloadOn = 3 * .8, ForceEnd = true,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         Mult= .8,
         LHIK = true,
@@ -238,7 +238,7 @@ SWEP.Animations = {
         MagUpIn = 1.75,
     },
     ["reload_empty"] = {
-        Source = "reload_empty", MinProgress = 3.1, ForceEnd = true,
+        Source = "reload_empty", EndReloadOn = 3.1 * .8, ForceEnd = true,
         Mult= .8,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         LHIK = true,

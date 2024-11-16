@@ -325,3 +325,8 @@ local nvcnaw = 7
 SWEP.Inaccuracy_Add_ADS			= 0
 SWEP.Inaccuracy_Add_Hip			= 0
 SWEP.Inaccuracy_Add_Move		= 0.1
+
+
+function SWEP:Hook_BulletHit(data)
+    HORDE:CreateFloorFire(self, data.tr.HitPos)
+end

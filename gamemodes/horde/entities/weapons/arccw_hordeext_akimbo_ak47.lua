@@ -128,8 +128,6 @@ SWEP.MeleeHitNPCSound		= "MW2Common.Melee.HitFleshy_Slice"
 
 local wpnmodel = "models/weapons/arccw_go/v_rif_ak47.mdl"
 
-
-
 local invis_mat = "Models/effects/vol_light001"
 function SWEP:Hook_Think_2()
     if CLIENT and self.VM then

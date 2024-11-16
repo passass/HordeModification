@@ -254,6 +254,6 @@ SWEP.Animations = {
 
         Mult = .9,
 
-        MinProgress = 1.9, ForceEnd = true
+        EndReloadOn = 1.9, ForceEnd = true
     },
 }

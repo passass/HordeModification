@@ -226,7 +226,7 @@ SWEP.Animations = {
         Source = {"shoot_iron", "shoot_iron2", "shoot_iron3"},
     },
     ["reload"] = {
-        Source = "reload", MinProgress = 2.35, ForceEnd = true,
+        Source = "reload", EndReloadOn = 2.35, ForceEnd = true,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         Checkpoints = {20, 26, 40},
         LHIK = true,
@@ -236,7 +236,7 @@ SWEP.Animations = {
         LHIKEaseOut = .6,
     },
     ["reload_empty"] = {
-        Source = "reload_empty", MinProgress = 2.5, ForceEnd = true,
+        Source = "reload_empty", EndReloadOn = 2.5, ForceEnd = true,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         Checkpoints = {20, 26, 40, 60, 80},
         LHIK = true,

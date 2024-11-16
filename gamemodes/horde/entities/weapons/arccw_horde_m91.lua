@@ -1211,6 +1211,7 @@ SWEP.Attachments = {
 SWEP.Animations = {
     ["idle"] = {
         Source = "idle",
+        Time = 9999,
     },
     ["ready"] = {
         Source = "draw_first",

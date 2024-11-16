@@ -206,14 +206,14 @@ SWEP.Animations = {
         SoundTable = {
             {t = 0, s = Sound ("TFA_XENOPHAGE_RELOAD.1")},
         },
-        MinProgress = 4.55, ForceEnd = true, Mult=0.9,
+        EndReloadOn = 4.55, ForceEnd = true, Mult=0.9,
     },
     ["reload_empty"] = {
         Source = "reload",
         SoundTable = {
             {t = 0, s = Sound ("TFA_XENOPHAGE_RELOAD.1")},
         },
-        MinProgress = 4.55, ForceEnd = true, Mult=0.9,
+        EndReloadOn = 4.55, ForceEnd = true, Mult=0.9,
     },
     ["fire"] = {
         Source = "shoot"

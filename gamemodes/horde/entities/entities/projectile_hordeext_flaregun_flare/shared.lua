@@ -76,7 +76,7 @@ function ENT:Detonate(data)
     if !SERVER then return end
     if !self:IsValid() or self.Removing then return end
 	if IsValid(data.HitEntity) && (data.HitEntity:IsNPC() or data.HitEntity:IsPlayer()) && !self.Removing then
-		self:FireBullets({
+        self:FireBullets({
 			Attacker = self.Owner,
 			Damage = 45,
 			Tracer = 0,
@@ -101,6 +101,7 @@ function ENT:Detonate(data)
 		})
 	end
 
+    HORDE:CreateFloorFire(self, data.HitPos)
     util.Decal("FadingScorch", data.HitPos + data.HitNormal, data.HitPos - data.HitNormal)
     self:Remove()
 end

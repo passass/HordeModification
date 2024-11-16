@@ -183,6 +183,9 @@ end
         arccw_horde_nade_emp = "arccw_hordeext_nade_emp",
         arccw_horde_nade_molotov = "arccw_hordeext_nade_molotov",
 
+        
+        horde_m2 = "hordeext_m2",
+
         arccw_horde_m1014 = "arccw_hordeext_m1014",
         arccw_go_mag7 = "arccw_hordeext_mag7",
 
