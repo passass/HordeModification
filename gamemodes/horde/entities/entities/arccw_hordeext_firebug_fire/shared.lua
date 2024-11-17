@@ -175,7 +175,7 @@ function ENT:Think()
                 ent.Horde_Firebug_fire_damagelasttime = ct
 
                 local d = DamageInfo()
-                d:SetDamage(ent:IsPlayer() and 2 or 10)
+                d:SetDamage(ent:IsPlayer() and 2 or 15)
                 if ent:Horde_GetIgniteDamageTaken() < 2 then
                     ent:Horde_SetIgniteDamage(2)
                 end

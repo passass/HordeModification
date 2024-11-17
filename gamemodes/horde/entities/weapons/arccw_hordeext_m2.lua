@@ -137,6 +137,7 @@ function SWEP:PrimaryAttack()
         tracedata.mins = Vector(-25,-25,-25)
         tracedata.maxs = Vector(25,25,25)
         local trace = util.TraceHull(tracedata)
+        HORDE:CreateFloorFire(self, trace.HitPos, 45)
         local Distance = self.Owner:GetPos():Distance(trace.HitPos)
         local Ignite = function()
             if not self:IsValid() then return end
