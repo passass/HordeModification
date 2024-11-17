@@ -226,7 +226,7 @@ SWEP.Animations = {
         },
     },
     ["reload"] = {
-        Source = "base_reload", Mult = .64, EndReloadOn = 2.85, ForceEnd = true,
+        Source = "base_reload", Mult = .64, EndReloadOn = 2.85 * .64, ForceEnd = true,
         --Time = 2,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Framerate = 30,
@@ -240,7 +240,7 @@ SWEP.Animations = {
         },
     },
     ["reload_empty"] = {
-        Source = "base_reloadempty", Mult = .64, EndReloadOn = 3.75, ForceEnd = true,
+        Source = "base_reloadempty", Mult = .64, EndReloadOn = 3.75 * .64, ForceEnd = true,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         LHIK = true,
         LHIKIn = .4, LHIKEaseIn = .2,

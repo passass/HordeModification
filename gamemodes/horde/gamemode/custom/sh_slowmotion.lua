@@ -23,13 +23,13 @@ local bonus_hooks = {
                 local wep = ply:GetActiveWeapon()
                 if !IsValid(wep) or !wep.ArcCW then return end
                 if !wep:GetReloading() then
-                    wep.LastRes = nil
+                    wep.LastReloadMult = nil
                     wep.LastAnimPrg = nil
                     wep.LastAnimPrcd = nil
                     return
                 end
                 local mult = 1 / wep:GetBuff_Mult("Mult_ReloadTime") --> 0
-                if wep.LastRes == mult then
+                if wep.LastReloadMult == mult then
                     return
                 end
                 local shouldshotgunreload = wep:GetBuff_Override("Override_ShotgunReload")
@@ -53,8 +53,8 @@ local bonus_hooks = {
                 local vm_animdur = vm:SequenceDuration()
 
 
-                if !wep.LastRes then
-                    wep.LastRes = mult
+                if !wep.LastReloadMult then
+                    wep.LastReloadMult = mult
                 end
                 if !wep.LastAnimPrcd then
                     wep.LastAnimPrcd = start_reload
@@ -63,24 +63,25 @@ local bonus_hooks = {
                 local dur = wep:GetAnimKeyTime(anim)
                 local dur_minprg = (wep.Animations[anim].MagUpIn or wep.Animations[anim].EndReloadOn or wep:GetAnimKeyTime(anim, true))
 
-                local anim_progress = math.Clamp((wep.LastAnimPrg or 0) + (ct - wep.LastAnimPrcd) * wep.LastRes / dur, 0, 1)
+                local anim_progress = math.Clamp((wep.LastAnimPrg or 0) + (ct - wep.LastAnimPrcd) * wep.LastReloadMult / dur, 0, 1)
+                local anim_progress_reloadtime = math.Clamp((wep.LastAnimPrg or 0) + (ct - wep.LastAnimPrcd) * wep.LastReloadMult / (wep.Animations[anim].EndReloadOn or dur), 0, 1)
                 wep.LastAnimPrg = anim_progress
 
                 local anim_rate = mult * (vm_animdur / dur)
                 vm:SetPlaybackRate(anim_rate)
 
                 dur = (wep.Animations[anim].EndReloadOn or dur)
-
-                local reloadtime = dur_minprg / mult * (1 - anim_progress * (dur / dur_minprg))
-                local reloadtime2 = dur / mult * (1 - anim_progress)
+                local reloadtime = dur_minprg / mult * (1 - anim_progress_reloadtime)
+                local reloadtime2 = dur / mult * (1 - anim_progress_reloadtime)
                 wep:SetReloadingREAL(ct + reloadtime2)
                 wep:SetNextPrimaryFire(ct + reloadtime2)
+                wep:SetNextIdle(ct + vm_animdur / mult * (1 - anim_progress))
 
                 wep:SetMagUpIn(ct + reloadtime)
                 wep:SetMagUpCount(0)
                 //wep:SetNextIdle(ct + anim_timetoend)
 
-                wep.LastRes = mult
+                wep.LastReloadMult = mult
                 wep.LastAnimPrcd = ct
             end)
         end

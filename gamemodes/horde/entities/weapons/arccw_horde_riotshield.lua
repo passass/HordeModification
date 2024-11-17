@@ -4,6 +4,16 @@ if CLIENT then
     SWEP.WepSelectIcon = Material("entities/horde_riotshield.png")
     killicon.Add("arccw_horde_riotshield", "entities/horde_riotshield", Color(0, 0, 0, 255))
 end
+function SWEP:DrawWeaponSelection(x, y, w, h, a)
+    surface.SetDrawColor(255, 255, 255, a)
+    if isnumber(self.WepSelectIcon) then
+        surface.SetMaterial(Material(surface.GetTextureNameByID( self.WepSelectIcon )))
+    else
+        surface.SetMaterial(self.WepSelectIcon)
+    end
+
+    surface.DrawTexturedRect(x, y, w, w / 2)
+end
 SWEP.Base = "arccw_horde_base_melee"
 SWEP.Spawnable = true -- this obviously has to be set to true
 SWEP.Category = "ArcCW - Horde" -- edit this if you like
