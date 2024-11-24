@@ -159,7 +159,9 @@ local mutations = {
 	"Regenerator",
 }
 
-function HORDE:TimeStop_freeze_npc(ent)
+function HORDE:TimeStop_freeze_npc(ent, freezeid)
+    HORDE.EntModifiers:AddModifier(ent, "HordeNPCFreeze", freezeid, true)
+
 	if ent.Horde_StartTimeStop and ent:Horde_StartTimeStop() then return end
     local phys = ent:GetPhysicsObject()
     if IsValid(phys) then
@@ -280,7 +282,13 @@ function HORDE:TimeStop_freeze_npc(ent)
 	end
 end
 
-function HORDE:TimeStop_unfreeze_npc(ent)
+function HORDE:TimeStop_unfreeze_npc(ent, freezeid)
+    HORDE.EntModifiers:RemoveModifier(ent, "HordeNPCFreeze", freezeid)
+
+    if HORDE.EntModifiers:GetBool(ent, "HordeNPCFreeze") then
+        return
+    end
+
 	if ent.Horde_EndTimeStop and ent:Horde_EndTimeStop() then return end
     ent.AnimationPlaybackRate = 1
     ent:SetPlaybackRate(1)
@@ -591,7 +599,7 @@ local function start_timestop(activator)
         for _, ent in pairs(ents.FindByClass("npc_*")) do
             if !ent:IsNPC() then continue end
             table.insert(npc_slowed, ent)
-            HORDE:TimeStop_freeze_npc(ent)
+            HORDE:TimeStop_freeze_npc(ent, "TimeStop")
         end
 
         for i, ent in pairs(ents.GetAll()) do
@@ -602,7 +610,7 @@ local function start_timestop(activator)
 
         hook.Add( "OnEntityCreated", "Horde_TimeStop", function( ent )
             if ent:IsNPC() then
-                HORDE:TimeStop_freeze_npc(ent)
+                HORDE:TimeStop_freeze_npc(ent, "TimeStop")
                 
                 table.insert(npc_slowed, ent)
             elseif IsEntity(ent) and !ent:IsWeapon() then
@@ -650,7 +658,7 @@ local function start_timestop(activator)
 
                 for _, ent in pairs(npc_slowed) do
                     if !IsValid(ent) then continue end
-                    HORDE:TimeStop_unfreeze_npc(ent)
+                    HORDE:TimeStop_unfreeze_npc(ent, "TimeStop")
                 end
                 for _, ent in pairs(frozed_entities) do
                     if !IsValid(ent) then continue end

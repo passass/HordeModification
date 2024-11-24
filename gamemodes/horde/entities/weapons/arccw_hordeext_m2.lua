@@ -134,8 +134,8 @@ function SWEP:PrimaryAttack()
         tracedata.start = self.Owner:GetShootPos()
         tracedata.endpos = self.Owner:GetShootPos() + (self.Owner:GetAimVector() * 500)
         tracedata.filter = self.Owner
-        tracedata.mins = Vector(-25,-25,-25)
-        tracedata.maxs = Vector(25,25,25)
+        tracedata.mins = Vector(-5,-5,-5)
+        tracedata.maxs = Vector(5,5,5)
         local trace = util.TraceHull(tracedata)
         HORDE:CreateFloorFire(self, trace.HitPos, 45)
         local Distance = self.Owner:GetPos():Distance(trace.HitPos)
@@ -147,6 +147,7 @@ function SWEP:PrimaryAttack()
             dmg:SetInflictor(self)
             dmg:SetDamageType(DMG_BURN)
             dmg:SetDamage(8)
+            dmg:SetDamageCustom(HORDE.DMG_PLAYER_FRIENDLY)
             util.BlastDamageInfo(dmg, trace.HitPos, 128)
             
             if (SERVER) and trace.Hit then

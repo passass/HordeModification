@@ -55,6 +55,103 @@ HORDE.BuyablePerks = {
             end,
         },
     },
+    buyableperk_moreammo = {
+        name = "Increased ammunition",
+        description = "Increase Your ammunition By 10%",
+        shop_icon = "entities/att/arccw_uc_tp_overload.png",
+        category = "BuyablePerks",
+        price = 500,
+        weight = 0,
+        price_incby = 250,
+        canupgrade = true,
+        maxlevel = 5,
+        wep_perkapply = function(wep, lvl)
+            local mult = 1.1 ^ lvl
+            if !wep.Horde_MaxMags then
+                wep.Horde_MaxMags = HORDE.Ammo_DefaultMaxMags
+            end
+
+            HORDE:Modifier_AddToWeapon(
+                wep:GetOwner(), wep, "Horde_TotalMaxAmmoMult", "buyableperk_moreammo",
+                {
+                    mult = mult,
+                }
+            )
+            HORDE:Modifier_AddToWeapon(
+                wep:GetOwner(), wep, "Horde_MaxMags", "buyableperk_moreammo",
+                {
+                    mult = mult,
+                    rounded_value = true,
+                }
+            )
+        end,
+        wep_perkremove = function(wep, lvl)
+            HORDE:Modifier_AddToWeapon(
+                wep:GetOwner(), wep, "Horde_TotalMaxAmmoMult", "buyableperk_moreammo"
+            )
+            HORDE:Modifier_AddToWeapon(
+                wep:GetOwner(), wep, "Horde_MaxMags", "buyableperk_moreammo"
+            )
+        end,
+    },
+    buyableperk_moreclip = {
+        name = "Increased Clip Size",
+        description = "Increase Clip Size By 20%",
+        shop_icon = "entities/att/arccw_uc_tp_overload.png",
+        category = "BuyablePerks",
+        price = 750,
+        weight = 0,
+        price_incby = 250,
+        canupgrade = true,
+        maxlevel = 3,
+        wep_perkapply = function(wep, lvl)
+            if !wep.ArcCW then return end
+            local mult = 1.2 ^ lvl
+            
+            HORDE:Modifier_AddToWeapon(
+                wep:GetOwner(), wep, "Mult_ClipSize", "buyableperk_moreclip",
+                {
+                    mult = mult,
+                }
+            )
+        end,
+        wep_perkremove = function(wep, lvl)
+            HORDE:Modifier_AddToWeapon(
+                wep:GetOwner(), wep, "Mult_ClipSize", "buyableperk_moreclip"
+            )
+        end,
+    },
+    buyableperk_tacmove = {
+        name = "Tactical Movement",
+        description = "You move without penalty in aiming",
+        shop_icon = "materials/perks/sniper.png",
+        category = "BuyablePerks",
+        price = 1000,
+        weight = 0,
+        price_incby = 0,
+        canupgrade = false,
+        maxlevel = 1,
+        wep_perkapply = function(wep, lvl)
+            if wep.ArcCW and wep.SpeedMult and wep.SightedSpeedMult then
+                HORDE:Modifier_AddToWeapon(
+                    wep:GetOwner(), wep, "SightedSpeedMult", "buyableperk_tacmove",
+                    {
+                        override = math.max(wep.SpeedMult, wep.SightedSpeedMult),
+                        priority = 5
+                    }
+                )
+            end
+        end,
+        wep_perkremove = function(wep, lvl)
+            if wep.ArcCW and wep.SpeedMult and wep.SightedSpeedMult then
+                HORDE:Modifier_AddToWeapon(
+                    wep:GetOwner(), wep, "SightedSpeedMult", "buyableperk_tacmove"
+                )
+            end
+        end,
+    },
+
+    --"materials/perks/sniper.png"
     buyableperk_rpmup = {
         name = "Faster Shooter",
         description = "Increase Your RPM By 5%",
@@ -99,39 +196,41 @@ local function init_buyableperk(ply)
     end
 end
 
+local function applybuffs(ply, name, lvl)
+    for modif_name, value in pairs(HORDE.items[name].buffs_modifiers or {}) do
+        local multtable = {
+            override = value.override,
+            priority = value.priority,
+        }
+        if value.base or value.mult then
+            multtable.mult = (value.base or 1) * ((1 + (value.mult or 0)) ^ lvl) + (value.incby or 0) * lvl
+        end
+        HORDE:Modifier_AddToWeapons(ply, modif_name, "Horde_BuyablePerk_" .. name, multtable)
+    end
+
+    if HORDE.BuyablePerks[name] and HORDE.BuyablePerks[name].wep_perkapply then
+        for _, wep in pairs(ply:GetWeapons()) do
+            HORDE.BuyablePerks[name].wep_perkapply(wep, lvl)
+        end
+    end
+end
+
 local function levelup_buyableperk(ply, name)
     local lvl = ply.HORDE_BuyablePerk[name].lvl
+    if !lvl then return end
 
-    for modif_name, value in pairs(HORDE.items[name].buffs_modifiers or {}) do
-        HORDE:Modifier_AddToWeapons(ply, modif_name, "Horde_BuyablePerk_" .. name, (value.base or 1) * ((1 + (value.mult or 0)) ^ lvl) + (value.incby or 0) * lvl)
-    end
+    applybuffs(ply, name, lvl)
 
     if HORDE.BuyablePerks[name] and HORDE.BuyablePerks[name].OnLevelUp then
         HORDE.BuyablePerks[name].OnLevelUp(ply, lvl)
     end
 end
 
-local function unequip_buyableperk(ply, name)
-    for modif_name, value in pairs(HORDE.items[name].buffs_modifiers or {}) do
-        HORDE:Modifier_AddToWeapons(ply, modif_name, "Horde_BuyablePerk_" .. name)
-    end
-
-    if HORDE.BuyablePerks[name] then
-        for hookname, hookfunc in pairs(HORDE.BuyablePerks[name].Hooks or {}) do
-            hook.Remove(hookname, "Horde_BuyablePerk_" .. tostring(ply:EntIndex()) .. "_" .. name .. "_" .. hookname)
-        end
-        if HORDE.BuyablePerks[name].OnUnset then
-            HORDE.BuyablePerks[name].OnUnset(ply)
-        end
-    end
-end
-
 local function equip_buyableperk(ply, name)
     local lvl = ply.HORDE_BuyablePerk[name].lvl
+    if !lvl then return end
 
-    for modif_name, value in pairs(HORDE.items[name].buffs_modifiers or {}) do
-        HORDE:Modifier_AddToWeapons(ply, modif_name, "Horde_BuyablePerk_" .. name, (value.base or 1) * ((1 + (value.mult or 0)) ^ lvl) + (value.incby or 0) * lvl)
-    end
+    applybuffs(ply, name, lvl)
 
     if HORDE.BuyablePerks[name] then
         for hookname, hookfunc in pairs(HORDE.BuyablePerks[name].Hooks or {}) do
@@ -150,6 +249,26 @@ local function equip_buyableperk(ply, name)
         end
         if HORDE.BuyablePerks[name].OnSet then
             HORDE.BuyablePerks[name].OnSet(ply, lvl)
+        end
+    end
+end
+
+local function unequip_buyableperk(ply, name)
+    for modif_name, value in pairs(HORDE.items[name].buffs_modifiers or {}) do
+        HORDE:Modifier_AddToWeapons(ply, modif_name, "Horde_BuyablePerk_" .. name)
+    end
+    if HORDE.BuyablePerks[name] and HORDE.BuyablePerks[name].wep_perkremove then
+        for _, wep in pairs(ply:GetWeapons()) do
+            HORDE.BuyablePerks[name].wep_perkremove(wep)
+        end
+    end
+
+    if HORDE.BuyablePerks[name] then
+        for hookname, hookfunc in pairs(HORDE.BuyablePerks[name].Hooks or {}) do
+            hook.Remove(hookname, "Horde_BuyablePerk_" .. tostring(ply:EntIndex()) .. "_" .. name .. "_" .. hookname)
+        end
+        if HORDE.BuyablePerks[name].OnUnset then
+            HORDE.BuyablePerks[name].OnUnset(ply)
         end
     end
 end
@@ -201,13 +320,6 @@ function HORDE:AddBuyablePerkLevel(ply, name)
     if ply.HORDE_BuyablePerk[name] and ply.HORDE_BuyablePerk[name].lvl then
         ply.HORDE_BuyablePerk[name].lvl = ply.HORDE_BuyablePerk[name].lvl + 1
         levelup_buyableperk(ply, name)
-        
-        --unequip_buyableperk(ply, name)
-        --if HORDE.BuyablePerks[name] and HORDE.BuyablePerks[name].OnUnset then
-        --    HORDE.BuyablePerks[name].OnUnset(ply)
-        --end
-
-        --equip_buyableperk(ply, name)
     else
         ply.HORDE_BuyablePerk[name] = {}
         ply.HORDE_BuyablePerk[name].lvl = 1
@@ -255,6 +367,19 @@ if SERVER then
         net.WriteInt(HORDE:GetBuyablePerkLevel(ply, name), 8)
         net.Send(ply)
     end
+
+    hook.Add("WeaponEquip", "Horde_Buyableperk_apply", function(wep)
+        timer.Simple(engine.TickInterval(), function()
+            local ply = wep:GetOwner()
+            if !IsValid(ply) or !ply.HORDE_BuyablePerk or !IsValid(wep) then return end
+
+            for name, buyableperktable in pairs(ply.HORDE_BuyablePerk) do
+                if HORDE.BuyablePerks[name] and HORDE.BuyablePerks[name].wep_perkapply then
+                    HORDE.BuyablePerks[name].wep_perkapply(wep, buyableperktable.lvl)
+                end
+            end
+        end)
+    end)
 else
     net.Receive("Horde_SyncBuyablePerk", function()
         local name = net.ReadString()

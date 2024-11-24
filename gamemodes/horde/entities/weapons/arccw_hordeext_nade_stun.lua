@@ -43,7 +43,7 @@ SWEP.Primary.ClipSize = 1
 
 
 SWEP.MuzzleVelocity = 1000
-SWEP.ShootEntity = "arccw_thr_stun"
+SWEP.ShootEntity = "arccw_thr_ext_stun"
 
 SWEP.TTTWeaponType = "weapon_ttt_confgrenade"
 SWEP.NPCWeaponType = "weapon_grenade"

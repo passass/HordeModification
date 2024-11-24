@@ -481,8 +481,8 @@ function HORDE:Modifier_AddToWeapons(ply, modifier, primarykey, mult, otherdata)
     otherdata = otherdata or {}
     if mult then
         if istable(mult) then
-            mult.mult = math.Round( mult.mult, 4 )
-            mult.add = math.Round( mult.add, 4 )
+            mult.mult = math.Round( mult.mult or 1, 4 )
+            mult.add = math.Round( mult.add or 0, 4 )
         else
             mult = math.Round( mult, 4 )
         end
@@ -551,8 +551,8 @@ function HORDE:Modifier_AddToWeapon(ply, wep, modifier, primarykey, mult, otherd
 
     if mult then
         if istable(mult) then
-            if mult.mult then mult.mult = math.Round( mult.mult, 4 ) end
-            if mult.add then mult.add = math.Round( mult.add, 4 ) end
+            mult.mult = math.Round( mult.mult or 1, 4 )
+            mult.add = math.Round( mult.add or 0, 4 )
         else
             mult = math.Round( mult, 4 )
         end

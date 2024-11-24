@@ -221,7 +221,7 @@ SWEP.Attachments = {
     },
 }
 
-local reloadmult = 1.5
+local reloadmult = 1.4
 
 SWEP.Animations = {
     ["idle"] = {

@@ -36,6 +36,7 @@ function HORDE.Timers:New(o, start_enabled)
 end
 
 function HORDE.Timers:CallFunc()
+    if self.removed then return end
     self:func()
     self.bypasses = self.bypasses + 1
     if self.repetitions != 0 then
@@ -44,6 +45,8 @@ function HORDE.Timers:CallFunc()
 end
 
 function HORDE.Timers:StartTimer(NoCallFuncAndChangeReps)
+    if self.removed then return end
+
     if !NoCallFuncAndChangeReps then
         if self.callfunconstart then
             self:CallFunc()
@@ -73,6 +76,7 @@ function HORDE.Timers:StartTimer(NoCallFuncAndChangeReps)
 end
 
 function HORDE.Timers:UpdateTimer(updateonlydata)
+    if self.removed then return end
 
     if self:IsPaused() then self:UnPause() end
 

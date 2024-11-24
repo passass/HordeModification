@@ -17,10 +17,10 @@ function entmeta:Horde_AddStun(duration)
     elseif self:IsNPC() then--self.Base == "npc_vj_creature_base" or self.Base == "npc_vj_human_base" then
         --self:SetSchedule(SCHED_NPC_FREEZE)
         self.Horde_Stunned = true
-        HORDE:TimeStop_freeze_npc(self)
+        HORDE:TimeStop_freeze_npc(self, "StunEffect")
         timer.Create("Horde_RemoveStun" .. self:GetCreationID(), 5, 1, function()
             if not self:IsValid() then return end
-            HORDE:TimeStop_unfreeze_npc(self)
+            HORDE:TimeStop_unfreeze_npc(self, "StunEffect")
             self.Horde_Stunned = nil
         end)
     end

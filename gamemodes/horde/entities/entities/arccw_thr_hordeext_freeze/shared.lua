@@ -102,7 +102,7 @@ function ENT:Explode()
         if !ent.IsFreezed then
             ent.old_Freeze_Material = ent:GetMaterial()
             ent:SetMaterial("Horde/Freeze/freeze_slush")
-            HORDE:TimeStop_freeze_npc(ent)
+            HORDE:TimeStop_freeze_npc(ent, "FreezeGrenade")
             ParticleEffectAttach( "frost_char_cloud", PATTACH_POINT_FOLLOW, ent, ent:LookupAttachment("chest") )
 
             hook.Add("Horde_OnPlayerDamage", hookname, function(ply, npc, bonus, hitgroup, dmginfo)
@@ -120,7 +120,7 @@ function ENT:Explode()
                 ent.old_Freeze_Material = nil
                 ent:StopParticles()
                 if !HORDE.TimeStop_Proceed() then
-                    HORDE:TimeStop_unfreeze_npc(ent)
+                    HORDE:TimeStop_unfreeze_npc(ent, "FreezeGrenade")
                 end
             end
             hook.Remove("Horde_OnPlayerDamage", hookname)

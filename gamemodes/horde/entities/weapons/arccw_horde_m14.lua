@@ -262,7 +262,7 @@ SWEP.Attachments = {
     },
     {
         Hidden = true,
-        Slot = {"bo1_foregrip", "bo1_sling", "bo1_mk", "bo1_m203", "bo1_bipod"},
+        Slot = {}--{"bo1_foregrip", "bo1_sling", "bo1_mk", "bo1_m203", "bo1_bipod"},
     }, --6
     {
         PrintName = "Tactical",
@@ -280,7 +280,7 @@ SWEP.Attachments = {
         PrintName = "Stock",
         Slot = {"bo1_stock"},
         DefaultAttName = "No Stock",
-        Installed = "bo1_stock_medium"
+        --Installed = "bo1_stock_medium"
     },
     { --9
         PrintName = "Fire Group",
