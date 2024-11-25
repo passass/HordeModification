@@ -186,11 +186,129 @@ end
 
 SWEP.ModifiedCache_Permanent = {}
 
+--[[
 local old_AdjustAtts = SWEP.AdjustAtts
 function SWEP:AdjustAtts()
     old_AdjustAtts(self)
 
     self.ModifiedCache = table.Merge(self.ModifiedCache_Permanent, self.ModifiedCache)
+end
+]]
+function SWEP:AdjustAtts()
+    local old_inf = self:HasInfiniteAmmo()
+
+    self:RecalcAllBuffs()
+
+    -- Recalculate active elements so dependencies aren't fucked
+    self.ActiveElementCache = nil
+    self:GetActiveElements(true)
+    self.ModifiedCache = table.Copy(self.ModifiedCache_Permanent)
+
+    -- Tempoarily disable modified cache, since we're building it right now
+    MODIFIED_CACHE = false
+
+    for i, k in pairs(self.Attachments) do
+        if !k.Installed then continue end
+        local ok = true
+
+        if !ArcCW:SlotAcceptsAtt(k.Slot, self, k.Installed) then ok = false end
+        if ok and !self:CheckFlags(k.ExcludeFlags, k.RequireFlags) then ok = false end
+
+        local atttbl = ArcCW.AttachmentTable[k.Installed]
+
+        if !atttbl then continue end
+        if ok and !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then ok = false end
+
+        if !ok then
+            self:Detach(i, true)
+            continue
+        end
+
+        -- Cache all possible value modifiers
+        for var, v in pairs(atttbl) do
+            self.ModifiedCache[var] = true
+            if var == "ToggleStats" or var == "Override_Firemodes" then
+                for _, v2 in pairs(v) do
+                    for var2, _ in pairs(v2) do
+                        self.ModifiedCache[var2] = true
+                    end
+                end
+            end
+        end
+    end
+
+    for _, e in pairs(self.AttachmentElements) do
+        if !istable(e) then continue end
+        for var, v in pairs(e) do
+            self.ModifiedCache[var] = true
+        end
+    end
+
+    for _, e in pairs(self.Firemodes) do
+        if !istable(e) then continue end
+        for var, v in pairs(e) do
+            self.ModifiedCache[var] = true
+        end
+    end
+
+    MODIFIED_CACHE = true
+
+    if SERVER then
+        local cs = self:GetCapacity() + self:GetChamberSize()
+
+        if self:Clip1() > cs and self:Clip1() != ArcCW.BottomlessMagicNumber then
+            local diff = self:Clip1() - cs
+            self:SetClip1(cs)
+
+            if self:GetOwner():IsValid() and !self:GetOwner():IsNPC() then
+                self:GetOwner():GiveAmmo(diff, self.Primary.Ammo, true)
+            end
+        end
+    else
+        local se = self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity
+        if se then
+            local path = "arccw/weaponicons/" .. self:GetClass()
+            local mat = Material(path)
+
+            if !mat:IsError() then
+                local tex = mat:GetTexture("$basetexture")
+                local texpath = tex:GetName()
+
+                killicon.Add(se, texpath, Color(255, 255, 255))
+            end
+        end
+    end
+
+    local ubgl_ammo = self:GetBuff_Override("UBGL_Ammo")
+    local ubgl_clip = self:GetBuff_Override("UBGL_Capacity")
+
+    self.Secondary.ClipSize = ubgl_clip or -1
+    self.Secondary.Ammo = ubgl_ammo or "none"
+
+    --[[]
+    if ubgl_clip then
+        self.Secondary.ClipSize = ubgl_clip
+        if self:GetOwner():IsPlayer() and ArcCW.ConVars["atts_ubglautoload"]:GetBool() and ubgl_ammo then
+            local amt = math.min(ubgl_clip - self:Clip2(), self:GetOwner():GetAmmoCount(ubgl_ammo))
+            self:SetClip2(self:Clip2() + amt)
+            self:GetOwner():RemoveAmmo(amt, ubgl_ammo)
+        end
+    else
+        self.Secondary.ClipSize = -1
+    end
+    ]]
+
+
+
+    self:RebuildSubSlots()
+
+    local fmt = self:GetBuff_Override("Override_Firemodes", self.Firemodes)
+    fmt["BaseClass"] = nil
+
+    local fmi = self:GetFireMode()
+    if !fmt[fmi] then self:SetFireMode(1) end
+
+    self:AdjustAmmo(old_inf)
 end
 
 local old_FireRocket = SWEP.FireRocket

@@ -123,7 +123,7 @@ HORDE.BuyablePerks = {
     },
     buyableperk_tacmove = {
         name = "Tactical Movement",
-        description = "You move without penalty in aiming",
+        description = "You move without penalty in aiming.\nDoesn't remove penalty from atts.",
         shop_icon = "materials/perks/sniper.png",
         category = "BuyablePerks",
         price = 1000,
@@ -134,7 +134,7 @@ HORDE.BuyablePerks = {
         wep_perkapply = function(wep, lvl)
             if wep.ArcCW and wep.SpeedMult and wep.SightedSpeedMult then
                 HORDE:Modifier_AddToWeapon(
-                    wep:GetOwner(), wep, "SightedSpeedMult", "buyableperk_tacmove",
+                    wep:GetOwner(), wep, "Override_SightedSpeedMult", "buyableperk_tacmove",
                     {
                         override = math.max(wep.SpeedMult, wep.SightedSpeedMult),
                         priority = 5
@@ -145,7 +145,7 @@ HORDE.BuyablePerks = {
         wep_perkremove = function(wep, lvl)
             if wep.ArcCW and wep.SpeedMult and wep.SightedSpeedMult then
                 HORDE:Modifier_AddToWeapon(
-                    wep:GetOwner(), wep, "SightedSpeedMult", "buyableperk_tacmove"
+                    wep:GetOwner(), wep, "Override_SightedSpeedMult", "buyableperk_tacmove"
                 )
             end
         end,

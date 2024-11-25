@@ -10,7 +10,11 @@ end
 
 if CLIENT then
     hook.Add("PreDrawViewModel", "ArcCW_NewVM", function(vm, ply, wep)
-        if !wep.ArcCW then return end
+        if !wep.ArcCW then
+            local hands = ply:GetHands()
+            hands:SetParent(LocalPlayer():GetViewModel())
+            return
+        end
         local vm_real = wep.REAL_VM
         if IsValid(vm_real) and !vm_real.Not_Stated then
 
