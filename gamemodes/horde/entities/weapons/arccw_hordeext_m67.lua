@@ -18,6 +18,7 @@ SWEP.Trivia_Mechanism = "Composition B"
 SWEP.Trivia_Country = "USA"
 SWEP.Trivia_Year = 1968
 SWEP.Primary.MaxAmmo = 9
+SWEP.Primary.Ammo = "Grenade"
 
 SWEP.Slot = 4
 

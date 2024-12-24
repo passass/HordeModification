@@ -8,6 +8,7 @@ SWEP.Base = "arccw_hordeext_base_nade"
 SWEP.Spawnable = true -- this obviously has to be set to true
 SWEP.Category = "ArcCW - Horde" -- edit this if you like
 SWEP.AdminOnly = false
+SWEP.Primary.Ammo = "Grenade"
 
 SWEP.PrintName = "Nanobot Grenade"
 SWEP.Trivia_Class = "Hand Grenade"

@@ -43,6 +43,7 @@ SWEP.Primary.ClipSize = 1
 
 SWEP.MuzzleVelocity = 1000
 SWEP.ShootEntity = "arccw_thr_shrapnel"
+SWEP.Primary.Ammo = "Grenade"
 
 SWEP.TTTWeaponType = "weapon_ttt_confgrenade"
 SWEP.NPCWeaponType = "weapon_grenade"

@@ -7,6 +7,7 @@ SWEP.Base = "arccw_hordeext_base_nade"
 SWEP.Spawnable = true -- this obviously has to be set to true
 SWEP.Category = "ArcCW - Horde" -- edit this if you like
 SWEP.AdminOnly = false
+SWEP.Primary.Ammo = "arccw_hordeext_nade_chain"
 
 SWEP.PrintName = "Chain Grenade"
 SWEP.ForceDefaultAmmo = 0
@@ -32,6 +33,9 @@ SWEP.Throwing = true
 
 SWEP.Primary.ClipSize = 1
 
+game.AddAmmoType({
+    name = "arccw_hordeext_nade_chain",
+})
 
 SWEP.MuzzleVelocity = 600
 SWEP.Horde_MaxMags = 40

@@ -4,6 +4,7 @@ SWEP.Base = "arccw_hordeext_base_nade"
 SWEP.Spawnable = true -- this obviously has to be set to true
 SWEP.Category = "ArcCW - Horde" -- edit this if you like
 SWEP.AdminOnly = false
+SWEP.Primary.Ammo = "Grenade"
 
 SWEP.PrintName = "Medic Grenade"
 SWEP.Trivia_Class = "Hand Grenade"
@@ -15,6 +16,7 @@ SWEP.Trivia_Country = "Britain"
 SWEP.Trivia_Year = 2000
 SWEP.Primary.MaxAmmo = 9
 SWEP.ForceDefaultAmmo = 0
+SWEP.Primary.Ammo = "Grenade"
 
 SWEP.Slot = 4
 

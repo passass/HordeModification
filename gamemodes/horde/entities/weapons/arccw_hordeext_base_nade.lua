@@ -1,5 +1,7 @@
 SWEP.Base = "arccw_horde_base_nade"
+SWEP.Primary.Ammo = "Grenade"
 
+SWEP.DoNotEquipmentAmmo = true
 SWEP.KeepIfEmpty = true
 function SWEP:Throw()
     if self:GetNextPrimaryFire() > CurTime() then return end
