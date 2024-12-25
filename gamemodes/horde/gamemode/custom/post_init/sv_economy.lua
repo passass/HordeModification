@@ -921,5 +921,8 @@ end
 function plymeta:DropWeapon(wep)
     wep = wep or self:GetActiveWeapon()
     if !IsValid(wep) or !self:CanDropWeapon(wep) then return end
+    if wep.PreDrop then
+        wep:PreDrop()
+    end
     old_dropweapon(self, wep)
 end

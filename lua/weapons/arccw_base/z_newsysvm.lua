@@ -223,6 +223,70 @@ end
 local ang0 = Angle(0, 0, 0)
 local dev_alwaysready = ArcCW.ConVars["dev_alwaysready"]
 
+function SWEP:Equip(newowner)
+    if HORDE:WeaponChangeAmmoType(self) then
+        HORDE:WeaponAmmoTypeSync(self)
+    end
+
+    if SERVER then
+        if self:IsOnFire() then
+            self:Extinguish()
+        end
+
+        self.fingerprints = self.fingerprints or {}
+
+        if !table.HasValue(self.fingerprints, newowner) then
+            table.insert(self.fingerprints, newowner)
+        end
+    end
+
+    if SERVER then
+        if IsValid(newowner) and self.StoredAmmo > 0 and self.Primary.Ammo != "none" then
+            //local ammo = newowner:GetAmmoCount(self.Primary.Ammo)
+            local given = self.StoredAmmo//math.min(self.StoredAmmo, self.Primary.ClipMax - ammo)
+            newowner:GiveAmmo( given, self.Primary.Ammo)
+            self.StoredAmmo = 0
+        elseif self.Horde_AmmoType then
+            newowner:SetAmmo( 0, self.Horde_AmmoType)
+        end
+
+
+    end
+end
+
+function SWEP:PreDrop()
+    if self.Throwing then
+        if self:GetGrenadePrimed() then
+            self:Throw()
+        end
+    else
+        if SERVER and IsValid(self:GetOwner()) and self.Primary.Ammo != "none" then
+            local ammo = self:Ammo1()
+
+            -- Do not drop ammo if we have another gun that uses this type
+            for _, w in ipairs(self:GetOwner():GetWeapons()) do
+                if IsValid(w) and w != self and w:GetPrimaryAmmoType() == self:GetPrimaryAmmoType() then
+                ammo = 0
+                end
+            end
+
+            self.StoredAmmo = ammo
+            print("self.StoredAmmo", self.StoredAmmo, self:Ammo1(), self:GetOwner():GetAmmoCount(self:GetPrimaryAmmoType()))
+
+            if ammo > 0 then
+                self:GetOwner():RemoveAmmo(ammo, self.Primary.Ammo)
+            end
+
+            HORDE:WeaponDeleteHordeAmmoType(self)
+        end
+    end
+
+    net.Start("arccw_togglecustomize")
+        net.WriteBool(false)
+    net.Send(self:GetOwner())
+    self:ToggleCustomizeHUD(false)
+end
+
 function SWEP:Deploy()
     if !IsValid(self:GetOwner()) or self:GetOwner():IsNPC() then
         return
@@ -1299,6 +1363,10 @@ function SWEP:Initialize()
     if (!IsValid(owner) or owner:IsNPC()) and self:IsValid() and self.NPC_Initialize and SERVER then
         self:NPC_Initialize()
     end
+    
+    timer.Simple(0, function()
+        HORDE:WeaponChangeAmmoType(self)
+    end)
     if owner:IsValid() then
         self:createCustomVM(self.ViewModel)
         if game.SinglePlayer() and SERVER then
@@ -1309,6 +1377,7 @@ function SWEP:Initialize()
             if IsValid(self) then self:createCustomVM(self.ViewModel) end
         end)
     end
+
     if !self.Backstab then -- is not melee
         local do_createnewattcat_magazine = true
         local do_createnewattcat_calibers = true

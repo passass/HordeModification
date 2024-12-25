@@ -159,6 +159,7 @@ function SWEP:InitialDefaultClip()
         if self:HasBottomlessClip() then
             self:SetClip1(0)
         end
+        HORDE:WeaponChangeAmmoType(self)
         local ammotype = self.Primary.Ammo
 
         local total_ammo
@@ -317,6 +318,15 @@ function SWEP:FireRocket(ent, vel, ang, dontinheritvel)
 
     if rocket then
         rocket.SpawnTime = CurTime()
+    end
+end
+
+local old_AdjustAmmo = SWEP.AdjustAmmo
+function SWEP:AdjustAmmo(...)
+    old_AdjustAmmo(self, ...)
+
+    if IsValid(self:GetOwner()) then
+        HORDE:WeaponChangeAmmoType(self)
     end
 end
 

@@ -285,7 +285,12 @@ function HORDE:GiveStarterWeapons(ply)
             for _, wpn_class in pairs(weapons_gotted) do
                 local wep = ply:GetWeapon(wpn_class)
                 if IsValid(wep) then
-                    ply:SetAmmo(wep.StartAmmo or math.Round(HORDE:Ammo_GetMaxAmmo(wep) / 4 * 3), wep:GetPrimaryAmmoType())
+                    HORDE:WeaponChangeAmmoType(wep)
+                    local ammogive = wep.StartAmmo or math.Round(HORDE:Ammo_GetMaxAmmo(wep) / 4 * 3)
+                    //if wep.ArcCW then
+                    //    wep.ForceDefaultAmmo = ammogive
+                    //end
+                    ply:SetAmmo(ammogive, wep:GetPrimaryAmmoType())
                 end
             end
         end)
