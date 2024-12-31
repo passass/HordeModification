@@ -15,3 +15,24 @@ if SERVER then
         end
     end
 end
+
+function plymeta:Horde_UnsetGadget()
+    if self.Horde_Gadget == nil then return end
+    if SERVER then
+        local item = HORDE.items[self.Horde_Gadget]
+        if item then
+            self:Horde_AddWeight(item.weight)
+        end
+        if not self.has_used_consumable_gadget then
+            self:Horde_AddMoney(math.floor(HORDE.sell_item_mult * item.price))
+        end
+    end
+    hook.Run("Horde_OnUnsetGadget", self, self.Horde_Gadget)
+    if SERVER then
+        net.Start("Horde_Gadget")
+            net.WriteUInt(HORDE.NET_PERK_UNSET, HORDE.NET_PERK_BITS)
+            net.WriteEntity(self)
+        net.Broadcast()
+    end
+    self.Horde_Gadget = nil
+end

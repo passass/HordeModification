@@ -111,16 +111,19 @@ else
     net.Receive("Horde_SyncAmmoType", function()
         local wep = net.ReadEntity()
         local ammonumber = net.ReadUInt(5)
-        local ammotype = string.format("Horde_AmmoType_%s", ammonumber)
-
-        if !wep.Horde_OrigAmmoType then
-            wep.Horde_OrigAmmoType = wep.Primary.Ammo
-        end
-
-        wep.Primary.Ammo = ammotype
-        wep.Horde_AmmoType = ammotype
-
-        MySelf.Horde_AmmoTypesTable[wep] = ammonumber
+        timer.Simple(0, function()
+            if !IsValid(wep) then return end
+            local ammotype = string.format("Horde_AmmoType_%s", ammonumber)
+    
+            if !wep.Horde_OrigAmmoType then
+                wep.Horde_OrigAmmoType = wep.Primary.Ammo
+            end
+    
+            wep.Primary.Ammo = ammotype
+            wep.Horde_AmmoType = ammotype
+    
+            MySelf.Horde_AmmoTypesTable[wep] = ammonumber
+        end)
     end)
 end
 

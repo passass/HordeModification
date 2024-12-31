@@ -47,7 +47,7 @@ att.Hook_ShouldNotSight = function(wep)
 end
 
 local function Ammo(wep)
-    return wep.Owner:GetAmmoCount("pistol") -- att.UBGL_Ammo
+    return wep.Owner:GetAmmoCount(wep:GetPrimaryAmmoType()) -- att.UBGL_Ammo
 end
 
 att.Hook_Think = function(wep)

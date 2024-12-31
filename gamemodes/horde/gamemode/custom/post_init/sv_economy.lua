@@ -504,7 +504,7 @@ net.Receive("Horde_SellItem", function (len, ply)
         local wep = ply:GetWeapon(class)
         if wep.Horde_OnSell and wep:Horde_OnSell() then return end
         local item = HORDE.items[class]
-        ply:Horde_AddMoney(math.floor(item.price * 0.25))
+        ply:Horde_AddMoney(math.floor(item.price * HORDE.sell_item_mult))
 		if wep.ArcCW and wep.Attachments then
             for k, v in pairs(wep.Attachments) do
                 if v.Installed and !v.FreeSlot and !v.Hidden and !v.Integral then
@@ -519,7 +519,7 @@ net.Receive("Horde_SellItem", function (len, ply)
         if item.entity_properties.type == HORDE.ENTITY_PROPERTY_DROP or item.entity_properties.wep_that_place then
             local drop_entities = ply:Horde_GetDropEntities()
             if drop_entities and drop_entities[class] then
-                ply:Horde_AddMoney(math.floor(0.25 * item.price * drop_entities[class]))
+                ply:Horde_AddMoney(math.floor(HORDE.sell_item_mult * item.price * drop_entities[class]))
                 -- Remove all the drop entiies of this player
                 for _, ent in pairs(HORDE.player_drop_entities[ply:SteamID()]) do
                     if ent:IsValid() and (ent:GetClass() == class or ent.Horde_ItemID == class) then
@@ -544,12 +544,12 @@ net.Receive("Horde_SellItem", function (len, ply)
         elseif item.entity_properties.type == HORDE.ENTITY_PROPERTY_GADGET then
             if ply:Horde_GetGadget() == nil then return end
             ply:Horde_UnsetGadget()
-            ply:Horde_AddMoney(math.floor(0.25 * item.price))
+            ply:Horde_AddMoney(math.floor(HORDE.sell_item_mult * item.price))
             ply:Horde_SyncEconomy()
         elseif item.entity_properties.type == HORDE.ENTITY_PROPERTY_BUYABLEPERK then
             local lvl = HORDE:GetBuyablePerkLevel(ply, class)
             if lvl > 0 then
-                ply:Horde_AddMoney(math.floor(0.25 * HORDE:GetBuyablePerkPrice(ply, class, lvl-1)))
+                ply:Horde_AddMoney(math.floor(HORDE.sell_item_mult * HORDE:GetBuyablePerkPrice(ply, class, lvl-1)))
                 HORDE:StripBuyablePerk(ply, class)
                 ply:Horde_SyncEconomy()
             end
